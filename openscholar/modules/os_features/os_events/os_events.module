@@ -204,7 +204,7 @@ function os_events_process_node(&$variables) {
     $subscribe = str_replace('http://', 'webcal://', $subscribe);
 
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
-    if ($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']) {
+    if (!empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type'])) {
       $register = l(t('Register'), 'os_events/registration/' . $variables['node']->nid, array('attributes' => array('class' => array('register'))));
     }
     else {
@@ -713,6 +713,51 @@ function os_events_mollom_form_info($form_id) {
   mollom_form_info_add_fields($form_info, 'registration', 'event_signup_simple');
 
   return $form_info;
+}
+
+/**
+ * Save the settings for the mollom form.
+ */
+function os_events_save_mollom_settings() {
+  $mollom_form = array(
+    'form_id' => 'registration_form',
+    'mode' => '1',
+    'checks' => array('spam'),
+    'enabled_fields' => array('field_department][und][0][value','field_full_name][und][0][value'),
+    'strictness' => 'normal',
+    'discard' => '1',
+    'moderation' => 0,
+    'entity' => 'registration',
+    'bundle' => 'event_signup_simple',
+    'module' => 'os_events',
+    'title' => 'Registration form',
+    'elements' => array(
+      'field_department][und][0][value' => 'Department',
+      'field_full_name][und][0][value' => 'Full Name',
+    ),
+    'mapping' => array(
+      'author_email' => 'anon_email',
+      'post_id' => 'registration_id',
+    ),
+    'bypass access' => array(),
+    'mail ids' => array(),
+  );
+
+  mollom_form_save($mollom_form);
+}
+
+/**
+ * Implements hook_modules_enabled().
+ *
+ * When enabling the mollom module we need to add the event registration form
+ * to mollom form protection list.
+ */
+function os_events_modules_enabled($modules) {
+  if (!in_array('mollom', $modules)) {
+    return;
+  }
+
+  os_events_save_mollom_settings();
 }
 
 /**
