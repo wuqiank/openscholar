@@ -58,11 +58,11 @@ function os_events_theme() {
 function os_events_menu() {
   $items = array();
 
-  $items['os_events/registration/%node'] = array(
+  $items['os_events/%ctools_js/registration/%node'] = array(
     'title callback' => 'os_events_register_form_title',
-    'title arguments' => array('node', 2),
-    'page callback' => 'registration_register_page',
-    'page arguments' => array('node', 2),
+    'title arguments' => array('node', 3),
+    'page callback' => 'os_events_events_register',
+    'page arguments' => array(1, 3),
     'access arguments' => array('create event_signup_simple registration'),
   );
 
@@ -205,7 +205,7 @@ function os_events_process_node(&$variables) {
 
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
     if (!empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type'])) {
-      $register = l(t('Register'), 'os_events/registration/' . $variables['node']->nid, array('attributes' => array('class' => array('register'))));
+      $register = os_events_generate_modal_register_link($variables['node']->nid);
     }
     else {
       $register = '';
@@ -221,6 +221,72 @@ function os_events_process_node(&$variables) {
       '#weight' => 10,
     );
   }
+}
+
+/**
+ * Generate the link for revealing the modal registration form.
+ *
+ * @param $nid
+ *  The event NID.
+ * @param $modal_settings
+ *  Ctools modal settings.
+ *
+ * @return string
+ *  Link for the revealing the modal.
+ */
+function os_events_generate_modal_register_link($nid, $modal_settings = array()) {
+  $modal_settings += array(
+    'modalSize' => array(
+      'type' => 'fixed',
+      'width' => 600,
+      'height' => 250,
+      'addWidth' => 10,
+      'addHeight' => 10,
+      'contentRight' => 0,
+      'contentBottom' => 0,
+    ),
+  );
+
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_modal_add_js();
+  $modal_style = array(
+    'events-modal-style' => $modal_settings,
+  );
+  drupal_add_js($modal_style, 'setting');
+
+  return ctools_ajax_text_button(t('Register'), 'os_events/js/registration/' . $nid, '', 'ctools-use-modal ctools-modal-events-modal-style register');
+}
+
+/**
+ * Menu callback; Display the registration form in modal window.
+ *
+ * @param $js
+ *  Ctools JS settings.
+ * @param $node
+ *  The node object.
+ */
+function os_events_events_register($js, $node) {
+  ctools_include('modal');
+  ctools_include('ajax');
+  $registration_type = registration_get_entity_registration_type('node', $node);
+  $registration = entity_get_controller('registration')->create(array(
+    'entity_type' => 'node',
+    'entity_id' => $node->nid,
+    'type' => $registration_type,
+  ));
+
+  $registration_form = drupal_get_form('registration_form', $registration);
+
+  $form_state = array(
+    'title' => os_events_register_form_title('node', $node->nid),
+    'ajax' => $js,
+    'use_ctools' => TRUE,
+  );
+
+  $output = ctools_modal_form_render($form_state, $registration_form);
+  print ajax_render($output);
+  exit;
 }
 
 /**
@@ -659,6 +725,27 @@ function os_events_form_registration_form_alter(&$form, &$form_state) {
   // keep the event registration fieldset open.
   $form_state['rebuild'] = TRUE;
   unset($form['actions'], $form['field_full_name'], $form['field_department'], $form['anon_mail'], $form['user']);
+
+  $form['#submit'][] = 'os_events_modal_submit';
+}
+
+/**
+ * Submit handler; Dismissing the ctools modal window and display a message
+ * when the registration is completed.
+ */
+function os_events_modal_submit($form, $form_state) {
+  $commands = array();
+
+  // dismiss the window
+  $commands[] = ctools_modal_command_dismiss();
+  // Display messages.
+  $commands[] = ajax_command_before('#columns', theme('status_messages'));
+
+  // Clean any message.
+  drupal_get_messages();
+
+  print ajax_render($commands);
+  exit;
 }
 
 /**
