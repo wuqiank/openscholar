@@ -336,7 +336,7 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
   // have a description to display on certain pages.
   // Roles that are not mentioned here will be displayed as they are in the DB
   // and will not have a description.
-  $basic_roles = array(
+  $system_roles = array(
     OS_USER_ROLE_BASIC => array(
       'human_name' => t('Basic member'),
       'description' => t('<em>Basic members</em> may only add new posts and edit their own posts.'),
@@ -361,7 +361,7 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
       // "human" names as values.
 
       foreach ($og_roles as $machine_name) {
-        $human_name = !empty($basic_roles[$machine_name]) ? $basic_roles[$machine_name]['human_name'] : $machine_name;
+        $human_name = !empty($system_roles[$machine_name]) ? $system_roles[$machine_name]['human_name'] : $machine_name;
         $roles[$machine_name] = $human_name;
       }
       break;
@@ -372,8 +372,8 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
 
       foreach ($og_roles as $machine_name) {
         // Attempt to get human name and description.
-        $human_name = !empty($basic_roles[$machine_name]) ? $basic_roles[$machine_name]['human_name'] : $machine_name;
-        $description = !empty($basic_roles[$machine_name]) ? $basic_roles[$machine_name]['description'] : '';
+        $human_name = !empty($system_roles[$machine_name]) ? $system_roles[$machine_name]['human_name'] : $machine_name;
+        $description = !empty($system_roles[$machine_name]) ? $system_roles[$machine_name]['description'] : '';
         // Theme and create the array.
         $roles[$machine_name] = _cp_user_role_option($human_name, $description);
       }
