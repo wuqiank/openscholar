@@ -309,7 +309,7 @@ function cp_user_form_cp_settings_form_alter(&$form, &$form_state) {
  *
  * @return array $roles
  */
-function _cp_user_list_roles($mode = 'names', $bundle = NULL) {
+function _cp_user_list_roles($mode = 'names', $bundle = NULL, $gid = 0) {
   $roles = array();
 
   $machine_names = array(
@@ -340,7 +340,7 @@ function _cp_user_list_roles($mode = 'names', $bundle = NULL) {
       break;
 
     case 'rids':
-      $og_roles = og_roles('node', $bundle);
+      $og_roles = og_roles('node', $bundle, $gid);
       for ($i = 0; $i < sizeof($machine_names); $i++) {
         $roles[$machine_names[$i]] = array_search($machine_names[$i], $og_roles);
       }

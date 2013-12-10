@@ -350,7 +350,7 @@ function _cp_user_get_role($uid, $gid, $human_name = FALSE) {
  */
 function _cp_user_set_role($uid, $gid, $role_name, $bundle = 'personal') {
   // Gets a map of group roles with (key) role machine name => (value) role ID.
-  $roles = _cp_user_list_roles('rids', $bundle);
+  $roles = _cp_user_list_roles('rids', $bundle, $gid);
 
   // Loops over each possible OG role...
   foreach ($roles as $machine_name => $rid) {
