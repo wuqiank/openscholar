@@ -754,8 +754,7 @@ function os_files_update_7015() {
  */
 function os_files_update_7016() {
   // Loop over all the site logo fields.
-  $query = db_select('field_data_field_site_logo', 'f');
-  $results = $query
+  $results = db_select('field_data_field_site_logo', 'f')
     ->condition('f.bundle', array('department', 'personal', 'project'), 'IN')
     ->fields('f', array('field_site_logo_fid','entity_id'))
     ->execute()
@@ -778,6 +777,5 @@ function os_files_update_7016() {
   foreach ($nodes as $node) {
     $node->field_site_logo = NULL;
     node_save($node);
-    drupal_set_message(t('The site logo of the @label was removed.', array('@label' => $node->title)));
   }
 }
