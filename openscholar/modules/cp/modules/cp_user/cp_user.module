@@ -312,12 +312,15 @@ function cp_user_form_cp_settings_form_alter(&$form, &$form_state) {
  *       a themed string of their "human" name and description as values.
  *    - 'rids': Returns array array of roles with their "machine" names as keys
  *       and their RIDs as values.
+ * @param $bundle
+ *    The bundle of the group whose roles are to be returned.
  * @param $gid
- *    The group ID whose roles are to be returned.
+ *    (optional) The group ID whose roles are to be returned. Defaults to 0,
+ *    which will return the default OG roles for the given bundle.
  *
  * @return array $roles
  */
-function _cp_user_list_roles($mode = 'names', $bundle = NULL, $gid = 0) {
+function _cp_user_list_roles($mode = 'names', $bundle, $gid = 0) {
   $roles = array();
 
   // In the UI, the following roles will not be displayed as they are in the DB
