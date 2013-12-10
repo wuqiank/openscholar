@@ -352,7 +352,8 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
   );
 
   // Get all OG roles in the group - could be default roles or custom roles.
-  $og_roles = og_roles('node', $bundle, $gid);
+  // Will not include the 'member' and 'non-member' OG roles.
+  $og_roles = og_roles('node', $bundle, $gid, FALSE, FALSE);
 
   switch ($format) {
     case 'names':
