@@ -130,7 +130,7 @@ function os_links_field_default_fields() {
           'label' => 'hidden',
           'module' => 'link',
           'settings' => array(),
-          'type' => 'link_default',
+          'type' => 'hidden',
           'weight' => '1',
         ),
         'sidebar_teaser' => array(
