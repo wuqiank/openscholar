@@ -228,11 +228,10 @@ function cp_user_edit_membership_form($form_state, $user_load) {
     '#title' => t('Role:'),
     '#weight' => 10,
   );
-  // Prepares the list mode to generate verbose role descriptions on options.
-  $list_mode = 'options';
   $form['edit_membership']['edit_role'] = array(
     '#type' => 'radios',
-    '#options' => _cp_user_list_roles($list_mode),
+    // Each option is themed and includes a description.
+    '#options' => _cp_user_list_roles('options', $space->group->type, $space->group->nid),
     '#default_value' => _cp_user_get_role($user->uid, $space->group->nid),
   );
 
@@ -312,31 +311,36 @@ function _cp_user_role_option($label, $description) {
 /**
  * Returns the user's current role for this group.
  *
+ * Note: Users in OS are not supposed to be assigned more than one role in each
+ * group, but this is true only in the UI. In fact, a user in OS may have two
+ * roles - when a user is assigned a new role, they keep the 'member' role,
+ * but it is not shown in the UI. This means that if the user has another role
+ * besides the 'member' role, then this is the role we wish to display.
+ *
  * @param bool $human_name
  *   If TRUE, returns the human-readable name (i.e. "Administrator")
  *   If FALSE, returns the machine name (i.e. "vsite admin")
  */
 function _cp_user_get_role($uid, $gid, $human_name = FALSE) {
-  // Loads the user's roles with this group node.
-  $user_roles = og_get_user_roles('node', $gid, $uid);
-  // Handles vsite admins...
-  if (in_array('vsite admin', $user_roles)) {
-    $role = OS_USER_ROLE_ADMIN;
-  }
-  // Handles non-admins...
-  else if (in_array('content editor', $user_roles)) {
-    $role = OS_USER_ROLE_EDITOR;
-  }
-  else if (in_array('vsite user', $user_roles)) {
-    $role = OS_USER_ROLE_BASIC;
+  // Get all OG roles assigned to the given user in the given group, without
+  // including the roles 'member' and 'non-member'.
+  $user_roles = og_get_user_roles('node', $gid, $uid, FALSE);
+
+  // Get role.
+  if (empty($user_roles)) {
+    // Empty array means that the user is just a member.
+    $role = OG_AUTHENTICATED_ROLE;
   }
   else {
-    $role = t('authenticated user');
+    // User has a role besides 'member', get the only role in the array.
+    $role = reset($user_roles);
   }
 
   if ($human_name) {
-    $names = _cp_user_list_roles();
-    $role = isset($names[$role]) ? $names[$role] : t('None');
+    // Get all human names for OG roles in this group.
+    $names = _cp_user_list_roles('names', NULL, $gid);
+    // Get the role's human name, if any (will default to the machine name).
+    $role = $names[$role];
   }
 
   return $role;
