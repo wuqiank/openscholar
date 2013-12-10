@@ -344,6 +344,9 @@ background: linear-gradient(0deg, rgb(210, 20, 20) 30%, rgb(255, 123, 0) 100%);
 box-shadow:         0px 1px 1px rgba(50, 50, 50, 0.5);
 }
 
+.pin-button a, 
+fieldset.pin-fieldset legend a, 
+#user-login fieldset legend a,
 .page-site-register .form-submit,
 .logged-in.no-sidebars.page-user #content .user-add-website,
 .os-green-button {
@@ -365,6 +368,27 @@ background: linear-gradient(180deg, rgb(61, 155, 19) 30%, rgb(61, 132, 19) 70%);
 -webkit-box-shadow: 0px 1px 1px rgba(50, 50, 50, 0.5);
 -moz-box-shadow:    0px 1px 1px rgba(50, 50, 50, 0.5);
 box-shadow:         0px 1px 1px rgba(50, 50, 50, 0.5);
+}
+
+fieldset.pin-fieldset legend, 
+#user-login fieldset legend,
+.pin-button a, 
+fieldset.pin-fieldset legend a, 
+#user-login fieldset legend a {
+	color:#FFF !important;
+	width:300px;
+}
+
+.pin-button, 
+fieldset.pin-fieldset legend, 
+#user-login fieldset legend {
+    background-color:none;
+}
+
+#user-login fieldset, 
+.pin-button, fieldset.pin-fieldset legend, #user-login fieldset legend {
+    width: 300px;
+    padding-left: 0;
 }
 
 
