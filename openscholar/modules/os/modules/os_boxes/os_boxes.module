@@ -427,6 +427,12 @@ function os_boxes_preprocess_web_widgets_inline(&$vars) {
   ));
 }
 
+function os_boxes_preprocess_block(&$vars) {
+  if (web_widgets_inside_widget()) {
+    $vars['classes_array'][] = 'os-boxes-embedded';
+  }
+}
+
 /**
  * Implements hook_menu_contextual_links_alter().
  *
