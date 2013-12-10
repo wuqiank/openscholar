@@ -83,10 +83,7 @@ projects[entitycache][subdir] = "contrib"
 projects[entitycache][version] = 1.1
 
 projects[entityreference][subdir] = "contrib"
-;projects[entityreference][version] = 1.0-rc5+11-dev
-projects[entityreference][download][type] = git
-projects[entityreference][download][branch] = 7.x-1.0
-projects[entityreference][download][revision] = 5b1c289
+projects[entityreference][version] = 1.1
 projects[entityreference][patch][] = "http://drupal.org/files/1802916-er-show-identifier-14.patch"
 
 projects[entityreference_prepopulate][subdir] = "contrib"
@@ -159,7 +156,7 @@ projects[flag][subdir] = "contrib"
 projects[flag][version] = 2.0
 
 projects[google_feedapi][subdir] = "contrib"
-projects[google_feedapi][version] = 1.1
+projects[google_feedapi][version] = 1.2
 
 projects[hierarchical_taxonomy][subdir] = "contrib"
 projects[hierarchical_taxonomy][download][type] = git
@@ -261,9 +258,7 @@ projects[oembed][patch][] = "http://drupalcode.org/project/oembed.git/patch/a27a
 projects[oembed][patch][] = "http://drupal.org/files/issues/oembed.2134415.wysiwyg_dimensions.patch"
 
 projects[og][subdir] = "contrib"
-projects[og][version] = 2.2
-projects[og][patch][] = "http://drupal.org/files/1981620-er-prepopualte-existing-node-1.patch"
-projects[og][patch][] = "http://drupal.org/files/1982798-og-worker-2.patch"
+projects[og][version] = 2.4
 
 projects[og_moderation][subdir] = "contrib"
 projects[og_moderation][version] = 2.0
