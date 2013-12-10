@@ -326,15 +326,14 @@ function _cp_user_get_role($uid, $gid, $human_name = FALSE) {
   // including the roles 'member' and 'non-member'.
   $user_roles = og_get_user_roles('node', $gid, $uid, FALSE);
 
-  // Get role.
   if (empty($user_roles)) {
-    // Empty array means that the user is just a member.
-    $role = OG_AUTHENTICATED_ROLE;
+    // Empty array probably means that the user is just a member, which we
+    // display as 'None' to show that they do not have a specific role.
+    return $human_name ? 'None' : OG_AUTHENTICATED_ROLE;
   }
-  else {
-    // User has a role besides 'member', get the only role in the array.
-    $role = reset($user_roles);
-  }
+
+  // User has a role besides 'member', get the only role in the array.
+  $role = reset($user_roles);
 
   if ($human_name) {
     // Get all human names for OG roles in this group.
