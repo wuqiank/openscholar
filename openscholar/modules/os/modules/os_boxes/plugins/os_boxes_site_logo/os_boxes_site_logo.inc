@@ -162,7 +162,9 @@ function os_boxes_site_logo_submit($form, $form_state) {
     );
 
     $scale = null;
+    $host_object = NULL;
     if (module_exists('vsite') && $vsite = spaces_get_space()) {
+      $host_object = $vsite->id;
       $instance = field_info_instance('node', 'field_site_logo', $vsite->group->type);
       if ($instance['widget']['settings']['resolution']) {
         $scale = explode('x', $instance['widget']['settings']['resolution']);
@@ -182,11 +184,11 @@ function os_boxes_site_logo_submit($form, $form_state) {
     $orig = _imagefield_crop_file_to_crop($file->fid);
     if ($orig->fid == $file->fid) {
       $orig = imagefield_crop_create_copy($file);
-      file_usage_add($orig, 'imagefield_crop', 'file', $file->fid);
+      file_usage_add($orig, 'imagefield_crop', 'node', $host_object);
     }
     _imagefield_crop_resize(drupal_realpath($orig->uri), $item, $scale, $file);
     file_save($file);
-    file_usage_add($file, 'os_boxes', 'box', 1);  // prevents errors when trying to reuse the same image
+    file_usage_add($file, 'os_boxes', 'node', $host_object);  // prevents errors when trying to reuse the same image
   }
   else {
     // there's no file. remove the old file, remove file_usage and set sensible defaults for the vsite
