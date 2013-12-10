@@ -767,13 +767,16 @@ function cp_form_redirect($form, &$form_state) {
  * Implements hook_module_implements_alter().
  */
 function cp_module_implements_alter(&$implementations, $hook) {
-  switch ($hook) {
-    // Ensures that cp_form_redirect() occurs after redirect_edit_form_submit().
-    case 'form_alter':
-      $module = 'cp';
-      $group = $implementations[$module];
-      unset($implementations[$module]);
-      $implementations[$module] = $group;
-      break;
+  if ($hook != 'form_alter') {
+    return;
   }
+
+  if (empty($implementations['cp'])) {
+    return;
+  }
+
+  // Ensures that cp_form_redirect() occurs after redirect_edit_form_submit().
+  $group = $implementations['cp'];
+  unset($implementations['cp']);
+  $implementations['cp'] = $group;
 }

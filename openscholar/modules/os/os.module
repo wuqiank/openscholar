@@ -1997,17 +1997,18 @@ function os_logout_logged_users() {
     ->execute()
     ->fetchAllAssoc('uid');
 
-  if (empty($user_result)) {
-    return;
-  }
-
   // Get a list of no-admin logged users with no "administer site configuration"
   // permission.
-  $result = db_select('sessions', 's')
+  $query = db_select('sessions', 's')
     ->fields('s')
-    ->condition('uid', 1, '<>')
-    ->condition('uid', array(array_keys($user_result)), 'NOT IN')
-    ->execute()
+    ->condition('uid', 1, '<>');
+
+  // If users with "administer site configuration" are logged, keep them logged.
+  if (!empty($user_result)) {
+    $query->condition('uid', array(array_keys($user_result)), 'NOT IN');
+  }
+
+  $result = $query->execute()
     ->fetchAllAssoc('uid');
 
   if (empty($result)) {
@@ -2028,4 +2029,27 @@ function os_settings_form_submit($form, &$form_state) {
     os_logout_logged_users();
     drupal_set_message(t('All non-admin users have been logged out.'));
   }
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function os_requirements($phase) {
+  $requirements = array();
+  if ($phase === 'runtime') {
+    $requirements['os_field_ui'] = array(
+      'title' => t('Field UI'),
+      'description' => t('The Field UI module is enabled, and will a cause a menu rebuild everytime a new vocabulary is created. It is recommened to disable it on production.'),
+    );
+
+    if (module_exists('field_ui')) {
+      $requirements['os_field_ui']['value'] = t('Enabled');
+      $requirements['os_field_ui']['severity'] = REQUIREMENT_WARNING;
+    }
+    else {
+      $requirements['os_field_ui']['value'] = t('Disabled');
+    }
+
+  }
+  return $requirements;
 }
