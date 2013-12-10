@@ -215,8 +215,8 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   // Roles to hide from the form.
   $hide_roles = array(
-    'member',
-    'non-member',
+    OG_AUTHENTICATED_ROLE,
+    OG_ANONYMOUS_ROLE,
   );
 
   foreach (element_children($form['permission']) as $key) {
@@ -300,16 +300,17 @@ function cp_user_og_ui_admin_new_role($variables) {
   // These roles will not be editable.
   $always_blocked = array(
     OG_ANONYMOUS_ROLE,
-    OS_USER_ROLE_ADMIN,
     OS_USER_ROLE_EDITOR,
     // This should have been OG_AUTHENTICATED_ROLE but we renamed it.
     'basic member',
+    // This should have been OS_USER_ROLE_ADMIN but we renamed it.
+    'administrator'
   );
 
   // Roles to hide from display.
   $hide_roles = array(
-    'member',
-    'non-member',
+    OG_AUTHENTICATED_ROLE,
+    OG_ANONYMOUS_ROLE,
   );
 
   foreach ($role_names as $rid => $name) {
