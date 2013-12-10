@@ -302,10 +302,18 @@ function cp_user_form_cp_settings_form_alter(&$form, &$form_state) {
 }
 
 /**
- * Returns an associative array mapping role names to human readable names.
+ * Returns an associative array of OG roles.
  *
- * @param bool $verbose
- *   If TRUE, formats a 2-line label with descriptive help text for each role.
+ * @param $mode
+*    The requested format for the array. Accepted values:
+ *    - 'names': Returns array of roles with their "machine" names as keys and
+ *       their "human" names as values.
+ *    - 'options': Returns array of roles with their "machine" names as keys and
+ *       a themed string of their "human" name and description as values.
+ *    - 'rids': Returns array array of roles with their "machine" names as keys
+ *       and their RIDs as values.
+ * @param $gid
+ *    The group ID whose roles are to be returned.
  *
  * @return array $roles
  */
