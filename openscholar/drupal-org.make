@@ -102,6 +102,9 @@ projects[eva][subdir] = "contrib"
 projects[eva][version] = 1.2
 projects[eva][revision] = "6d92c27"
 
+projects[expire][subdir] = "contrib"
+projects[expire][version] = 2.0-beta2
+
 projects[facetapi][subdir] = "contrib"
 projects[facetapi][version] = 1.1
 projects[facetapi][patch][] = "http://drupal.org/files/2006704-facetapi-er-regroup-2.patch"
@@ -156,7 +159,7 @@ projects[flag][subdir] = "contrib"
 projects[flag][version] = 2.0
 
 projects[google_feedapi][subdir] = "contrib"
-projects[google_feedapi][version] = 1.1
+projects[google_feedapi][version] = 1.2
 
 projects[hierarchical_taxonomy][subdir] = "contrib"
 projects[hierarchical_taxonomy][download][type] = git

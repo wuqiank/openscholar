@@ -658,13 +658,13 @@ function os_files_entity_info_alter(&$info){
       'label' => t('Link with no icon'),
       'custom settings' => TRUE
     ),
+    'os_files_title' => array(
+      'label' => t('Title'),
+      'custom settings' => TRUE
+    ),
     
     'os_files_thumbnail' => array(
       'label' => t('Thumbnail'),
-      'custom settings' => TRUE
-    ),
-    'os_files_preview' => array(
-      'label' => t('Preview'),
       'custom settings' => TRUE
     ),
   );
@@ -1288,6 +1288,103 @@ function os_files_file_download($uri){
 }
 
 /**
+ * Implements hook_file_view
+ * 
+ * Prepares file view.  
+ * @see http://community.openscholar.harvard.edu/openscholar/topics/better_files_media_management_and_display
+ */
+function os_files_file_view($file, $view_mode, $langcode) {
+  if (!in_array($view_mode, array('os_files_title', 'teaser', 'full', 'os_files_thumbnail'))) {
+    return;
+  }
+
+  $icon = array(
+    '#theme' => 'file_icon',
+    '#file' => $file,
+    '#icon_directory' => drupal_get_path('module', 'os_files') . '/icons',
+  );
+  
+  //icon, title, download
+  if ($view_mode == 'full') {
+    //full mode never needs to link to the file view.  link to the file instead and omit the download link
+    $content = array(
+      'file-info' => array(  
+        '#prefix' => '<div class="file-info">',
+        '#suffix' => '</div>',
+        'icon' => $icon,
+        'title' => array(
+          '#theme' => 'link',
+          '#path' => file_create_url($file->uri),
+          '#text' => $file->filename,
+          '#options' => array('attributes' => array(), 'html' => NULL),
+        ),
+      ),
+    );
+  } else {
+    $content = array(
+      'file-info' => array(
+        '#prefix' => '<div class="file-info">',
+        '#suffix' => '</div>',
+        'icon' => $icon,
+        'title' => array(
+          '#theme' => 'link',
+          '#path' => 'file/' . $file->fid,
+          '#text' => $file->filename,
+          '#options' => array('attributes' => array('class' => array('entity-link')), 'html' => FALSE),
+        ),
+        'download' => array(
+          '#theme' => 'link',
+          '#path' => file_create_url($file->uri),
+          '#text' => 'Download',
+          '#options' => array('attributes' => array('class' => array('download-link')), 'html' => FALSE),
+        ),
+      ),
+    );
+  }
+  
+  //add thumbnail for list of images
+  if (@$file->sv_list_of_images) {
+    unset ($content['file-info']['icon']);
+    switch ($view_mode) {
+      case 'full':
+        $content['file-info']['file'] = $file->content['file']; //include embedded image
+        $content['file-info']['file']['#style_name'] = 'os_files_small';
+        break;
+  
+      case 'teaser':
+        $content['file-info']['file'] = $file->content['file']; //include embedded image
+        $content['file-info']['file']['#style_name'] = 'os_files_small';
+        break;
+      
+      case 'os_files_thumbnail':
+        $content['file-info'] = $file->content['file']; //just use the image
+        $content['file-info']['#style_name'] = 'os_square_50_50';
+        $content['file-info']['#attributes']['class'] = array('recent-images-list');
+        break;
+    }
+  }
+  
+  //add video thumb/colorbox for list of video
+  if (@$file->sv_list_of_videos) {
+    unset ($content['file-info']['icon']);
+    
+    if ($file->filemime == 'video/oembed') {
+      switch ($view_mode) {
+        case 'full':    
+          $content['file-info']['file'] = $file->content['file']; //include embedded video
+          break;
+      
+        case 'teaser':
+          $content['file-info']['video_thumb'] = _os_files_video_thumb($file);
+          break;
+      }
+    }
+  }
+  
+  $file->content['file'] = $content;
+}
+
+/**
  * Implements hook_views_alter().
  *
  * Adds necessary relationship and filters to Media Browser view to make it
@@ -1530,14 +1627,14 @@ function os_files_views_data_alter(&$data){
  * Implements hook_os_entity_view_modes()
  */
 function os_files_os_entity_view_modes() {
-  return array('file' => array(
-    'image' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'video' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'audio' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'document' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'executable' => array('os_files_link', 'os_files_link_icon'),
-    'html' => array('os_files_link', 'full'),
+  $modes = array('file' => array_fill_keys(
+    array('image', 'video', 'audio', 'document', 'executable', 'html'),
+    array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_title')
   ));
+  
+  $modes['file']['image'][] = 'os_files_thumbnail';
+  
+  return $modes;
 }
 
 
@@ -1689,27 +1786,31 @@ function _os_files_video_thumb($file) {
   if (!module_exists('colorbox')) {
     return FALSE;
   }
+  
+  if (!is_array($file)) {
+    $file = (array) $file;
+  }
 
   $url = urldecode(file_uri_target($file['uri']));
   $id = 'embed-colorbox-' . $file['fid'];
 
   //get dimensions.  scale down to preset max size if needed.
-  if ($data = oembedcore_oembed_data($url)) {
-    $w = $data->width;
-    $h = $data->height;
+  if ($data = oembed_get_data($url)) {
+    $w = $data['width'];
+    $h = $data['height'];
     $w_max = 500;
     $h_max = 500;
     
     if ($w > $w_max) {
       $w = $w_max;
-      $ratio = $w/$data->width;
+      $ratio = $w/$data['width'];
       $h = $ratio * $h;
     }
     
     if ($h > $h_max) {
       $h = $h_max;
-      $ratio = $h/$data->height;
-      $w = $ratio * $data->height;
+      $ratio = $h/$data['height'];
+      $w = $ratio * $data['height'];
     }
   } else {
     $w = $h = 500;
@@ -1928,9 +2029,7 @@ function os_files_add_fields($type) {
         )
       ),
       'module' => 'text',
-      'settings' => array(
-        'max_length' => '255'
-      ),
+      'settings' => array(),
       'translatable' => '0',
       'type' => 'text_long'
     );
@@ -1955,7 +2054,7 @@ function os_files_add_fields($type) {
           'label' => 'hidden',
           'module' => 'text',
           'settings' => array(
-            'trim_length' => 600,
+            'trim_length' => 160,
           ),
           'type' => 'text_summary_or_trimmed',
           'weight' => 0,

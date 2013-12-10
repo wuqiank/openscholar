@@ -22,8 +22,8 @@ class os_sv_list_file extends os_sv_list {
     $form = parent::options_form($form_state);
     $types = array('all' => t('All')) + 
       array_reduce(file_type_get_all_types(), function ($ret, $o) {$ret[$o->type] = $o->label; return $ret;});
-    $form['content_type']['#title'] = t('File Type');
-    $form['content_type']['#options'] = $types;
+    $form['content']['content_type']['#title'] = t('File Type');
+    $form['content']['content_type']['#options'] = $types;
     return $form;
   }
   
@@ -56,7 +56,7 @@ class os_sv_list_file extends os_sv_list {
       'sort_oldest' => t('Oldest'),
       'sort_alpha' => t('Alphabetical'),
       'sort_filesize' => t('Filesize'),
-      //usage?
+      'sort_random' => t('Random'),
     );
   }
   
@@ -72,6 +72,9 @@ class os_sv_list_file extends os_sv_list {
   }
   function sort_alpha(&$efq) {
     $efq->propertyOrderBy('filename', 'ASC');
+  }
+  function sort_filesize(&$efq) {
+    $efq->propertyOrderBy('filesize', 'DESC');
   }
   
 }

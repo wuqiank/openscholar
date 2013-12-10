@@ -33,17 +33,23 @@ class sv_list_node_biblio extends sv_list_plugin {
     return array('sort_biblio' => t('Year of Publication'));
   }
   
-  public function options_form($box_options) {
-    $form['biblio_whitelist'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Select publication types to display'),
-      '#default_value' => $box_options['biblio_whitelist'], //isset($this->options['biblio_whitelist']) ? $this->options['biblio_whitelist'] : $defaults['biblio_whitelist'],
-      '#options' => $this->biblio_types,
-      '#prefix' => '<div id="os_sv_list_biblio_whitelist">',
-      '#suffix' => '</div>',
-      '#attached' => array(
-        'js' => array(
-          drupal_get_path('module', 'os_boxes').'/misc/selectAll.js',
+  public function options_form($box_options, &$form) {
+    $form['content']['biblio_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Publication Types'),
+      '#collapsed' => TRUE, 
+      '#collapsible' => TRUE,
+      'biblio_whitelist' => array(
+        '#type' => 'checkboxes',
+        '#title' => t('Select publication types to display'),
+        '#default_value' => $box_options['biblio_whitelist'], //isset($this->options['biblio_whitelist']) ? $this->options['biblio_whitelist'] : $defaults['biblio_whitelist'],
+        '#options' => $this->biblio_types,
+        '#prefix' => '<div id="os_sv_list_biblio_whitelist">',
+        '#suffix' => '</div>',
+        '#attached' => array(
+          'js' => array(
+            drupal_get_path('module', 'os_boxes').'/misc/selectAll.js',
+          ),
         ),
       ),
       '#states' => array(
@@ -55,8 +61,6 @@ class sv_list_node_biblio extends sv_list_plugin {
         ),
       )
     );
-    
-    return $form;
   }
   
   
@@ -96,10 +100,5 @@ class sv_list_node_biblio extends sv_list_plugin {
   
   public function sort_biblio($options, $efq) {
     $efq->addTag('sv_list_biblio');
-  }
-  
-  public function re_sort($options, $efq) {
-    //if we can't figure out how to make the efq sort, maybe do a sort afterwards?  
-    //not as ugly as it sounds, since we could just query for the 1-20 pubs we have to display on this page.
   }
 }
