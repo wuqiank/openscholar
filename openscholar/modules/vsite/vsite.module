@@ -2820,7 +2820,7 @@ function vsite_redirect_load_by_source_alter(&$redirects, $source, $context) {
       $vsite_mismatch = TRUE;
     }
     // Otherwise, outside a vsite, any group ID value means it's a mismatch.
-    else if ($gid !== FALSE) {
+    else if ($vsite === FALSE && $gid !== FALSE) {
       $vsite_mismatch = TRUE;
     }
 
