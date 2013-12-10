@@ -190,7 +190,11 @@ a img {
 	margin-bottom: 15px;	
 }
 
-.block-boxes-os_sv_list_file .file img {margin-right:5px;vertical-align:middle;}
+.block-boxes-os_sv_list_file .file img {margin-right:5px;vertical-align:middle;display:block;}
+
+.block-boxes-os_sv_list_file .file img.file-icon {display:inline;}
+
+.block-boxes-os_sv_list_file .file-info iframe {display:block;}
 
 #content-column a.entity-link {
 	display: inline-block;	
