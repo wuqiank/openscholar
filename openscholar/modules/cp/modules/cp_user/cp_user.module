@@ -304,7 +304,7 @@ function cp_user_form_cp_settings_form_alter(&$form, &$form_state) {
 /**
  * Returns an associative array of OG roles.
  *
- * @param $mode
+ * @param $format
 *    The requested format for the array. Accepted values:
  *    - 'names': Returns array of roles with their "machine" names as keys and
  *       their "human" names as values.
@@ -313,15 +313,23 @@ function cp_user_form_cp_settings_form_alter(&$form, &$form_state) {
  *    - 'rids': Returns array array of roles with their "machine" names as keys
  *       and their RIDs as values.
  * @param $bundle
- *    The bundle of the group whose roles are to be returned.
+ *    (optional) The bundle of the group whose roles are to be returned. If not
+ *    provided, $gid is mandatory and will be used to retrieve the bundle.
  * @param $gid
  *    (optional) The group ID whose roles are to be returned. Defaults to 0,
- *    which will return the default OG roles for the given bundle.
+ *    which will return the default OG roles for the given bundle. Must be
+ *    bigger than 0 if $bundle is not provided.
  *
  * @return array $roles
  */
-function _cp_user_list_roles($mode = 'names', $bundle, $gid = 0) {
+function _cp_user_list_roles($format, $bundle, $gid = 0) {
   $roles = array();
+
+  if (empty($bundle)) {
+    // Get bundle.
+    $group = node_load($gid);
+    $bundle = $group->type;
+  }
 
   // In the UI, the following roles will not be displayed as they are in the DB
   // but will have these "human readable" names for display. In addition, they
@@ -346,7 +354,7 @@ function _cp_user_list_roles($mode = 'names', $bundle, $gid = 0) {
   // Get all OG roles in the group - could be default roles or custom roles.
   $og_roles = og_roles('node', $bundle, $gid);
 
-  switch ($mode) {
+  switch ($format) {
     case 'names':
       // Create array of roles with their "machine" names as keys and their
       // "human" names as values.
