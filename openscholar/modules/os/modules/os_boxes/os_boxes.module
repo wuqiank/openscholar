@@ -82,10 +82,10 @@ function os_boxes_menu() {
     'weight' => 2,
   );
 
-  $items['os/widget/embed/%os_boxes/%'] = array(
+  $items['widget/embed/%os_boxes/%'] = array(
     'title' => 'Embed Widget',
     'page callback' => 'os_boxes_embed_code',
-    'page arguments' => array(3, 4),
+    'page arguments' => array(2, 3),
     'access callback' => true,
     'type' => MENU_CALLBACK,
     'file' => 'os_boxes.admin.inc',
@@ -337,7 +337,7 @@ function os_boxes_preprocess_boxes_box(&$variables) {
 
   if (!empty($variables['block']['embed_link']) && !web_widgets_inside_widget()) {
     $delta = $variables['block']['delta'];
-    $base = url('os/widget/embed/'.$delta);
+    $base = url('widget/embed/'.$delta);
 
     // copied from request_path() to do the same thing it does
     $request_path = strtok($base, '?');
