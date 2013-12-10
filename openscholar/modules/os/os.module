@@ -4,6 +4,7 @@
  * @file
  * Openscholar module file.
  */
+
 include_once ('os.features.inc');
 include_once ('includes/os.inc');
 
@@ -1190,8 +1191,6 @@ function os_context_registry() {
   return $registry;
 }
 
-
-
 /**
  * Implements hook_cron().
  *
@@ -1239,6 +1238,8 @@ function _os_conditional_css_browsers($cond) {
 }
 
 /**
+ * Implements hook_system_info_alter().
+ *
  * Adds all our regions to every subtheme of os_basetheme.
  */
 function os_system_info_alter(&$info, $file, $type) {
@@ -1356,11 +1357,11 @@ function os_url_outbound_alter(&$path, &$options, $original) {
 }
 
 /**
+ * Implements hook_context_block_info_alter().
+ *
  * Add defaults to blocks as required.
  *
  * Some of this was handled by the core block module which is no longer used.
- *
- * @param $blocks
  */
 function os_context_block_info_alter(&$blocks) {
 
@@ -1373,9 +1374,9 @@ function os_context_block_info_alter(&$blocks) {
 }
 
 /**
- * Allow altering of views before build but after the filters are attached.
+ * Implements hook_views_pre_build().
  *
- * @param view $view
+ * Allow altering of views before build but after the filters are attached.
  */
 function os_views_pre_build(&$view) {
   // Is this the RSS Feed View.
@@ -1388,6 +1389,7 @@ function os_views_pre_build(&$view) {
   }
 }
 
+// @TODO document why this is here or else remove.
 //function os_admin_paths_alter(&$paths) {
 //  foreach ($paths as $k => $p) {
 //    if (strpos($k, 'node/*/edit') !== FALSE/* || strpos($k, 'node/add') !== FALSE*/) {
@@ -1532,6 +1534,8 @@ function os_access_region($module, $delta) {
 }
 
 /**
+ * Implements hook_js_alter().
+ *
  * Checks to see if the colorbox js has been loaded,
  * and loads a small script to fix an issue if its been found
  */
@@ -1733,10 +1737,13 @@ function os_user_login_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Implements hook_library().
+ */
 function os_library() {
-  $l = array();
+  $libraries = array();
 
-  $l['os.ajax-fix'] = array(
+  $libraries['os.ajax-fix'] = array(
     'title' => 'Ajax Termination Fix',
     'version' => '1.0',
     'js' => array(
@@ -1744,16 +1751,21 @@ function os_library() {
     ),
   );
 
-  return $l;
-}
-
-function os_library_alter(&$l) {
-  $l['drupal.ajax']['dependencies'][] = array('os', 'os.ajax-fix');
+  return $libraries;
 }
 
 /**
+ * Implements hook_library_alter().
+ */
+function os_library_alter(&$libraries) {
+  $libraries['drupal.ajax']['dependencies'][] = array('os', 'os.ajax-fix');
+}
+
+/**
+ * Implements hook_restws_resource_info_alter().
+ *
  * Customize what resources will be avalible for RestWS to use
- **/
+ */
 function os_restws_resource_info_alter(&$info){
 
 //   //Remove entity types except those listed
@@ -1846,7 +1858,7 @@ function os_views_query_alter(&$view, &$query) {
 }
 
 /**
- * Implements field_default_fields_alter() for altering field settings.
+ * Implements hook_field_default_fields_alter().
  *
  * If the default scheme is private change the file field exports to be
  * private.
