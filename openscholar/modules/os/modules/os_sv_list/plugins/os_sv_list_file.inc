@@ -5,15 +5,6 @@ class os_sv_list_file extends os_sv_list {
     parent::__construct();
     $this->entity_type = 'file';
   }
-  /**
-   * Implementation of boxes_content::options_defaults().
-   */
-  /*
-  public function options_defaults() {
-    $options = parent::options_defaults();
-    return $options;
-  }
-  */
   
   /**
    * Implementation of boxes_content::options_form().
@@ -27,29 +18,7 @@ class os_sv_list_file extends os_sv_list {
     $form['content']['content_type']['#options'] = $types;
     return $form;
   }
-  
-  public function render() {
-    $block = parent::render();
-    
-    //$block['content'] .= ' files';
-    return $block;
-  }
-
-//   protected function _display_options() {
-//     $info = entity_get_info('file'); 
-//     foreach ($info['view modes'] as $mode => $info) {
-//       $modes[$mode] = $info['label'];
-//     }
-    
-//     dpm($modes);
-//     return $modes; //lets see how this plays out....
-//     return array(
-//       'display_title' => t('Title'),
-//       'display_preview' => t('Preview'),
-//       'display_details' => t('Details'),
-//       'display_grid' => t('Grid'),
-//     );
-//   }
+ 
   /**
    * @function query()
    * 
