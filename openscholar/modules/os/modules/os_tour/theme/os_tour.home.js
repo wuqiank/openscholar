@@ -112,7 +112,21 @@
           // Allows us to target just this tour in CSS rules.
           //$('.hopscotch-bubble').addClass('os-tour-cp-build-layout');
         });
-        $tourLink.slideDown('slow');
+
+        // When the page is first loaded, the "Take a tour" link is set to
+        // `display: hidden`. Once the help modal is dismissed, it will appear,
+        // and then remember not to attach this effect in the future.
+        var eventName = 'drupalOverlayBeforeClose';
+        var welcomePage = 'body.page-cp-welcome';
+        $(document).bind(eventName, function(event) {
+          if (!$("#overlay-container").find("iframe").contents().find(welcomePage).length) {
+            return;
+          }
+          if ($('#os-tour-home').length) {
+            console.log('Animating...');
+            $('#os-tour-home').slideDown('slow');
+          }
+        });
       });
 
     }
