@@ -19,8 +19,9 @@ function os_front_default_box() {
   $box->description = 'Front Page Header Text';
   $box->options = array(
     'text' => array(
-      'value' => '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_logo.gif" class="os-title-image" alt="OpenScholar"></div><br> <strong>Welcome!</strong> Lorem ipsum dolor sit amet, consectetuer
-          adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.',
+      'value' => '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_logo.gif" class="os-title-image" alt="OpenScholar"></div><br>
+          <strong>The easiest way to manage all your institution\'s sites</strong><br/>
+          Welcome! Log in and hover over this widget to customize your front page.',
       'format' => 'filtered_html',
     ),
     'additional_classes' => '',
