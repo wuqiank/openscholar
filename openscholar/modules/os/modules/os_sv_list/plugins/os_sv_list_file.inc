@@ -22,6 +22,7 @@ class os_sv_list_file extends os_sv_list {
     $form = parent::options_form($form_state);
     $types = array('all' => t('All')) + 
       array_reduce(file_type_get_all_types(), function ($ret, $o) {$ret[$o->type] = $o->label; return $ret;});
+    unset($types['html']);
     $form['content']['content_type']['#title'] = t('File Type');
     $form['content']['content_type']['#options'] = $types;
     return $form;
@@ -49,6 +50,17 @@ class os_sv_list_file extends os_sv_list {
 //       'display_grid' => t('Grid'),
 //     );
 //   }
+  /**
+   * @function query()
+   * 
+   * Remove html files from ever showing up in sv list.
+   */
+  public function query() {
+    $efq = parent::query();
+    $efq->entityCondition('bundle', 'html', '!=');
+    return $efq;
+  }
+  
   
   protected function _sort_options() {
     return array(
