@@ -36,7 +36,7 @@ function vsite_get_vsite($sid = FALSE, $reset = FALSE){
 }
 
 /**
- * Implementation of hook_default_og_membership_type().
+ * Implements hook_default_og_membership_type().
  */
 function vsite_default_og_membership_type() {
   $items = array();
@@ -222,7 +222,6 @@ function vsite_library_alter(&$libraries, $module) {
   $path = drupal_get_path('module', 'vsite') . '/js/overlay-parent.js';
   $libraries['parent']['js'][$path] = array();
 }
-
 
 /**
  * Implements hook_js_alter().
@@ -670,7 +669,7 @@ function vsite_spaces_plugins(){
 }
 
 /**
- * Implements hook_registry_alter().
+ * Implements hook_spaces_registry_alter().
  *
  * Alter the registry to tell spaces_og groups to use the vsite plugin by
  * default.
@@ -841,7 +840,6 @@ function vsite_permission(){
 }
 
 /**
- *
  * Implements hook_admin_paths_alter().
  *
  * Any path in spaces is immediately disqualified from being in an overlay
@@ -872,6 +870,7 @@ function vsite_vsite_og_node_type_info(){
     'department' => 'group'
   );
 }
+
 /**
  * Returns whether bundle is a group or is group content.
  *
@@ -1402,6 +1401,13 @@ function vsite_attach_fields_to_group($bundle){
   }
 }
 
+/**
+ * Ensures a field instance of 'field_group_parent' exists on the bundle.
+ *
+ * @param $bundle
+ *
+ * @see vsite_os_settings_subsites_form_submit()
+ */
 function vsite_attach_fields_to_subsite($bundle){
 
   if (! field_info_field('field_group_parent')) {
@@ -2437,6 +2443,8 @@ function vsite_user_autocomplete($string = '') {
 }
 
 /**
+ * Implements hook_entity_property_info_alter().
+ *
  * Alter metadata for entity properties for use with entity module.
  *
  * Expose group entity properties to the entityAPI module.
@@ -2784,7 +2792,7 @@ function vsite_cp_settings() {
 }
 
 /**
- * Implements hook_HOOK_alter() for redirect_load_by_source.
+ * Implements hook_redirect_load_by_source_alter().
  *
  * Alter the redirect candidates before selecting the top one.
  *
