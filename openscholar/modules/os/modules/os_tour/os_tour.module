@@ -211,7 +211,6 @@ function _os_tour_process_page_help(&$variables) {
     '#options' => array(
       'attributes' => array(
         'id' => $tour_info['id'],
-        'class' => array('os-green-button'),
       ),
     ),
     '#attached' => $attached,
