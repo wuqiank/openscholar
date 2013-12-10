@@ -24,13 +24,6 @@ function os_front_context_default_contexts_alter($contexts) {
     'region' => 'header_second',
   );
 
-  $blocks['boxes-os_front_create'] = array(
-    'module' => 'boxes',
-    'delta' => 'os_front_create',
-    'weight' => 2,
-    'region' => 'header_second',
-  );
-
   $blocks['boxes-os_front_main_support'] = array(
     'module' => 'boxes',
     'delta' => 'os_front_main_support',
@@ -57,9 +50,6 @@ function os_front_context_default_contexts_alter($contexts) {
   $blocks['os_search_solr-site-search']['weight'] = 1;
   $blocks['os_search_db-site-search']['region'] = 'header_second';
   $blocks['os_search_db-site-search']['weight'] = 1;
-
-  // Removes the basic "Get your site now" link.
-  $blocks['vsite_register-get_your_site_block']['region'] = FALSE;
 }
 
 /**

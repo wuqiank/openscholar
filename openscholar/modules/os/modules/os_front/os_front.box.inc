@@ -30,22 +30,6 @@ function os_front_default_box() {
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
-  $box->delta = 'os_front_create';
-  $box->plugin_key = 'os_boxes_html';
-  $box->title = '';
-  $box->description = 'Create A Site';
-  $box->options = array(
-    'text' => array(
-      'value' => '<a href="/site/register"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_createsite.gif" class="os-title-image" alt="OpenScholar"></a>',
-      'format' => 'filtered_html',
-    ),
-    'additional_classes' => '',
-  );
-  $export['os_front_create'] = $box;
-
-  $box = new stdClass();
-  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
-  $box->api_version = 1;
   $box->delta = 'os_front_main_support';
   $box->plugin_key = 'os_boxes_html';
   $box->title = 'Support';
