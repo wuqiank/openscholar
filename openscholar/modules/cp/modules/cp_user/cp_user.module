@@ -383,7 +383,7 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
       // Get array of roles with their "machine" names as keys and their RIDs
       // as values.
 
-      $roles = $og_roles;
+      $roles = array_flip($og_roles);
       break;
   }
 
