@@ -302,7 +302,7 @@ function cp_user_form_cp_settings_form_alter(&$form, &$form_state) {
 }
 
 /**
- * Returns an associative array of VSite roles.
+ * Returns an associative array of OG roles.
  *
  * @param $format
 *    The requested format for the array. Accepted values:
