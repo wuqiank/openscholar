@@ -566,6 +566,7 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 .node-person.node-sidebar-teaser .field-name-field-person-photo {
   float: left;
   margin-top: 5px;
+  display: table-cell;
 }
 
 .node-type-person #content .node-person .field-name-body {
@@ -623,6 +624,13 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 
 .node-teaser.node-person {
   padding: 15px 0 30px;
+  display:table;
+}
+
+
+.person-teaser-wrapper {
+	display:table-cell;
+	vertical-align:top;
 }
 
 .node-link.node-teaser {
@@ -638,12 +646,7 @@ LIST OF POSTS - PERSON TEASER IN SIDEBAR
      margin-right: 0;
 }
 
-/* I DONT THINK THIS IS NEEDED ANYMORE,BUT LEAVING IN UNTIL TESTED
->>>>>>> SCHOLAR-3.9
-.sidebar .block-boxes-os_sv_list_box .node.node-person.node-teaser.article.with-person-photo .node-header {
-	margin-left: 95px;
-}
-*/
+
 /* Node FAQ */
 .node-teaser.node-faq {
   line-height: 19px;

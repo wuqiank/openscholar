@@ -221,6 +221,7 @@ class os_sv_list extends os_boxes_default {
     
     //give plguins a chance to alter the entities after loading but before rendering.  see events.
     $entities = entity_load($this->entity_type, $ids);
+    $entites = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
     $this->_plugins_invoke('entities_alter', $entities);
     if (empty($entities)) {
       return $block;
