@@ -2859,8 +2859,8 @@ function vsite_og_permission_alter(&$perms) {
       continue;
     }
 
-    // Content editor can edit any content.
-    if (strpos($perm_name, 'update any') !== FALSE) {
+    // Content editor can edit any content except feed and feed importer content types.
+    if ((strpos($perm_name, 'update any') !== FALSE) && strpos($perm_name, 'feed') == FALSE) {
       $perms[$perm_name]['default role'][] = 'content editor';
     }
     else {
