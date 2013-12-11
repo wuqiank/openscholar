@@ -199,6 +199,8 @@ function cp_user_theme_registry_alter(&$theme_registry) {
  * element. Here we need the 'Edit roles and permissions' button to be above the
  * table, so this is actually a copy of OG's theme function with special
  * treatment for top buttons.
+ * In addition, some roles are to be displayed with a different name, and some
+ * are not to be displayed at all, so we're taking care of that here too.
  */
 function cp_user_og_ui_admin_permissions($variables) {
   $form = $variables['form'];
@@ -256,7 +258,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   }
   $output = '';
 
-  // This is the part that was added to the original theme function.
+  // This part was added to the original theme function.
   if (!empty($form['top_buttons'])) {
     // Display this element above the permissions table.
     $output .= drupal_render($form['top_buttons']);
