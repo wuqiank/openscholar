@@ -1,6 +1,12 @@
 <?php
 class os_boxes_html extends os_boxes_default {
 
+  public $embed_as = array(
+    'inline',
+    'iframe',
+    'oembed',
+  );
+
   public function options_defaults() {
     $options = parent::options_defaults();
 

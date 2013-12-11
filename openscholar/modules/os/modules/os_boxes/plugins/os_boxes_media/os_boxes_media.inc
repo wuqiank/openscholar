@@ -2,6 +2,12 @@
 
 class os_boxes_media extends os_boxes_default {
 
+  public $embed_as = array(
+    'inline',
+    'iframe',
+    'oembed'
+  );
+
   public function options_defaults() {
     $options = parent::options_defaults();
     $options['fid'] = 0;

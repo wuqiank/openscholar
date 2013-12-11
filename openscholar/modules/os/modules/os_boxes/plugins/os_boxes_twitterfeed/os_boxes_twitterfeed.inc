@@ -7,6 +7,12 @@
 
 class os_boxes_twitterfeed extends os_boxes_default {
 
+  public $embed_as = array(
+    'inline',
+    'iframe',
+    'oembed',
+  );
+
   /**
    * Implements boxes_content::options_defaults().
    */

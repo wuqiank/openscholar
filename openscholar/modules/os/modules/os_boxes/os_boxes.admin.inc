@@ -246,7 +246,7 @@ function os_boxes_embed_code($box, $embed_style) {
         $block_arr = _block_get_renderable_array($b_out);
         $block = $block_arr['boxes_'.$box->delta];
 
-        print web_widgets_render_widget($embed_style, drupal_render($block), $block['#block']->subject);
+        print web_widgets_render_widget($embed_style, drupal_render($block), '');
       }
     }
   }

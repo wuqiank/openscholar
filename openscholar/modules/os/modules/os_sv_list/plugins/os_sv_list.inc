@@ -5,6 +5,10 @@ class os_sv_list extends os_boxes_default {
   private $plugins = array();
   protected $entity_type;
   protected $bundle;
+
+  public $embed_as = array(
+    'iframe',
+  );
   
   public function __construct() {
     parent::__construct();
