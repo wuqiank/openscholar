@@ -1332,7 +1332,7 @@ function os_files_file_view($file, $view_mode, $langcode) {
       '#theme' => 'link',
       '#text' => t('Read more'),
       '#path' => 'file/' . $file->fid,
-      '#options' => array('attributes' => array('rel' => 'tag', 'title' => strip_tags($file->filename)), 'html' => FALSE),
+      '#options' => array('attributes' => array('class' => 'read-more', 'rel' => 'tag', 'title' => strip_tags($file->filename)), 'html' => FALSE),
     );
     $file->content['os_file_description'][0]['#markup'] .= drupal_render($readmore);
   }
