@@ -446,7 +446,6 @@ function os_boxes_preprocess_web_widgets_inline(&$vars) {
  * Implements hook_preprocess_web_widgets_iframe.
  */
 function os_boxes_preprocess_web_widgets_iframe(&$vars) {
-  dpm($vars);
   $vars['content_url'] = $vars['path'];
   $vars['script_url'] = $GLOBALS['base_url'].'/'.drupal_get_path('module', 'os_boxes').'/misc/os_boxes.resize_parent.js';
 }

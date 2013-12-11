@@ -11,7 +11,6 @@
   }
 
   function receiveMessage(e) {
-    console.log(e);
     var data = JSON.parse(e.data);
 
     if (typeof data.url == 'undefined') return;
