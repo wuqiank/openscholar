@@ -202,19 +202,28 @@ function cp_user_theme_registry_alter(&$theme_registry) {
  */
 function cp_user_og_ui_admin_permissions($variables) {
   $form = $variables['form'];
+
+  // Rename vsite user and vsite admin roles to basic member and administrator roles.
+  if ($role_id = array_search('vsite user', $form['role_names']['#value'])) {
+    $form['role_names'][$role_id]['#markup'] = 'basic member';
+  }
+  if ($role_id = array_search('vsite admin', $form['role_names']['#value'])) {
+    $form['role_names'][$role_id]['#markup'] = 'administrator';
+  }
+
   $role_names = $form['role_names']['#value'];
 
-  if ($member_rid = array_search(OG_AUTHENTICATED_ROLE, $role_names)) {
-    // Change role name from 'member' to 'basic member'.
-    $role_names[$member_rid] = 'basic member';
-    $form['role_names'][$member_rid]['#markup'] = 'basic member';
-  }
+  // Roles to hide from the form.
+  $hide_roles = array(
+    OG_AUTHENTICATED_ROLE,
+    OG_ANONYMOUS_ROLE,
+  );
 
   foreach (element_children($form['permission']) as $key) {
     $row = array();
     // Module name.
     if (is_numeric($key)) {
-      $row[] = array('data' => drupal_render($form['permission'][$key]), 'class' => array('module'), 'id' => 'module-' . $form['permission'][$key]['#id'], 'colspan' => count($form['role_names']['#value']) + 1);
+      $row[] = array('data' => drupal_render($form['permission'][$key]), 'class' => array('module'), 'id' => 'module-' . $form['permission'][$key]['#id'], 'colspan' => count($form['role_names']['#value']) - count($hide_roles) + 1);
     }
     else {
       // Permission row.
@@ -224,6 +233,10 @@ function cp_user_og_ui_admin_permissions($variables) {
       );
 
       foreach (element_children($form['checkboxes']) as $rid) {
+        if (in_array($role_names[$rid], $hide_roles)) {
+          $form['checkboxes'][$rid][$key]['#access'] = FALSE;
+          continue;
+        }
         $form['checkboxes'][$rid][$key]['#title'] = $role_names[$rid] . ': ' . $form['permission'][$key]['#markup'];
         $form['checkboxes'][$rid][$key]['#title_display'] = 'invisible';
         $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$key]), 'class' => array('checkbox'));
@@ -233,6 +246,10 @@ function cp_user_og_ui_admin_permissions($variables) {
   }
   $header[] = (t('Permission'));
   foreach (element_children($form['role_names']) as $rid) {
+    if (in_array($role_names[$rid], $hide_roles)) {
+      $form['role_names'][$rid]['#access'] = FALSE;
+      continue;
+    }
     $header[] = array('data' => drupal_render($form['role_names'][$rid]), 'class' => array('checkbox'));
   }
   $output = '';
@@ -261,6 +278,15 @@ function cp_user_og_ui_admin_new_role($variables) {
   $group_type = $form['group_type']['#value'];
   $gid = $form['gid']['#value'];
   $bundle = $form['bundle']['#value'];
+
+  // Rename vsite user and vsite admin roles to basic member and administrator roles.
+  if ($role_id = array_search('vsite user', $form['role_names']['#value'])) {
+    $form['role_names']['#value'][$role_id] = 'basic member';
+  }
+  if ($role_id = array_search('vsite admin', $form['role_names']['#value'])) {
+    $form['role_names']['#value'][$role_id] = 'administrator';
+  }
+
   $role_names = $form['role_names']['#value'];
 
   if ($gid) {
@@ -274,19 +300,26 @@ function cp_user_og_ui_admin_new_role($variables) {
   // These roles will not be editable.
   $always_blocked = array(
     OG_ANONYMOUS_ROLE,
-    OS_USER_ROLE_ADMIN,
     OS_USER_ROLE_EDITOR,
     // This should have been OG_AUTHENTICATED_ROLE but we renamed it.
     'basic member',
+    // This should have been OS_USER_ROLE_ADMIN but we renamed it.
+    'administrator'
+  );
+
+  // Roles to hide from display.
+  $hide_roles = array(
+    OG_AUTHENTICATED_ROLE,
+    OG_ANONYMOUS_ROLE,
   );
 
   foreach ($role_names as $rid => $name) {
+    if (in_array($name, $hide_roles)) {
+      continue;
+    }
     $text = !$default_access ? t('edit permissions') : t('view permissions');
     $path = $gid ? "group/$group_type/$gid/admin" : 'admin/config/group';
     $permissions = l($text, "$path/permission/$rid/edit");
-
-    // Change role name from 'member' to 'basic member'.
-    $name = $name == OG_AUTHENTICATED_ROLE ? 'basic member' : $name;
 
     if (!$default_access && !in_array($name, $always_blocked)) {
       $rows[] = array(check_plain($name), l(t('edit role'), "$path/role/$rid/edit"), $permissions);
