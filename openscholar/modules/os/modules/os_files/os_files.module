@@ -1339,8 +1339,18 @@ function os_files_file_view($file, $view_mode, $langcode) {
           '#text' => 'Download',
           '#options' => array('attributes' => array('class' => array('download-link')), 'html' => FALSE),
         ),
-      ),
+      )
     );
+    
+    //teasers get read more link
+    if ($view_mode == 'teaser' && $file->os_file_description) {
+      $file->content['read_more'] = array(
+        '#theme' => 'link',
+        '#text' => t('Read more'),
+        '#path' => 'file/' . $file->fid,
+        '#options' => array('attributes' => array('rel' => 'tag', 'title' => strip_tags($file->filename)), 'html' => FALSE),
+      );
+    }
   }
   
   //add thumbnail for list of images
@@ -1353,7 +1363,6 @@ function os_files_file_view($file, $view_mode, $langcode) {
         break;
   
       case 'teaser':
-        $content['file-info']['file'] = $file->content['file']; 
         $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
         $content['file']['#style_name'] = 'os_files_small';
         break;
@@ -1825,7 +1834,7 @@ function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
   $id = 'embed-colorbox-' . $file['fid'];
 
   //get dimensions.  scale down to preset max size if needed.
-  if ($data = oembed_get_data($url)) {
+  if (($data = oembed_get_data($url)) && isset($data['width'], $data['height'])) {
     $w = $data['width'];
     $h = $data['height'];
     
@@ -1851,7 +1860,12 @@ function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
     '#parameters' => array('width' => $w, 'height' => $h),
   );
   
-  $box_html = drupal_render($filebox); //oembed_bare doesn't do anything useful with prefix, suffix, or attributes...
+  $box_html = drupal_render($filebox); 
+  
+  if (!$box_html) {
+    return array();
+  }
+  
   $box_html = '<div style="display:none;"><div id="'.$id.'" style="overflow: hidden !important">' . $box_html . '</div></div>';
   
   $video = array(
