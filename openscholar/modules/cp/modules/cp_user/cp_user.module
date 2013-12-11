@@ -217,12 +217,6 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   $role_names = $form['role_names']['#value'];
 
-  // Roles to hide from the form.
-  $hide_roles = array(
-    OG_AUTHENTICATED_ROLE,
-    OG_ANONYMOUS_ROLE,
-  );
-
   foreach (element_children($form['permission']) as $key) {
     $row = array();
     // Module name.
@@ -237,7 +231,9 @@ function cp_user_og_ui_admin_permissions($variables) {
       );
 
       foreach (element_children($form['checkboxes']) as $rid) {
-        if (in_array($role_names[$rid], $hide_roles)) {
+        if (empty($roles_human_names[$rid])) {
+          // Some roles are not to be shown on the UI, for example 'non-member',
+          // so do not display roles that don't exist in the "human" names list.
           $form['checkboxes'][$rid][$key]['#access'] = FALSE;
           continue;
         }
@@ -250,7 +246,9 @@ function cp_user_og_ui_admin_permissions($variables) {
   }
   $header[] = (t('Permission'));
   foreach (element_children($form['role_names']) as $rid) {
-    if (in_array($role_names[$rid], $hide_roles)) {
+    if (empty($roles_human_names[$rid])) {
+      // Some roles are not to be shown on the UI, for example 'non-member',
+      // so do not display roles that don't exist in the "human" names list.
       $form['role_names'][$rid]['#access'] = FALSE;
       continue;
     }
