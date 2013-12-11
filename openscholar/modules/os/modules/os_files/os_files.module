@@ -1328,12 +1328,13 @@ function os_files_file_view($file, $view_mode, $langcode) {
       
   //teasers get read more link
   if ($view_mode == 'teaser' && $file->os_file_description) {
-    $file->content['read_more'] = array(
+    $readmore = array(
       '#theme' => 'link',
       '#text' => t('Read more'),
       '#path' => 'file/' . $file->fid,
       '#options' => array('attributes' => array('rel' => 'tag', 'title' => strip_tags($file->filename)), 'html' => FALSE),
     );
+    $file->content['os_file_description'][0]['#markup'] .= drupal_render($readmore);
   }
   
   //add thumbnail for list of images
