@@ -221,6 +221,7 @@ class os_sv_list extends os_boxes_default {
     
     //give plguins a chance to alter the entities after loading but before rendering.  see events.
     $entities = entity_load($this->entity_type, $ids);
+    $entites = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
     $this->_plugins_invoke('entities_alter', $entities);
     if (empty($entities)) {
       return $block;
@@ -230,30 +231,9 @@ class os_sv_list extends os_boxes_default {
     $render = $this->_plugins_invoke('render', $entities);
     $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
     
-    //apply a layout.  just doing grid for now.
-    $layout = 'sv-list-' . $this->options['layout'];
-    if ($this->options['layout'] == 'grid') {
-      $layout .= ' sv-list-grid-' . $this->options['grid_size'];
-      $render = (isset($render[$this->entity_type])) ? $render[$this->entity_type] : $render; 
-      $render['#attached']['css'][] = drupal_get_path('module', 'os_sv_list').'/os_sv_list_layout.css';
-      
-      //if the nth-child css doesn't work out, we could manually insert a div...
-//       $div = array('#markup' => '<div class="sv-list-new-row">DIV!</div>', '#type' => 'markup');
-//       $c = count($entities);
-//       for ($i = $this->options['grid_size'] ; $i < count($entities); $i += 1 + $this->options['grid_size']) {
-//         array_splice($render, $i, 0, array($div));
-//       }
-//       $render = (isset($render[$this->entity_type])) ? $render[$this->entity_type] : $render;
-//       foreach ($render as &$item) {
-//         if (is_array($item)) {
-//           $item['#attributes'] = array('class' => array('sv-grid'));
-//         }
-//       }    
-    }
-    
     //now render to html.
     $content = drupal_render($render);      
-    $block['content'] = '<div id="box-' . $this->delta . '-page" data-page="'.$page_num.'" data-delta="'.$this->delta.'" class="'. $layout .'">' . $content . '</div>' . $pager . $more;
+    $block['content'] = '<div id="box-' . $this->delta . '-page" data-page="'.$page_num.'" data-delta="'.$this->delta.'">' . $content . '</div>' . $pager . $more;
     return $block;
   }
   
@@ -375,7 +355,7 @@ class os_sv_list extends os_boxes_default {
     $options = array_reduce($view_modes, function($ret, $mode) use ($info) {$ret[$mode] = $info['view modes'][$mode]['label']; return $ret;});
     
     //rename some options to friendlier titles
-    array_merge(array('full' => 'Entire Post'), $options);
+    $options = array_merge(array('full' => 'Entire Post'), $options);
     return $options;    
   }
   
@@ -398,6 +378,10 @@ class os_sv_list extends os_boxes_default {
     
     // Use blank path for unknown paths.
     $content_map += array_fill_keys(array_keys(array_diff_key($content_types, $content_map)),' ');
+    
+    //Keep user saved more link for this content type
+    $content_map[$this->options['content_type']] = $this->options['more_link'];
+    
     return $content_map;     
   }
   

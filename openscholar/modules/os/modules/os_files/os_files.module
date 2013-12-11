@@ -278,6 +278,7 @@ function os_files_form_file_entity_add_upload_alter(&$form, &$form_state) {
     $extensions = array_unique($extensions);
     $extras = array_unique($extras);
     if (empty($args[0]['override_extensions'])) {
+      sort($extensions);
       $form['upload']['#upload_validators']['file_validate_extensions'] = array(implode(' ', $extensions));
     }
     
@@ -660,6 +661,11 @@ function os_files_entity_info_alter(&$info){
     ),
     'os_files_title' => array(
       'label' => t('Title'),
+      'custom settings' => TRUE
+    ),
+    
+    'os_files_thumbnail' => array(
+      'label' => t('Thumbnail'),
       'custom settings' => TRUE
     ),
   );
@@ -1289,13 +1295,14 @@ function os_files_file_download($uri){
  * @see http://community.openscholar.harvard.edu/openscholar/topics/better_files_media_management_and_display
  */
 function os_files_file_view($file, $view_mode, $langcode) {
-  if (!in_array($view_mode, array('os_files_title', 'teaser', 'full'))) {
+  if (!in_array($view_mode, array('os_files_title', 'teaser', 'full', 'os_files_thumbnail'))) {
     return;
   }
 
   $icon = array(
     '#theme' => 'file_icon',
     '#file' => $file,
+    '#icon_directory' => drupal_get_path('module', 'os_files') . '/icons',
   );
   
   //icon, title, download
@@ -1337,33 +1344,66 @@ function os_files_file_view($file, $view_mode, $langcode) {
   }
   
   //add thumbnail for list of images
-  if (isset($file->sv_list_of_images) && $file->sv_list_of_images) {
-    TRUE;
-  }  
-  if ($file->type == 'image') {
+  if (@$file->sv_list && @$file->sv_list_of_images) {
+    unset ($content['file-info']['icon']);
     switch ($view_mode) {
       case 'full':
         $content['file-info']['file'] = $file->content['file']; //include embedded image
+        $content['file-info']['file']['#style_name'] = 'os_files_large'; //600x600
         break;
   
       case 'teaser':
         $content['file-info']['file'] = $file->content['file']; //include embedded image
         $content['file-info']['file']['#style_name'] = 'os_files_small';
         break;
+      
+      case 'os_files_thumbnail':        
+        $img = $file->content['file'];
+        $img['#style_name'] = 'os_square_50_50';
+        $img['#attributes']['class'] = array('recent-images-list');
+        
+        $content['file-info'] = array(
+          '#theme' => 'link',
+          '#text' => render($img),
+          '#path' => 'file/' . $file->fid,
+          '#options' => array('attributes' => array(), 'html' => TRUE),
+        );
+        break;
     }
   }
   
   //add video thumb/colorbox for list of video
-  //if (@$file->sv_list_of_videos) {
-  if ($file->type == 'video') {
-    switch ($view_mode) {
-      case 'full':    
-        $content['file-info']['file'] = $file->content['file']; //include embedded video
-        break;
+  if (@$file->sv_list && @$file->sv_list_of_videos) {
+    unset ($content['file-info']['icon']);
     
-      case 'teaser':
-        $content['file-info']['video_thumb'] = _os_files_video_thumb($file);
+    if ($file->filemime == 'video/oembed') {
+      switch ($view_mode) {
+        case 'full':    
+          $content['file-info']['file'] = $file->content['file']; //include embedded video
+          break;
+      
+        case 'teaser':
+          $content['file-info']['video_thumb'] = _os_files_video_thumb($file);
+          break;
+      }
+    }
+  }
+  
+  //outside of sv list, we should still include the file preview
+  if (!@$file->sv_list && $view_mode == 'full') {
+    switch ($file->type) {
+      case 'image':
+        $content['file-info']['file'] = $file->content['file']; //include embedded image
+        $content['file-info']['file']['#style_name'] = 'os_files_xxlarge'; 
+        unset($content['file-info']['file']['#width'], $content['file-info']['file']['#height']);
         break;
+        
+      case 'video':
+        if (isset($file->oembed)) {
+          $content['file-info']['file'] = $file->content['file']; //include thumbnail
+        }
+        break;
+        
     }
   }
   
@@ -1613,10 +1653,14 @@ function os_files_views_data_alter(&$data){
  * Implements hook_os_entity_view_modes()
  */
 function os_files_os_entity_view_modes() {
-  return array('file' => array_fill_keys(
-    array('image', 'video', 'audio', 'document', 'executable', 'html'),
+  $modes = array('file' => array_fill_keys(
+    array('image', 'video', 'audio', 'document', 'executable'),
     array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_title')
   ));
+  
+  $modes['file']['image'][] = 'os_files_thumbnail';
+  
+  return $modes;
 }
 
 
@@ -1777,22 +1821,22 @@ function _os_files_video_thumb($file) {
   $id = 'embed-colorbox-' . $file['fid'];
 
   //get dimensions.  scale down to preset max size if needed.
-  if ($data = oembedcore_oembed_data($url)) {
-    $w = $data->width;
-    $h = $data->height;
+  if ($data = oembed_get_data($url)) {
+    $w = $data['width'];
+    $h = $data['height'];
     $w_max = 500;
     $h_max = 500;
     
     if ($w > $w_max) {
       $w = $w_max;
-      $ratio = $w/$data->width;
+      $ratio = $w/$data['width'];
       $h = $ratio * $h;
     }
     
     if ($h > $h_max) {
       $h = $h_max;
-      $ratio = $h/$data->height;
-      $w = $ratio * $data->height;
+      $ratio = $h/$data['height'];
+      $w = $ratio * $data['height'];
     }
   } else {
     $w = $h = 500;
@@ -1863,14 +1907,15 @@ function _os_files_extensions_from_type($type) {
       'tex',
       'wtml',
       'wtt',
-      'wwtfig'
+      'wwtfig',
     );
 
     $types['executable'] = array(
       'zip',
       'tgz',
       'gz',
-      'exe'
+      'exe',
+      'tar',
     );
   }
   
