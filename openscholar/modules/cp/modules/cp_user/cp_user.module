@@ -206,7 +206,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   // In some cases, we want a certain role to be displayed with a different
   // name than the one in the DB. Here we get the "human" names for all roles in
   // the vsite and use them to rename all roles on the list.
-  $roles_human_names = _cp_user_list_roles('rids-names', NULL, $form['gid']['#value']);
+  $roles_human_names = _cp_user_list_roles('rids-human', NULL, $form['gid']['#value']);
   foreach (array_keys(element_children($form['role_names'])) as $rid) {
     if (!is_numeric($rid) || empty($roles_human_names[$rid])) {
       // Not a role.
