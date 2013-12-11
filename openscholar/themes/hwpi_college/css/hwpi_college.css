@@ -442,7 +442,6 @@ a, a:visited {
     -moz-border-top-colors: none;
     background: none repeat scroll 0 0 transparent;
     padding: 0;
-    margin-top:15px;
 }
 
 #content-column .block.block-boxes-os_boxes_manual_list h2.block-title {
@@ -628,7 +627,7 @@ padding: 20px 0;
 }
 
 #footer .at-panel {
-    background: #f4f4f4;
+    background: #F9F9F9;
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     padding: 30px 15px 0;
@@ -718,7 +717,7 @@ background-color: none !important;
 }
 
 #powerby-login {
-    background: #f4f4f4;
+    background: #F9F9F9;
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     height: 30px;

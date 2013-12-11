@@ -5,15 +5,6 @@ class os_sv_list_file extends os_sv_list {
     parent::__construct();
     $this->entity_type = 'file';
   }
-  /**
-   * Implementation of boxes_content::options_defaults().
-   */
-  /*
-  public function options_defaults() {
-    $options = parent::options_defaults();
-    return $options;
-  }
-  */
   
   /**
    * Implementation of boxes_content::options_form().
@@ -22,33 +13,23 @@ class os_sv_list_file extends os_sv_list {
     $form = parent::options_form($form_state);
     $types = array('all' => t('All')) + 
       array_reduce(file_type_get_all_types(), function ($ret, $o) {$ret[$o->type] = $o->label; return $ret;});
+    unset($types['html']);
     $form['content']['content_type']['#title'] = t('File Type');
     $form['content']['content_type']['#options'] = $types;
     return $form;
   }
-  
-  public function render() {
-    $block = parent::render();
-    
-    //$block['content'] .= ' files';
-    return $block;
+ 
+  /**
+   * @function query()
+   * 
+   * Remove html files from ever showing up in sv list.
+   */
+  public function query() {
+    $efq = parent::query();
+    $efq->entityCondition('bundle', 'html', '!=');
+    return $efq;
   }
-
-//   protected function _display_options() {
-//     $info = entity_get_info('file'); 
-//     foreach ($info['view modes'] as $mode => $info) {
-//       $modes[$mode] = $info['label'];
-//     }
-    
-//     dpm($modes);
-//     return $modes; //lets see how this plays out....
-//     return array(
-//       'display_title' => t('Title'),
-//       'display_preview' => t('Preview'),
-//       'display_details' => t('Details'),
-//       'display_grid' => t('Grid'),
-//     );
-//   }
+  
   
   protected function _sort_options() {
     return array(
@@ -72,6 +53,9 @@ class os_sv_list_file extends os_sv_list {
   }
   function sort_alpha(&$efq) {
     $efq->propertyOrderBy('filename', 'ASC');
+  }
+  function sort_filesize(&$efq) {
+    $efq->propertyOrderBy('filesize', 'DESC');
   }
   
 }
