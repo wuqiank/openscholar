@@ -1,9 +1,9 @@
 #block-vsite-register-get-yout-site-block {
-    float: left;
     display: block;
-    width: 50%;
-    padding: 20px 0px;
-    margin: 0 !important;
+    clear: both;
+    text-align: center;
+    padding: 0px;
+    margin: 40px 0 40px 0 !important;
 }
 
 #block-vsite-register-get-yout-site-block .get-your-site-button {
@@ -30,20 +30,4 @@
     background-image: -o-linear-gradient(top, #df1f25, #BB2127);
     background-image: linear-gradient(to bottom, #df1f25, #BB2127);
     text-decoration: none;
-}
-
-#block-vsite-register-get-yout-site-block .block-content {
-    float: right;
-}
-
-/** TODO MOVE TO PROPER CSS FILE **/
-
-#boxes-box-os_front_header .boxes-box-content {
-    text-align: center;
-}
-
-#block-os-search-db-site-search {
-    display: block;
-    width: 50%;
-    margin: 0 !important;
 }
