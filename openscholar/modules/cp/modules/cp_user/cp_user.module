@@ -203,12 +203,16 @@ function cp_user_theme_registry_alter(&$theme_registry) {
 function cp_user_og_ui_admin_permissions($variables) {
   $form = $variables['form'];
 
-  // Rename vsite user and vsite admin roles to basic member and administrator roles.
-  if ($role_id = array_search('vsite user', $form['role_names']['#value'])) {
-    $form['role_names'][$role_id]['#markup'] = 'basic member';
-  }
-  if ($role_id = array_search('vsite admin', $form['role_names']['#value'])) {
-    $form['role_names'][$role_id]['#markup'] = 'administrator';
+  // In some cases, we want a certain role to be displayed with a different
+  // name than the one in the DB. Here we get the "human" names for all roles in
+  // the vsite and use them to rename all roles on the list.
+  $roles_human_names = _cp_user_list_roles('rids-names', NULL, $form['gid']['#value']);
+  foreach (array_keys(element_children($form['role_names'])) as $rid) {
+    if (!is_numeric($rid) || empty($roles_human_names[$rid])) {
+      // Not a role.
+      continue;
+    }
+    $form['role_names'][$rid]['#markup'] = $roles_human_names[$rid];
   }
 
   $role_names = $form['role_names']['#value'];
