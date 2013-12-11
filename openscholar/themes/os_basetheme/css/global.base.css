@@ -192,6 +192,10 @@ a img {
 
 .block-boxes-os_sv_list_file .file img {margin-right:5px;vertical-align:middle;}
 
+.sv-list-video.sv-list-view-teaser img {
+	width: 200px;
+}
+
 #content-column a.entity-link {
 	display: inline-block;	
 }

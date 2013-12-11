@@ -1352,8 +1352,9 @@ function os_files_file_view($file, $view_mode, $langcode) {
         break;
   
       case 'teaser':
-        $content['file-info']['file'] = $file->content['file']; //include embedded image
-        $content['file-info']['file']['#style_name'] = 'os_files_small';
+        $content['file-info']['file'] = $file->content['file']; 
+        $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
+        $content['file']['#style_name'] = 'os_files_small';
         break;
       
       case 'os_files_thumbnail':
@@ -1375,7 +1376,7 @@ function os_files_file_view($file, $view_mode, $langcode) {
           break;
       
         case 'teaser':
-          $content['file-info']['video_thumb'] = _os_files_video_thumb($file);
+          $content = array_merge(array('video_thumb' => _os_files_video_thumb($file, 200, 200)), $content);
           break;
       }
     }
@@ -1782,7 +1783,7 @@ function os_files_stream_wrappers_alter(&$wrappers){
  * 
  * When colorbox is present, wraps thumbnail of video, with link to colorbox of embedded player
  */
-function _os_files_video_thumb($file) {
+function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
   if (!module_exists('colorbox')) {
     return FALSE;
   }
@@ -1798,28 +1799,27 @@ function _os_files_video_thumb($file) {
   if ($data = oembed_get_data($url)) {
     $w = $data['width'];
     $h = $data['height'];
-    $w_max = 500;
-    $h_max = 500;
     
-    if ($w > $w_max) {
-      $w = $w_max;
+    if ($w > $width_max) {
+      $w = $width_max;
       $ratio = $w/$data['width'];
       $h = $ratio * $h;
     }
     
-    if ($h > $h_max) {
-      $h = $h_max;
+    if ($h > $height_max) {
+      $h = $height_max;
       $ratio = $h/$data['height'];
       $w = $ratio * $data['height'];
     }
   } else {
-    $w = $h = 500;
+    $w = $h = min($height_max, $width_max);
   }
   
   $filebox = array(
     '#type' => 'oembed',
     '#url' => $url,
     '#options' => array('maxwidth' => $w),
+    '#parameters' => array('width' => $w, 'height' => $h),
   );
   
   $box_html = drupal_render($filebox); //oembed_bare doesn't do anything useful with prefix, suffix, or attributes...
@@ -1830,7 +1830,7 @@ function _os_files_video_thumb($file) {
     '#prefix' => '<div class="oembed"><a href="?innerWidth='.$w.'&innerHeight='.$h.'&inline=true#' . $id . '" class="colorbox-inline">',
     '#suffix' => '<span class="video-indicator"> </span></a></div>' . $box_html,
     '#url' => $url,
-    '#attributes' => array('width' => '250px'),
+    '#attributes' => array('width' => min($w, 250) . 'px'),
     '#options' => array(),
   );
 
