@@ -1341,7 +1341,7 @@ function os_files_file_view($file, $view_mode, $langcode) {
     unset ($content['file-info']['icon']);
     switch ($view_mode) {
       case 'full':
-        $content['file-info']['file'] = $file->content['file']; //include embedded image
+        $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
         $content['file-info']['file']['#style_name'] = 'os_files_large'; //600x600
         break;
   
@@ -1372,7 +1372,9 @@ function os_files_file_view($file, $view_mode, $langcode) {
     if ($file->filemime == 'video/oembed') {
       switch ($view_mode) {
         case 'full':    
-          $content['file-info']['file'] = $file->content['file']; //include embedded video
+          //$content['file-info']['file'] = $file->content['file']; //include embedded video
+          $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
+          
           break;
       
         case 'teaser':
