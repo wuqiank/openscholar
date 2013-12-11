@@ -57,6 +57,7 @@ abstract class os_boxes_default extends boxes_box {
       '#title' => t('Make Embedable'),
       '#description' => t('Allow this widget to be embedded on other websites.'),
       '#default_value' => $this->options['make_embedable'],
+      '#access' => !empty($this->embed_as)
     );
 
     $form['advanced'] = array(
