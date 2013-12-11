@@ -187,8 +187,9 @@ a img {
 
 
 .file {
-	margin-bottom: 15px;	
+	margin-bottom: 18px;	
 }
+
 
 .block-boxes-os_sv_list_file .file img {margin-right:5px;vertical-align:middle;display:block;}
 
@@ -200,21 +201,22 @@ a img {
 	width: 200px;
 }
 
+
 #content-column a.entity-link {
 	display: inline-block;	
 }
 
 div.content a.download-link {
-	background: url("../images/scholarbase-sprite.png") no-repeat scroll 0 -585px rgba(0, 0, 0, 0);
+	background: url("../images/scholarbase-sprite.png") no-repeat scroll 0 -588px rgba(0, 0, 0, 0);
     font-size: 12px;
     margin-left: 12px;
-    padding-left: 1.18em;
+    padding-left: 1.1em;
   
 	}
-
+/*
 div.sidebar a.download-link {
 	float: right;
-}
+}*/
 
 p {
      margin: 0px 0px 1.5em;
