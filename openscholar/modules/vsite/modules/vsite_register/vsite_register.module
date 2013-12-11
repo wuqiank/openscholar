@@ -139,6 +139,11 @@ function vsite_register_block_view($delta = '') {
   switch ($delta) {
     case 'get_your_site_block':
       $path = 'site/register';
+      $options = array(
+        'attributes' => array(
+          'id' => 'get-your-site-block',
+        ),
+      );
       if (user_access('access administration pages')) {
         $text = t('Create a site');
       }
