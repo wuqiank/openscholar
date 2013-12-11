@@ -37,7 +37,7 @@ function os_front_default_box() {
   $box->description = 'Support';
   $box->options = array(
     'text' => array(
-      'value' => '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_support.gif" class="os-title-image" alt="OpenScholar"></div><br>We have a very active community-style support site where questions, ideas, and problems can be searched for, posted, and replied to. <a href="http://community.openscholar.harvard.edu/openscholar">Visit the Community</a>',
+      'value' => '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_support.gif" class="os-title-image" alt="OpenScholar"></div><br><p>As you customize your sitewide theme, <a href="/admin/config/openscholar">OpenScholar settings</a> and <a href="/admin/config/openscholar/vsite_register">Vsite Register settings</a>...</p><ol><li>For questions about administering and configuring your new OpenScholar installation, search and/or post to our <a href="https://github.com/openscholar/openscholar/issues">GitHub issue queue</a>.</li><li>To provide your end-users with additional site-building guides and documentation, feel free to refer to OpenScholar @ Harvard\'s <a href="http://support.openscholar.harvard.edu">Help Center</a> and <a href="http://community.openscholar.harvard.edu">Community forum</a>.</li></ol><br/>',
       'format' => 'filtered_html',
     ),
     'additional_classes' => '',
@@ -49,7 +49,7 @@ function os_front_default_box() {
   $box->api_version = 1;
   $box->delta = 'os_front_main_configure';
   $box->plugin_key = 'os_boxes_html';
-  $box->title = 'Configure this Page';
+  $box->title = 'Configure this page';
   $box->description = 'Create A Site';
   $box->options = array(
     'text' => array(
@@ -69,7 +69,7 @@ function os_front_default_box() {
   $box->description = 'Create A Site';
   $box->options = array(
     'text' => array(
-      'value' => 'Sample Websites <ul>
+      'value' => 'Sample websites <ul>
         <li>
           <a href=""><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_samplesite1.gif"></a>
         </li>

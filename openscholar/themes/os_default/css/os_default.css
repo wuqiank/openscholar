@@ -485,8 +485,7 @@ body.sitewide-front {
 
 
 .sitewide-front #columns {
-    height:400px;
-    background:url('../images/osfrontpg_headerbg.gif') center 30px no-repeat;
+    background: url('../images/osfrontpg_headerbg.gif') center bottom no-repeat;
      margin-bottom: 25px;
 }
 
@@ -519,7 +518,6 @@ body.sitewide-front {
 .sitewide-front #block-boxes-os-front-main-configure {
 	border:1px solid #ff9500;
 	width:290px;
-	height: 300px;
 }
 
 
