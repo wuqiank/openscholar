@@ -7,7 +7,6 @@
 class os_boxes_feedreader extends os_boxes_default {
 
   public $embed_as = array(
-    'inline',
     'iframe',
   );
 

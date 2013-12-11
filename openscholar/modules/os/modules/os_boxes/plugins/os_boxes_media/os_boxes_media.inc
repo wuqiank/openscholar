@@ -3,7 +3,6 @@
 class os_boxes_media extends os_boxes_default {
 
   public $embed_as = array(
-    'inline',
     'iframe',
     'oembed'
   );

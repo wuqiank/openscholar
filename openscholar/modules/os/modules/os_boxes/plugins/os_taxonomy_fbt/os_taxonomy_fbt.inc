@@ -11,7 +11,6 @@
 class os_taxonomy_fbt extends os_boxes_default {
 
   public $embed_as = array(
-    'inline',
     'iframe',
   );
 
