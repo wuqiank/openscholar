@@ -1295,7 +1295,7 @@ function os_files_file_download($uri){
  * @see http://community.openscholar.harvard.edu/openscholar/topics/better_files_media_management_and_display
  */
 function os_files_file_view($file, $view_mode, $langcode) {
-  if (!in_array($view_mode, array('os_files_title', 'teaser', 'full', 'os_files_thumbnail'))) {
+  if ($file->type == 'html' || !in_array($view_mode, array('os_files_title', 'teaser', 'full', 'os_files_thumbnail'))) {
     return;
   }
 
