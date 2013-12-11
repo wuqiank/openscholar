@@ -184,11 +184,12 @@ function os_boxes_site_logo_submit($form, $form_state) {
     $orig = _imagefield_crop_file_to_crop($file->fid);
     if ($orig->fid == $file->fid) {
       $orig = imagefield_crop_create_copy($file);
-      file_usage_add($orig, 'imagefield_crop', 'node', $host_object);
+      file_usage_add($orig, 'imagefield_crop', 'file', $file->fid);
     }
     _imagefield_crop_resize(drupal_realpath($orig->uri), $item, $scale, $file);
     file_save($file);
-    file_usage_add($file, 'os_boxes', 'node', $host_object);  // prevents errors when trying to reuse the same image
+    // Associate the original logo with the site he belong to.
+    file_usage_add($file, 'os_boxes', 'node', $host_object);
   }
   else {
     // there's no file. remove the old file, remove file_usage and set sensible defaults for the vsite

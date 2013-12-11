@@ -748,3 +748,85 @@ function os_files_update_7015() {
     field_update_instance($instance_info);
   }
 }
+
+/**
+ * Update file usage of sites logo.
+ */
+function os_files_update_7016(&$sandbox) {
+  // Count all the files.
+  if (!isset($sandbox['progress'])) {
+    $sandbox['progress'] = 0;
+    $sandbox['max'] = db_select('file_usage', 'f')
+      ->fields('f', array('fid'))
+      ->condition('f.type', 'box')
+      ->condition('f.id', 1)
+      ->orderby('fid')
+      ->execute()
+      ->rowCount();
+  }
+
+  // Get the lat file we processed and set the number of batches.
+  $fid = empty($sandbox['fid']) ? 0 : $sandbox['fid'];
+  $batch = 100;
+
+  // Load the files in batches.
+  $result = db_select('file_usage', 'f')
+    ->fields('f', array('fid'))
+    ->condition('f.type', 'box')
+    ->condition('f.id', 1)
+    ->condition('f.fid', $fid, '>=')
+    ->range(0, $batch)
+    ->orderby('fid')
+    ->execute()
+    ->fetchAllAssoc('fid');
+
+  if (empty($result)) {
+    return;
+  }
+
+  $files = file_load_multiple(array_keys($result));
+
+  foreach ($files as $file) {
+    if (!empty($file->{OG_AUDIENCE_FIELD}[LANGUAGE_NONE][0])) {
+      // Loading the group object.
+      $host_id = $file->{OG_AUDIENCE_FIELD}[LANGUAGE_NONE][0]['target_id'];
+    }
+    else {
+      // For some reason there isn't a group ref on the file object. We need to
+      // parse the uri of the file and then search the purl ID with that name.
+      $purl = parse_url($file->uri, PHP_URL_HOST);
+      $provider = purl_load(array('value' =>  $purl, 'provider' => 'spaces_og'));
+
+      if (!$host_id = $provider['id']) {
+        // We didn't find a vsite ID here, skip to the next iterate.
+        continue;
+      }
+    }
+
+    // Update the file usage with the new info.
+    $params = array(
+      '@fid' => $file->fid,
+      '@id' => $host_id,
+    );
+
+    try {
+      db_update('file_usage')
+        ->fields(array(
+          'type' => 'node',
+          'id' => $host_id,
+        ))
+        ->condition('fid', $file->fid)
+        ->execute();
+
+      if (drupal_is_cli()) {
+        drush_log(dt("Update the file ID @fid.", $params), 'success');
+      }
+    } catch (Exception $e) {
+      watchdog(dt("A record for the file ID @fid with the type 'node' and the nid @id is already exists.", $params), 'error');
+    }
+
+    $sandbox['progress']++;
+    $sandbox['fid'] = $file->fid;
+    $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+  }
+}
