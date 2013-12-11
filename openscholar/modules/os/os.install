@@ -551,3 +551,10 @@ function os_update_7026() {
   );
   features_revert($revert);
 }
+
+/**
+ * Enables new module `os_front`.
+ */
+function os_update_7027() {
+  module_enable(array('os_front'));
+}
