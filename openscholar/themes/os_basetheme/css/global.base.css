@@ -197,10 +197,25 @@ a img {
 
 .block-boxes-os_sv_list_file .file-info iframe {display:block;}
 
+
+/* VIDEO RULES */
+
 .sv-list-video.sv-list-view-teaser img {
 	width: 200px;
 }
 
+#content-column .sv-list-view-teaser .file-image img,
+#content-column .sv-list-video.sv-list-view-teaser .oembed {
+	float: left;
+	margin-right:10px;
+	margin-bottom: 20px;
+}
+
+#content-column .sv-list-image.sv-list-view-teaser .file-image,
+#content-column .sv-list-video.sv-list-view-teaser .file-video  {
+    clear: both;
+    display: block;
+}
 
 #content-column a.entity-link {
 	display: inline-block;	
