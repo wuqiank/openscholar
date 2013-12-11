@@ -1365,11 +1365,11 @@ function os_files_file_view($file, $view_mode, $langcode) {
     }
   }
   
-  //add video thumb/colorbox for list of video
-  if (@$file->sv_list && @$file->sv_list_of_videos) {
+  //add thumb/colorbox for list of video/audio
+  if (@$file->sv_list && (@$file->sv_list_of_videos || @$file->sv_list_of_audio)) {
     unset ($content['file-info']['icon']);
     
-    if ($file->filemime == 'video/oembed') {
+    if (in_array($file->filemime, array('video/oembed', 'audio/oembed'))) {
       switch ($view_mode) {
         case 'full':    
           //$content['file-info']['file'] = $file->content['file']; //include embedded video
