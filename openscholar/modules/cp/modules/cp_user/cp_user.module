@@ -561,8 +561,10 @@ function cp_user_form_cp_settings_form_alter(&$form, &$form_state) {
  *       their "human" names as values.
  *    - 'options': Returns array of roles with their "machine" names as keys and
  *       a themed string of their "human" name and description as values.
- *    - 'rids': Returns array array of roles with their "machine" names as keys
- *       and their RIDs as values.
+ *    - 'rids': Returns array of roles with their "machine" names as keys and
+ *       their RIDs as values.
+ *    - 'rids-human': Returns array of roles with their RIDs as keys and their
+ *       "human" names as values.
  * @param $bundle
  *    (optional) The bundle of the group whose roles are to be returned. If not
  *    provided, $gid is mandatory and will be used to retrieve the bundle.
@@ -583,7 +585,7 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
   }
 
   // In the UI, the following roles will not be displayed as they are in the DB
-  // but will have these "human readable" names for display. In addition, they
+  // but will have these "human-readable" names for display. In addition, they
   // have a description to display on certain pages.
   // Roles that are not mentioned here will be displayed as they are in the DB
   // and will not have a description.
@@ -635,6 +637,16 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
       // as values.
 
       $roles = array_flip($og_roles);
+      break;
+
+    case 'rids-human':
+      // Create array of roles with their RIDs as keys and their "human" names
+      // as values.
+
+      foreach ($og_roles as $rid => $machine_name) {
+        $human_name = !empty($system_roles[$machine_name]) ? $system_roles[$machine_name]['human_name'] : $machine_name;
+        $roles[$rid] = $human_name;
+      }
       break;
   }
 
