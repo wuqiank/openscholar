@@ -1393,11 +1393,37 @@ class FeatureContext extends DrupalContext {
     }
   }
 
-  /*
+  /**
    * @Given /^I make the node "([^"]*)" sticky$/
    */
   public function iMakeTheNodeSticky($title) {
     $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$title'"));
     $this->invoke_code('os_migrate_demo_make_node_sticky', array("'$nid'"));
   }
+
+  /**
+   * @Given /^I associate the logo "([^"]*)" to "([^"]*)"$/
+   */
+  public function iAssociateTheLogoTo($file_name, $vsite) {
+    $this->invoke_code('os_migrate_demo_add_logo_to_site', array("'{$file_name}'", "'{$vsite}'"));
+  }
+
+  /**
+   * @When /^I delete the logo "([^"]*)" from "([^"]*)"$/
+   */
+  public function iDeleteTheLogoFrom($file_name, $vsite) {
+    return array(
+      new Step\When(""),
+    );
+  }
+
+  /**
+   * @Given /^I update "([^"]*)" settings$/
+   */
+  public function iUpdateSettings($vsite) {
+    return array(
+      new Step\When(""),
+    );
+  }
+
 }
