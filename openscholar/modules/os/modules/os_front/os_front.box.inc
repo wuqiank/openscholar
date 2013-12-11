@@ -53,7 +53,7 @@ function os_front_default_box() {
   $box->description = 'Create A Site';
   $box->options = array(
     'text' => array(
-      'value' => '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_configure.gif" class="os-title-image" alt="OpenScholar"></div><br>Want to change the design/theme of this page or change the content that appears? <a href="">Find out how.</a>',
+      'value' => '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_configure.gif" class="os-title-image" alt="OpenScholar"></div><br><ol><li>To configure these widgets, simply log in and hover over the widget.</li><li>To add or remove widgets from this context, <a href="/admin/structure/context/list/os_sitewide_front/edit">edit the os_sitewide_front context</a>.</li></ol><br/>',
       'format' => 'filtered_html',
     ),
     'additional_classes' => '',
