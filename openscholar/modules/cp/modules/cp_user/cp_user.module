@@ -70,7 +70,6 @@ function cp_user_menu() {
 
   $items['cp/users/edit-roles-permissions/confirm'] = array(
     'type' => MENU_CALLBACK,
-    'title' => 'Are you sure?',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('cp_user_vsite_edit_roles_permissions_confirm'),
     'access callback' => 'cp_user_admin_access',
@@ -80,7 +79,7 @@ function cp_user_menu() {
 }
 
 /**
- * Show limited options for VSite permissions.
+ * Page callback; VSite permissions page, based on OG Permissions page.
  */
 function cp_user_vsite_permissions() {
   $vsite = vsite_get_vsite();
@@ -96,7 +95,7 @@ function cp_user_vsite_permissions() {
 }
 
 /**
- * Show limited options for VSite roles.
+ * Page callback; VSite roles page, based on OG Roles page.
  */
 function cp_user_vsite_roles() {
   $vsite = vsite_get_vsite();
@@ -138,7 +137,7 @@ function cp_user_add_button_edit_roles_permissions(&$form, $vsite, $destination)
     ),
     'edit_roles_permissions' => array(
       '#type' => 'markup',
-      '#markup' => l('Edit roles and permissions', 'cp/users/edit-roles-permissions/confirm', $options),
+      '#markup' => l(t('Edit roles and permissions'), 'cp/users/edit-roles-permissions/confirm', $options),
       '#weight' => -50,
     ),
   );
@@ -203,6 +202,13 @@ function cp_user_theme_registry_alter(&$theme_registry) {
  * are not to be displayed at all, so we're taking care of that here too.
  */
 function cp_user_og_ui_admin_permissions($variables) {
+  // This function should override OG's theme only when outside of the admin.
+  $item = menu_get_item();
+  if (strpos($item['path'], 'admin/') === 0) {
+    // Inside the admin, use OG's theme function.
+    return theme_og_ui_admin_permissions($variables);
+  }
+
   $form = $variables['form'];
 
   // In some cases, we want a certain role to be displayed with a different
@@ -276,6 +282,13 @@ function cp_user_og_ui_admin_permissions($variables) {
  * We override the theme to add OS roles to the list of always-blocked roles.
  */
 function cp_user_og_ui_admin_new_role($variables) {
+  // This function should override OG's theme only when outside of the admin.
+  $item = menu_get_item();
+  if (strpos($item['path'], 'admin/') === 0) {
+    // Inside the admin, use OG's theme function.
+    return theme_og_ui_admin_new_role($variables);
+  }
+
   $form = $variables['form'];
   $header = array(t('Name'), array('data' => t('Operations'), 'colspan' => 2));
 
