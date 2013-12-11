@@ -1400,6 +1400,12 @@ function os_files_file_view($file, $view_mode, $langcode) {
         }
         break;
         
+      case 'audio':
+        if (isset($file->oembed)) {        
+          $content['file-info']['file'] = $file->content['file'];
+        } 
+        break;
+        
     }
   }
   
