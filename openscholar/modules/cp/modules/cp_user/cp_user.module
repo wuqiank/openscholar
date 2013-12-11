@@ -215,7 +215,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   // name than the one in the DB. Here we get the "human" names for all roles in
   // the vsite and use them to rename all roles on the list.
   $roles_human_names = _cp_user_list_roles('rids-human', NULL, $form['gid']['#value']);
-  foreach (array_keys(element_children($form['role_names'])) as $rid) {
+  foreach (element_children($form['role_names']) as $rid) {
     if (!is_numeric($rid) || empty($roles_human_names[$rid])) {
       // Not a role.
       continue;
@@ -229,7 +229,12 @@ function cp_user_og_ui_admin_permissions($variables) {
     $row = array();
     // Module name.
     if (is_numeric($key)) {
-      $row[] = array('data' => drupal_render($form['permission'][$key]), 'class' => array('module'), 'id' => 'module-' . $form['permission'][$key]['#id'], 'colspan' => count($form['role_names']['#value']) - count($hide_roles) + 1);
+      $row[] = array(
+        'data' => drupal_render($form['permission'][$key]),
+        'class' => array('module'),
+        'id' => 'module-' . $form['permission'][$key]['#id'],
+        'colspan' => count($roles_human_names) + 1
+      );
     }
     else {
       // Permission row.
@@ -294,14 +299,17 @@ function cp_user_og_ui_admin_new_role($variables) {
 
   $group_type = $form['group_type']['#value'];
   $gid = $form['gid']['#value'];
-  $bundle = $form['bundle']['#value'];
 
-  // Rename vsite user and vsite admin roles to basic member and administrator roles.
-  if ($role_id = array_search('vsite user', $form['role_names']['#value'])) {
-    $form['role_names']['#value'][$role_id] = 'basic member';
-  }
-  if ($role_id = array_search('vsite admin', $form['role_names']['#value'])) {
-    $form['role_names']['#value'][$role_id] = 'administrator';
+  // In some cases, we want a certain role to be displayed with a different
+  // name than the one in the DB. Here we get the "human" names for all roles in
+  // the vsite and use them to rename all roles on the list.
+  $roles_human_names = _cp_user_list_roles('rids-human', NULL, $form['gid']['#value']);
+  foreach (array_keys($form['role_names']['#value']) as $rid) {
+    if (!is_numeric($rid) || empty($roles_human_names[$rid])) {
+      // Not a role.
+      continue;
+    }
+    $form['role_names']['#value'][$rid] = $roles_human_names[$rid];
   }
 
   $role_names = $form['role_names']['#value'];
@@ -317,21 +325,17 @@ function cp_user_og_ui_admin_new_role($variables) {
   // These roles will not be editable.
   $always_blocked = array(
     OG_ANONYMOUS_ROLE,
-    OS_USER_ROLE_EDITOR,
     // This should have been OG_AUTHENTICATED_ROLE but we renamed it.
-    'basic member',
+    'Basic member',
     // This should have been OS_USER_ROLE_ADMIN but we renamed it.
-    'administrator'
-  );
-
-  // Roles to hide from display.
-  $hide_roles = array(
-    OG_AUTHENTICATED_ROLE,
-    OG_ANONYMOUS_ROLE,
+    'Administrator',
+    // This should have been OS_USER_ROLE_EDITOR but we renamed it.
+    'Content editor',
   );
 
   foreach ($role_names as $rid => $name) {
-    if (in_array($name, $hide_roles)) {
+    if (empty($roles_human_names[$rid])) {
+      // This role should not be displayed in the UI.
       continue;
     }
     $text = !$default_access ? t('edit permissions') : t('view permissions');
@@ -629,7 +633,6 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
     case 'names':
       // Create array of roles with their "machine" names as keys and their
       // "human" names as values.
-
       foreach ($og_roles as $machine_name) {
         $human_name = !empty($system_roles[$machine_name]) ? $system_roles[$machine_name]['human_name'] : $machine_name;
         $roles[$machine_name] = $human_name;
@@ -639,7 +642,6 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
     case 'options':
       // Create array of roles with their "machine" names as keys and a themed
       // string of their "human" name and description (if any) as values.
-
       foreach ($og_roles as $machine_name) {
         // Attempt to get human name and description.
         $human_name = !empty($system_roles[$machine_name]) ? $system_roles[$machine_name]['human_name'] : $machine_name;
@@ -652,14 +654,12 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
     case 'rids':
       // Get array of roles with their "machine" names as keys and their RIDs
       // as values.
-
       $roles = array_flip($og_roles);
       break;
 
     case 'rids-human':
       // Create array of roles with their RIDs as keys and their "human" names
       // as values.
-
       foreach ($og_roles as $rid => $machine_name) {
         $human_name = !empty($system_roles[$machine_name]) ? $system_roles[$machine_name]['human_name'] : $machine_name;
         $roles[$rid] = $human_name;
