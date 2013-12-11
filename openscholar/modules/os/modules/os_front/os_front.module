@@ -41,15 +41,15 @@ function os_front_context_default_contexts_alter($contexts) {
   $blocks['boxes-os_front_sample'] = array(
     'module' => 'boxes',
     'delta' => 'os_front_sample',
-    'weight' => 0,
+    'weight' => 1,
     'region' => 'footer',
   );
 
   // Positions existing SOLR and drupal search widget.
-  $blocks['os_search_solr-site-search']['region'] = 'header_second';
-  $blocks['os_search_solr-site-search']['weight'] = 1;
-  $blocks['os_search_db-site-search']['region'] = 'header_second';
-  $blocks['os_search_db-site-search']['weight'] = 1;
+  $blocks['os_search_solr-site-search']['region'] = 'footer';
+  $blocks['os_search_solr-site-search']['weight'] = 0;
+  $blocks['os_search_db-site-search']['region'] = 'footer';
+  $blocks['os_search_db-site-search']['weight'] = 0;
 
   // Modifies existing "Get your site now" block.
   $blocks['vsite_register-get_your_site_block']['weight'] = 2;
