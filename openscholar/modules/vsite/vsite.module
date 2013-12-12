@@ -98,16 +98,17 @@ function vsite_cron() {
 /**
  * Implements hook_og_membership_insert().
  *
- * Make the "support team" and admin member of the group.
  */
 function vsite_og_membership_insert(OgMembership $og_membership) {
-  if ($og_membership->entity_type != 'user' || $og_membership->type != 'support_expire') {
-    // Not a "support team" membership.
+  if ($og_membership->entity_type != 'user') {
+    // Not a user membership.
     return;
   }
 
+  // Grant a vsite user role or a support team role according to the membership.
   $og_role = og_roles($og_membership->group_type, NULL, $og_membership->gid);
-  $rid = array_search('vsite admin', $og_role);
+  $role_name = $og_membership->type == 'support_expire' ? 'vsite admin' : 'vsite user';
+  $rid = array_search($role_name, $og_role);
   og_role_grant($og_membership->group_type, $og_membership->gid, $og_membership->etid, $rid);
 }
 
