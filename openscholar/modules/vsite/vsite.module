@@ -591,7 +591,7 @@ function vsite_user_presave(&$edit, $account, $category) {
   foreach ($role_names  as $role_name) {
     $role = user_role_load_by_name($role_name);
     if (!empty($edit['roles'][$role->rid])) {
-      throw new Exception('User object cannot be saved with "vsite admin" role.');
+      throw new Exception(format_string('User object cannot be saved with @name role.', array('@name' => $role_name)));
     }
   }
 }
