@@ -197,7 +197,9 @@ a img {
 
 .block-boxes-os_sv_list_file .file-info iframe {display:block;}
 
-.block-boxes-os_sv_list_file .read-more {margin-left:5px;}
+.block-boxes-os_sv_list_file .read-more {margin-left:5px;font-size:13px;}
+
+.block-boxes-os_sv_list_file .view-mode-teaser p {display:inline;}
 
 
 /* VIDEO RULES */
@@ -210,6 +212,10 @@ a img {
 #content-column .sv-list-video.sv-list-view-teaser .oembed {
 	float: left;
 	margin-right:10px;
+}
+
+#content-column .sv-list-video.sv-list-view-teaser img,
+#content-column .sv-list-image.sv-list-view-teaser .file-image img {
 	margin-bottom: 20px;
 }
 
