@@ -98,6 +98,7 @@ class os_boxes_media extends os_boxes_default {
       }
 
       $render = file_view($file, 'full');
+      $render['file'] = $render['file']['file-info']['file'];
       if (isset($file->oembed) && $file->oembed['provider'] == 'box') {
         $render['file']['#attached']['js'][] = drupal_get_path('module', 'os_boxes').'/plugins/os_boxes_media/os_boxes_media.box_oembed.js';
         $render['file']['#attached']['js'][] = array(
