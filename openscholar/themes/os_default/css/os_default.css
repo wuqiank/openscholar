@@ -384,7 +384,7 @@ fieldset.pin-fieldset legend,
 }
 
 
-fieldset.edit-pin-fieldset {
+fieldset#edit-pin-fieldset {
 	background:#F7F7F7;
 }
 
