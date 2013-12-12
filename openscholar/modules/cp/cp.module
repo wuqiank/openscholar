@@ -14,6 +14,11 @@ define('CP_MENU_MINI', 'mini');
 define('CP_MENU_FULL', 'full');
 
 /**
+ * Defines the default maximum number of allowed URL redirects per site.
+ */
+define('CP_REDIRECT_MAX_DEFAULT', 15);
+
+/**
  * Loads an include file based on a $_GET.
  *
  * @see cp_init()
@@ -668,7 +673,7 @@ function cp_create_redirect_access() {
   if (!redirect_access('create', 'redirect')) {
     return FALSE;
   }
-  $max = variable_get('cp_redirect_max', 3);
+  $max = variable_get('cp_redirect_max', CP_REDIRECT_MAX_DEFAULT);
   $rids = cp_redirect_get_redirects();
   return count($rids) < $max;
 }
