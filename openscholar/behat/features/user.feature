@@ -27,7 +27,7 @@ Feature: User functionality testing.
     Given I am logging in as "john"
       And I visit "john/cp/users/permissions"
      When I click "Edit roles and permissions"
-      And I press "edit-submit"
+      And I press "Confirm"
       And I visit "john/cp/users/permissions"
      Then I should see the button "Save permissions"
 
@@ -51,6 +51,6 @@ Feature: User functionality testing.
     Given I am logging in as "john"
       And I visit "john/cp/users/roles"
      When I click "Restore default roles and permissions"
-      And I press "edit-submit"
+      And I press "Confirm"
       And I visit "john/cp/users/roles"
      Then I should not see the button "Save permissions"
