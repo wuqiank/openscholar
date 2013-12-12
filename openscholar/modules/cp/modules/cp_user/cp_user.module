@@ -486,11 +486,8 @@ function cp_user_og_ui_add_users_submit(&$form, &$form_state) {
   $account = user_load_by_name($form_state['values']['name']);
 
   if ($state) {
-    $og_roles = og_roles('node', FALSE, $form_state['values']['gid']);
-    $vsite_user_role = array_search('vsite user', $og_roles);
-
-    // Grant them the vsite user role
-    og_role_grant('node', $form_state['values']['gid'], $account->uid, $vsite_user_role);
+    // Associate the user with the group.
+    og_group('node', $form_state['values']['gid'], array('entity' => $account->uid));
   }
 
   $form_state['redirect'] = 'cp/users';
