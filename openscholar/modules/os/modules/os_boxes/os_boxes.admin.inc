@@ -227,7 +227,7 @@ function os_boxes_remove_widget($module, $delta, $target = FALSE) {
 }
 
 /**
- * Returns an embedable version of a box
+ * Returns an embeddable version of a box
  * @param $box - a full box object
  * @param $embed_style - how the box should be embedded in the client
  *    can be inline or iframe
