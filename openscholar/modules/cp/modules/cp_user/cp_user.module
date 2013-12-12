@@ -229,6 +229,7 @@ function cp_user_og_ui_admin_permissions($variables) {
     return theme_og_ui_admin_permissions($variables);
   }
 
+  
   $form = $variables['form'];
 
   // In some cases, we want a certain role to be displayed with a different
