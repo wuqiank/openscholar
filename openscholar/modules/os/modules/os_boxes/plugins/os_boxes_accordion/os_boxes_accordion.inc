@@ -2,6 +2,9 @@
 
 class os_boxes_accordion extends os_boxes_widget_collection {
 
+  public $embed_as = array(
+    'iframe',
+  );
 
   function render() {
     $output = parent::render();

@@ -355,19 +355,10 @@ fieldset.pin-fieldset legend a,
 	font-size:13px;
 	font-weight:bold;
 color: rgb(230, 230, 230);
-text-shadow: 0px -1px 0px rgba(30, 30, 30, 0.25);
 -webkit-border-radius: 4px;
 -moz-border-radius: 4px;
 border-radius: 4px;
-background: rgb(61, 155, 19);
-background: -moz-linear-gradient(90deg, rgb(61, 155, 19) 30%, rgb(61, 132, 19) 70%);
-background: -webkit-linear-gradient(90deg, rgb(61, 155, 19) 30%, rgb(61, 132, 19) 70%);
-background: -o-linear-gradient(90deg, rgb(61, 155, 19) 30%, rgb(61, 132, 19) 70%);
-background: -ms-linear-gradient(90deg, rgb(61, 155, 19) 30%, rgb(61, 132, 19) 70%);
-background: linear-gradient(180deg, rgb(61, 155, 19) 30%, rgb(61, 132, 19) 70%);
--webkit-box-shadow: 0px 1px 1px rgba(50, 50, 50, 0.5);
--moz-box-shadow:    0px 1px 1px rgba(50, 50, 50, 0.5);
-box-shadow:         0px 1px 1px rgba(50, 50, 50, 0.5);
+background: #3D9B13;
 }
 
 fieldset.pin-fieldset legend, 
@@ -392,6 +383,10 @@ fieldset.pin-fieldset legend,
     padding-left: 0;
 }
 
+
+fieldset#edit-pin-fieldset {
+	background:#F7F7F7;
+}
 
 .profile h3 {
 	margin: -5px -5px 15px;
