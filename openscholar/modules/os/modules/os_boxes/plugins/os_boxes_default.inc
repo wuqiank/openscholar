@@ -54,7 +54,7 @@ abstract class os_boxes_default extends boxes_box {
 
     $form['make_embeddable'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Make Embedable'),
+      '#title' => t('Make Embeddable'),
       '#description' => t('Allow this widget to be embedded on other websites.'),
       '#default_value' => $this->options['make_embeddable'],
       '#access' => !empty($this->embed_as)
