@@ -1357,7 +1357,7 @@ class FeatureContext extends DrupalContext {
     }
   }
 
-  /*
+  /**
    * @Then /^I should see the publication "([^"]*)" comes before "([^"]*)"$/
    */
   public function iShouldSeeThePublicationComesBefore($first, $second) {
@@ -1393,11 +1393,35 @@ class FeatureContext extends DrupalContext {
     }
   }
 
-  /*
+  /**
    * @Given /^I make the node "([^"]*)" sticky$/
    */
   public function iMakeTheNodeSticky($title) {
     $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$title'"));
     $this->invoke_code('os_migrate_demo_make_node_sticky', array("'$nid'"));
+  }
+
+  /**
+   * @Then /^I should see the button "([^"]*)"$/
+   */
+  public function iShouldSeeTheButton($button) {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('xpath', "//input[@type='submit' or @type='button'][@value='$button' or @id='$button' or @name='$button']");
+
+    if (!$element) {
+      throw new Exception("Could not find a button with id|name|value equal to '$button'");
+    }
+  }
+
+  /**
+   * @Then /^I should not see the button "([^"]*)"$/
+   */
+  public function iShouldNotSeeTheButton($button) {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('xpath', "//input[@type='submit' or @type='button'][@value='$button' or @id='$button' or @name='$button']");
+
+    if ($element) {
+      throw new Exception("A button with id|name|value equal to '$button' was found.");
+    }
   }
 }

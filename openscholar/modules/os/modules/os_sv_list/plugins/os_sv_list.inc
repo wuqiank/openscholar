@@ -5,6 +5,10 @@ class os_sv_list extends os_boxes_default {
   private $plugins = array();
   protected $entity_type;
   protected $bundle;
+
+  public $embed_as = array(
+    'iframe',
+  );
   
   public function __construct() {
     parent::__construct();
@@ -221,6 +225,7 @@ class os_sv_list extends os_boxes_default {
     
     //give plguins a chance to alter the entities after loading but before rendering.  see events.
     $entities = entity_load($this->entity_type, $ids);
+    $entites = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
     $this->_plugins_invoke('entities_alter', $entities);
     if (empty($entities)) {
       return $block;
@@ -231,8 +236,10 @@ class os_sv_list extends os_boxes_default {
     $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
     
     //now render to html.
-    $content = drupal_render($render);      
-    $block['content'] = '<div id="box-' . $this->delta . '-page" data-page="'.$page_num.'" data-delta="'.$this->delta.'">' . $content . '</div>' . $pager . $more;
+    $content = drupal_render($render);   
+    $delta = $this->delta;   
+    $class = implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display']));
+    $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
     return $block;
   }
   

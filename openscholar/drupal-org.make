@@ -259,6 +259,7 @@ projects[oembed][patch][] = "http://drupal.org/files/issues/oembed.2134415.wysiw
 
 projects[og][subdir] = "contrib"
 projects[og][version] = 2.4
+projects[og][patch][] = "https://drupal.org/files/issues/2153555-og-role-maintain-on-revert-2.patch"
 
 projects[og_moderation][subdir] = "contrib"
 projects[og_moderation][version] = 2.0
@@ -294,7 +295,7 @@ projects[pinserver][subdir] = "contrib"
 projects[pinserver][type] = module
 projects[pinserver][download][type] = git
 projects[pinserver][download][url] = "git://github.com/openscholar/pinserver.git"
-projects[pinserver][download][tag] = 7.x-3.4.4
+projects[pinserver][download][tag] = 7.x-3.4.5
 
 projects[purl][subdir] = "contrib"
 ;: projects[purl][version] = 1.0-beta1+11-dev
@@ -386,6 +387,9 @@ projects[views_infinite_scroll][subdir] = "contrib"
 projects[views_infinite_scroll][version] = 1.1
 ;projects[views_infinite_scroll][patch][] = "http://drupal.org/files/views_infinite_scroll-vbo-1965288-2.patch"
 ;projects[views_infinite_scroll][patch][] = "http://localhost/patch/views_infinite_scroll-no_auto_scroll-2012910-1.patch"
+
+projects[web_widgets][subdir] = "contrib"
+projects[web_widgets][version] = 1.0-alpha2
 
 projects[wysiwyg][subdir] = "contrib"
 projects[wysiwyg][version] = 2.2
