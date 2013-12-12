@@ -194,8 +194,7 @@ function cp_menu() {
       'page callback' => 'drupal_get_form',
       'page arguments' => array('redirect_edit_form'),
       'access callback' => TRUE,
-      'access callback' => 'redirect_access',
-      'access arguments' => array('create', 'redirect'),
+      'access callback' => 'cp_create_redirect_access',
       'file' => 'redirect.admin.inc',
       'file path' => $path,
     );
@@ -659,6 +658,19 @@ function cp_redirect_get_redirects() {
   return $rids;
 }
 
+/**
+ * Returns TRUE when the number of current redirects is less than the maximum.
+ */
+function cp_create_redirect_access() {
+  if (!module_exists('redirect')) {
+    return FALSE;
+  }
+  if (!redirect_access('create', 'redirect')) {
+    return FALSE;
+  }
+  $max = variable_get('cp_redirect_max', 3);
+  $rids = cp_redirect_get_redirects();
+  return count($rids) < $max;
 }
 
 /**
