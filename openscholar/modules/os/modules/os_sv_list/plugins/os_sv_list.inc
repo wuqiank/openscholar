@@ -204,6 +204,9 @@ class os_sv_list extends os_boxes_default {
         'quantity' => $this->options['number_of_items'],
       ));
       
+      drupal_add_library('system', 'drupal.ajax');
+      drupal_add_js(drupal_get_path('module', 'os_sv_list'). '/os_sv_list_display.js');      
+      
       //if the pager is active, the more link needs its vars to know whether or not to display.
       global $pager_page_array, $pager_total;
       $pager_current = $pager_page_array[$parameters['pager_id']] + 1;
