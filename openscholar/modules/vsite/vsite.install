@@ -19,8 +19,16 @@ function vsite_install() {
 
   _vsite_initilize_group_fields();
 
-  // @todo: fix.
-  // variable_set('og_group_manager_default_rids_node_vsite', $manager_roles);
+  // Get all group types.
+  $node_info = module_invoke_all('vsite_og_node_type_info');
+  $group_bundles = array_keys($node_info, 'group');
+
+  // Set the default manager roles for each group type.
+  foreach ($group_bundles as $bundle) {
+    $og_roles = og_roles('node', $bundle);
+    $rid = array_search('vsite admin', $og_roles);
+    variable_set('og_group_manager_default_rids_node_' . $bundle, $rid);
+  }
 }
 
 /**
