@@ -446,4 +446,3 @@ class vsite extends space_og {
     return og_user_access('node', $nid, 'administer group', $account);
   }
 }
-
