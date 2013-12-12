@@ -657,3 +657,37 @@ body.sitewide-front {
 #block-boxes-os-front-sample {
     margin-bottom: 20px;
 }
+
+#block-vsite-register-get-your-site-block {
+    display: block;
+    clear: both;
+    text-align: center;
+    padding: 0px;
+    margin: 40px 0 40px 0 !important;
+}
+
+#block-vsite-register-get-your-site-block .get-your-site-button {
+    background: #919191;
+    background-image: -webkit-linear-gradient(top, #919191, #6b6b6b);
+    background-image: -moz-linear-gradient(top, #919191, #6b6b6b);
+    background-image: -ms-linear-gradient(top, #919191, #6b6b6b);
+    background-image: -o-linear-gradient(top, #919191, #6b6b6b);
+    background-image: linear-gradient(to bottom, #919191, #6b6b6b);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+}
+
+#block-vsite-register-get-your-site-block .get-your-site-button:hover {
+    background: #df1f25;
+    background-image: -webkit-linear-gradient(top, #df1f25, #BB2127);
+    background-image: -moz-linear-gradient(top, #df1f25, #BB2127);
+    background-image: -ms-linear-gradient(top, #df1f25, #BB2127);
+    background-image: -o-linear-gradient(top, #df1f25, #BB2127);
+    background-image: linear-gradient(to bottom, #df1f25, #BB2127);
+    text-decoration: none;
+}

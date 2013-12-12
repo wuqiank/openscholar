@@ -175,7 +175,6 @@ function vsite_register_block_view($delta = '') {
   }
 
   if (isset($text)) {
-    $filepath = drupal_get_path('module', 'vsite_register');
     $options = array(
       'attributes' => array(
         'class' => array('get-your-site-button'),
@@ -185,11 +184,6 @@ function vsite_register_block_view($delta = '') {
     $block['content'] = array(
       'content' => array(
         '#markup' => l($text, $path, $options),
-        '#attached' => array(
-          'css' => array(
-            0 => "$filepath/theme/vsite_register.block.css",
-          ),
-        ),
       ),
     );
   }
