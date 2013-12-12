@@ -571,7 +571,7 @@ function _cp_app_settings_page_title($feature_name) {
 }
 
 /**
- * Implements hook_form_alter() for redirect_edit_form.
+ * Implements hook_form_FORM_ID_alter() for redirect_edit_form.
  *
  * Modifies purl values if the form is being loaded inside a vsite.
  *
@@ -622,6 +622,34 @@ function cp_form_redirect_edit_form_alter(&$form, &$form_state, $form_id) {
 
   // Adds redirect behavior to return to CP > Settings.
   $form['#submit'][] = 'cp_form_redirect';
+}
+
+/**
+ * Implmements hook_form_BASE_FORM_ID_alter() for node_edit_form.
+ */
+function cp_form_node_form_alter(&$form, &$form_state, $form_id) {
+  // Hides the default redirect form section from displaying.
+  _cp_form_alter_remove_redirect_element($form);
+}
+
+/**
+ * Implmements hook_form_FORM_ID_alter() for taxonomy_term_edit_form.
+ */
+function cp_form_taxonomy_form_term_alter(&$form, &$form_state, $form_id) {
+  // Hides the default redirect form section from displaying.
+  _cp_form_alter_remove_redirect_element($form);
+}
+
+/**
+ * Hides the default redirect form section from displaying.
+ *
+ * @see cp_form_node_form_alter()
+ * @see cp_form_taxonomy_form_term_alter()
+ */
+function _cp_form_alter_remove_redirect_element(&$form) {
+  if (isset($form['redirect'])) {
+    $form['redirect']['#access'] = FALSE;
+  }
 }
 
 /**
