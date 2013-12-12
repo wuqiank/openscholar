@@ -245,8 +245,11 @@ function os_boxes_embed_code($box, $embed_style) {
       if ($b_out = _block_render_blocks(array($b))) {
         $block_arr = _block_get_renderable_array($b_out);
         $block = $block_arr['boxes_'.$box->delta];
+        $block['#attached']['js'] = array(
+          drupal_get_path('module', 'os_boxes').'/misc/os_boxes.resize_child.js',
+        );
 
-        print web_widgets_render_widget($embed_style, drupal_render($block), $block['#block']->subject);
+        print web_widgets_render_widget($embed_style, drupal_render($block), '');
       }
     }
   }

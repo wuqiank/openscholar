@@ -22,6 +22,22 @@ abstract class os_boxes_default extends boxes_box {
   public $changed;
 
   /**
+   * Given an embed type, return a label
+   */
+  public function embed_label($type) {
+    $types = &drupal_static(__FUNCTION__, array(
+      'inline' => t('HTML5'),
+      'iframe' => t('Iframe'),
+      'oembed' => t('URL')
+    ));
+
+    if (isset($types[$type])) {
+      return $types[$type];
+    }
+    return '';
+  }
+
+  /**
    * Implementation of boxes_content::options_defaults().
    */
   public function options_defaults() {
@@ -38,9 +54,10 @@ abstract class os_boxes_default extends boxes_box {
 
     $form['make_embeddable'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Make Embedable'),
+      '#title' => t('Make Embeddable'),
       '#description' => t('Allow this widget to be embedded on other websites.'),
       '#default_value' => $this->options['make_embeddable'],
+      '#access' => !empty($this->embed_as)
     );
 
     $form['advanced'] = array(
