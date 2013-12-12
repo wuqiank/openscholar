@@ -114,7 +114,9 @@ function os_update_7010() {
   features_revert(array_fill_keys(array('os_faq','os_links','os_news','os_profiles'), array('view')));
 
   //enable mollom on event signup pages
-  _os_update_event_registration_mollom();
+  if (module_exists('mollom')) {
+    os_events_save_mollom_settings();
+  }
 
   //quinn and its flavors -> eloquent
   $flavors = array(
@@ -197,41 +199,6 @@ function os_update_7012() {
     foreach (array(DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID) as $rid) {
       user_role_grant_permissions($rid, array('access resource file'));
     }
-  }
-}
-
-/**
- * @function _os_update_event_registration_mollom
- *
- * Configures mollom to put a captcha on event signups
- */
-function _os_update_event_registration_mollom() {
-  if (module_exists('mollom')) {
-    $mollom_form = array(
-      'form_id' => 'registration_form',
-      'mode' => '1',
-      'checks' => array('spam'),
-      'enabled_fields' => array('field_department][und][0][value','field_full_name][und][0][value'),
-      'strictness' => 'normal',
-      'discard' => '1',
-      'moderation' => 0,
-      'entity' => 'registration',
-      'bundle' => 'event_signup_simple',
-      'module' => 'os_events',
-      'title' => 'Registration form',
-      'elements' => array(
-        'field_department][und][0][value' => 'Department',
-        'field_full_name][und][0][value' => 'Full Name',
-      ),
-      'mapping' => array(
-        'author_email' => 'anon_email',
-        'post_id' => 'registration_id',
-      ),
-      'bypass access' => array(),
-      'mail ids' => array(),
-    );
-
-    mollom_form_save($mollom_form);
   }
 }
 
@@ -572,9 +539,16 @@ function _query_so_ids($object_type, $object_id, $value = FALSE, $compare = '=',
 }
 
 /**
- * Enable message notify and set emails to be send as full HTML.
+ * Reverts feature module `vsite_preset` component: spaces_presets.
+ *
+ * Note: although this might "belong" in vsite_preset.install, it needs to run
+ * AFTER os_update_7025().
  */
 function os_update_7026() {
-  module_enable(array('message_notify', 'mailsystem', 'mimemail'));
-  variable_set('mimemail_format', 'full_html');
+  $revert = array(
+    'vsite_preset' => array(
+      'spaces_presets',
+    ),
+  );
+  features_revert($revert);
 }

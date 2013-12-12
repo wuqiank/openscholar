@@ -78,7 +78,7 @@ class sv_list_taxonomy extends sv_list_plugin {
    * 
    * Limit the query's scope to items in this subsite.
    */
-  public function query_alter($options, &$efq) {
+  public function query_alter($options, $efq) {
     // For all Queries but image, filter out based on vocab.
     if ($options['terms'] && $options['terms'] != -1) {
       $ids = $this->tagged_entities($options);
@@ -145,7 +145,7 @@ class sv_list_taxonomy extends sv_list_plugin {
     }
     
     $query->join('og_vocab', 'ogv', 'ogr.vid = ogv.vid');
-    $query->condition('ogv.entity_type', $this->entity_type);
+    //$query->condition('ogv.entity_type', $this->entity_type);
 
     $query->groupBy('ogv.vid');
     $query->addExpression('GROUP_CONCAT(ogv.bundle)', 'bundles');    

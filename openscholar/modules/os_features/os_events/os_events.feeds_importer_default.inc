@@ -60,11 +60,6 @@ function os_events_feeds_importer_default() {
             'target' => 'field_date:end',
             'unique' => FALSE,
           ),
-          4 => array(
-            'source' => 'Repeat rule',
-            'target' => 'field_date:rrule',
-            'unique' => FALSE,
-          ),
           5 => array(
             'source' => 'Location',
             'target' => 'field_event_location',
