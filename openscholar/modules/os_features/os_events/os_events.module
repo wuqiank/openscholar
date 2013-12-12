@@ -864,14 +864,33 @@ function os_events_entity_insert($entity, $type) {
   if ($type != 'registration') {
     return;
   }
+  $wrapper = entity_metadata_Wrapper($type, $entity);
+  $node = node_load($entity->entity_id);
 
-  $message = message_create('os_event_registration');
-  $wrapper = entity_metadata_wrapper('message', $message);
-  $wrapper->field_node_reference->set($entity->entity_id);
-  $wrapper->field_registration->set($entity);
+  $module = 'os_events';
+  $key = 'registration_confirmation';
+  $language = language_default();
+  $message = drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, array(), NULL, FALSE);
+  $message['subject'] = t("@title event registration confirmation", array("@title" => $node->title));
 
+  $params = array(
+    '@url' => url($node->nid),
+    '@title' => $node->title,
+    '@user-name' => $wrapper->field_full_name->value(),
+  );
 
-  message_notify_send_message($message, array('mail' => $entity->anon_mail));
+  $message['body'] = array();
+  $message['body'][] = t("Hello @user-name", $params);
+  $message['body'][] = t("You registered to the event <a href='@url'>@title</a> successfully", $params);
+
+  // Retrieve the responsible implementation for this message.
+  $system = drupal_mail_system($module, $key);
+
+  // Format the message body.
+  $message = $system->format($message);
+
+  // Send e-mail.
+  $message['result'] = $system->mail($message);
 }
 
 /**
