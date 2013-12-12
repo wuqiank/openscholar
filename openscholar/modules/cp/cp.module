@@ -628,6 +628,19 @@ function cp_form_redirect_edit_form_alter(&$form, &$form_state, $form_id) {
  * Returns a render array for listing all of this site's redirects.
  */
 function _cp_settings_form_redirects_build($form) {
+  $rids = cp_redirect_get_redirects();
+  $redirects = redirect_load_multiple(array_keys($rids));
+  $build = _cp_settings_redirect_build_element($redirects);
+
+  $form['redirects']['redirects'] += $build;
+  return $form;
+}
+
+/**
+ * Returns an array of redirect IDs for this site.
+ */
+function cp_redirect_get_redirects() {
+  $rids = array();
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'redirect');
   if (module_exists('vsite')) {
@@ -639,12 +652,13 @@ function _cp_settings_form_redirects_build($form) {
     $query->propertyCondition('redirect_options', $match, 'LIKE');
   }
   $result = $query->execute();
-  $rids = $result['redirect'];
-  $redirects = redirect_load_multiple(array_keys($rids));
-  $build = _cp_settings_redirect_build_element($redirects);
+  if (isset($result['redirect'])) {
+    $rids += $result['redirect'];
+  }
 
-  $form['redirects']['redirects'] += $build;
-  return $form;
+  return $rids;
+}
+
 }
 
 /**
