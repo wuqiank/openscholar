@@ -166,13 +166,13 @@ function cp_user_vsite_toggle_roles_permissions_confirm($form, &$form_state, $va
 
   if ($value) {
     // Changing to custom permissions.
-    $title = t('Restore default roles and permissions in %vsite', array('%vsite' => $vsite->group->title));
-    $description = t('Are you sure you want to restore the default roles and permissions in %vsite?', array('%vsite' => $vsite->group->title));
+    $title = t('Edit roles and permissions in %vsite', array('%vsite' => $vsite->group->title));
+    $description = t('Are you sure you want to override the default roles and permissions in %vsite?', array('%vsite' => $vsite->group->title));
   }
   else {
     // Changing to default permissions.
-    $title = t('Edit roles and permissions in %vsite', array('%vsite' => $vsite->group->title));
-    $description = t('Are you sure you want to override the default roles and permissions in %vsite?', array('%vsite' => $vsite->group->title));
+    $title = t('Restore default roles and permissions in %vsite', array('%vsite' => $vsite->group->title));
+    $description = t('Are you sure you want to restore the default roles and permissions in %vsite?', array('%vsite' => $vsite->group->title));
   }
 
   return confirm_form($form,
