@@ -245,35 +245,58 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   $role_names = $form['role_names']['#value'];
 
-  foreach (element_children($form['permission']) as $key) {
-    $row = array();
-    // Module name.
-    if (is_numeric($key)) {
-      $row[] = array(
-        'data' => drupal_render($form['permission'][$key]),
-        'class' => array('module'),
-        'id' => 'module-' . $form['permission'][$key]['#id'],
-        'colspan' => count($roles_human_names) + 1
-      );
-    }
-    else {
-      // Permission row.
-      $row[] = array(
-        'data' => drupal_render($form['permission'][$key]),
-        'class' => array('permission'),
-      );
+  // Only CRUD permissions should be displayed in the UI. Create an array of
+  // the allowed permissions so we can filter the list by it.
+  $allowed_permissions = array();
+  foreach (node_permissions_get_configured_types() as $type) {
+    $allowed_permissions = array_merge($allowed_permissions, og_list_permissions($type));
+  }
+  $allowed_permissions = array_keys($allowed_permissions);
 
+  foreach (element_children($form['permission']) as $key) {
+    if (is_numeric($key)) {
+      // Module name, not for display in the UI.
+      // Not including it in the table is not enough, because later we call the
+      // function drupal_render_children() which will render it anyway unless
+      // we unset it.
+      unset($form['permission'][$key]);
+      continue;
+    }
+
+    if (!in_array($key, $allowed_permissions)) {
+      // Do not show this permission in the UI.
+      // Not including it in the table is not enough, because later we call the
+      // function drupal_render_children() which will render it anyway unless
+      // we unset it.
+      unset($form['permission'][$key]);
+
+      // We must also unset all the checkboxes related to the permission, one
+      // for each role, so they would not be rendered later.
       foreach (element_children($form['checkboxes']) as $rid) {
-        if (empty($roles_human_names[$rid])) {
-          // Some roles are not to be shown on the UI, for example 'non-member',
-          // so do not display roles that don't exist in the "human" names list.
-          $form['checkboxes'][$rid][$key]['#access'] = FALSE;
-          continue;
-        }
-        $form['checkboxes'][$rid][$key]['#title'] = $role_names[$rid] . ': ' . $form['permission'][$key]['#markup'];
-        $form['checkboxes'][$rid][$key]['#title_display'] = 'invisible';
-        $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$key]), 'class' => array('checkbox'));
+        unset($form['checkboxes'][$rid][$key]);
       }
+
+      continue;
+    }
+
+    $row = array();
+
+    // Permission row.
+    $row[] = array(
+      'data' => drupal_render($form['permission'][$key]),
+      'class' => array('permission'),
+    );
+
+    foreach (element_children($form['checkboxes']) as $rid) {
+      if (empty($roles_human_names[$rid])) {
+        // Some roles are not to be shown on the UI, for example 'non-member',
+        // so do not display roles that don't exist in the "human" names list.
+        $form['checkboxes'][$rid][$key]['#access'] = FALSE;
+        continue;
+      }
+      $form['checkboxes'][$rid][$key]['#title'] = $role_names[$rid] . ': ' . $form['permission'][$key]['#markup'];
+      $form['checkboxes'][$rid][$key]['#title_display'] = 'invisible';
+      $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$key]), 'class' => array('checkbox'));
     }
     $rows[] = $row;
   }
