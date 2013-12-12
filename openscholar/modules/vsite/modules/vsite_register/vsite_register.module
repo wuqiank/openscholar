@@ -159,7 +159,7 @@ function vsite_register_block_view($delta = '') {
   }
 
   if (isset($text)) {
-    $path = drupal_get_path('module', 'vsite_register');
+    $filepath = drupal_get_path('module', 'vsite_register');
     $options = array(
       'attributes' => array(
         'class' => array('get-your-site-button'),
@@ -171,7 +171,7 @@ function vsite_register_block_view($delta = '') {
         '#markup' => l($text, $path, $options),
         '#attached' => array(
           'css' => array(
-            0 => "$path/theme/vsite_register.block.css",
+            0 => "$filepath/theme/vsite_register.block.css",
           ),
         ),
       ),
@@ -379,20 +379,9 @@ function vsite_register_get_purls() {
 }
 
 /**
- *
- */
-function vsite_register_block_view_alter(&$block, &$data) {
-  if (user_access('access administration pages') && $data->module == 'vsite_register' && $data->delta = 'get_yout_site_block') {
-    $block['content']['#contextual_links']['admin'] = array(
-
-    );
-  }
-}
-
-/**
  * Implements hook_contextual_links_view_alter().
  *
- * add contextual links to menu to create new links.
+ * Adds a link for sitewide admins to configure Vsite Register from widget.
  */
 function vsite_register_contextual_links_view_alter(&$element, $items) {
   if (!isset($element['#element']['#block']->bid) || $element['#element']['#block']->bid != 'vsite_register-get_your_site_block') {
