@@ -121,11 +121,11 @@ ul.mobile-buttons {
 }
 
 .breadcrumb {
-margin-top: 15px;
+margin-top: 15px !important;
 
 .page-node #content-column .content-inner, 
 #content-column .content-inner {
-padding: 22px 0;
+padding: 22px 0 !important;
 }
 
 
