@@ -286,7 +286,7 @@ function os_events_events_register($js, $node) {
 
   $output = ctools_modal_form_render($form_state, $registration_form);
   print ajax_render($output);
-  exit;
+  drupal_exit();
 }
 
 /**
@@ -745,7 +745,7 @@ function os_events_modal_submit($form, $form_state) {
   drupal_get_messages();
 
   print ajax_render($commands);
-  exit;
+  drupal_exit();
 }
 
 /**
