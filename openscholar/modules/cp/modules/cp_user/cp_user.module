@@ -252,6 +252,9 @@ function cp_user_og_ui_admin_permissions($variables) {
     $allowed_permissions = array_merge($allowed_permissions, og_list_permissions($type));
   }
   $allowed_permissions = array_keys($allowed_permissions);
+  // In addition to CRUD permissions, the permission 'Change theme' is the only
+  // non-CRUD permission that should be displayed on the list.
+  $allowed_permissions[] = 'change theme';
 
   foreach (element_children($form['permission']) as $key) {
     if (is_numeric($key)) {
