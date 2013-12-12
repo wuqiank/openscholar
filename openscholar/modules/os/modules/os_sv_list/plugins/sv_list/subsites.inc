@@ -44,7 +44,7 @@ class sv_list_subsites extends sv_list_plugin  {
    * 
    * Limit the query's scope to items in this subsite.
    */
-  public function query_alter($options, &$efq) {
+  public function query_alter($options, $efq) {
     if (!module_exists('vsite') || (($vsite = spaces_get_space()) == FALSE)) {
       return;
     }
