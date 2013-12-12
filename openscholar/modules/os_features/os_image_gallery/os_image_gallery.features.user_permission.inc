@@ -15,10 +15,7 @@ function os_image_gallery_user_default_permissions() {
     'name' => 'create media_gallery content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -38,10 +35,7 @@ function os_image_gallery_user_default_permissions() {
     'name' => 'delete own media_gallery content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -51,7 +45,6 @@ function os_image_gallery_user_default_permissions() {
     'name' => 'edit any media_gallery content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
     ),
     'module' => 'node',
@@ -62,10 +55,7 @@ function os_image_gallery_user_default_permissions() {
     'name' => 'edit own media_gallery content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );

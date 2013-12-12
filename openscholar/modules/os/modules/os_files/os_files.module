@@ -261,6 +261,7 @@ function os_files_form_file_entity_add_upload_alter(&$form, &$form_state) {
     $extensions = array_unique($extensions);
     $extras = array_unique($extras);
     if (empty($args[0]['override_extensions'])) {
+      sort($extensions);
       $form['upload']['#upload_validators']['file_validate_extensions'] = array(implode(' ', $extensions));
     }
     
@@ -657,13 +658,13 @@ function os_files_entity_info_alter(&$info){
       'label' => t('Link with no icon'),
       'custom settings' => TRUE
     ),
+    'os_files_title' => array(
+      'label' => t('Title'),
+      'custom settings' => TRUE
+    ),
     
     'os_files_thumbnail' => array(
       'label' => t('Thumbnail'),
-      'custom settings' => TRUE
-    ),
-    'os_files_preview' => array(
-      'label' => t('Preview'),
       'custom settings' => TRUE
     ),
   );
@@ -1287,6 +1288,133 @@ function os_files_file_download($uri){
 }
 
 /**
+ * Implements hook_file_view
+ * 
+ * Prepares file view.  
+ * @see http://community.openscholar.harvard.edu/openscholar/topics/better_files_media_management_and_display
+ */
+function os_files_file_view($file, $view_mode, $langcode) {
+  if ($file->type == 'html' || !in_array($view_mode, array('os_files_title', 'teaser', 'full', 'os_files_thumbnail'))) {
+    return;
+  }
+
+  $icon = array(
+    '#theme' => 'file_icon',
+    '#file' => $file,
+    '#icon_directory' => drupal_get_path('module', 'os_files') . '/icons',
+  );
+  
+  //icon, title, download
+  $content = array(
+    'file-info' => array(
+      '#prefix' => '<div class="file-info">',
+      '#suffix' => '</div>',
+      'icon' => $icon,
+      'title' => array(
+        '#theme' => 'link',
+        '#path' => 'file/' . $file->fid,
+        '#text' => $file->filename,
+        '#options' => array('attributes' => array('class' => array('entity-link')), 'html' => FALSE),
+      ),
+      'download' => array(
+        '#theme' => 'link',
+        '#path' => file_create_url($file->uri),
+        '#text' => 'Download',
+        '#options' => array('attributes' => array('class' => array('download-link')), 'html' => FALSE),
+      ),
+    )
+  );
+      
+  //teasers get read more link
+  if ($view_mode == 'teaser' && $file->os_file_description) {
+    $readmore = array(
+      '#theme' => 'link',
+      '#text' => t('Read more'),
+      '#path' => 'file/' . $file->fid,
+      '#options' => array('attributes' => array('class' => 'read-more', 'rel' => 'tag', 'title' => strip_tags($file->filename)), 'html' => FALSE),
+    );
+    $file->content['os_file_description'][0]['#markup'] .= drupal_render($readmore);
+  }
+  
+  //add thumbnail for list of images
+  if (@$file->sv_list && @$file->sv_list_of_images) {
+    unset ($content['file-info']['icon']);
+    switch ($view_mode) {
+      case 'full':
+        $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
+        $content['file-info']['file']['#style_name'] = 'os_files_large'; //600x600
+        break;
+  
+      case 'teaser':
+        $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
+        $content['file']['#style_name'] = 'os_files_small';
+        break;
+      
+      case 'os_files_thumbnail':        
+        $img = $file->content['file'];
+        $img['#style_name'] = 'os_square_50_50';
+        $img['#attributes']['class'] = array('recent-images-list');
+        
+        $content['file-info'] = array(
+          '#theme' => 'link',
+          '#text' => render($img),
+          '#path' => 'file/' . $file->fid,
+          '#options' => array('attributes' => array(), 'html' => TRUE),
+        );
+        break;
+    }
+  }
+  
+  //add thumb/colorbox for list of video/audio
+  if (@$file->sv_list && (@$file->sv_list_of_videos || @$file->sv_list_of_audio)) {
+    unset ($content['file-info']['icon']);
+    
+    if (in_array($file->filemime, array('video/oembed', 'audio/oembed'))) {
+      switch ($view_mode) {
+        case 'full':    
+          //$content['file-info']['file'] = $file->content['file']; //include embedded video
+          $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
+          
+          break;
+      
+        case 'teaser':
+          $content = array_merge(array('video_thumb' => _os_files_video_thumb($file, 200, 200)), $content);
+          break;
+      }
+    }
+  }
+  
+  //outside of sv list, we should still include the file preview
+  if (!@$file->sv_list && $view_mode == 'full') {
+    $content['file-info']['os_file_description'] = $file->os_file_description;
+    
+    switch ($file->type) {
+      case 'image':
+        $content['file-info']['file'] = $file->content['file']; //include embedded image
+        $content['file-info']['file']['#style_name'] = 'os_files_xxlarge';
+        unset($content['file-info']['file']['#width'], $content['file-info']['file']['#height'], $content['file-info']['icon'], $content['file-info']['title']);
+        break;
+        
+      case 'video':
+        if (isset($file->oembed)) {
+          $content['file-info']['file'] = $file->content['file']; //include thumbnail
+          unset($content['file-info']['icon'], $content['file-info']['title']);
+        }
+        break;
+        
+      case 'audio':
+        if (isset($file->oembed)) {        
+          $content['file-info']['file'] = $file->content['file'];
+        } 
+        break;
+        
+    }
+  }
+  
+  $file->content['file'] = $content;
+}
+
+/**
  * Implements hook_views_alter().
  *
  * Adds necessary relationship and filters to Media Browser view to make it
@@ -1529,14 +1657,14 @@ function os_files_views_data_alter(&$data){
  * Implements hook_os_entity_view_modes()
  */
 function os_files_os_entity_view_modes() {
-  return array('file' => array(
-    'image' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'video' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'audio' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'document' => array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_preview', 'os_files_thumbnail'),
-    'executable' => array('os_files_link', 'os_files_link_icon'),
-    'html' => array('os_files_link', 'full'),
+  $modes = array('file' => array_fill_keys(
+    array('image', 'video', 'audio', 'document', 'executable'),
+    array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_title')
   ));
+  
+  $modes['file']['image'][] = 'os_files_thumbnail';
+  
+  return $modes;
 }
 
 
@@ -1565,17 +1693,18 @@ function os_files_file_default_types() {
   return $types;
 }
 
-function os_files_file_default_types_alter(&$types){
-  $types['image']->mimetypes = array_merge($types['image']->mimetypes, array(
+function os_files_file_default_types_alter(&$types){ 
+  $image = array(
     // *.ico files
     'image/ico',
     'application/ico',
     'application/x-ico',
     'application/x-win-bitmap',
     'image/x-win-bitmap'
-  ));
+  );
+  $types['image']->mimetypes = (empty($types['image']->mimetypes)) ? $image : array_merge($types['image']->mimetypes, $image);
 
-  $types['video']->mimetypes = array_merge($types['video']->mimetypes, array(
+  $video = array(
     // *.mov files
     'video/x-quicktime',
     'image/mov',
@@ -1604,10 +1733,11 @@ function os_files_file_default_types_alter(&$types){
     // *.wmv files
     'video/x-ms-wmv',
     'text/oembed'
-  ));
+  );
+  $types['video']->mimetypes = (empty($types['video']->mimetypes)) ? $video : array_merge($types['video']->mimetypes, $video);
   $types['video']->streams[] = 'oembed';
 
-  $types['audio']->mimetypes = array_merge($types['audio']->mimetypes, array(
+  $audio = array(
     // *.mp3 files
     'audio/x-mpeg',
     'audio/mp3',
@@ -1623,9 +1753,10 @@ function os_files_file_default_types_alter(&$types){
     'application/ogg',
     'audio/x-ogg',
     'application/x-ogg'
-  ));
+  );
+  $types['audio']->mimetypes = (empty($types['audio']->mimetypes)) ? $audio : array_merge($types['audio']->mimetypes, $audio);
 
-  $types['document']->mimetypes = array_merge($types['document']->mimetypes, array(
+  $document = array(
     // *.doc files
     'application/vnd.msword',
     'application/vmd.ms-word',
@@ -1658,9 +1789,9 @@ function os_files_file_default_types_alter(&$types){
     // *.cls, *.sty
     'text/x-tex',
     'application/x-latex',
-  ));
+  );
 
-  $types['document']->mimetypes = array_diff($types['document']->mimetypes, array('text/oembed'));
+  $types['document']->mimetypes = (empty($types['document']->mimetypes)) ? $document : array_merge($types['document']->mimetypes, $document);
   $types['document']->streams = array_diff($types['document']->streams, array('oembed'));
 }
 
@@ -1684,43 +1815,51 @@ function os_files_stream_wrappers_alter(&$wrappers){
  * 
  * When colorbox is present, wraps thumbnail of video, with link to colorbox of embedded player
  */
-function _os_files_video_thumb($file) {
+function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
   if (!module_exists('colorbox')) {
     return FALSE;
+  }
+  
+  if (!is_array($file)) {
+    $file = (array) $file;
   }
 
   $url = urldecode(file_uri_target($file['uri']));
   $id = 'embed-colorbox-' . $file['fid'];
 
   //get dimensions.  scale down to preset max size if needed.
-  if ($data = oembedcore_oembed_data($url)) {
-    $w = $data->width;
-    $h = $data->height;
-    $w_max = 500;
-    $h_max = 500;
+  if (($data = oembed_get_data($url)) && isset($data['width'], $data['height'])) {
+    $w = $data['width'];
+    $h = $data['height'];
     
-    if ($w > $w_max) {
-      $w = $w_max;
-      $ratio = $w/$data->width;
+    if ($w > $width_max) {
+      $w = $width_max;
+      $ratio = $w/$data['width'];
       $h = $ratio * $h;
     }
     
-    if ($h > $h_max) {
-      $h = $h_max;
-      $ratio = $h/$data->height;
-      $w = $ratio * $data->height;
+    if ($h > $height_max) {
+      $h = $height_max;
+      $ratio = $h/$data['height'];
+      $w = $ratio * $data['height'];
     }
   } else {
-    $w = $h = 500;
+    $w = $h = min($height_max, $width_max);
   }
   
   $filebox = array(
     '#type' => 'oembed',
     '#url' => $url,
     '#options' => array('maxwidth' => $w),
+    '#parameters' => array('width' => $w, 'height' => $h),
   );
   
-  $box_html = drupal_render($filebox); //oembed_bare doesn't do anything useful with prefix, suffix, or attributes...
+  $box_html = drupal_render($filebox); 
+  
+  if (!$box_html) {
+    return array();
+  }
+  
   $box_html = '<div style="display:none;"><div id="'.$id.'" style="overflow: hidden !important">' . $box_html . '</div></div>';
   
   $video = array(
@@ -1728,7 +1867,7 @@ function _os_files_video_thumb($file) {
     '#prefix' => '<div class="oembed"><a href="?innerWidth='.$w.'&innerHeight='.$h.'&inline=true#' . $id . '" class="colorbox-inline">',
     '#suffix' => '<span class="video-indicator"> </span></a></div>' . $box_html,
     '#url' => $url,
-    '#attributes' => array('width' => '250px'),
+    '#attributes' => array('width' => min($w, 250) . 'px'),
     '#options' => array(),
   );
 
@@ -1779,14 +1918,15 @@ function _os_files_extensions_from_type($type) {
       'tex',
       'wtml',
       'wtt',
-      'wwtfig'
+      'wwtfig',
     );
 
     $types['executable'] = array(
       'zip',
       'tgz',
       'gz',
-      'exe'
+      'exe',
+      'tar',
     );
   }
   
@@ -1927,9 +2067,7 @@ function os_files_add_fields($type) {
         )
       ),
       'module' => 'text',
-      'settings' => array(
-        'max_length' => '255'
-      ),
+      'settings' => array(),
       'translatable' => '0',
       'type' => 'text_long'
     );
@@ -1954,7 +2092,7 @@ function os_files_add_fields($type) {
           'label' => 'hidden',
           'module' => 'text',
           'settings' => array(
-            'trim_length' => 600,
+            'trim_length' => 160,
           ),
           'type' => 'text_summary_or_trimmed',
           'weight' => 0,

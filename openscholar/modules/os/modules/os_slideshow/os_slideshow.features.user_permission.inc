@@ -15,10 +15,7 @@ function os_slideshow_user_default_permissions() {
     'name' => 'create slideshow_slide content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -38,10 +35,7 @@ function os_slideshow_user_default_permissions() {
     'name' => 'delete own slideshow_slide content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -61,10 +55,7 @@ function os_slideshow_user_default_permissions() {
     'name' => 'edit own slideshow_slide content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );

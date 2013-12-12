@@ -15,10 +15,7 @@ function os_news_user_default_permissions() {
     'name' => 'create news content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -37,10 +34,7 @@ function os_news_user_default_permissions() {
     'name' => 'delete own news content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -50,7 +44,6 @@ function os_news_user_default_permissions() {
     'name' => 'edit any news content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
     ),
     'module' => 'node',
   );
@@ -60,10 +53,7 @@ function os_news_user_default_permissions() {
     'name' => 'edit own news content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );

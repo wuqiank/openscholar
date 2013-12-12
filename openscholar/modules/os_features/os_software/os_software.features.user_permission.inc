@@ -15,10 +15,7 @@ function os_software_user_default_permissions() {
     'name' => 'create software_project content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -28,10 +25,7 @@ function os_software_user_default_permissions() {
     'name' => 'create software_release content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -59,10 +53,7 @@ function os_software_user_default_permissions() {
     'name' => 'delete own software_project content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -72,10 +63,7 @@ function os_software_user_default_permissions() {
     'name' => 'delete own software_release content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -85,7 +73,6 @@ function os_software_user_default_permissions() {
     'name' => 'edit any software_project content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
     ),
     'module' => 'node',
   );
@@ -95,7 +82,6 @@ function os_software_user_default_permissions() {
     'name' => 'edit any software_release content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
     ),
     'module' => 'node',
   );
@@ -105,10 +91,7 @@ function os_software_user_default_permissions() {
     'name' => 'edit own software_project content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -118,10 +101,7 @@ function os_software_user_default_permissions() {
     'name' => 'edit own software_release content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );

@@ -39,10 +39,7 @@ function os_publications_user_default_permissions() {
     'name' => 'create biblio content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -61,10 +58,7 @@ function os_publications_user_default_permissions() {
     'name' => 'delete own biblio content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );
@@ -74,7 +68,6 @@ function os_publications_user_default_permissions() {
     'name' => 'edit any biblio content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
     ),
     'module' => 'node',
   );
@@ -93,10 +86,7 @@ function os_publications_user_default_permissions() {
     'name' => 'edit own biblio content',
     'roles' => array(
       'administrator' => 'administrator',
-      'content editor' => 'content editor',
       'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
     ),
     'module' => 'node',
   );

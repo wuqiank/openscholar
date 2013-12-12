@@ -23,7 +23,7 @@ class sv_list_taxonomy extends sv_list_plugin {
     );
   }
   
-  public function options_form($options) {
+  public function options_form($options, &$form) {
      // Get all relevant vocabularies.
     //$vocabs = os_sv_list_get_content_type_vocabs($options['content_type'], $this->entity_type); //@TODO does this func work with files terms too?
     $vocabs = $this->_os_sv_list_vid_by_bundle();
@@ -33,7 +33,7 @@ class sv_list_taxonomy extends sv_list_plugin {
     }
         
     // The 'vocabs' tree will contain select fields - one for each vocabulary.    
-    $form['vocabs'] = array(
+    $form['filters']['vocabs'] = array(
       '#type' => 'item',
       '#prefix' => '<div id="vocabs">',
       '#suffix' => '</div>',
@@ -62,7 +62,7 @@ class sv_list_taxonomy extends sv_list_plugin {
       $vocab_default_value = (isset($options['vocabs'][$element])) ? $options['vocabs'][$element] : array();
       
       // Create select field with the terms as options.
-      $form['vocabs'][$element] = array(
+      $form['filters']['vocabs'][$element] = array(
         '#type' => 'select',
         '#options' => $terms,
         '#title' => $vocabulary->name,
@@ -71,8 +71,6 @@ class sv_list_taxonomy extends sv_list_plugin {
         '#element_validate' => array('os_sv_list_terms_element_validate'), //group selected terms from all vocab fields
       );
     }
-    
-    return $form;
   }
   
   /**
@@ -80,7 +78,7 @@ class sv_list_taxonomy extends sv_list_plugin {
    * 
    * Limit the query's scope to items in this subsite.
    */
-  public function query_alter($options, &$efq) {
+  public function query_alter($options, $efq) {
     // For all Queries but image, filter out based on vocab.
     if ($options['terms'] && $options['terms'] != -1) {
       $ids = $this->tagged_entities($options);
@@ -147,7 +145,7 @@ class sv_list_taxonomy extends sv_list_plugin {
     }
     
     $query->join('og_vocab', 'ogv', 'ogr.vid = ogv.vid');
-    $query->condition('ogv.entity_type', $this->entity_type);
+    //$query->condition('ogv.entity_type', $this->entity_type);
 
     $query->groupBy('ogv.vid');
     $query->addExpression('GROUP_CONCAT(ogv.bundle)', 'bundles');    
