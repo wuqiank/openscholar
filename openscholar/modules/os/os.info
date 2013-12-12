@@ -169,3 +169,5 @@ features[views_view][] = vsite_autocomplete
 features[views_view][] = os_users
 files[] = includes/expire.node.inc
 files[] = includes/expire.file.inc
+
+files[] = includes/node.inc
