@@ -377,6 +377,13 @@ function os_boxes_preprocess_boxes_box(&$variables) {
       );
     }
 
+    $purl = '';
+    if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+      if ($vsite->purl_provider == PURL_VSITE_PATH) {
+        $purl = $vsite->group->purl.'/';
+      }
+    }
+
     $output = array(
       '#attached' => array(
         'library' => array(
@@ -420,7 +427,7 @@ function os_boxes_preprocess_boxes_box(&$variables) {
           '#prefix' => '<div id="'.$delta.'-oembed">',
           '#suffix' => '</div>',
           '#markup' => theme('web_widgets_embed_code', array(
-            'code' => url('box/'.$delta, array('alias' => TRUE, 'absolute' => TRUE)),
+            'code' => url('box/'.$purl.$delta, array('alias' => true, 'absolute' => true)),
             'style' => 'inline',
           )),
           '#access' => in_array('oembed', $box->embed_as)
