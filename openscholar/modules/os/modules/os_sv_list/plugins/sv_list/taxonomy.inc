@@ -31,20 +31,23 @@ class sv_list_taxonomy extends sv_list_plugin {
     if (empty($vocabs)) {
       return;
     }
-        
+            
     // The 'vocabs' tree will contain select fields - one for each vocabulary.    
-    $form['filters']['vocabs'] = array(
-      '#type' => 'item',
-      '#prefix' => '<div id="vocabs">',
-      '#suffix' => '</div>',
-      '#title' => t('Filter by vocabulary'),
+    $vocab_form = array(
+      '#type' => 'fieldset',
+      '#collapsible' => FALSE,
+      '#title' => 'Filter by Vocabulary',
       '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
-      '#tree' => TRUE,
-      '#attached' => array(
-        'js' => array(
-          array('type' => 'setting', 'data' => array('sv_list_vocab_bundles' => $vocabs)),
+      
+      'vocab_select' => array(
+        '#type' => 'item',
+        '#tree' => TRUE,
+        '#attached' => array(
+          'js' => array(
+            array('type' => 'setting', 'data' => array('sv_list_vocab_bundles' => $vocabs)),
+          )
         )
-      )
+      ),
     );  
     
     // Create a select field for each vocabulary, with the vocabulary's terms as the field's options.
@@ -62,15 +65,21 @@ class sv_list_taxonomy extends sv_list_plugin {
       $vocab_default_value = (isset($options['vocabs'][$element])) ? $options['vocabs'][$element] : array();
       
       // Create select field with the terms as options.
-      $form['filters']['vocabs'][$element] = array(
+      $vocab_form[$element] = array(
         '#type' => 'select',
         '#options' => $terms,
         '#title' => $vocabulary->name,
         '#multiple' => TRUE,
         '#default_value' => $vocab_default_value,
         '#element_validate' => array('os_sv_list_terms_element_validate'), //group selected terms from all vocab fields
+        '#attached' => array(
+          'js' => array(libraries_get_path('select2') . '/select2.js'),
+          'css' => array(libraries_get_path('select2') . '/select2.css'),
+        ),
       );
     }
+    
+    $form['vocabs'] = $vocab_form;
   }
   
   /**

@@ -55,14 +55,10 @@ class os_sv_list extends os_boxes_default {
     
     $form['#submit'] = array('os_sv_list_form_submit');
     $form['#attached'] = array(
-      'js' => array(libraries_get_path('select2') . '/select2.js'),
-      'css' => array(
-        libraries_get_path('select2') . '/select2.css',
-        drupal_get_path('module', 'os_sv_list') . '/os_sv_list.css',
-      ),
+      'css' => array(drupal_get_path('module', 'os_sv_list') . '/os_sv_list.css',),
     );
 
-     $form['filters'] = $form['details'] = $form['content'] = array(
+     $form['filters'] = $form['details'] = $form['vocabs'] = $form['content'] = array(
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
     );
@@ -167,7 +163,7 @@ class os_sv_list extends os_boxes_default {
     $this->_plugins_invoke('options_form', $form);
 
     //hide empty fieldsets.  plugins _could_ empty some of the defaults
-    foreach (array('details', 'content', 'filters') as $fieldset) {
+    foreach (array('details', 'content', 'filters', 'vocabs') as $fieldset) {
       if (isset($form[$fieldset]) && count($form[$fieldset]) <= 2) {
         unset($form[$fieldset]);
       }
