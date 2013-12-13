@@ -444,7 +444,7 @@ function vsite_node_delete($node) {
 function vsite_form_os_settings_form_alter(&$form, &$form_state, $form_id){
 
   $subsite_bundles = variable_get('subsite_bundles',array('personal','project'));
-  $subsite_parents = variable_get('subsite_parents',array('department'));
+  $subsite_parents = variable_get('subsite_parents',array('department', 'project'));
 
   $subsite_ref_field = field_info_field('field_group_parent');
   if(!$subsite_ref_field){
@@ -2726,7 +2726,7 @@ function vsite_cp_settings() {
   if (!$vsite || !isset($vsite->group->type)) {
     return;
   }
-  $default = array('department');
+  $default = array('department', 'project');
   $subsite_parents = variable_get('subsite_parents', $default);
   if (!in_array($vsite->group->type, $subsite_parents)) {
     return;
