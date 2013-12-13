@@ -92,6 +92,8 @@ dependencies[] = os_tour
 dependencies[] = os_importer
 dependencies[] = os_front
 dependencies[] = citation_distribute
+dependencies[] = os_slideshow
+dependencies[] = os_breadcrumbs
 
 ; Control Panel
 dependencies[] = cp
