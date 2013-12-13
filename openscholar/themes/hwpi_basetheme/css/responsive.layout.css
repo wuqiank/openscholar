@@ -426,7 +426,7 @@ display: block;
 }
 
 .person-teaser-wrapper {
-display: inline;
+display: inline !important;
 }
 
 .file-os-files-large,
