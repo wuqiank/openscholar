@@ -94,7 +94,7 @@ class os_sv_list extends os_boxes_default {
 
     $form['content']['sort_by'] = array(
       '#type' => 'select',
-      '#title' => 'Sorting',
+      '#title' => 'Sorted By',
       '#default_value' => $this->options['sort_by'],
       '#options' => $this->_sort_options(),
       '#attached' => array(
@@ -107,7 +107,12 @@ class os_sv_list extends os_boxes_default {
 
 
     //details fieldset
-    $form['details']['more'] = array(
+    $form['details']['more_div'] = array(
+      '#prefix' => '<div class="more-wrapper">',
+      '#suffix' => '</div>',  
+    );
+    
+    $form['details']['more_div']['more'] = array(
       '#title' => 'Show "more" link',
       '#type' => 'checkbox',
       '#default_value' => $this->options['more'],
@@ -120,10 +125,11 @@ class os_sv_list extends os_boxes_default {
         unset($form_state['input']['more_link']);
     }
     
-    $form['details']['more_link'] = array(
+    $form['details']['more_div']['more_link'] = array(
       '#title' => t('URL for the more link'),
       '#type' => 'textfield',
       '#default_value' => $this->options['more_link'],
+      '#size' => 15,
       '#states' => array(
         'visible' => array('input[name=more]' => array('checked' => TRUE)),
         'invisible'  => array('input[name=more]' => array('checked' => FALSE)),
@@ -137,8 +143,9 @@ class os_sv_list extends os_boxes_default {
       )
     );
     
-    $form['details']['more_text'] = array(
+    $form['details']['more_div']['more_text'] = array(
       '#title' => 'Label of the more link (default: "more")',
+      '#size' => 15,
       '#type' => 'textfield',
       '#default_value' => $this->options['more_text'],
         '#states' => array(
