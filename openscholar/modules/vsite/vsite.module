@@ -2848,3 +2848,26 @@ function vsite_og_permission_alter(&$perms) {
   $perms['view users outside groups']['default role'][] = 'content editor';
   $perms['unsubscribe']['default role'][] = 'content editor';
 }
+
+/**
+ * Implements hook_redirect_hash_alter().
+ */
+function vsite_redirect_hash_alter(&$hash, $redirect) {
+  // Integrates with module `redirect`.
+  // Prevents redirect_validate() from finding false duplicate paths.
+  // @see redirect_hash()
+  if ($vsite = vsite_get_vsite()) {
+    $hash['gid'] = $vsite->id;
+  }
+}
+
+/**
+ * Implements hook_redirect_parse_url_alter().
+ */
+function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
+  if ($vsite = vsite_get_vsite()) {
+    if ($purl = vsite_get_purl()) {
+      $parsed['url'] = "{$purl}/{$parsed['url']}";
+    }
+  }
+}
