@@ -418,7 +418,7 @@ function vsite_update_7013() {
   features_revert(array('vsite' => array('field')));
 
   $group_types = array_keys(array_intersect(module_invoke_all('vsite_og_node_type_info'), array('group')));
-  $group_types = array_intersect($group_types, variable_get('subsite_parents', array('department')));
+  $group_types = array_intersect($group_types, variable_get('subsite_parents', array('department', 'project')));
 
   foreach ($group_types as $type) {
     vsite_attach_fields_to_group($type);
