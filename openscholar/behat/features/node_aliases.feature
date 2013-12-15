@@ -70,3 +70,25 @@ Feature:
      When I fill in "edit-path-alias" with "blog"
       And I press "edit-submit"
      Then I should see "The alias is already in use."
+
+  @api
+  Scenario: Verify the user can enter an alias with node type at the start
+    Given I am logging in as "john"
+      And I visit "john/node/add/presentation"
+      And I fill in "Title" with "Checking a presentation"
+      And I uncheck the box "Generate automatic URL alias"
+      And I fill in "edit-path-alias" with "presentations/checking-presentation"
+     When I press "edit-submit"
+     Then I should see "Presentation Checking a presentation has been created."
+
+  @api
+  Scenario: Verify the user can't enter an alias with a menu item which already
+            in use.
+    Given I am logging in as "john"
+      And I visit "john/node/add/presentation"
+      And I fill in "Title" with "Checking a presentation"
+      And I uncheck the box "Generate automatic URL alias"
+      And I fill in "edit-path-alias" with "user/login"
+     When I press "edit-submit"
+     Then I should see "The alias is already in use."
+
