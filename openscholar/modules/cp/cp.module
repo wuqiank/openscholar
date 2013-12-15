@@ -1,9 +1,10 @@
 <?php
-// $Id$
 
 /**
  * @file
  * Code for OpenScholar Control Panel.
+ *
+ * @todo fix form redirect (should go to CP > Menu, not default redirect path).
  */
 
 include_once ('cp.features.inc');
@@ -11,6 +12,11 @@ include_once ('cp.features.inc');
 define('CP_MENU_OFF', 'off');
 define('CP_MENU_MINI', 'mini');
 define('CP_MENU_FULL', 'full');
+
+/**
+ * Defines the default maximum number of allowed URL redirects per site.
+ */
+define('CP_REDIRECT_MAX_DEFAULT', 15);
 
 /**
  * Loads an include file based on a $_GET.
@@ -193,8 +199,16 @@ function cp_menu() {
       'page callback' => 'drupal_get_form',
       'page arguments' => array('redirect_edit_form'),
       'access callback' => TRUE,
+      'access callback' => 'cp_create_redirect_access',
+      'file' => 'redirect.admin.inc',
+      'file path' => $path,
+    );
+    $items['cp/redirect/delete/%redirect'] = array(
+      'title' => 'Delete redirect',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('redirect_delete_form', 3),
       'access callback' => 'redirect_access',
-      'access arguments' => array('create', 'redirect'),
+      'access arguments' => array('delete', 3),
       'file' => 'redirect.admin.inc',
       'file path' => $path,
     );
@@ -207,7 +221,7 @@ function cp_menu() {
  * Implements hook_menu_alter().
  */
 function cp_menu_alter(&$items) {
-  // make them all part of 'cp' menu
+  // Makes all menu items with path like "cp*" part of the same "cp" menu.
   foreach ($items as $path => $item) {
     if (strpos($path, 'cp') === 0) {
       if (!array_key_exists('menu_name', $item)) {
@@ -218,6 +232,22 @@ function cp_menu_alter(&$items) {
       if (!array_key_exists('access callback', $item)) $items[$path]['access arguments'] = array(
         'access control panel',
       );
+    }
+  }
+
+  // Prevents vsite admins from accessing all sitewide redirects.
+  $restricted = array(
+    'admin/config/search/redirect',
+    'admin/config/search/redirect/list',
+    'admin/config/search/redirect/add',
+    'admin/config/search/redirect/edit/%redirect',
+    'admin/config/search/redirect/delete/%redirect',
+    'admin/config/search/redirect/settings',
+  );
+  foreach ($restricted as $path) {
+    if (isset($items[$path])) {
+      $items[$path]['access callback'] = 'user_access';
+      $items[$path]['access arguments'] = 'administer site settings';
     }
   }
 }
@@ -298,7 +328,14 @@ function cp_use_cp_theme() {
  * Implements hook_admin_paths().
  */
 function cp_admin_paths() {
-  return array('cp/build/features/*' => TRUE, 'cp/support' => TRUE);
+  $items = array(
+    'cp/build/features/*' => TRUE,
+    'cp/support' => TRUE,
+    'cp/redirect/add' => TRUE,
+    'cp/redirect/delete/*'
+  );
+
+  return $items;
 }
 
 /**
@@ -408,8 +445,20 @@ function cp_cp_settings() {
     ),
   );
 
-  if(module_exists('vsite') && module_exists('expire')){
+  if (module_exists('redirect')) {
+    $settings['redirects'] = array(
+      'group' => array(
+        '#title' => t('URL Redirects'),
+        '#id' => 'redirects',
+      ),
+      'form' => array(
+        '#title' => t('Manage redirects'),
+      ),
+      'after_build' => array('_cp_settings_form_redirects_build'),
+    );
+  }
 
+  if (module_exists('vsite') && module_exists('expire')) {
     $settings['cp_clear_cache'] = array(
       'group' => array(
         '#title' => t('Maintenance'),
@@ -526,7 +575,7 @@ function _cp_app_settings_page_title($feature_name) {
 }
 
 /**
- * Implements hook_form_alter() for redirect_edit_form.
+ * Implements hook_form_FORM_ID_alter() for redirect_edit_form.
  *
  * Modifies purl values if the form is being loaded inside a vsite.
  *
@@ -574,4 +623,230 @@ function cp_form_redirect_edit_form_alter(&$form, &$form_state, $form_id) {
   $form['source']['#description'] = $description;
   $description = t('Enter any existing destination URL (like http://example.com/) to redirect to.');
   $form['redirect']['#description'] = $description;
+
+  // Adds redirect behavior to return to CP > Settings.
+  $form['#submit'][] = 'cp_form_redirect';
 }
+
+/**
+ * Implmements hook_form_BASE_FORM_ID_alter() for node_edit_form.
+ */
+function cp_form_node_form_alter(&$form, &$form_state, $form_id) {
+  // Hides the default redirect form section from displaying.
+  _cp_form_alter_remove_redirect_element($form);
+}
+
+/**
+ * Implmements hook_form_FORM_ID_alter() for taxonomy_term_edit_form.
+ */
+function cp_form_taxonomy_form_term_alter(&$form, &$form_state, $form_id) {
+  // Hides the default redirect form section from displaying.
+  _cp_form_alter_remove_redirect_element($form);
+}
+
+/**
+ * Hides the default redirect form section from displaying.
+ *
+ * @see cp_form_node_form_alter()
+ * @see cp_form_taxonomy_form_term_alter()
+ */
+function _cp_form_alter_remove_redirect_element(&$form) {
+  if (isset($form['redirect'])) {
+    $form['redirect']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Returns a render array for listing all of this site's redirects.
+ */
+function _cp_settings_form_redirects_build($form) {
+  $rids = cp_redirect_get_redirects();
+  $redirects = redirect_load_multiple(array_keys($rids));
+  $build = _cp_settings_redirect_build_element($redirects);
+
+  $form['redirects']['redirects'] += $build;
+  return $form;
+}
+
+/**
+ * Returns an array of redirect IDs for this site.
+ */
+function cp_redirect_get_redirects() {
+  $rids = array();
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'redirect');
+  if (module_exists('vsite')) {
+    $vsite = vsite_get_vsite();
+    $gid = $vsite->id;
+    $len = strlen((string) $gid);
+    // Matches a serialized array key/value pair like `array('id' => $gid)`.
+    $match = '%' . db_like(";s:2:\"id\";s:{$len}:\"{$gid}\";") . '%';
+    $query->propertyCondition('redirect_options', $match, 'LIKE');
+  }
+  $result = $query->execute();
+  if (isset($result['redirect'])) {
+    $rids += $result['redirect'];
+  }
+
+  return $rids;
+}
+
+/**
+ * Returns TRUE when the number of current redirects is less than the maximum.
+ */
+function cp_create_redirect_access() {
+  if (!module_exists('redirect')) {
+    return FALSE;
+  }
+  if (!redirect_access('create', 'redirect')) {
+    return FALSE;
+  }
+  $max = variable_get('cp_redirect_max', CP_REDIRECT_MAX_DEFAULT);
+  $rids = cp_redirect_get_redirects();
+  return count($rids) < $max;
+}
+
+/**
+ * Returns a build array containing "Add new" and list of existing redirects.
+ */
+function _cp_settings_redirect_build_element($redirects) {
+  $title = t('URL Redirects');
+  $path = drupal_get_path('module', 'cp');
+  $description = t('URL redirects allow you to send users from a non-existing path on your site, to any other URL. You might want to use this to create a short link, or to transition users from an old URL that no longer exists to the new URL. Each site may only have a limited number of URL redirects.');
+  $build = array(
+    'description' => array(
+      '#markup' => "<p class=\"description\">{$description}</p>",
+      '#weight' => 0,
+    ),
+    'redirects' => array(
+      '#theme' => 'item_list',
+      '#attributes' => array(
+        'class' => array(
+          'redirect-item-list',
+        ),
+        'id' => 'cp-menu-redirects-list',
+      ),
+      '#items' => array(),
+      '#weight' => 2,
+    ),
+    '#attached' => array(
+      'css' => array(
+        "{$path}/theme/cp.redirect.css",
+      ),
+    ),
+  );
+
+  // Provides a link to add more redirects if the user hasn't yet hit the max.
+  if (cp_create_redirect_access()) {
+    $link = l(t('+ Add new redirect'), 'cp/redirect/add');
+    $build['add_new'] = array(
+      '#markup' => "<div id=\"cp-menu-add-new-redirect\">{$link}</div>",
+      '#weight' => 1,
+    );
+  }
+
+  foreach ($redirects as $redirect) {
+    if (!is_object($redirect) || !isset($redirect->rid)) {
+      continue;
+    }
+
+    $source = _cp_redirect_format_link($redirect->source);
+    $destination = _cp_redirect_format_link($redirect->redirect);
+    $options = array('query' => array('destination' => 'cp/settings'));
+    $item = array(
+      'class' => array('redirect-item', "redirect-{$redirect->rid}"),
+      'children' => array(
+        0 => array(
+          'data' => $source,
+          'class' => array('redirect-property', 'redirect-source'),
+        ),
+        1 => array(
+          'data' => '&nbsp;',
+          'class' => array('redirect-property', 'redirect-icon'),
+        ),
+        2 => array(
+          'data' => $destination,
+          'class' => array('redirect-property', 'redirect-destination'),
+        ),
+        3 => array(
+          // @todo implement delete callback.
+          'data' => l(t('delete'), "cp/redirect/delete/{$redirect->rid}", $options),
+          'class' => array('redirect-property', 'redirect-delete'),
+        ),
+      ),
+    );
+
+    $build['redirects']['#items'][$redirect->rid] = $item;
+  }
+
+  return $build;
+}
+
+/**
+ * Takes an external or internal path and returns an absolute, trimmed link.
+ *
+ * @param string $path
+ *   A path like http://example.com or an internal path like "pages/mypage".
+ * @param int $trim
+ *   A number of characters to trim the display to.
+ *
+ * @return string $link
+ *   An HTML snippet like <a href="$path" title="$path">$trimmed</a>
+ */
+function _cp_redirect_format_link($path, $trim = 48) {
+  // Formats the path into an absolute URL.
+  $options = array(
+    'absolute' => TRUE,
+  );
+  $path = url($path, $options);
+
+  // Trims the displayed value to the maximum length.
+  if (strlen($path) < $trim) {
+    $text = $path;
+  }
+  else {
+    $text = substr($path, 0, $trim) . '...';
+  }
+
+  // Builds the link HTML snippet.
+  $options = array(
+    'attributes' => array(
+      'title' => $path,
+    ),
+  );
+  $link = l($text, $path, $options);
+
+  return $link;
+}
+
+/**
+ * Submit callback; sends user back to CP > Settings page.
+ *
+ * @see cp_form_redirect_edit_form_alter()
+ */
+function cp_form_redirect($form, &$form_state) {
+  switch ($form['#form_id']) {
+    case 'redirect_edit_form':
+      $form_state['redirect'] = 'cp/settings';
+      break;
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function cp_module_implements_alter(&$implementations, $hook) {
+  if ($hook != 'form_alter') {
+    return;
+  }
+
+  if (empty($implementations['cp'])) {
+    return;
+  }
+
+  // Ensures that cp_form_redirect() occurs after redirect_edit_form_submit().
+  $group = $implementations['cp'];
+  unset($implementations['cp']);
+  $implementations['cp'] = $group;
+}
+

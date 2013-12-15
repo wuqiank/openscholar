@@ -45,6 +45,7 @@ dependencies[] = pathauto
 dependencies[] = biblio
 dependencies[] = advanced_help
 dependencies[] = jquery_update
+dependencies[] = redirect
 
 ; media / files / wysiwyg
 dependencies[] = imagefield_crop
@@ -56,6 +57,7 @@ dependencies[] = wysiwyg
 dependencies[] = wysiwyg_filter
 dependencies[] = media_internet
 dependencies[] = media_oembed
+dependencies[] = oembedprovider
 
 ; media custom
 dependencies[] = media_embed
@@ -88,6 +90,9 @@ dependencies[] = os_ga
 dependencies[] = os_wysiwyg_link
 dependencies[] = os_tour
 dependencies[] = os_importer
+dependencies[] = citation_distribute
+dependencies[] = os_slideshow
+dependencies[] = os_breadcrumbs
 
 ; Control Panel
 dependencies[] = cp
@@ -126,6 +131,7 @@ dependencies[] = password_policy
 dependencies[] = shorten
 dependencies[] = respondjs
 dependencies[] = views_infinite_scroll
+dependencies[] = web_widgets
 
 files[] = openscholar.profile
 
