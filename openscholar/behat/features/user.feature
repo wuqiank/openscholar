@@ -22,7 +22,7 @@ Feature: User functionality testing.
       And I press "Add users"
      Then I should see "michelle has been added to the group John."
 
-  @api
+  @api @customRoles
   Scenario: Enable custom roles and permissions in a VSite.
     Given I am logging in as "john"
       And I visit "john/cp/users/permissions"
@@ -31,7 +31,7 @@ Feature: User functionality testing.
       And I visit "john/cp/users/permissions"
      Then I should see the button "Save permissions"
 
-  @api
+  @api @customRoles
   Scenario: Create a custom role in a vsite.
     Given I am logging in as "john"
      When I visit "john/cp/users/roles"
@@ -40,13 +40,23 @@ Feature: User functionality testing.
       And I visit "john/cp/users/roles"
      Then I should see "New Custom Role"
 
-  @api
+  @api @customRoles
+  Scenario: Set permissions to a custom role in a vsite.
+    Given I am logging in as "john"
+    When I give the role "New Custom Role" in the group "john" the permission "Create Bio content"
+    When I visit "john/cp/users/roles"
+    And I fill in "Name" with "New Custom Role"
+    And I press "Add role"
+    And I visit "john/cp/users/roles"
+    Then I should see "New Custom Role"
+
+  @api @customRoles
   Scenario: Assign a custom role to a vsite member.
     Given I am logging in as "john"
      When I give the user "klark" the role "New Custom Role" in the group "john"
      Then I should verify that the user "klark" has a role of "New Custom Role" in the group "john"
 
-  @api
+  @api @customRoles
   Scenario: Restore default roles and permissions in a VSite.
     Given I am logging in as "john"
       And I visit "john/cp/users/roles"

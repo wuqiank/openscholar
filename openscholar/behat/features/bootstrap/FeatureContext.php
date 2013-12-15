@@ -945,6 +945,26 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I give the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
+   */
+  public function iGiveTheRoleThePermissionInTheGroup($role, $group, $permission) {
+    $rid = $this->invoke_code('');
+    //john/group/node/2/admin/permission/27/edit
+    $uid = $this->invoke_code('os_migrate_demo_get_user_by_name', array("'{$name}'"));
+
+    return array(
+      new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit'),
+      new Step\When('I fill in "edit-name" with "' . $name . '"'),
+      new Step\When('I press "Add users"'),
+      new Step\When('I visit "' . $group . '/cp/users/edit_membership/' . $uid . '"'),
+      new Step\When('I select the radio button named "edit_role" with value "' . $role . '"'),
+      new Step\When('I press "Save"'),
+    );
+  }
+
+I give the role
+
+  /**
    * @Then /^I should verify that the user "([^"]*)" has a role of "([^"]*)" in the group "([^"]*)"$/
    */
   public function iShouldVerifyThatTheUserHasRole($name, $role, $group) {
