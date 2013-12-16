@@ -216,7 +216,7 @@ function os_importer_importer_title($type) {
 /**
  * Access callback - determine if the user can import content from csv.
  *
- * @param $type
+ * @param $bundle
  *  The type of the feeds importer or the node type.
  * @param $feed
  *  Determine if the access callback is for feed or rss. Set TRUE if the access
@@ -225,11 +225,9 @@ function os_importer_importer_title($type) {
  * @return bool
  *  Return TRUE/FALSE.
  */
-function os_importer_import_access($type, $feed = TRUE) {
-  $bundle = $type;
-
+function os_importer_import_access($bundle, $feed = TRUE) {
   if ($feed) {
-    $source = feeds_source($type);
+    $source = feeds_source($bundle);
     $config = $source->importer->getConfig();
 
     if (!$bundle = $config['processor']['config']['content_type']) {
@@ -238,8 +236,16 @@ function os_importer_import_access($type, $feed = TRUE) {
   }
 
   $info = os_importer_importable_content();
+  $access = !empty($info[$bundle]);
 
-  return !empty($info[$bundle]);
+  // When we have 'vsite' we must have specific create permission per bundle.
+  if ($access && module_exists('vsite')) {
+    if (!$vsite = vsite_get_vsite()) {
+      return FALSE;
+    }
+    $access = og_user_access('node', $vsite->id, "create $bundle content");
+  }
+  return $access;
 }
 
 /**
