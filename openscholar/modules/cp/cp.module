@@ -750,14 +750,14 @@ function _cp_settings_redirect_build_element($redirects) {
       continue;
     }
 
-    $source = _cp_redirect_format_link($redirect->source);
-    $destination = _cp_redirect_format_link($redirect->redirect);
+    $source_url = redirect_url($redirect->source, $redirect->source_options);
+    $redirect_url = redirect_url($redirect->redirect, array_merge($redirect->redirect_options, array('alias' => TRUE)));
     $options = array('query' => array('destination' => 'cp/settings'));
     $item = array(
       'class' => array('redirect-item', "redirect-{$redirect->rid}"),
       'children' => array(
         0 => array(
-          'data' => $source,
+          'data' => $source_url,
           'class' => array('redirect-property', 'redirect-source'),
         ),
         1 => array(
@@ -765,7 +765,7 @@ function _cp_settings_redirect_build_element($redirects) {
           'class' => array('redirect-property', 'redirect-icon'),
         ),
         2 => array(
-          'data' => $destination,
+          'data' => $redirect_url,
           'class' => array('redirect-property', 'redirect-destination'),
         ),
         3 => array(
@@ -780,43 +780,6 @@ function _cp_settings_redirect_build_element($redirects) {
   }
 
   return $build;
-}
-
-/**
- * Takes an external or internal path and returns an absolute, trimmed link.
- *
- * @param string $path
- *   A path like http://example.com or an internal path like "pages/mypage".
- * @param int $trim
- *   A number of characters to trim the display to.
- *
- * @return string $link
- *   An HTML snippet like <a href="$path" title="$path">$trimmed</a>
- */
-function _cp_redirect_format_link($path, $trim = 48) {
-  // Formats the path into an absolute URL.
-  $options = array(
-    'absolute' => TRUE,
-  );
-  $path = url($path, $options);
-
-  // Trims the displayed value to the maximum length.
-  if (strlen($path) < $trim) {
-    $text = $path;
-  }
-  else {
-    $text = substr($path, 0, $trim) . '...';
-  }
-
-  // Builds the link HTML snippet.
-  $options = array(
-    'attributes' => array(
-      'title' => $path,
-    ),
-  );
-  $link = l($text, $path, $options);
-
-  return $link;
 }
 
 /**
