@@ -48,16 +48,16 @@ Feature: User functionality testing.
      Then I should verify that the user "klark" has a role of "New Custom Role" in the group "john"
 
   @api
-  Scenario: Check node creation permissions of a custom role - check failure.
+  Scenario: Test node creation permissions of a custom role - check failure.
     Given I am logging in as "klark"
      When I go to "john/node/add/book"
      Then I should get a "403" HTTP response
 
   @api
-  Scenario: Check node creation permissions of a custom role - check success.
+  Scenario: Test node creation permissions of a custom role - check success.
     Given I am logging in as "klark"
-    When I go to "john/node/add/blog"
-    Then I should get a "200" HTTP response
+     When I go to "john/node/add/blog"
+     Then I should get a "200" HTTP response
 
   @api
   Scenario: Restore default roles and permissions in a VSite.
