@@ -114,6 +114,12 @@
 
 }
 
+@-moz-document url-prefix() { 
+#edit-layout-unused-widgets {
+  clear: both;
+ }
+}
+
 #edit-layout-unused-widgets .widget-container {
   height: 100%;
   /* position: absolute;*/
