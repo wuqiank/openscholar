@@ -314,7 +314,7 @@ projects[respondjs][version] = 1.1
 
 projects[redirect][subdir] = "contrib"
 projects[redirect][version] = 1.0-rc1
-projects[redirect][patch][] = "http://drupal.org/files/issues/purl-integrate_redirect_keep_options-2157639-1.patch"
+projects[redirect][patch][] = "http://drupal.org/files/issues/purl-integrate_redirect_keep_options-1735266-4.patch"
 
 projects[robotstxt][subdir] = "contrib"
 projects[robotstxt][version] = "1.1"
