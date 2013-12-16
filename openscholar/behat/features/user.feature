@@ -39,11 +39,7 @@ Feature: User functionality testing.
       And I press "Add role"
       And I visit "john/cp/users/roles"
      Then I should see "New Custom Role"
-
-  @api @customRoles
-  Scenario: Set permissions to a custom role in a vsite.
-    Given I am logging in as "john"
-    When I give the role "New Custom Role" in the group "john" the permission "Create Blog entry content"
+      And I give the role "New Custom Role" in the group "john" the permission "Create Blog entry content"
 
   @api @customRoles
   Scenario: Assign a custom role to a vsite member.
