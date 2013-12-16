@@ -69,7 +69,7 @@ function os_spaces_presets() {
         'harvard_courses',
       ),
       'site_frontpage' => 'home',
-      'theme_default' => 'ballard',
+      'theme_default' => 'hwpi_classic',
       'os_breadcrumbs_show_breadcrumbs' => 0,
     ),
     'menus' => array(
@@ -264,7 +264,7 @@ function os_spaces_presets() {
         'harvard_courses',
       ),
       'site_frontpage' => 'home',
-      'theme_default' => 'cleanblue',
+      'theme_default' => 'hwpi_classic',
       'os_breadcrumbs_show_breadcrumbs' => 0,
     ),
   );
@@ -312,7 +312,7 @@ function os_spaces_presets() {
         'harvard_courses',
       ),
       'site_frontpage' => 'home',
-      'theme_default' => 'cleanblue',
+      'theme_default' => 'hwpi_classic',
       'os_breadcrumbs_show_breadcrumbs' => 0,
     ),
   );
