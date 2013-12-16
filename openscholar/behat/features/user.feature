@@ -43,18 +43,25 @@ Feature: User functionality testing.
   @api @customRoles
   Scenario: Set permissions to a custom role in a vsite.
     Given I am logging in as "john"
-    When I give the role "New Custom Role" in the group "john" the permission "Create Bio content"
-    When I visit "john/cp/users/roles"
-    And I fill in "Name" with "New Custom Role"
-    And I press "Add role"
-    And I visit "john/cp/users/roles"
-    Then I should see "New Custom Role"
+    When I give the role "New Custom Role" in the group "john" the permission "Create Blog entry content"
 
   @api @customRoles
   Scenario: Assign a custom role to a vsite member.
     Given I am logging in as "john"
      When I give the user "klark" the role "New Custom Role" in the group "john"
      Then I should verify that the user "klark" has a role of "New Custom Role" in the group "john"
+
+  @api @customRoles
+  Scenario: Check node creation permissions of a custom role - check failure.
+    Given I am logging in as "klark"
+     When I go to "john/node/add/book"
+     Then I should get a "403" HTTP response
+
+  @api @customRoles
+  Scenario: Check node creation permissions of a custom role - check success.
+    Given I am logging in as "klark"
+    When I go to "john/node/add/blog"
+    Then I should get a "200" HTTP response
 
   @api @customRoles
   Scenario: Restore default roles and permissions in a VSite.
