@@ -81,11 +81,15 @@ function os_front_default_box() {
         '#markup' => '<p>' . t('As you customize your sitewide theme, <a href="/admin/config/openscholar">OpenScholar settings</a> and <a href="/admin/config/openscholar/vsite_register">Vsite Register settings</a>...') . '</p>',
       ),
       'list' => array(
-
+        '#theme' => 'item_list',
+        '#type' => 'ol',
+        '#items' => array(
+          0 => t('For questions about administering and configuring your new OpenScholar installation, search and/or post to our <a href="https://github.com/openscholar/openscholar/issues">GitHub issue queue</a>.'),
+          1 => t('To provide your end-users with additional site-building guides and documentation, feel free to refer to OpenScholar @ Harvard\'s <a href="http://support.openscholar.harvard.edu">Help Center</a> and <a href="http://community.openscholar.harvard.edu">Community forum</a>.'),
+        ),
       ),
     );
     $value = drupal_render($build);
-    $value = '<br><p><ol><li>For questions about administering and configuring your new OpenScholar installation, search and/or post to our <a href="https://github.com/openscholar/openscholar/issues">GitHub issue queue</a>.</li><li>To provide your end-users with additional site-building guides and documentation, feel free to refer to OpenScholar @ Harvard\'s <a href="http://support.openscholar.harvard.edu">Help Center</a> and <a href="http://community.openscholar.harvard.edu">Community forum</a>.</li></ol><br/>';
   }
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
@@ -105,7 +109,36 @@ function os_front_default_box() {
 
   $value = '';
   if (!user_is_anonymous()) {
-    $value = '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_configure.gif" class="os-title-image" alt="OpenScholar"></div><br><ol><li>To configure these widgets, simply log in and hover over the widget.</li><li>To add or remove widgets from this context, <a href="/admin/structure/context/list/os_sitewide_front/edit">edit the os_sitewide_front context</a>.</li></ol><br/>';
+    $build = array(
+      'banner' => array(
+        '#type' => 'container',
+        '#attributes' => array(
+          'class' => array(
+            'os-align-center',
+          ),
+        ),
+        'image' => array(
+          '#theme' => 'image',
+          '#path' => "$path/images/osfrontpg_configure.gif",
+          '#alt' => t('OpenScholar configure'),
+          '#title' => t('OpenScholar configure'),
+          '#attributes' => array(
+            'class' => array(
+              'os-title-image',
+            ),
+          ),
+        ),
+      ),
+      'list' => array(
+        '#theme' => 'item_list',
+        '#type' => 'ol',
+        '#items' => array(
+          0 => t('To configure these widgets, simply hover over the widget, click the gear, then click <strong>Edit widget</strong>.'),
+          1 => t('To add or remove widgets from this context, <a href="/admin/structure/context/list/os_sitewide_front/edit">edit the os_sitewide_front context</a>.'),
+        ),
+      ),
+    );
+    $value = drupal_render($build);
   }
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
