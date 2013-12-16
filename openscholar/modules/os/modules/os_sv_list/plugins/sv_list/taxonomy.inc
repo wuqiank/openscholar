@@ -38,14 +38,12 @@ class sv_list_taxonomy extends sv_list_plugin {
       '#collapsible' => FALSE,
       '#title' => 'Filter by Vocabulary',
       '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
-      
-      'vocab_select' => array(
-        '#type' => 'item',
-        '#tree' => TRUE,
-        '#attached' => array(
-          'js' => array(
-            array('type' => 'setting', 'data' => array('sv_list_vocab_bundles' => $vocabs)),
-          )
+      '#tree' => TRUE,
+      '#attached' => array(
+        'css' => array(libraries_get_path('select2') . '/select2.css'),
+        'js' => array(
+          array('type' => 'setting', 'data' => array('sv_list_vocab_bundles' => $vocabs)),
+          libraries_get_path('select2') . '/select2.js',
         )
       ),
     );  
@@ -72,10 +70,6 @@ class sv_list_taxonomy extends sv_list_plugin {
         '#multiple' => TRUE,
         '#default_value' => $vocab_default_value,
         '#element_validate' => array('os_sv_list_terms_element_validate'), //group selected terms from all vocab fields
-        '#attached' => array(
-          'js' => array(libraries_get_path('select2') . '/select2.js'),
-          'css' => array(libraries_get_path('select2') . '/select2.css'),
-        ),
       );
     }
     
