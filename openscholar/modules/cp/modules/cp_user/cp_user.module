@@ -725,8 +725,8 @@ function cp_user_form_og_ui_admin_new_role_alter(&$form, &$form_state) {
 }
 
 /**
- * Submit handler; After the user add roles from the cp redirect him back to the
- * page he came from and not the default path of OG.
+ * Submit handler; After the user add roles from the cp redirect them back to
+ * the page he came from and not the default path of OG.
  */
 function cp_user_roles_add_redirect($form, &$form_state) {
   $form_state['redirect'] = 'cp/users/roles';
