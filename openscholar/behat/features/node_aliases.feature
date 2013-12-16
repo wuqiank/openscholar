@@ -59,7 +59,8 @@ Feature:
       And I verify the url is "lincoln.local"
 
   @api
-  Scenario: Verify it is impossible to use aliases if they exist without the purl.
+  Scenario: Verify it is impossible to use aliases if they exist without the
+            purl.
     Given I am logging in as "john"
       And I visit "john/node/add/blog"
       And I fill in "Title" with "This Node Should Not Exist"
@@ -71,24 +72,27 @@ Feature:
       And I press "edit-submit"
      Then I should see "The alias is already in use."
 
-  @api
-  Scenario: Verify the user can enter an alias with node type at the start
+  @api @current
+  Scenario: Verify the user can enter an alias with node type at the start.
+            i.e: when user create a new presentation he can can set the alias as
+            presentation/new-presentation.
     Given I am logging in as "john"
       And I visit "john/node/add/presentation"
       And I fill in "Title" with "Checking a presentation"
       And I uncheck the box "Generate automatic URL alias"
       And I fill in "edit-path-alias" with "presentations/checking-presentation"
-     When I press "edit-submit"
+     When I press "Save"
      Then I should see "Presentation Checking a presentation has been created."
 
-  @api
+  @api @current
   Scenario: Verify the user can't enter an alias with a menu item which already
             in use.
+            i.e: Verify user can't create post with the alias 'user/login'.
     Given I am logging in as "john"
       And I visit "john/node/add/presentation"
       And I fill in "Title" with "Checking a presentation"
       And I uncheck the box "Generate automatic URL alias"
       And I fill in "edit-path-alias" with "user/login"
-     When I press "edit-submit"
+     When I press "Save"
      Then I should see "The alias is already in use."
 

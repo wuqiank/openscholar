@@ -2630,6 +2630,10 @@ function _vsite_form_alias_validate($entity_type, $entity, $path) {
     // need to check the href because the menu_get_item return any value for any
     // item. Even when not in used. On the other hand the href can be different
     // between existing and non existing menu items.
+    // If a user enter a new alias, non existing alias, such as
+    // presentation/foo, the menu item holds the menu object of presentation.
+    // If a user enter an existing menu item, such as presentation/bar, the href
+    // of the menu item will be presentation/bar.
     if ($items['alias_with_purl']['href'] == $alias || $items['alias_without_purl']['href'] == $alias_without_purl) {
       return FALSE;
     }
