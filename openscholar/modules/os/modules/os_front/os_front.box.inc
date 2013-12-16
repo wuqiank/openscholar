@@ -81,18 +81,18 @@ function os_front_default_box() {
     'images' => array(
       0 => array(
         'path' => "$path/images/osfrontpg_samplesite1.gif",
-        'alt' => 'Sample site A',
-        'title' => 'Sample site A',
+        'alt' => t('Sample site A'),
+        'title' => t('Sample site A'),
       ),
       1 => array(
         'path' => "$path/images/osfrontpg_samplesite2.gif",
-        'alt' => 'Sample site B',
-        'title' => 'Sample site B',
+        'alt' => t('Sample site B'),
+        'title' => t('Sample site B'),
       ),
       2 => array(
         'path' => "$path/images/osfrontpg_samplesite3.gif",
-        'alt' => 'Sample site C',
-        'title' => 'Sample site C',
+        'alt' => t('Sample site C'),
+        'title' => t('Sample site C'),
       ),
     ),
   );
@@ -102,10 +102,10 @@ function os_front_default_box() {
   $box->delta = 'os_front_sample';
   $box->plugin_key = 'os_boxes_html';
   $box->title = '';
-  $box->description = 'List example site screenshots';
+  $box->description = t('List example site screenshots');
   $box->options = array(
     'text' => array(
-      'value' => theme_os_front_boxcontent_sample($variables),
+      'value' => theme('os_front_boxcontent_sample', $variables),
       'format' => 'filtered_html',
     ),
     'additional_classes' => '',

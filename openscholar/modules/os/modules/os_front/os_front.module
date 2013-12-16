@@ -69,26 +69,30 @@ function os_front_theme() {
 }
 
 /**
- *
+ * Theme function, returns an optional header and list of images.
  */
 function theme_os_front_boxcontent_sample($variables) {
+  $build = array();
+
+  if (isset($variables['header'])) {
+    $header = $variables['header'];
+    $build['header'] = array(
+      '#markup' => "<h2>{$header}</h2>",
+    );
+  }
+
   $images = $variables['images'];
   $items = array();
   foreach ($images as $image) {
     $items[] = array(
-      'data' => theme_image($image),
+      'data' => theme('image', $image),
     );
   }
-  $header = $variables['header'];
-  $build = array(
-    'header' => array(
-      '#markup' => "<h2>{$header}</h2>",
-    ),
-    'list' => array(
-      '#theme' => 'item_list',
-      '#items' => $items,
-    ),
+  $build['list'] = array(
+    '#theme' => 'item_list',
+    '#items' => $items,
   );
+
   $output = drupal_render($build);
   return $output;
 }
