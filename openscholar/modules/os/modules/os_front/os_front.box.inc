@@ -10,7 +10,32 @@
 function os_front_default_box() {
   $export = array();
 
-  $value = '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_logo.gif" class="os-title-image" alt="OpenScholar"></div><br><strong>The easiest way to manage all your institution\'s sites</strong>';
+  $path = drupal_get_path('theme', 'os_default');
+  $build = array(
+    'banner' => array(
+      '#type' => 'container',
+      '#attributes' => array(
+        'class' => array(
+          'os-align-center',
+        ),
+      ),
+      'image' => array(
+        '#theme' => 'image',
+        '#path' => "$path/images/osfrontpg_logo.gif",
+        '#alt' => t('OpenScholar'),
+        '#title' => t('OpenScholar'),
+        '#attributes' => array(
+          'class' => array(
+            'os-title-image',
+          ),
+        ),
+      ),
+    ),
+    'tagline' => array(
+      '#markup' => '<strong>' . t('The easiest way to manage all your institution\'s sites') . '</strong>',
+    ),
+  );
+  $value = drupal_render($build);
   if (user_access('access administration pages')) {
     $value .= '<br/>' . t('Welcome! Hover over this widget to customize your front page.');
   }
@@ -32,7 +57,35 @@ function os_front_default_box() {
 
   $value = '';
   if (!user_is_anonymous()) {
-    $value = '<div align="center"><img src="/profiles/openscholar/themes/os_default/images/osfrontpg_support.gif" class="os-title-image" alt="OpenScholar"></div><br><p>As you customize your sitewide theme, <a href="/admin/config/openscholar">OpenScholar settings</a> and <a href="/admin/config/openscholar/vsite_register">Vsite Register settings</a>...</p><ol><li>For questions about administering and configuring your new OpenScholar installation, search and/or post to our <a href="https://github.com/openscholar/openscholar/issues">GitHub issue queue</a>.</li><li>To provide your end-users with additional site-building guides and documentation, feel free to refer to OpenScholar @ Harvard\'s <a href="http://support.openscholar.harvard.edu">Help Center</a> and <a href="http://community.openscholar.harvard.edu">Community forum</a>.</li></ol><br/>';
+    $build = array(
+      'banner' => array(
+        '#type' => 'container',
+        '#attributes' => array(
+          'class' => array(
+            'os-align-center',
+          ),
+        ),
+        'image' => array(
+          '#theme' => 'image',
+          '#path' => "$path/images/osfrontpg_support.gif",
+          '#alt' => t('OpenScholar support'),
+          '#title' => t('OpenScholar support'),
+          '#attributes' => array(
+            'class' => array(
+              'os-title-image',
+            ),
+          ),
+        ),
+      ),
+      'intro' => array(
+        '#markup' => '<p>' . t('As you customize your sitewide theme, <a href="/admin/config/openscholar">OpenScholar settings</a> and <a href="/admin/config/openscholar/vsite_register">Vsite Register settings</a>...') . '</p>',
+      ),
+      'list' => array(
+
+      ),
+    );
+    $value = drupal_render($build);
+    $value = '<br><p><ol><li>For questions about administering and configuring your new OpenScholar installation, search and/or post to our <a href="https://github.com/openscholar/openscholar/issues">GitHub issue queue</a>.</li><li>To provide your end-users with additional site-building guides and documentation, feel free to refer to OpenScholar @ Harvard\'s <a href="http://support.openscholar.harvard.edu">Help Center</a> and <a href="http://community.openscholar.harvard.edu">Community forum</a>.</li></ol><br/>';
   }
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
@@ -70,7 +123,7 @@ function os_front_default_box() {
   );
   $export['os_front_main_configure'] = $box;
 
-  $path = drupal_get_path('theme', 'os_default');
+
   $variables = array(
     'header' => t('Sample websites'),
     'images' => array(
