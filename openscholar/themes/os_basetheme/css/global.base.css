@@ -196,6 +196,10 @@ a img {
 	margin-bottom: 22px;	
 }
 
+#content-column .file {
+	border-bottom: 1px solid #CCCCCC;
+    padding-bottom: 20px;
+}
 
 .block-boxes-os_sv_list_file .file img {margin-right:2px;vertical-align:bottom;display:block;}
 
