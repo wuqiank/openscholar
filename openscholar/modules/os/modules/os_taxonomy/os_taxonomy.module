@@ -918,7 +918,7 @@ function theme_os_taxonomy_tagged_nodes($variables) {
     $build += array_map(function ($a) use ($tid) {
       $entity = entity_load_single($a['entity_type'], $a['entity_id']);
       $entity->contextual_annotation_key = 'tid-' . $tid;
-      return entity_view($a['entity_type'], array($entity));
+      return entity_view($a['entity_type'], array($entity), 'teaser');
     }, $entities);
 
 //     $nodes = node_load_multiple($nids);
