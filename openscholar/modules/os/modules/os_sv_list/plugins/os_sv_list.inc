@@ -59,14 +59,10 @@ class os_sv_list extends os_boxes_default {
     
     $form['#submit'] = array('os_sv_list_form_submit');
     $form['#attached'] = array(
-      'js' => array(libraries_get_path('select2') . '/select2.js'),
-      'css' => array(
-        libraries_get_path('select2') . '/select2.css',
-        drupal_get_path('module', 'os_sv_list') . '/os_sv_list.css',
-      ),
+      'css' => array(drupal_get_path('module', 'os_sv_list') . '/os_sv_list.css',),
     );
 
-     $form['filters'] = $form['details'] = $form['content'] = array(
+     $form['filters'] = $form['details'] = $form['vocabs'] = $form['content'] = array(
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
     );
@@ -102,7 +98,7 @@ class os_sv_list extends os_boxes_default {
 
     $form['content']['sort_by'] = array(
       '#type' => 'select',
-      '#title' => 'Sorting',
+      '#title' => 'Sorted By',
       '#default_value' => $this->options['sort_by'],
       '#options' => $this->_sort_options(),
       '#attached' => array(
@@ -115,7 +111,12 @@ class os_sv_list extends os_boxes_default {
 
 
     //details fieldset
-    $form['details']['more'] = array(
+    $form['details']['more_div'] = array(
+      '#prefix' => '<div class="more-wrapper">',
+      '#suffix' => '</div>',  
+    );
+    
+    $form['details']['more_div']['more'] = array(
       '#title' => 'Show "more" link',
       '#type' => 'checkbox',
       '#default_value' => $this->options['more'],
@@ -128,10 +129,11 @@ class os_sv_list extends os_boxes_default {
         unset($form_state['input']['more_link']);
     }
     
-    $form['details']['more_link'] = array(
+    $form['details']['more_div']['more_link'] = array(
       '#title' => t('URL for the more link'),
       '#type' => 'textfield',
       '#default_value' => $this->options['more_link'],
+      '#size' => 15,
       '#states' => array(
         'visible' => array('input[name=more]' => array('checked' => TRUE)),
         'invisible'  => array('input[name=more]' => array('checked' => FALSE)),
@@ -145,8 +147,9 @@ class os_sv_list extends os_boxes_default {
       )
     );
     
-    $form['details']['more_text'] = array(
+    $form['details']['more_div']['more_text'] = array(
       '#title' => 'Label of the more link (default: "more")',
+      '#size' => 15,
       '#type' => 'textfield',
       '#default_value' => $this->options['more_text'],
         '#states' => array(
@@ -171,7 +174,7 @@ class os_sv_list extends os_boxes_default {
     $this->_plugins_invoke('options_form', $form);
 
     //hide empty fieldsets.  plugins _could_ empty some of the defaults
-    foreach (array('details', 'content', 'filters') as $fieldset) {
+    foreach (array('details', 'content', 'filters', 'vocabs') as $fieldset) {
       if (isset($form[$fieldset]) && count($form[$fieldset]) <= 2) {
         unset($form[$fieldset]);
       }
