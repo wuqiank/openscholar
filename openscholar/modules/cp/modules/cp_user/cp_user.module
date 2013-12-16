@@ -68,6 +68,11 @@ function cp_user_menu() {
     'access callback' => 'cp_user_admin_access',
   );
 
+  $items['cp/users/users'] = array(
+    'title' => 'People',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
   $items['cp/users/toggle-roles-permissions/confirm/%'] = array(
     'type' => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
