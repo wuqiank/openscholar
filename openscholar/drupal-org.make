@@ -305,6 +305,7 @@ projects[purl][download][revision] = 469e8668
 projects[purl][patch][] = "http://drupal.org/files/1473502-purl-init-2_0.patch"
 projects[purl][patch][] = "http://drupal.org/files/1982198-purl-cache-set-1.patch"
 projects[purl][patch][] = "http://drupal.org/files/729862-9-purl-inbound-alter-modifies-q.patch"
+projects[purl][patch][] = "http://drupal.org/files/issues/purl-integrate_redirect_keep_options-1735266-4.patch"
 
 projects[registration][subdir] = "contrib"
 projects[registration][version] = 1.1
@@ -314,7 +315,6 @@ projects[respondjs][version] = 1.1
 
 projects[redirect][subdir] = "contrib"
 projects[redirect][version] = 1.0-rc1
-projects[redirect][patch][] = "http://drupal.org/files/issues/purl-integrate_redirect_keep_options-1735266-4.patch"
 
 projects[robotstxt][subdir] = "contrib"
 projects[robotstxt][version] = "1.1"
