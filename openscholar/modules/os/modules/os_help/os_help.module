@@ -5,6 +5,12 @@
  * Implements hook_help().
  */
 function os_help_help($path, $arg) {
+  $item = menu_get_item();
+  // Display the help icon only for allowed pages.
+  if (!$item['access']) {
+    return;
+  }
+
   switch ($path) {
     case 'cp/build':
     case 'cp/build/apps':
@@ -43,14 +49,10 @@ function os_help_help($path, $arg) {
       break;
   }
   if (isset($topic)) {
-    $item = menu_get_item();
-    // Display the help icon only for allowed pages.
-    if ($item['access']) {
-      return theme('advanced_help_topic', array(
-        'module' => 'os_help',
-        'topic' => $topic,
-      ));
-    }
+    return theme('advanced_help_topic', array(
+      'module' => 'os_help',
+      'topic' => $topic,
+    ));
   }
 }
 
