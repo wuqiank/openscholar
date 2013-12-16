@@ -96,7 +96,6 @@ class os_boxes_feedreader extends os_boxes_default {
       '#default_value' => $this->options['number_of_items']
     );
 
-    $form += parent::options_form();
     return $form;
   }
 
