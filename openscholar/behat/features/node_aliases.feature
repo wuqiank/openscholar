@@ -72,7 +72,7 @@ Feature:
       And I press "edit-submit"
      Then I should see "The alias is already in use."
 
-  @api @current
+  @api
   Scenario: Verify the user can enter an alias with node type at the start.
             i.e: when user create a new presentation he can can set the alias as
             presentation/new-presentation.
@@ -84,7 +84,7 @@ Feature:
      When I press "Save"
      Then I should see "Presentation Checking a presentation has been created."
 
-  @api @current
+  @api
   Scenario: Verify the user can't enter an alias with a menu item which already
             in use.
             i.e: Verify user can't create post with the alias 'user/login'.
