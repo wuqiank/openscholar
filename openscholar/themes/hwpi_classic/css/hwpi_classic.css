@@ -150,6 +150,8 @@ margin-left:6em;
     font-size: 13px;
 }
 
+.block-boxes-os_sv_list_box .sv-list-view-title h1 {font-family:arial;}
+
 /* Border control */
 .not-front.two-sidebars #content-column .content-inner {
 	border-right: 1px solid #e7e7e7;
