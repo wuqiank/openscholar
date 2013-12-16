@@ -2621,7 +2621,20 @@ function _vsite_form_alias_validate($entity_type, $entity, $path) {
     // When creating a node/term and the user did not fill the alias field then
     // the alias is empty and if statement will fail.
     $alias_without_purl = substr($alias, (strpos($alias, '/') + 1));
-    if (menu_get_item($alias) || menu_get_item($alias_without_purl)) {
+    $items = array(
+      'alias_with_purl' => menu_get_item($alias),
+      'alias_without_purl' => menu_get_item($alias_without_purl),
+    );
+
+    // Checking the href of the menu item is equal to the alias of the node. We
+    // need to check the href because the menu_get_item return any value for any
+    // item. Even when not in used. On the other hand the href can be different
+    // between existing and non existing menu items.
+    // If a user enter a new alias, non existing alias, such as
+    // presentation/foo, the menu item holds the menu object of presentation.
+    // If a user enter an existing menu item, such as presentation/bar, the href
+    // of the menu item will be presentation/bar.
+    if ($items['alias_with_purl']['href'] == $alias || $items['alias_without_purl']['href'] == $alias_without_purl) {
       return FALSE;
     }
   }
