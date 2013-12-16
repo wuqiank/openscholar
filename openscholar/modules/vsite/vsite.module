@@ -2799,8 +2799,8 @@ function vsite_redirect_load_by_source_alter(&$redirects, $source, $context) {
 function vsite_og_default_roles_alter(&$roles) {
   $roles = array(
     'vsite user',
-    'vsite admin',
     'content editor',
+    'vsite admin',
   );
 }
 
