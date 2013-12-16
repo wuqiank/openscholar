@@ -712,3 +712,22 @@ function _cp_user_list_roles($format, $bundle, $gid = 0) {
 
   return $roles;
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function cp_user_form_og_ui_admin_new_role_alter(&$form, &$form_state) {
+  $item = menu_get_item();
+  if ($item['path'] != 'cp/users/roles') {
+    return;
+  }
+  $form['add']['#submit'][] = 'cp_user_roles_add_redirect';
+}
+
+/**
+ * Submit handler; After the user add roles from the cp redirect them back to
+ * the page he came from and not the default path of OG.
+ */
+function cp_user_roles_add_redirect($form, &$form_state) {
+  $form_state['redirect'] = 'cp/users/roles';
+}
