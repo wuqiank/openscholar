@@ -992,11 +992,11 @@ img.recent-images-list:hover {
 .lt-ie9	span[style*="FLOAT: RIGHT;"] .file-os-files-xxlarge, 
 .lt-ie9	span[style*="FLOAT: RIGHT;"] .file-os-files-small, 
 .lt-ie9	span[style*="FLOAT: RIGHT;"] .file-os-files-medium,
-span[style*="float:	right;"] .file-os-files-large, 
-span[style*="float:	right;"] .file-os-files-xlarge, 
-span[style*="float:	right;"] .file-os-files-xxlarge, 
-span[style*="float:	right;"] .file-os-files-small, 
-span[style*="float:	right;"] .file-os-files-medium {
+span[style*="float: right;"] .file-os-files-large, 
+span[style*="float: right;"] .file-os-files-xlarge, 
+span[style*="float: right;"] .file-os-files-xxlarge, 
+span[style*="float: right;"] .file-os-files-small, 
+span[style*="float: right;"] .file-os-files-medium {
 	padding-left:10px;
 	padding-right:0;
 	}	
