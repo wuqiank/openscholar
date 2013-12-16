@@ -19,7 +19,7 @@ class os_boxes_feedreader extends os_boxes_default {
     $options['feed'] = false;
     $options['number_of_items'] = 5;
     $options['feed_display'] = 'title';
-    $options['time_display'] = 'relative';
+    $options['time_display'] = 'formal';
 
     return $options;
   }
@@ -76,13 +76,18 @@ class os_boxes_feedreader extends os_boxes_default {
       '#description' => t('Select the way you wish the feed items to be displayed.')
     );
 
+    $options = array(
+      '0' => t('Don\'t show'),
+      'relative' => t('Relative <br/><span class="description">Example: 5 minutes ago</span>'),
+      'formal' => t('Full date <br/><span class="description">Example: August 21, 2013</span>'),
+    );
     $form['time_display'] = array(
-      '#type' => 'select',
-      '#title' => t('Feed item date/time display'),
-      '#options' => array('0' => "--None--", 'relative' => t("Relative (5 minutes ago)"), 'formal' => "Date (August 21, 2013)"),
+      '#type' => 'checkboxes',
+      '#title' => t('Original date and time published'),
+      '#options' => $options,
       '#required' => FALSE,
       '#default_value' => $this->options['time_display'],
-      '#description' => t('Select the way you wish the feeds time to be displayed.')
+      '#description' => t('Select the way you wish the feed\'s original publish date and time to be displayed.')
     );
 
     $form['number_of_items'] = array(
