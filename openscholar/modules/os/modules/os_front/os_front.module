@@ -1,56 +1,64 @@
 <?php
 
+/**
+ * @file
+ * Modifies layout and markup for OpenScholar sitewide front page.
+ */
+
 include_once('os_front.features.inc');
 
-
+/**
+ * Implements hook_context_default_contexts_alter().
+ */
 function os_front_context_default_contexts_alter($contexts) {
-  // add some extra blocks/boxes to the 'sitewide_front'
-  if (isset($contexts['os_sitewide_front'])) {
-    $b = &$contexts['os_sitewide_front']->reactions['block']['blocks'];
-
-    $b['boxes-os_front_header'] = array(
-      'module' => 'boxes',
-      'delta' => 'os_front_header',
-      'weight' => 0,
-      'region' => 'header_second',
-    );
-
-    $b['boxes-os_front_create'] = array(
-      'module' => 'boxes',
-      'delta' => 'os_front_create',
-      'weight' => 2,
-      'region' => 'header_second',
-    );
-
-    $b['boxes-os_front_main_support'] = array(
-      'module' => 'boxes',
-      'delta' => 'os_front_main_support',
-      'weight' => 0,
-      'region' => 'content_first',
-    );
-
-    $b['boxes-os_front_main_configure'] = array(
-      'module' => 'boxes',
-      'delta' => 'os_front_main_configure',
-      'weight' => 0,
-      'region' => 'content_second',
-    );
-
-    $b['boxes-os_front_sample'] = array(
-      'module' => 'boxes',
-      'delta' => 'os_front_sample',
-      'weight' => 0,
-      'region' => 'footer',
-    );
-
-    $b['os_search_solr-site-search']['region'] = 'header_second';
-    $b['os_search_solr-site-search']['weight'] = 1;
-    $b['os_search_db-site-search']['region'] = 'header_second';
-    $b['os_search_db-site-search']['weight'] = 1;
-    $b['vsite_register-get_your_site_block']['region'] = false;
+  // Only continues if context `os_sitewide_front` can be altered.
+  if (!isset($contexts['os_sitewide_front'])) {
+    return;
   }
+  $blocks = &$contexts['os_sitewide_front']->reactions['block']['blocks'];
+
+  $blocks['boxes-os_front_header'] = array(
+    'module' => 'boxes',
+    'delta' => 'os_front_header',
+    'weight' => 0,
+    'region' => 'header_second',
+  );
+
+  $blocks['boxes-os_front_main_support'] = array(
+    'module' => 'boxes',
+    'delta' => 'os_front_main_support',
+    'weight' => 0,
+    'region' => 'content_first',
+  );
+
+  $blocks['boxes-os_front_main_configure'] = array(
+    'module' => 'boxes',
+    'delta' => 'os_front_main_configure',
+    'weight' => 0,
+    'region' => 'content_second',
+  );
+
+  $blocks['boxes-os_front_sample'] = array(
+    'module' => 'boxes',
+    'delta' => 'os_front_sample',
+    'weight' => 1,
+    'region' => 'footer',
+  );
+
+  // Positions existing SOLR and drupal search widget.
+  $blocks['os_search_solr-site-search']['region'] = 'footer';
+  $blocks['os_search_solr-site-search']['weight'] = 0;
+  $blocks['os_search_db-site-search']['region'] = 'footer';
+  $blocks['os_search_db-site-search']['weight'] = 0;
+
+  // Modifies existing "Get your site now" block.
+  $blocks['vsite_register-get_your_site_block']['weight'] = 2;
+  $blocks['vsite_register-get_your_site_block']['region'] = 'header_second';
 }
 
+/**
+ * Implements hook_preprocess_HOOK() for html.tpl.php.
+ */
 function os_front_preprocess_html(&$vars) {
   if ($vars['is_front'] && !(module_exists('vsite') && vsite_get_vsite())) {
     $vars['classes_array'][] = 'sitewide-front';
