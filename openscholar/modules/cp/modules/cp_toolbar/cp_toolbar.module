@@ -275,12 +275,6 @@ function cp_toolbar_fill_drawer() {
   $bundles = os_get_bundles(array(1,2));
   asort($bundles);
 
-  // Do not show the following links.
-  $exclude_links = array(
-    'class_material',
-    'software_release',
-  );
-
   $links = array();
   $app_info = os_app_info();
   foreach ($bundles as $type => $name) {
