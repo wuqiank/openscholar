@@ -1709,6 +1709,27 @@ function os_app_info($app_name = NULL) {
 }
 
 /**
+ * Return an array of enabled content types in the current space.
+ *
+ * @return array
+ */
+function os_get_enabled_content_types() {
+  $enabled_content_types = array();
+  $spaces_features = variable_get('spaces_features', array());
+  foreach ($spaces_features as $feature => $enabled) {
+    if (!$enabled) {
+      continue;
+    }
+    $info = os_app_info($feature);
+    if (isset($info['nodetypes'])) {
+      $enabled_content_types = array_merge($enabled_content_types, array_values($info['nodetypes']));
+    }
+  }
+
+  return $enabled_content_types;
+}
+
+/**
  * Implements hook_form_BASE_FORM_ID_alter() for user_login form.
  */
 function os_form_user_login_alter(&$form, $form_state) {
