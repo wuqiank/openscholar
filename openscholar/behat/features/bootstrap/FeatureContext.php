@@ -1424,4 +1424,17 @@ class FeatureContext extends DrupalContext {
       throw new Exception("A button with id|name|value equal to '$button' was found.");
     }
   }
+
+  /**
+   * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
+   */
+  public function iSetFeatureStatus ($feature, $status, $group) {
+
+    return array(
+      new Step\When('I visit "' . $group . '"'),
+      new Step\When('I click "Build"'),
+      new Step\When('I select "' . $status . '" from "' . $feature . '"'),
+      new Step\When('I press "Save configuration"'),
+    );
+  }
 }

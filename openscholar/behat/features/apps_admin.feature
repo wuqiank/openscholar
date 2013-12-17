@@ -27,10 +27,7 @@ Feature:
     @api
     Scenario: Check site owner can't manage permissions of disabled app.
       Given I am logging in as "john"
-        And I visit "john"
-        And I click "Build"
-        And I select "Disabled" from "edit-spaces-features-os-booklets"
-        And I press "Save configuration"
+        And I set feature "edit-spaces-features-os-booklets" to "Disabled" on "john"
        When I visit "john/cp/users/permissions"
        Then I should not see "Create book page content"
         And I should see "Create Bio content"
@@ -38,9 +35,6 @@ Feature:
     @api
     Scenario: Check enabling app brings back its permissions.
       Given I am logging in as "john"
-        And I visit "john"
-        And I click "Build"
-        And I select "Public" from "edit-spaces-features-os-booklets"
-        And I press "Save configuration"
+        And I set feature "edit-spaces-features-os-booklets" to "Public" on "john"
        When I visit "john/cp/users/permissions"
        Then I should see "Create book page content"
