@@ -279,7 +279,7 @@ function cp_toolbar_fill_drawer() {
   $app_info = os_app_info();
   foreach ($bundles as $type => $name) {
     foreach ($app_info as $info) {
-      if (isset($info['require_parent_node'][$type]) && $info['require_parent_node'][$type] == TRUE) {
+      if (!empty($info['require_parent_node'][$type])) {
         continue 2;
       }
     }
