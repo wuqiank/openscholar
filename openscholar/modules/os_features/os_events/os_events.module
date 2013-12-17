@@ -238,7 +238,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
   $modal_settings += array(
     'modalSize' => array(
       'type' => 'fixed',
-      'width' => 530,
+      'width' => 700,
       'height' => 500,
       'addWidth' => 10,
       'addHeight' => 10,
@@ -874,14 +874,14 @@ function os_events_entity_insert($entity, $type) {
   $message['subject'] = t("@title event registration confirmation", array("@title" => $node->title));
 
   $params = array(
-    '@url' => url($node->nid),
+    '@url' => url('node/' . $node->nid, array('absolute' => TRUE)),
     '@title' => $node->title,
     '@user-name' => $wrapper->field_full_name->value(),
   );
 
   $message['body'] = array();
   $message['body'][] = t("Hello @user-name", $params);
-  $message['body'][] = t("You registered to the event <a href='@url'>@title</a> successfully", $params);
+  $message['body'][] = t("You registered to the event @title(@url) successfully", $params);
 
   // Retrieve the responsible implementation for this message.
   $system = drupal_mail_system($module, $key);
