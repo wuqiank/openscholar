@@ -282,9 +282,12 @@ function cp_toolbar_fill_drawer() {
   );
 
   $links = array();
+  $app_info = os_app_info();
   foreach ($bundles as $type => $name) {
-    if (in_array($type, $exclude_links)) {
-      continue;
+    foreach ($app_info as $info) {
+      if (isset($info['require_parent_node'][$type]) && $info['require_parent_node'][$type] == TRUE) {
+        continue 2;
+      }
     }
     $url_str = str_replace('_', '-', $type);
     foreach ($content as $link) {
