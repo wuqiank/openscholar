@@ -201,6 +201,9 @@ a img {
     padding-bottom: 20px;
 }
 
+
+#content-column .sv-list-video.sv-list-view-teaser .file.file-video {min-height: 150px;}
+
 .block-boxes-os_sv_list_file .file img {margin-right:2px;vertical-align:bottom;display:block;}
 
 .block-boxes-os_sv_list_file .file img.file-icon {display:inline;}
