@@ -25,7 +25,7 @@ Feature:
       | Software      | Public |
 
     @api
-    Scenario: Check site owner can't manage permissions of disabled app
+    Scenario: Check site owner can't manage permissions of disabled app.
       Given I am logging in as "john"
         And I visit "john"
         And I click "Build"
@@ -35,9 +35,8 @@ Feature:
        Then I should not see "Create book page content"
         And I should see "Create Bio content"
 
-
     @api
-    Scenario: Check enabling app brings back its permissions
+    Scenario: Check enabling app brings back its permissions.
       Given I am logging in as "john"
         And I visit "john"
         And I click "Build"

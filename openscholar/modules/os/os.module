@@ -1709,31 +1709,6 @@ function os_app_info($app_name = NULL) {
 }
 
 /**
- * Return an array of content types in the current space.
- *
- * @param bool $enabled
- *   (Optional) Look for enabled or disabled content types.
- *   By default look for the enabled ones.
- *
- * @return array $content_types
- */
-function os_get_content_types_by_features($enabled = TRUE) {
-  $content_types = array();
-  $spaces_features = variable_get('spaces_features', array());
-  foreach ($spaces_features as $feature => $status) {
-    if ($status != $enabled) {
-      continue;
-    }
-    $info = os_app_info($feature);
-    if (isset($info['nodetypes'])) {
-      $content_types = array_merge($content_types, array_values($info['nodetypes']));
-    }
-  }
-
-  return $content_types;
-}
-
-/**
  * Implements hook_form_BASE_FORM_ID_alter() for user_login form.
  */
 function os_form_user_login_alter(&$form, $form_state) {
