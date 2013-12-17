@@ -881,7 +881,7 @@ function os_events_entity_insert($entity, $type) {
 
   $message['body'] = array();
   $message['body'][] = t("Hello @user-name", $params);
-  $message['body'][] = t("You registered to the event @title(@url) successfully", $params);
+  $message['body'][] = t("You have successfully registered for @title (@url).", $params);
 
   // Retrieve the responsible implementation for this message.
   $system = drupal_mail_system($module, $key);
