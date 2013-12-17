@@ -379,7 +379,7 @@ function os_boxes_preprocess_boxes_box(&$variables) {
 
     $purl = '';
     if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
-      if ($vsite->purl_provider == PURL_VSITE_PATH) {
+      if ($vsite->purl_provider != PURL_VSITE_DOMAIN) {
         $purl = $vsite->group->purl.'/';
       }
     }
