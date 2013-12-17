@@ -375,6 +375,12 @@ fieldset#edit-pin-fieldset {
 	background:#F7F7F7;
 }
 
+.pin-button#pin-nvm {display:block;margin-bottom:20px;text-align:center;width: 50px;}
+
+.pin-button#pin-nvm a {width:50px;}
+  
+.collapsible.collapsed.pin-fieldset.form-wrapper.collapse-processed {padding-left:0;}
+
 .profile h3 {
 	margin: -5px -5px 15px;
 	padding:5px;
