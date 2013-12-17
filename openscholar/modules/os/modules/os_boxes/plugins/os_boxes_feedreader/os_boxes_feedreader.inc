@@ -81,12 +81,16 @@ class os_boxes_feedreader extends os_boxes_default {
       'relative' => t('Relative <br/><span class="description">Example: 5 minutes ago</span>'),
       'formal' => t('Full date <br/><span class="description">Example: August 21, 2013</span>'),
     );
+    $default_value = 'formal';
+    if (isset($this->options['time_display']) && in_array($this->options['time_display'], array_keys($options))) {
+      $default_value = $this->options['time_display'];
+    }
     $form['time_display'] = array(
       '#type' => 'radios',
       '#title' => t('Original date and time published'),
       '#options' => $options,
-      '#required' => FALSE,
-      '#default_value' => $this->options['time_display'],
+      '#required' => TRUE,
+      '#default_value' => $default_value,
       '#description' => t('Select the way you wish the feed\'s original publish date and time to be displayed.')
     );
 
