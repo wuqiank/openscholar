@@ -1709,24 +1709,28 @@ function os_app_info($app_name = NULL) {
 }
 
 /**
- * Return an array of enabled content types in the current space.
+ * Return an array of content types in the current space.
+ *
+ * @param bool $enabled
+ *   (Optional) Look for enabled or disabled content types.
+ *   By default look for the enabled ones.
  *
  * @return array
  */
-function os_get_enabled_content_types() {
-  $enabled_content_types = array();
+function os_get_content_types_by_features($enabled = TRUE) {
+  $content_types = array();
   $spaces_features = variable_get('spaces_features', array());
-  foreach ($spaces_features as $feature => $enabled) {
-    if (!$enabled) {
+  foreach ($spaces_features as $feature => $status) {
+    if ($status != $enabled) {
       continue;
     }
     $info = os_app_info($feature);
     if (isset($info['nodetypes'])) {
-      $enabled_content_types = array_merge($enabled_content_types, array_values($info['nodetypes']));
+      $content_types = array_merge($content_types, array_values($info['nodetypes']));
     }
   }
 
-  return $enabled_content_types;
+  return $content_types;
 }
 
 /**
