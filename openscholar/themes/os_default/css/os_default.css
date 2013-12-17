@@ -583,8 +583,8 @@ body.sitewide-front {
     line-height: 19px;
 }
 
-#block-os-search-solr-site-search #edit-submit,
-#block-os-search-db-site-search #edit-submit {
+.sitewide-front #block-os-search-solr-site-search #edit-submit,
+.sitewide-front #block-os-search-db-site-search #edit-submit {
     background: #919191;
     background-image: -webkit-linear-gradient(top, #919191, #6b6b6b);
     background-image: -moz-linear-gradient(top, #919191, #6b6b6b);
@@ -599,8 +599,8 @@ body.sitewide-front {
     text-decoration: none;
 }
 
-#block-os-search-solr-site-search #edit-submit:hover,
-#block-os-search-db-site-search #edit-submit:hover {
+.sitewide-front #block-os-search-solr-site-search #edit-submit:hover,
+.sitewide-front #block-os-search-db-site-search #edit-submit:hover {
     background: #df1f25;
     background-image: -webkit-linear-gradient(top, #df1f25, #BB2127);
     background-image: -moz-linear-gradient(top, #df1f25, #BB2127);
