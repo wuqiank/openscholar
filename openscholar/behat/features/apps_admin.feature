@@ -23,3 +23,9 @@ Feature:
       | Publications  | Public |
       | Reader        | Public |
       | Software      | Public |
+
+    @api
+    Scenario: Check site owner can't manage permissions of disabled app
+      Given I am logging in as "john"
+        And I visit "john"
+        And I click "Build"
