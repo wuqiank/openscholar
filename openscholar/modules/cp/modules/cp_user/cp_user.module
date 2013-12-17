@@ -248,8 +248,11 @@ function cp_user_og_ui_admin_permissions($variables) {
   // Only CRUD permissions should be displayed in the UI. Create an array of
   // the allowed permissions so we can filter the list by it.
   $allowed_permissions = array();
+  $enabled_content_types = cp_user_get_enabled_content_types();
   foreach (node_permissions_get_configured_types() as $type) {
-    $allowed_permissions = array_merge($allowed_permissions, og_list_permissions($type));
+    if (in_array($type, $enabled_content_types)) {
+      $allowed_permissions = array_merge($allowed_permissions, og_list_permissions($type));
+    }
   }
   $allowed_permissions = array_keys($allowed_permissions);
   // In addition to CRUD permissions, the permission 'Change theme' is the only
@@ -324,6 +327,26 @@ function cp_user_og_ui_admin_permissions($variables) {
   $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'permissions')));
   $output .= drupal_render_children($form);
   return $output;
+}
+
+/**
+ * Return an array of enabled content types in the current space.
+ *
+ * @return array
+ */
+function cp_user_get_enabled_content_types() {
+  $enabled_content_types = array();
+  $spaces_features = variable_get('spaces_features', array());
+  foreach ($spaces_features as $feature => $enabled) {
+    if ($enabled) {
+      $info = os_app_info($feature);
+      if ($info['nodetypes']) {
+        $enabled_content_types = array_merge($enabled_content_types, array_values($info['nodetypes']));
+      }
+    }
+  }
+
+  return $enabled_content_types;
 }
 
 /**
