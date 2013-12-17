@@ -1715,7 +1715,7 @@ function os_app_info($app_name = NULL) {
  *   (Optional) Look for enabled or disabled content types.
  *   By default look for the enabled ones.
  *
- * @return array
+ * @return array $content_types
  */
 function os_get_content_types_by_features($enabled = TRUE) {
   $content_types = array();
