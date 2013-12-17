@@ -275,8 +275,17 @@ function cp_toolbar_fill_drawer() {
   $bundles = os_get_bundles(array(1,2));
   asort($bundles);
 
+  // Do not show the following links.
+  $exclude_links = array(
+    'class_material',
+    'software_release',
+  );
+
   $links = array();
   foreach ($bundles as $type => $name) {
+    if (in_array($type, $exclude_links)) {
+      continue;
+    }
     $url_str = str_replace('_', '-', $type);
     foreach ($content as $link) {
       if ($link['access'] && $link['link_path'] == 'node/add/'.$url_str) {

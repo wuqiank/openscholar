@@ -31,20 +31,21 @@ class sv_list_taxonomy extends sv_list_plugin {
     if (empty($vocabs)) {
       return;
     }
-        
+            
     // The 'vocabs' tree will contain select fields - one for each vocabulary.    
-    $form['filters']['vocabs'] = array(
-      '#type' => 'item',
-      '#prefix' => '<div id="vocabs">',
-      '#suffix' => '</div>',
-      '#title' => t('Filter by vocabulary'),
+    $vocab_form = array(
+      '#type' => 'fieldset',
+      '#collapsible' => FALSE,
+      '#title' => 'Filter by Vocabulary',
       '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
       '#tree' => TRUE,
       '#attached' => array(
+        'css' => array(libraries_get_path('select2') . '/select2.css'),
         'js' => array(
           array('type' => 'setting', 'data' => array('sv_list_vocab_bundles' => $vocabs)),
+          libraries_get_path('select2') . '/select2.js',
         )
-      )
+      ),
     );  
     
     // Create a select field for each vocabulary, with the vocabulary's terms as the field's options.
@@ -62,7 +63,7 @@ class sv_list_taxonomy extends sv_list_plugin {
       $vocab_default_value = (isset($options['vocabs'][$element])) ? $options['vocabs'][$element] : array();
       
       // Create select field with the terms as options.
-      $form['filters']['vocabs'][$element] = array(
+      $vocab_form[$element] = array(
         '#type' => 'select',
         '#options' => $terms,
         '#title' => $vocabulary->name,
@@ -71,6 +72,8 @@ class sv_list_taxonomy extends sv_list_plugin {
         '#element_validate' => array('os_sv_list_terms_element_validate'), //group selected terms from all vocab fields
       );
     }
+    
+    $form['vocabs'] = $vocab_form;
   }
   
   /**

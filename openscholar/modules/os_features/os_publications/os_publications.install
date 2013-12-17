@@ -1060,3 +1060,13 @@ function os_publications_update_7014() {
   $csl = file_get_contents(drupal_get_path('module', 'biblio_citeproc') . '/style/american-chemical-society.csl');
   _install_csl('american-chemical-society.csl', $csl);
 }
+
+/**
+ * Make the "Data" biblio type visible.
+ */
+function os_publications_update_7015() {
+  db_update('biblio_types')
+    ->fields(array('visible' => 1))
+    ->condition('name', 'data')
+    ->execute();
+}

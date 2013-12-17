@@ -27,3 +27,9 @@ body.page-os-widget #vocabs .form-type-select {
      clear: both;
      display: block;
 }
+
+.more-wrapper>div, 
+fieldset#edit-content>.fieldset-wrapper>div {
+	display: inline-block;
+	margin-right: 2em;
+}

@@ -493,6 +493,18 @@ function os_migrate_demo_get_user_by_name($name) {
 }
 
 /**
+ * Get a role id.
+ * 
+ * @param $name
+ * @param $gid
+ */
+function os_migrate_demo_get_role_by_name($name, $gid) {
+  $roles = og_roles('node', NULL, $gid);
+  $id = array_search($name, $roles);
+  print($id);
+}
+
+/**
  * Delete a node with a specific title.
  *
  * @param $title
