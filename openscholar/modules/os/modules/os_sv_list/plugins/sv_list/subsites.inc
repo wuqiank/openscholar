@@ -15,7 +15,7 @@ $plugin = array(
 class sv_list_subsites extends sv_list_plugin  {
   
   public function options_defaults() {
-    return array('query_scope' => 'current');
+    return array('query_scope' => array('current' => 'current'));
   }
   
   public function options_form($options, &$form) {
@@ -48,7 +48,7 @@ class sv_list_subsites extends sv_list_plugin  {
     if (!module_exists('vsite') || (($vsite = spaces_get_space()) == FALSE)) {
       return;
     }
-    
+
     //skip this if subsites aren't an option
     if (!in_array($vsite->og->type, variable_get('subsite_parents', array()))) {
       return;

@@ -87,6 +87,10 @@ class sv_list_node_biblio extends sv_list_plugin {
     $types = $this->_biblio_types();
     $whitelist = array_filter($options['biblio_whitelist']);
     
+    if (empty($whitelist) || $options['content_type'] != 'biblio') {
+      return;
+    }
+    
     if (count($types) > count($whitelist)) {
       $nids = db_select('biblio', 'b') 
         ->condition('biblio_type', array_values($whitelist), 'IN')

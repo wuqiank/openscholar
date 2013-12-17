@@ -20,6 +20,10 @@ class sv_list_node_person  extends sv_list_plugin {
    * People should use last name, not first.
    */
   public function sort_alter($options, $efq) {  
+    if ($options['content_type'] != 'person') {
+      return;
+    }
+    
     if ($options['sort_by'] == 'sort_alpha') {
       $efq->order = array();
       $efq->fieldOrderBy('field_last_name', 'value', 'ASC');
