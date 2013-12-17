@@ -8,7 +8,6 @@
 
 function os_install() {
   _os_date_formats();
-  variable_set('mimemail_format', 'full_html');
 }
 
 /**
