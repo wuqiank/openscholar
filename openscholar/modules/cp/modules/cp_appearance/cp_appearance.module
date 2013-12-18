@@ -23,7 +23,7 @@ function cp_appearance_menu(){
     'weight' => 20,
     'menu_name' => 'cp',
     'access callback' => array(
-      'spaces_access_admin'
+      'cp_appearance_change_theme_access'
     )
   );
 
@@ -37,7 +37,7 @@ function cp_appearance_menu(){
     'weight' => 20,
     'menu_name' => 'cp',
     'access callback' => array(
-      'spaces_access_admin'
+      'cp_appearance_change_theme_access'
     )
   );
 
@@ -64,11 +64,20 @@ function cp_appearance_menu(){
 }
 
 /**
- * Access callback.
+ * Access callback; For adding subthemes.
  */
 function cp_appearance_sub_theme_access() {
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
     return og_user_access('node', $vsite->group->nid, 'manage subtheme', NULL, FALSE, TRUE);
+  }
+}
+
+/**
+ * Access callback; For changing the VSite's theme.
+ */
+function cp_appearance_change_theme_access() {
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    return og_user_access('node', $vsite->group->nid, 'change theme');
   }
 }
 
@@ -331,7 +340,8 @@ function _cp_appearance_theme_header_item($header_type) {
 
   switch ($header_type) {
     case 'HEADER_FEATURED':
-      $display_title = variable_get('cp_appearance_featured_display_title', '');
+      $default = t('Featured themes');
+      $display_title = variable_get('cp_appearance_featured_display_title', $default);
       if (!empty($display_title)) {
         $title = '<h2>' . check_plain($display_title) . '</h2>';
       }
@@ -439,26 +449,6 @@ function cp_appearance_swap_screenshot($form, &$state){
   ));
 }
 
-
-function cp_appearance_cp_settings() {
-  $setting['enable_responsive'] = array(
-    'group' => array(
-      '#title' => t('Responsive'),
-      '#id' => 'responsive',
-    ),
-    'form' => array(
-      '#type' => 'checkbox',
-      '#default_value' => variable_get('enable_responsive', false),
-      '#title' => t('Enable responsive behaviors'),
-      '#description' => t('Responsive behaviors will change the layout of your page to fit the screens of smaller devices, such
-        as phones or tablets. Disabling this will prevent the layout from changing, but could make using your site more difficult
-        on smaller devices.'),
-    ),
-  );
-
-  return $setting;
-}
-
 /**
  * Implements hook_admin_paths().
  */
@@ -477,6 +467,10 @@ function cp_appearance_og_permission() {
     'manage subtheme' => array(
       'title' => t('Add subtheme'),
       'description' => t('Allow the user to add subtheme.'),
+    ),
+    'change theme' => array(
+      'title' => t('Change theme'),
+      'description' => t('Allow the user to change the theme.'),
     ),
   );
 }

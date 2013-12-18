@@ -538,6 +538,7 @@ ol.search-results li.search-result:last-child {
 /* node person */
  .node-type-person #content-column .node-person h1.node-title {
   font-size: 38px;
+  line-height: 35px;
 }
 
 .node-type-person .node-person .field-name-field-professional-title {
@@ -552,9 +553,9 @@ ol.search-results li.search-result:last-child {
   margin-bottom: 30px;
 }
 
-article.node-teaser.node-person .field-name-field-person-photo ~ .node-header,
 article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
-	margin-left: 6em;
+  float: left;
+  margin-left: 0;
 }
 
 #content-column article.node-teaser.node-person .field-name-field-person-photo ~ .node-header {
@@ -566,6 +567,7 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 .node-person.node-sidebar-teaser .field-name-field-person-photo {
   float: left;
   margin-top: 5px;
+  display: table-cell;
 }
 
 .node-type-person #content .node-person .field-name-body {
@@ -625,6 +627,12 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   padding: 15px 0 30px;
 }
 
+
+.person-teaser-wrapper {
+	display:table-cell;
+	vertical-align:top;
+}
+
 .node-link.node-teaser {
 	padding: 10px 0 5px;
 	}
@@ -638,9 +646,6 @@ LIST OF POSTS - PERSON TEASER IN SIDEBAR
      margin-right: 0;
 }
 
-.sidebar .block-boxes-os_sv_list_box .node.node-person.node-teaser.article.with-person-photo .node-header {
-	margin-left: 95px;
-}
 
 /* Node FAQ */
 .node-teaser.node-faq {

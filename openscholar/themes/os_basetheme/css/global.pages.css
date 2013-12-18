@@ -463,21 +463,26 @@ ul.class_material_field_class a.class_material_field_class_anchor {
     position: relative;
 }
 
+
 .video-indicator {
 	background: url("../images/movie_file_icon.png") no-repeat;
  	bottom: 5px;
-    display: block;
-    height: 13%;
-    left: 5px;
-    height: 48px;
-    width: 48px;
+  display: block;
+  height: 13%;
+  left: 5px;
+  height: 48px;
+  width: 48px;
 	position: relative;
-    margin-top: -48px;
+  margin-top: -48px;
+}
+
+.oembed:hover>a>.video-indicator {
+  background: url("../images/movie_file_icon_highlight.png") no-repeat;
 }
 
 /* VIDEO ATTACHED TO A NODE  */
 
-.oembed {
+.node-content .oembed {
     background: none repeat scroll 0 0 #EEEEEE;
     border-color: #ccc;
     border-radius: 0 0 0 0;
@@ -485,7 +490,7 @@ ul.class_material_field_class a.class_material_field_class_anchor {
     border-width: 1px;
     color: #555555;
     text-align:center;
-
+    width: 250px;
 }
 
 .oembed .oembed-title {
@@ -857,6 +862,57 @@ border-top:1px solid #ccc;
 	border:none;
 	border-bottom:none;
 }	
+
+/* ACCORDION OVERRIDES */
+.ui-accordion .ui-accordion-content {
+    padding: 0.7em;
+}
+
+.accordion .ui-corner-all, 
+.accordion .ui-corner-bottom, 
+.accordion .ui-corner-right, 
+.accordion .ui-corner-br,
+.accordion .ui-corner-top, 
+.accordion .ui-corner-tr {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+.accordion .ui-corner-all, 
+.accordion .ui-corner-bottom, 
+.accordion .ui-corner-left, 
+.accordion .ui-corner-bl,
+.accordion .ui-corner-left, 
+.accordion .ui-corner-tl,
+.accordion .ui-corner-top {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+
+.ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+    left: 0.2em;
+}
+
+.ui-accordion .ui-accordion-icons {
+    padding-left: 1.55em;
+}
+
+.accordion .ui-widget-content {
+    background: #fafafa;
+    border: none;
+    color: #333;
+}
+
+.accordion .ui-state-default, 
+.accordion .ui-widget-content .ui-state-default, 
+.accordion .ui-widget-header .ui-state-default,
+.accordion .ui-state-active, 
+.accordion .ui-widget-content .ui-state-active, 
+.accordion .ui-widget-header .ui-state-active {
+    background: #EEE;
+    border: none;
+    color: #333;
+}
 	
 /* JCAROUSEL OVERRIDE STYLES */
 
@@ -903,23 +959,16 @@ border:1px solid #CCC;
 	
 /* Recent Images Widget */
 
-.block-boxes-os_sv_list_box .item-list ul.recent-images-list li {list-style-image:none;}
-
-ul.recent-images-list li {
-  list-style: none;
-  padding: 0;
+img.recent-images-list {
+  padding: 4px;	
+  background-color: white;	
+  border: 1px solid #ADADAD;
   float: left;
   clear: none;
   margin: 0 5px 5px 0; 
 }
-	
-ul.recent-images-list li img {
-  padding: 4px;	
-  background-color: white;	
-  border: 1px solid #ADADAD;
-}
 
-ul.recent-images-list li a:hover img {
+img.recent-images-list:hover {
      background-color: yellow;
  
 }

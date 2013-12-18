@@ -1050,3 +1050,32 @@ function os_publications_update_7012() {
 function os_publications_update_7013() {
   features_revert(array('os_publications' => array('field')));
 }
+
+/**
+ * Add "American chemical society.csl" and "American chemical society with titles.csl"
+ * to Biblio.
+ */
+function os_publications_update_7014() {
+  module_load_include('inc', 'biblio_citeproc', 'biblio_citeproc.admin');
+
+  $files = array(
+    'american-chemical-society',
+    'american-chemical-society-with-titles',
+  );
+
+  foreach ($files as $file) {
+    // Read the CSL file from the directory.
+    $csl = file_get_contents(drupal_get_path('module', 'biblio_citeproc') . '/style/' . $file . '.csl');
+    _install_csl($file . '.csl', $csl);
+  }
+}
+
+/**
+ * Make the "Data" biblio type visible.
+ */
+function os_publications_update_7015() {
+  db_update('biblio_types')
+    ->fields(array('visible' => 1))
+    ->condition('name', 'data')
+    ->execute();
+}

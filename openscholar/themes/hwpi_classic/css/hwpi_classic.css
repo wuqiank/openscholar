@@ -130,7 +130,7 @@ h2.block-title {
 
  
 article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
-margin-left: 5.7em;
+ margin-left: 0;
 }
 
 .sidebar article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
@@ -149,6 +149,8 @@ margin-left:6em;
 .links li a {
     font-size: 13px;
 }
+
+.block-boxes-os_sv_list_box .sv-list-view-title h1 {font-family:arial;}
 
 /* Border control */
 .not-front.two-sidebars #content-column .content-inner {
