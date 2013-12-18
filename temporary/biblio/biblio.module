@@ -1177,17 +1177,20 @@ function biblio_form($node, &$form_state) {
     '#required' => TRUE
   );
 
-    $form['biblio_next'] = array(
-        '#type'   => 'submit',
-        '#value'  => $step_two ? t('Change Publication Type') : t('Next'),
-        '#limit_validation_errors' => array(),
-        '#attributes' =>  array('style' => array('display: none;')),
-        '#weight' => -10,
-        '#submit' => array(),
-    );
-  if (isset($_COOKIE['has_js']) && !$_COOKIE['has_js']) {
-    unset($form['biblio_next']['#attributes']);
-  }
+  $form['biblio_next'] = array(
+    '#type'   => 'submit',
+    '#value'  => $step_two ? t('Change Publication Type') : t('Next'),
+    '#limit_validation_errors' => array(),
+    '#attributes' =>  array('class' => array('hide')),
+    '#weight' => -10,
+    '#submit' => array(),
+
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'biblio') . '/misc/biblio.js',
+      ),
+    ),
+  );
 
   if ($step_two) {
     $form['title'] = array(
