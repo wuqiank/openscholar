@@ -638,55 +638,6 @@ body.sitewide-front {
     margin-bottom: 20px;
 }
 
-<<<<<<< HEAD
-/* Site-wide front page */
-#block-os-get-started {
-  max-width: 780px;
-  margin: 0 auto;
-}
-
-.top-wrapper {
-  margin-bottom: 20px;
-}
-
-.top-wrapper .os-logo {
-  text-align: center;
-}
-
-.top-wrapper .tagline {
-  font-size: 20px;
-  color: gray;
-  margin-bottom: 20px;
-}
-
-.top-wrapper .first-wrapper,
-.top-wrapper .last-wrapper {
-  width: 50%;
-  float: left; /* LTR */
-}
-
-.top-wrapper .last-wrapper {
-  text-align: right; /* LTR */
-}
-
-.first-wrapper .form-actions .form-submit {
-  background: url("../images/icon_search.png") no-repeat scroll center center #4077AE !important;
-  height: 30px;
-  width: 30px;
-  border: solid 1px #ffffff;
-}
-
-.last-wrapper .create.btn {
-  background-color: #4cd964;
-  padding: 10px;
-  color: white;
-  font-size: 16px;
-}
-
-.last-wrapper .create.btn img {
-  vertical-align: middle;
-}
-=======
 #block-vsite-register-get-your-site-block {
     display: block;
     clear: both;
@@ -724,4 +675,3 @@ body.sitewide-front {
 .os-align-center {
     text-align: center;
 }
->>>>>>> SCHOLAR-3.x
