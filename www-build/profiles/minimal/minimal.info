@@ -1,0 +1,13 @@
+name = Minimal
+description = Start with only a few modules enabled.
+version = VERSION
+core = 7.x
+dependencies[] = block
+dependencies[] = dblog
+
+
+; Information added by drush on 2013-12-18
+version = "7.23"
+project = "drupal"
+datestamp = "1387384690"
+

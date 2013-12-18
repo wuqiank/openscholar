@@ -1,0 +1,15 @@
+name = Image
+description = Provides image manipulation tools.
+package = Core
+version = VERSION
+core = 7.x
+dependencies[] = file
+files[] = image.test
+configure = admin/config/media/image-styles
+
+
+; Information added by drush on 2013-12-18
+version = "7.23"
+project = "drupal"
+datestamp = "1387384690"
+

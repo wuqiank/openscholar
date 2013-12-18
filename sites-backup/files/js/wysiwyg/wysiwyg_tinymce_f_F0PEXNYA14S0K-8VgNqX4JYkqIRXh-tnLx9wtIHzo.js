@@ -1,0 +1,1 @@
+window.tinyMCEPreInit = {"base":"\/Users\/orr587\/bin\/drush\/profiles\/openscholar\/libraries\/tinymce\/jscripts\/tiny_mce","suffix":"","query":""};
