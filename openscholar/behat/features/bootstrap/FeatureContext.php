@@ -1441,7 +1441,7 @@ class FeatureContext extends DrupalContext {
       new Step\When('I visit "' . $group . '"'),
       new Step\When('I click "Build"'),
       new Step\When('I select "' . $status . '" from "' . $feature . '"'),
-      new Step\When('I press "Save configuration"'),
+      new Step\When('I press "edit-submit"'),
     );
   }
 }
