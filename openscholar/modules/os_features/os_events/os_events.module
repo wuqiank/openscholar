@@ -238,7 +238,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
   $modal_settings += array(
     'modalSize' => array(
       'type' => 'fixed',
-      'width' => 500,
+      'width' => 750,
       'height' => 500,
       'addWidth' => 10,
       'addHeight' => 10,
@@ -734,15 +734,27 @@ function os_events_form_registration_form_alter(&$form, &$form_state) {
  * when the registration is completed.
  */
 function os_events_modal_submit($form, $form_state) {
+  // Clean any message.
+  drupal_get_messages();
+
+  // Set the success message.
+  $registration = $form_state['registration'];
+  $wrapper = entity_metadata_wrapper($registration->entity_type, $registration->entity_id);
+  $date = $wrapper->field_date->value();
+
+  $param = array(
+    '@title' => $wrapper->label(),
+    '@data' => $date[0]['value'],
+  );
+  drupal_set_message(t('You have registered for @title at @data. We look forward to seeing you!', $param));
+
   $commands = array();
 
   // dismiss the window
   $commands[] = ctools_modal_command_dismiss();
+
   // Display messages.
   $commands[] = ajax_command_before('#columns', theme('status_messages'));
-
-  // Clean any message.
-  drupal_get_messages();
 
   print ajax_render($commands);
   drupal_exit();
