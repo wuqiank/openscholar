@@ -870,27 +870,23 @@ function os_events_entity_insert($entity, $type) {
   $module = 'os_events';
   $key = 'registration_confirmation';
   $language = language_default();
-  $message = drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, array(), NULL, FALSE);
-  $message['subject'] = t("@title event registration confirmation", array("@title" => $node->title));
-
   $params = array(
     '@url' => url('node/' . $node->nid, array('absolute' => TRUE)),
     '@title' => $node->title,
     '@user-name' => $wrapper->field_full_name->value(),
   );
 
+  drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, $params);
+}
+
+/**
+ * Implements hook_mail().
+ */
+function os_events_mail($key, &$message, $params) {
+  $message['subject'] = t("@title event registration confirmation", $params);
   $message['body'] = array();
   $message['body'][] = t("Hello @user-name", $params);
   $message['body'][] = t("You have successfully registered for @title (@url).", $params);
-
-  // Retrieve the responsible implementation for this message.
-  $system = drupal_mail_system($module, $key);
-
-  // Format the message body.
-  $message = $system->format($message);
-
-  // Send e-mail.
-  $message['result'] = $system->mail($message);
 }
 
 /**
