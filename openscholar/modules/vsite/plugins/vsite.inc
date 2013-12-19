@@ -435,7 +435,7 @@ class vsite extends space_og {
    * Overrides access_space().
    */
   function access_space($account = NULL) {
-    if (!parent::access_space($account) && !node_access('view', $this->group, $account)) {
+    if (!parent::access_space($account) || !node_access('view', $this->group, $account)) {
       return;
     }
 
