@@ -38,6 +38,19 @@ class os_boxes_sectionnav extends os_boxes_default {
         $block = os_books_build_toc($node) + $block;
       }
     }
+    elseif (isset($_GET['contexts'])) {
+      // coming from an ajax command that readds the widget to the list
+      foreach ($_GET['contexts'] as $c) {
+        if (strpos($c, 'os_pages') !== FALSE) {
+          $nid = str_replace('os_pages-page-', '', $c);
+          $node = node_load($nid);
+          if (isset($node->book['bid'])) {
+            $block = os_books_build_toc($nid) + $block;
+            break;
+          }
+        }
+      }
+    }
 
     return $block;
   }
