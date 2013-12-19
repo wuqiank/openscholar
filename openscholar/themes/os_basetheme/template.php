@@ -85,7 +85,7 @@ function os_basetheme_preprocess_page(&$vars) {
   }
 
   //hide useless tabs - drupal uses $vars['tabs'], but adaptive loads primary and secondary menu local tasks.
-  $vars['primary_local_tasks'] = $vars['tabs']['#primary'];
+  $vars['primary_local_tasks'] = !empty($vars['tabs']['#primary']) ? $vars['tabs']['#primary'] : '';
   $vars['secondary_local_tasks'] = $vars['tabs']['#secondary'];
 
   $theme_name = $GLOBALS['theme_key'];
@@ -180,6 +180,13 @@ function os_basetheme_preprocess_node(&$vars) {
       $vars['event_start']['month'] = check_plain($date->format('M'));
       $vars['event_start']['day'] = check_plain($date->format('d'));
       $vars['classes_array'][] = 'event-start';
+    }
+  }
+  
+  // Event persons, change title markup to h1
+  if ($vars['type'] == 'person') {
+    if (!$vars['teaser'] && $vars['view_mode'] != 'sidebar_teaser') {
+      $vars['title_prefix']['#suffix'] = '<h1 class="node-title">' . $vars['title'] . '</h1>';
     }
   }
 }
