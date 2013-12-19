@@ -22,6 +22,9 @@ function os_pinserver_auth_menu_alter(&$items) {
   if(variable_get('os_pinserver_registration', FALSE)){
     _os_pinserver_auth_register_menu_alter($items);
   }
+
+  // Add wrapper for "pinserver/auth"
+  $items['pinserver/auth']['page callback'] = 'os_pinserver_auth_init_check_user';
 }
 
 /**
@@ -164,4 +167,21 @@ function os_pinserver_auth_vsite_access_privacy_values_alter(&$privacy_options){
  */
 function os_pinserver_auth_vsite_access_denied($vsite){
   _os_pinserver_auth_vsite_access_denied($vsite);
+}
+
+/**
+ * Provide wrapper for "pinserver/auth" pinserver_check_user()
+ */
+function os_pinserver_auth_init_check_user(){
+  global $base_url, $conf;
+
+  $pinapp_domains = variable_get('os_fastpath_domain_pinapps',array());
+  // Does this host name  have a seperate pinserver config, if so load it up?
+  if(is_array($pinapp_domains) && isset($pinapp_domains[parse_url($base_url,PHP_URL_HOST)])){
+    foreach ($conf['os_fastpath_domain_pinapps'][parse_url($base_url,PHP_URL_HOST)] as $var => $value) {
+      $conf[$var] = $value;
+    }
+  }
+
+  return pinserver_check_user();
 }
