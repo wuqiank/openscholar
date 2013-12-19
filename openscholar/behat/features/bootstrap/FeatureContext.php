@@ -310,6 +310,18 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @When /^I change privacy of "([^"]*)" to "([^"]*)"$/
+   */
+  public function iChangePrivacyTo($vsite, $privacy) {
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/settings"'),
+      new Step\When('I select the radio button named "vsite_private" with value "' . $privacy . '"'),
+      new Step\When('I press "edit-submit"'),
+    );
+  }
+
+
+  /**
    * @Then /^I should verify the node "([^"]*)" not exists$/
    */
   public function iShouldVerifyTheNodeNotExists($title) {

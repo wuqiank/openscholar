@@ -12,3 +12,12 @@ Feature:
     | "einstein"                      | "Einstein"                                          |
     | "einstein/blog"                 | "Mileva Marić"                                      |
     | "einstein/blog/mileva-marić"    | "Yesterday I met Mileva, what a nice girl :)."      |
+
+  @api
+  Scenario: Testing private vsite can be seen only by allowed users.
+    Given I am logging in as "john"
+    When 
+    And I click "Log out"
+    And I am logging in as "klark"
+    And I edit the node "First blog"
+    Then I should get a "200" HTTP response
