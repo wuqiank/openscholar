@@ -234,7 +234,7 @@ a img {
 	width: 200px;
 }
 
-#content-column .sv-list-view-teaser .file-image img,
+#content-column .sv-list-image.sv-list-view-teaser .file-image img,
 #content-column .sv-list-video.sv-list-view-teaser .oembed {
 	float: left;
 }
@@ -264,7 +264,7 @@ div.content a.download-link {
 	}
 	
 .sv-list-all.sv-list-view-teaser .file-info {display:table;}
-.sv-list-all.sv-list-view-teaser .file-info a {display:table-cell;}
+
 
 p {
      margin: 0px 0px 1.5em;
