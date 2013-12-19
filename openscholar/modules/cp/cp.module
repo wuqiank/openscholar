@@ -593,6 +593,15 @@ function cp_form_redirect_edit_form_alter(&$form, &$form_state, $form_id) {
     return;
   }
 
+  // Include the `purl.admin.inc` file to invoke validate callback for when
+  // users rebuild the form to confirm adding a URL redirect whose source
+  // URL is an existing menu item.
+  $form_state['build_info']['files'][] = array(
+    'type' => 'inc',
+    'module' => 'purl',
+    'name' => 'purl.admin',
+  );
+  
   // Determines this vsite's purl modifier value.
   if (empty($form['purl']['modifier']['#default_value'])) {
     $default_value = "{$vsite->purl_provider}:{$vsite->id}";
