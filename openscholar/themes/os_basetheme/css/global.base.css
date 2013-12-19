@@ -216,6 +216,8 @@ a img {
 
 .block-boxes-os_sv_list_file .file img {margin-right:15px;display:block;}
 .block-boxes-os_sv_list_file .file img.file-icon {margin-right:8px;}
+.sv-list-all.sv-list-view-os_files_link_icon .file img.file-icon {margin-right:4px;}
+
 
 .block-boxes-os_sv_list_file .file img.file-icon {display:inline;}
 
