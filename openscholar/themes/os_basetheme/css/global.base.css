@@ -204,11 +204,18 @@ a img {
 #content-column .sv-list-video.sv-list-view-teaser .file.file-video,
 #content-column .sv-list-image.sv-list-view-teaser .file.file-image {
 	border-bottom: none;
+	margin-bottom:80px;
+
+}
+
+#content-column .sv-list-image.sv-list-view-teaser .file.file-image {
+	margin-bottom:20px;
 
 }
 
 
-.block-boxes-os_sv_list_file .file img {margin-right:8px;display:block;}
+.block-boxes-os_sv_list_file .file img {margin-right:15px;display:block;}
+.block-boxes-os_sv_list_file .file img.file-icon {margin-right:8px;}
 
 .block-boxes-os_sv_list_file .file img.file-icon {display:inline;}
 
@@ -244,19 +251,18 @@ a img {
 a.entity-link {
 	display: inline;
 	font-weight:bold;	
-	margin-right: 10px;
+	/*margin-right: 10px;*/
 }
 
 div.content a.download-link {
-	background: url("../images/scholarbase-sprite.png") no-repeat scroll 2px -588px rgba(0, 0, 0, 0);
-    font-size: 12px;
+	/*background: url("../images/scholarbase-sprite.png") no-repeat scroll 2px -588px rgba(0, 0, 0, 0);*/
+    font-size: 11px;
     padding-left: 1.2em;
-  
+    text-decoration:underline;
 	}
-/*
-div.sidebar a.download-link {
-	float: right;
-}*/
+	
+.sv-list-all.sv-list-view-teaser .file-info {display:table;}
+.sv-list-all.sv-list-view-teaser .file-info a {display:table-cell;}
 
 p {
      margin: 0px 0px 1.5em;
