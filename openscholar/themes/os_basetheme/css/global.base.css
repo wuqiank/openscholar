@@ -253,13 +253,13 @@ a img {
 a.entity-link {
 	display: inline;
 	font-weight:bold;	
-	/*margin-right: 10px;*/
+	padding-right: 10px;
 }
 
 div.content a.download-link {
-	/*background: url("../images/scholarbase-sprite.png") no-repeat scroll 2px -588px rgba(0, 0, 0, 0);*/
+	/*background: url("../images/scholarbase-sprite.png") no-repeat scroll 2px -588px rgba(0, 0, 0, 0);
+	 padding-left: 1.2em;*/
     font-size: 11px;
-    padding-left: 1.2em;
     text-decoration:underline;
 	}
 	
