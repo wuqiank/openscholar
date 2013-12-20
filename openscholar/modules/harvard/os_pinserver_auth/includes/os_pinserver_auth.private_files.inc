@@ -293,9 +293,18 @@ function _os_pinserver_auth_init_variables($boot = FALSE){
 	  $conf = variable_initialize(isset($conf) ? $conf : array());
   }
 
+  $url_info = parse_url($base_url);
+  $default = "{$url_info['scheme']}://{$url_info['host']}}";
+
+  //If this is a secure URL and there are no overrides for it, use the insecure
+  if($url_info['scheme'] == "https" && is_array($conf['os_fastpath_domain_pinapps']) && !isset($conf['os_fastpath_domain_pinapps'][$default])){
+    $default = "http://{$url_info['host']}}";
+  }
+
+
   // Does this host have a seperate pinserver config?
-  if(is_array($conf['os_fastpath_domain_pinapps']) && isset($conf['os_fastpath_domain_pinapps'][$base_url])){
-    foreach ($conf['os_fastpath_domain_pinapps'][$base_url] as $var => $value) {
+  if(is_array($conf['os_fastpath_domain_pinapps']) && isset($conf['os_fastpath_domain_pinapps'][$default])){
+    foreach ($conf['os_fastpath_domain_pinapps'][$default] as $var => $value) {
     	$conf[$var] = $value;
     }
   }
