@@ -91,8 +91,13 @@ function os_front_block_view($delta) {
           'text' => array(
             '#prefix' => '<span class="os-title-text">',
             '#suffix' => '</span>',
-            'text' => array(
-              '#markup' => '@'.variable_get('os_front_site_title', 'Change Me')
+            'text-anon' => array(
+              '#markup' => ' @ '.variable_get('os_front_site_title', 'Change Me'),
+              '#access' => !user_access('administer content'),
+            ),
+            'text-auth' => array(
+              '#markup' => ' @ '.l(variable_get('os_front_site_title', 'Change Me'), 'admin/config/openscholar/site-title'),
+              '#access' => user_access('administer content'),
             )
           )
         ),
@@ -106,6 +111,24 @@ function os_front_block_view($delta) {
       return $block;
     break;
   }
+}
+
+/**
+ * Implements hook_form_os_settings_form_alter().
+ */
+function os_front_form_os_settings_form_alter(&$form, &$form_state) {
+  $form['front-page'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => empty($form_state['build_info']['args']) || $form_state['build_info']['args'][0] != 'site-title',
+    '#title' => t('Front Page'),
+    'os_front_site_title' => array(
+      '#type' => 'textfield',
+      '#title' => t('Title of Site'),
+      '#description' => t('Appears on the default front page'),
+      '#default_value' => variable_get('os_front_site_title', 'Change Me')
+    )
+  );
 }
 
 /**
