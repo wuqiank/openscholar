@@ -17,8 +17,8 @@ function os_front_context_default_contexts_alter($contexts) {
   }
   $blocks = &$contexts['os_sitewide_front']->reactions['block']['blocks'];
 
-  $blocks['boxes-os_front_header'] = array(
-    'module' => 'boxes',
+  $blocks['os_front-os_front_header'] = array(
+    'module' => 'os_front',
     'delta' => 'os_front_header',
     'weight' => 0,
     'region' => 'header_second',
@@ -38,13 +38,6 @@ function os_front_context_default_contexts_alter($contexts) {
     'region' => 'content_second',
   );
 
-  $blocks['boxes-os_front_sample'] = array(
-    'module' => 'boxes',
-    'delta' => 'os_front_sample',
-    'weight' => 1,
-    'region' => 'footer',
-  );
-
   // Positions existing SOLR and drupal search widget.
   $blocks['os_search_solr-site-search']['region'] = 'footer';
   $blocks['os_search_solr-site-search']['weight'] = 0;
@@ -54,6 +47,65 @@ function os_front_context_default_contexts_alter($contexts) {
   // Modifies existing "Get your site now" block.
   $blocks['vsite_register-get_your_site_block']['weight'] = 2;
   $blocks['vsite_register-get_your_site_block']['region'] = 'header_second';
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function os_front_block_info() {
+  $blocks = array();
+
+  $blocks['os_front_header'] = array(
+    'info' => 'Front Page Header',
+    'cache' => DRUPAL_CACHE_GLOBAL,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function os_front_block_view($delta) {
+  switch($delta) {
+    case 'os_front_header':
+      $output = array(
+        'banner' => array(
+          '#type' => 'container',
+          '#attributes' => array(
+            'class' => array(
+              'os-align-center',
+            ),
+          ),
+          'image' => array(
+            '#theme' => 'image',
+            '#path' => drupal_get_path('theme', 'os_default')."/images/osfrontpg_logo.gif",
+            '#alt' => t('OpenScholar'),
+            '#title' => t('OpenScholar'),
+            '#attributes' => array(
+              'class' => array(
+                'os-title-image',
+              ),
+            ),
+          ),
+          'text' => array(
+            '#prefix' => '<span class="os-title-text">',
+            '#suffix' => '</span>',
+            'text' => array(
+              '#markup' => '@'.variable_get('os_front_site_title', 'Change Me')
+            )
+          )
+        ),
+      );
+
+      $block = array(
+        'subject' => NULL,
+        'content' => $output,
+      );
+
+      return $block;
+    break;
+  }
 }
 
 /**
