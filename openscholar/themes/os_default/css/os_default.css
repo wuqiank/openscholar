@@ -682,6 +682,10 @@ text-decoration:none;
     margin: 40px 0 40px 0 !important;
 }
 
+.sitewide-front #block-vsite-register-get-your-site-block {
+margin: 10px 0 40px 0 !important;
+}
+
 #block-vsite-register-get-your-site-block .get-your-site-button {
     background: #4CD964;
     -webkit-border-radius: 3px;
