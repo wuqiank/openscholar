@@ -33,6 +33,15 @@
             return;
           }
           if ($('#os-tour-home').length) {
+            // Settings Gear offsets for HWPI Classic default flavor.
+            var settingsXOffset = 945;
+            var settingsYOffset = 47;
+            // Settings Gear offsets for HWPI Classic Indigo flavor w/ HWP Personal sidebar widget.
+            if ($('#block-boxes-hwp-personal-contact-html').length) {
+              settingsXOffset = 625;
+              settingsYOffset = 36;
+            }
+
             var tour = {
               showPrevButton: true,
               scrollTopMargin: 100,
@@ -98,10 +107,10 @@
                 {
                   title: 'Section settings',
                   content: 'Every page on your site has a section settings gear like this one.<br/><br/>In fact, hover almost anywhere and you\'ll start seeing even more little gears...',
-                  target: document.querySelector('#content-column'),
+                  target: document.querySelector('#block-os-primary-menu'),
                   placement: "left",
-                  xOffset: 922,
-                  yOffset: 10
+                  xOffset: settingsXOffset,
+                  yOffset: settingsYOffset,
                 },
                 {
                   title: 'Let\'s get started!',
