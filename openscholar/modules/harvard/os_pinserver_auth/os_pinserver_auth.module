@@ -178,7 +178,6 @@ function os_pinserver_auth_vsite_access_denied($vsite){
  * Provide wrapper for "pinserver/auth" pinserver_check_user()
  */
 function os_pinserver_auth_init_check_user(){
-  global $base_url, $conf;
 
   //Init Domain specific pin variables
   _os_pinserver_auth_init_variables();
