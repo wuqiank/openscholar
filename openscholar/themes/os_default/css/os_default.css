@@ -459,11 +459,29 @@ body.sitewide-front {
 	line-height:19px;
 }
 
+
+.os-align-center img {
+   display:inline-block;
+    
+}
+
+.os-title-text a:hover,
 .sitewide-front a {
 	text-decoration:underline;
 	color:#007aff;
 
 }
+
+.os-title-text a,
+.os-title-text {
+	font-size: 50px;
+color: #777;
+height: 70px;
+display: inline-block;
+vertical-align: middle;
+text-decoration:none;
+}
+
 
 .not-logged-in.sitewide-front #columns {min-height:50px;}
 
@@ -664,6 +682,10 @@ body.sitewide-front {
     margin: 40px 0 40px 0 !important;
 }
 
+.sitewide-front #block-vsite-register-get-your-site-block {
+margin: 10px 0 40px 0 !important;
+}
+
 #block-vsite-register-get-your-site-block .get-your-site-button {
     background: #4CD964;
     -webkit-border-radius: 3px;
@@ -682,4 +704,6 @@ body.sitewide-front {
 
 .os-align-center {
     text-align: center;
+    
+    
 }
