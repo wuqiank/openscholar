@@ -294,8 +294,8 @@ function _os_pinserver_auth_init_variables($boot = FALSE){
   }
 
   // Does this host have a seperate pinserver config?
-  if(is_array($conf['os_fastpath_domain_pinapps']) && isset($conf['os_fastpath_domain_pinapps'][parse_url($base_url,PHP_URL_HOST)])){
-    foreach ($conf['os_fastpath_domain_pinapps'][parse_url($base_url,PHP_URL_HOST)] as $var => $value) {
+  if(is_array($conf['os_fastpath_domain_pinapps']) && isset($conf['os_fastpath_domain_pinapps'][$base_url])){
+    foreach ($conf['os_fastpath_domain_pinapps'][$base_url] as $var => $value) {
     	$conf[$var] = $value;
     }
   }
