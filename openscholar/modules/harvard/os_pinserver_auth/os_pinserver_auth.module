@@ -25,6 +25,11 @@ function os_pinserver_auth_menu_alter(&$items) {
 
   // Add wrapper for "pinserver/auth"
   $items['pinserver/auth']['page callback'] = 'os_pinserver_auth_init_check_user';
+
+  if(isset($items['user/pin'])){
+    // Add wrapper for "user/pin"
+    $items['user/pin']['page callback'] = 'os_pinserver_auth_pin_user_login';
+  }
 }
 
 /**
@@ -62,7 +67,7 @@ function os_pinserver_auth_node_access($node, $op, $account) {
 function os_pinserver_auth_js() {
   // Ensure the stream wrappers are available
    drupal_load('module', 'system');
-   _os_pinserver_auth_init_variables();
+   _os_pinserver_auth_init_variables(TRUE);
 
   return array(
     'files' => array(
@@ -175,13 +180,19 @@ function os_pinserver_auth_vsite_access_denied($vsite){
 function os_pinserver_auth_init_check_user(){
   global $base_url, $conf;
 
-  $pinapp_domains = variable_get('os_fastpath_domain_pinapps',array());
-  // Does this host name  have a seperate pinserver config, if so load it up?
-  if(is_array($pinapp_domains) && isset($pinapp_domains[parse_url($base_url,PHP_URL_HOST)])){
-    foreach ($conf['os_fastpath_domain_pinapps'][parse_url($base_url,PHP_URL_HOST)] as $var => $value) {
-      $conf[$var] = $value;
-    }
-  }
+  //Init Domain specific pin variables
+  _os_pinserver_auth_init_variables();
 
   return pinserver_check_user();
 }
+
+/**
+ * Provide wrapper for 'pin/user' to init domain specific variables
+ */
+ function os_pinserver_auth_pin_user_login(){
+
+   //Init Domain specific pin variables
+   _os_pinserver_auth_init_variables();
+
+   pinserver_authenticate_pin_user_login();
+ }
