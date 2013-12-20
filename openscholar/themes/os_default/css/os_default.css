@@ -375,6 +375,12 @@ fieldset#edit-pin-fieldset {
 	background:#F7F7F7;
 }
 
+.pin-button#pin-nvm {display:block;margin-bottom:20px;text-align:center;width: 50px;}
+
+.pin-button#pin-nvm a {width:50px;}
+  
+.collapsible.collapsed.pin-fieldset.form-wrapper.collapse-processed {padding-left:0;}
+
 .profile h3 {
 	margin: -5px -5px 15px;
 	padding:5px;
@@ -459,6 +465,8 @@ body.sitewide-front {
 
 }
 
+.not-logged-in.sitewide-front #columns {min-height:50px;}
+
 .sitewide-front #header-container {
     padding: 0;
     margin-bottom:20px;
@@ -466,7 +474,7 @@ body.sitewide-front {
 }
 
 
-.sitewide-front #columns {
+.logged-in.sitewide-front #columns {
     background: url('../images/osfrontpg_headerbg.gif') center bottom no-repeat;
      margin-bottom: 25px;
 }
@@ -496,35 +504,41 @@ body.sitewide-front {
     margin-bottom: 20px;
 }
 
-.sitewide-front #block-boxes-os-front-main-support,
-.sitewide-front #block-boxes-os-front-main-configure {
+.sitewide-front #block-boxes-os-front-main-support {
 	border:1px solid #ff9500;
-	width:290px;
+	margin-bottom: 50px;
 }
+
+.sitewide-front #block-boxes-os-front-main-support .content {
+	padding: 15px;
+	line-height:23px;
+}
+
 
 
 .sitewide-front .os-title-image {margin-top:10px;}
 
-.sitewide-front #block-boxes-os-front-main-support .block-inner,
-.sitewide-front #block-boxes-os-front-main-configure .block-inner {
+.sitewide-front #block-boxes-os-front-main-support .block-inner {
     margin-left: 0;
     margin-right: 0;
 }
 
-.sitewide-front #block-boxes-os-front-main-support .boxes-box-content,
-.sitewide-front #block-boxes-os-front-main-configure .boxes-box-content {
+.sitewide-front #block-boxes-os-front-main-support .boxes-box-content {
     margin-left: 12px;
     margin-right: 12px;
 }
 
 
 
-.sitewide-front #block-boxes-os-front-main-support h2,
-.sitewide-front #block-boxes-os-front-main-configure h2 {
+.sitewide-front #block-boxes-os-front-main-support h2 {
 	background:#ff9500;
 	padding:8px;
 	color:#FFF;
 	text-align:center;
+}
+
+#boxes-box-os_front_sample h2 {
+	font-size:23px;
 }
 
 .sitewide-front #block-boxes-os-front-create
@@ -546,9 +560,10 @@ body.sitewide-front {
 .sitewide-front #boxes-box-os_front_sample ul li {
 	float:left;
 	list-style:none;
-	margin-left: 52px;
+	margin-left: 40px;
 }
 
+#block-boxes-os-front-sample img {width:200px;border:1px solid #ccc;}
 
 /** TODO MOVE TO PROPER CSS FILE **/
 
@@ -583,8 +598,8 @@ body.sitewide-front {
     line-height: 19px;
 }
 
-#block-os-search-solr-site-search #edit-submit,
-#block-os-search-db-site-search #edit-submit {
+.sitewide-front #block-os-search-solr-site-search #edit-submit,
+.sitewide-front #block-os-search-db-site-search #edit-submit {
     background: #919191;
     background-image: -webkit-linear-gradient(top, #919191, #6b6b6b);
     background-image: -moz-linear-gradient(top, #919191, #6b6b6b);
@@ -599,8 +614,8 @@ body.sitewide-front {
     text-decoration: none;
 }
 
-#block-os-search-solr-site-search #edit-submit:hover,
-#block-os-search-db-site-search #edit-submit:hover {
+.sitewide-front #block-os-search-solr-site-search #edit-submit:hover,
+.sitewide-front #block-os-search-db-site-search #edit-submit:hover {
     background: #df1f25;
     background-image: -webkit-linear-gradient(top, #df1f25, #BB2127);
     background-image: -moz-linear-gradient(top, #df1f25, #BB2127);

@@ -183,6 +183,7 @@ function os_publications_query_biblio_alter(QueryAlterableInterface $query) {
       $new_order[$key] = $value;
       if ($key == 'biblio_type_name') {
         $new_order['n.sticky'] = 'DESC';
+        $new_order['biblio_year'] = 'DESC';
         $new_order['n.created'] = 'DESC';
       }
     }

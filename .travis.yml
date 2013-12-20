@@ -59,6 +59,9 @@ before_script:
   - drush solr-mark-all
   - drush solr-index
 
+  # Make sure emails are not sent.
+  - php -r "print json_encode(array('default-system' => 'DevelMailLog', 'mimemail' => 'MimeMailSystem'));" | drush vset --format=json mail_system -
+
   # Copy Behat configuration file.
   - cd profiles/openscholar/behat
   - cp behat.local.yml.travis behat.local.yml

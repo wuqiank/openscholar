@@ -98,8 +98,14 @@ function vsite_access_robotstxt() {
  */
 function vsite_access_node_access($node, $op, $account) {
   $type = is_string($node) ? $node : (is_array($node) ? $node['type'] : $node->type);
-
-  if (!$vsite = vsite_get_vsite()) {
+  $vsite = vsite_get_vsite();
+  
+  // Handle access to Group Content
+  if (og_is_group_content_type('node', $type) && $op == 'view') {
+     // When trying to view group content, check the privacy of the site.
+     if ($vsite && is_object($vsite->group) && !og_is_group_content_type('node', $vsite->group->type) && !node_access('view', $vsite->group, $account)) {
+       return NODE_ACCESS_DENY;
+    }
     return NODE_ACCESS_IGNORE;
   }
 

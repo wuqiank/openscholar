@@ -16,7 +16,7 @@
     <ul id="widget-categories">
     <?php foreach ($tags as $t): ?>
       <li>
-        <a href="#<?php echo $t; ?>">
+        <a href="#<?php echo $t; ?>" data-category="<?php echo $t; ?>">
           <?php echo $t; ?>
         </a>
       </li>

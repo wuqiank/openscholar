@@ -99,7 +99,7 @@ function os_events_admin_paths() {
  * Implements hook_os_entity_view_modes()
  */
 function os_events_os_entity_view_modes() {
-  return array('node' => 
+  return array('node' =>
     array('event' => array('sidebar_teaser')
   ));
 }
@@ -238,7 +238,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
   $modal_settings += array(
     'modalSize' => array(
       'type' => 'fixed',
-      'width' => 500,
+      'width' => 700,
       'height' => 500,
       'addWidth' => 10,
       'addHeight' => 10,
@@ -853,6 +853,40 @@ function os_events_modules_enabled($modules) {
 function os_events_date_ical_feed_event_render_alter(&$event, $view, &$context) {
   // Prevent placing a backslash before a colon, because it makes iCal crash.
   $event['description'] = str_replace('\:', ':', $event['description']);
+}
+
+/**
+ * Implements hook_entity_insert().
+ *
+ * Sending notification for user when subscribing to event.
+ */
+function os_events_entity_insert($entity, $type) {
+  if ($type != 'registration') {
+    return;
+  }
+  $wrapper = entity_metadata_Wrapper($type, $entity);
+  $node = node_load($entity->entity_id);
+
+  $module = 'os_events';
+  $key = 'registration_confirmation';
+  $language = language_default();
+  $params = array(
+    '@url' => url('node/' . $node->nid, array('absolute' => TRUE)),
+    '@title' => $node->title,
+    '@user-name' => $wrapper->field_full_name->value(),
+  );
+
+  drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, $params);
+}
+
+/**
+ * Implements hook_mail().
+ */
+function os_events_mail($key, &$message, $params) {
+  $message['subject'] = t("@title event registration confirmation", $params);
+  $message['body'] = array();
+  $message['body'][] = t("Hello @user-name", $params);
+  $message['body'][] = t("You have successfully registered for @title (@url).", $params);
 }
 
 /**

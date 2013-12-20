@@ -426,7 +426,7 @@ libraries[spyc][download][url] = "http://spyc.googlecode.com/files/spyc-0.5.zip"
 
 libraries[respondjs][type] = "libraries"
 libraries[respondjs][download][type] = "file"
-libraries[respondjs][download][url] = "https://github.com/scottjehl/Respond/archive/master.zip"
+libraries[respondjs][download][url] = "https://github.com/scottjehl/Respond/archive/1.3.0.zip"
 
 libraries[responsiveslides][type] = "libraries"
 libraries[responsiveslides][download][type] = "file"
