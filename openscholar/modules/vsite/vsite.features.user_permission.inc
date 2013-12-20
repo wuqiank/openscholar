@@ -37,6 +37,7 @@ function vsite_user_default_permissions() {
     'roles' => array(
       0 => 'administrator',
       1 => 'manager',
+      2 => 'support team'
     ),
     'module' => 'vsite',
   );
@@ -213,6 +214,16 @@ function vsite_user_default_permissions() {
     ),
     'module' => 'vsite',
   );
-
+  
+  // Exported permission: change vsite domain.
+  $permissions['change vsite domain'] = array(
+    'name' => 'change vsite domain',
+    'roles' => array(
+      0 => 'administrator',
+      1 => 'support team',
+    ),
+    'module' => 'vsite_domain',
+  );
+  
   return $permissions;
 }
