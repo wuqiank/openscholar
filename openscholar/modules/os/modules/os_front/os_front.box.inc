@@ -64,19 +64,22 @@ function os_front_default_box() {
         
       ),
       'intro' => array(
-        '#markup' => '<p>' . t('<strong>Welcome to OpenScholar!</strong> The easiest way to create and manage all of your institution sites. <br><br>You have successfully installed OpenScholar. This application makes it possible for you to create and manage multiple websites, or allow your users to create their own websites. Here are some things you can do right away:') . '</p>',
+        '#markup' => '<p>' . t('<div style="text-align:center;"><strong>Welcome to OpenScholar!</strong> <h3>The easiest way to create and manage all of your institution websites.</h3></div><br> You have successfully installed OpenScholar. This application makes it possible for you to create and manage multiple websites, or allow your users to create their own websites. Here are some things you can do right away:<br><br>') . '</p>',
       ),
       'list' => array(
         '#theme' => 'item_list',
         '#type' => 'ul',
         '#items' => array(
-          0 => t('<a href="/site/register">Create your first website now.</a>'),
-          1 => t('Configure who will have access</a> to create websites in this installation of OpenScholar.'),
-          2 => t('<a href="/admin/config/openscholar/vsite_register">Customize</a> what type of sites can be created</a> (personal / projects/ departments).'),
-	      3 => t('Other configuration settings.'),
-          4 => t('To provide your end-users with additional site-building guides and documentation, feel free to refer to OpenScholar @ Harvard\'s <a href="http://support.openscholar.harvard.edu">Help Center</a> and <a href="http://community.openscholar.harvard.edu">Community forum</a>.'),
-          5 => t('For questions about administering and configuring your new OpenScholar installation, search and/or post to our <a href="https://github.com/openscholar/openscholar/issues">GitHub issue queue</a>.'),
-         6 => t('Customize this front page .  (examples:  <a href="http://openscholar.harard.edu">http://openscholar.harard.edu</a>, <a href="http://scholar.harvard.edu">http://scholar.harvard.edu</a>).'),
+          0 => t('<a href="/site/register">Create your first website.</a>'),
+           1 => t('<a href="/admin/config/openscholar/vsite_register">Customize</a> what type of sites can be created (personal / projects/ departments).'),
+          2 => t('<a href="/admin/people/permissions">Configure</a> who will have access</a> to create websites in this installation of OpenScholar.'),
+         
+	      3 => t('Other <a href="/admin/config/openscholar">configuration</a> <a hre="/admin/config/openscholar/vsite_register">settings</a>.'),
+	      4 => t('For questions about administering and configuring your new OpenScholar installation, search and/or post to our <a href="https://github.com/openscholar/openscholar/issues">GitHub issue queue</a>.'),
+	      5 => t('<a href="/admin/structure/context/list/os_sitewide_front/edit">Customize</a> this front page .  (examples:  <a href="http://openscholar.harard.edu">http://openscholar.harard.edu</a>, <a href="http://scholar.harvard.edu">http://scholar.harvard.edu</a>).'),
+          6 => t('To provide your end-users with additional site-building guides and documentation, feel free to refer to OpenScholar @ Harvard\'s <a href="http://support.openscholar.harvard.edu">Help Center</a> and <a href="http://community.openscholar.harvard.edu">Community forum</a>.'),
+          
+         
          
         ),
       ),

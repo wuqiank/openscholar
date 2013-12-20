@@ -92,11 +92,11 @@ function os_front_block_view($delta) {
             '#prefix' => '<span class="os-title-text">',
             '#suffix' => '</span>',
             'text-anon' => array(
-              '#markup' => ' @ '.variable_get('os_front_site_title', 'Change Me'),
+              '#markup' => variable_get('os_front_site_title', 'Change Me'),
               '#access' => !user_access('administer content'),
             ),
             'text-auth' => array(
-              '#markup' => ' @ '.l(variable_get('os_front_site_title', 'Change Me'), 'admin/config/openscholar/site-title'),
+              '#markup' => l(variable_get('os_front_site_title', 'Change Me'), 'admin/config/openscholar/site-title'),
               '#access' => user_access('administer content'),
             )
           )
