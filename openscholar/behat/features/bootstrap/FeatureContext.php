@@ -72,7 +72,14 @@ class FeatureContext extends DrupalContext {
    *
    * @Given /^I am logging in as "([^"]*)"$/
    */
-  public function iAmLoggingInAs($username) {
+  public function iAmLoggingInAs($username, $custom = NULL) {
+    $steps = array();
+    if ($custom) {
+      $steps[] = new Step\When('I visit "/user" in a custom domain');
+    }
+    else {
+      $steps[] = new Step\When('I visit "/user"');
+    }
 
     try {
       $password = $this->users[$username];
@@ -84,12 +91,11 @@ class FeatureContext extends DrupalContext {
     if ($this->getDriver() instanceof Drupal\Driver\DrushDriver) {
       // We are using a cli, log in with meta step.
 
-      return array(
-        new Step\When('I visit "/user"'),
-        new Step\When('I fill in "Username" with "' . $username . '"'),
-        new Step\When('I fill in "Password" with "' . $password . '"'),
-        new Step\When('I press "edit-submit"'),
-      );
+      $steps[] = new Step\When('I fill in "Username" with "' . $username . '"');
+      $steps[] = new Step\When('I fill in "Password" with "' . $password . '"');
+      $steps[] = new Step\When('I press "edit-submit"');
+
+      return $steps;
     }
     else {
       // Log in.
@@ -101,6 +107,20 @@ class FeatureContext extends DrupalContext {
       $submit = $element->findButton('Log in');
       $submit->click();
     }
+  }
+
+  /**
+   * @Given /^I visit "([^"]*)" in a custom domain$/
+   */
+  function iVisitInCustomDomain($path) {
+    $this->getSession()->visit('http://lincoln.local/' . $path);
+  }
+
+  /**
+   * @Given /^I am logging in as "([^"]*)" in a custom domain$/
+   */
+  function iLogInAsInCustomDomain($user) {
+    $this->iAmLoggingInAs($user, TRUE);
   }
 
   /**
