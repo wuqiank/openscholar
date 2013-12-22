@@ -432,20 +432,10 @@ class vsite extends space_og {
   }
 
   /**
-   * Add access for support team.
-   */
-  function support_team_access($account = NULL) {
-    if (!user_access('subscribe as support team', $account)) {
-      return;
-    }
-
-  }
-
-  /**
    * Overrides access_space().
    */
   function access_space($account = NULL) {
-    if ((!parent::access_space($account) || !node_access('view', $this->group, $account)) && !$this->support_team_access($account)) {
+    if ((!parent::access_space($account) || !node_access('view', $this->group, $account))) {
       return;
     }
 
@@ -464,7 +454,7 @@ class vsite extends space_og {
       return TRUE;
     }
 
-    return user_access('administer group') || og_is_member('node', $this->id, 'user', $account) || support_team_access($accountt);
+    return user_access('administer group') || og_is_member('node', $this->id, 'user', $account);
   }
 
   /**
