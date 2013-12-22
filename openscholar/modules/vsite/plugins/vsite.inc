@@ -435,7 +435,26 @@ class vsite extends space_og {
    * Overrides access_space().
    */
   function access_space($account = NULL) {
-    return parent::access_space($account) && node_access('view', $this->group, $account);
+    if (!parent::access_space($account) || !node_access('view', $this->group, $account)) {
+      return;
+    }
+
+    // Check if vsite access is allowed. The above call to node_access() isn't
+    // sufficient as at this point there's still no vsite context, so
+    // vsite_get_vsite() will return FALSE, so we explicitly check the value of
+    // the "vsite access" field before granting access to the space.
+    $wrapper = entity_metadata_wrapper('node', $this->id);
+
+    if (empty($wrapper->{VSITE_ACCESS_FIELD})) {
+      return TRUE;
+    }
+
+    $value = $wrapper->{VSITE_ACCESS_FIELD}->value();
+    if (!in_array($value, array(VSITE_ACCESS_INTRANET_PRIVATE, VSITE_ACCESS_PRIVATE))) {
+      return TRUE;
+    }
+
+    return user_access('administer group') || og_is_member('node', $this->id, 'user', $account);
   }
 
   /**
