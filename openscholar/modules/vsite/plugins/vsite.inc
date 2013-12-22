@@ -435,6 +435,12 @@ class vsite extends space_og {
    * Overrides access_space().
    */
   function access_space($account = NULL) {
+    $item = menu_get_item();
+    if (user_access('subscribe as support team') && !empty($item['path']) && $item['path'] == 'group/%/%/subscribe') {
+      // Allow "support team" member to view subscribe page, even for private
+      // VSites.
+      return TRUE;
+    }
     if ((!parent::access_space($account) || !node_access('view', $this->group, $account))) {
       return;
     }
