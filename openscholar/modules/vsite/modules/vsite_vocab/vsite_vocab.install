@@ -13,6 +13,8 @@ function vsite_vocab_install(){
     'weight' => $weight
   ))->condition('type', 'module')->condition('name', 'vsite_vocab')->execute();
 
+  drupal_static_reset('og_fields_info');
+
   $bundles = og_get_all_group_content_bundle();
   if (isset($bundles['node']) && is_array($bundles['node'])) {
     $og_field = og_fields_info(OG_VOCAB_FIELD);
