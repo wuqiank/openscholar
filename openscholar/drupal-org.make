@@ -259,6 +259,7 @@ projects[oembed][patch][] = "http://drupal.org/files/issues/oembed.2134415.wysiw
 
 projects[og][subdir] = "contrib"
 projects[og][version] = 2.4
+projects[og][patch][] = "https://drupal.org/files/issues/2153555-og-role-maintain-on-revert-6.patch"
 
 projects[og_moderation][subdir] = "contrib"
 projects[og_moderation][version] = 2.0
@@ -294,7 +295,7 @@ projects[pinserver][subdir] = "contrib"
 projects[pinserver][type] = module
 projects[pinserver][download][type] = git
 projects[pinserver][download][url] = "git://github.com/openscholar/pinserver.git"
-projects[pinserver][download][tag] = 7.x-3.4.4
+projects[pinserver][download][tag] = 7.x-3.4.6
 
 projects[purl][subdir] = "contrib"
 ;: projects[purl][version] = 1.0-beta1+11-dev
@@ -304,6 +305,7 @@ projects[purl][download][revision] = 469e8668
 projects[purl][patch][] = "http://drupal.org/files/1473502-purl-init-2_0.patch"
 projects[purl][patch][] = "http://drupal.org/files/1982198-purl-cache-set-1.patch"
 projects[purl][patch][] = "http://drupal.org/files/729862-9-purl-inbound-alter-modifies-q.patch"
+projects[purl][patch][] = "http://drupal.org/files/issues/purl-integrate_redirect_keep_options-1735266-4.patch"
 
 projects[registration][subdir] = "contrib"
 projects[registration][version] = 1.1
@@ -365,6 +367,7 @@ projects[views][subdir] = "contrib"
 projects[views][download][type] = git
 projects[views][download][branch] = 7.x-3.x
 projects[views][download][revision] = 7173513
+projects[views][patch][] = "https://drupal.org/files/issues/views-jquery_dialog-2125261-1.patch"
 
 projects[views_bulk_operations][subdir] = "contrib"
 projects[views_bulk_operations][version] = 3.0
@@ -423,7 +426,7 @@ libraries[spyc][download][url] = "http://spyc.googlecode.com/files/spyc-0.5.zip"
 
 libraries[respondjs][type] = "libraries"
 libraries[respondjs][download][type] = "file"
-libraries[respondjs][download][url] = "https://github.com/scottjehl/Respond/archive/master.zip"
+libraries[respondjs][download][url] = "https://github.com/scottjehl/Respond/archive/1.3.0.zip"
 
 libraries[responsiveslides][type] = "libraries"
 libraries[responsiveslides][download][type] = "file"

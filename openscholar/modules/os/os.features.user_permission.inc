@@ -67,6 +67,7 @@ function os_user_default_permissions() {
       'manager' => 'manager',
       'vsite admin' => 'vsite admin',
       'vsite user' => 'vsite user',
+      'authenticated user' => 'authenticated user',
     ),
     'module' => 'overlay',
   );

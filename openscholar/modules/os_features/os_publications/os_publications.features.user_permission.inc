@@ -99,6 +99,7 @@ function os_publications_user_default_permissions() {
       'content editor' => 'content editor',
       'manager' => 'manager',
       'vsite admin' => 'vsite admin',
+      'vsite user' => 'vsite user',
     ),
     'module' => 'biblio',
   );

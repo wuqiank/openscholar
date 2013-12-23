@@ -31,7 +31,7 @@ function os_sv_list_pager_callback($box) {
   // Biblio doesn't use the EFQ's pager, so we have to initialize it ourselves.
   if ($box->options['content_type'] == 'biblio') {
     $page = isset($_GET['page']) ? $_GET['page'] : 0;
-    $total = count($box->get_nids(FALSE, $page));
+    $total = count($box->get_ids(FALSE, $page));
     $limit = $box->options['number_of_items'];
 
     if (!isset($ref)) {
