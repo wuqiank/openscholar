@@ -28,6 +28,26 @@ Feature:
      Then I should get a "403" HTTP response
 
   @api
+  Scenario: Testing private vsite can be seen by support team members.
+    Given I am logging in as "bill"
+      And I go to "obama"
+      And I should get a "200" HTTP response
+      And I click "Support obama"
+      And I should see "Are you sure you want to join the web site"
+      And I press "Join"
+     Then I should see "Your subscription request was sent."
+
+  @api
+  Scenario: Testing unsubscribing a support team member.
+    Given I am logging in as "bill"
+      And I go to "obama"
+      And I should get a "200" HTTP response
+      And I click "Unsubscribe obama"
+      And I should see "Are you sure you want to unsubscribe from the group"
+      And I press "Remove"
+     Then I should see "Access denied"
+
+  @api
   Scenario: Testing public vsite can be viewed by anonymous users.
     Given I am logging in as "john"
      When I change privacy of the site "obama" to "Public on the web. "
