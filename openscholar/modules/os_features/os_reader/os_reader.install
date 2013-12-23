@@ -131,11 +131,28 @@ function os_reader_update_7002() {
  * Remove duplicate feed importers items.
  */
 function os_reader_update_7003(&$sandbox) {
-  // Each batch process only one.
+
+  if (!isset($sandbox['progress'])) {
+    // count all the importers.
+    $sandbox['progress'] = 0;
+
+    $query = new EntityFieldQuery();
+    $sandbox['max'] = $query
+      ->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', 'feed_importer')
+      ->count()
+      ->execute();
+  }
+
+  // Each batch process only one due to high number of importers.
+  $nid = empty($sandbox['nid']) ? 0 : $sandbox['nid'];
   $query = new EntityFieldQuery();
   $result = $query
     ->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'feed_importer')
+    ->propertyCondition('nid', $nid, '>=')
+    ->range(0, 1)
+    ->propertyOrderBy('nid')
     ->execute();
 
   if (empty($result['node'])) {
@@ -144,7 +161,6 @@ function os_reader_update_7003(&$sandbox) {
 
   $importers = node_load_multiple(array_keys($result['node']));
 
-  // Each batch process 100 feed item of each feed importer.
   foreach ($importers as $importer) {
     $group = og_get_entity_groups('node', $importer);
     $gid = reset($group['node']);
@@ -152,31 +168,43 @@ function os_reader_update_7003(&$sandbox) {
 
     // TODO: Get only the feed items which not yet imported.
     $query = new EntityFieldQuery();
-    $result = $query
+    $results = $query
       ->entityCondition('entity_type', 'os_feed_item')
       ->propertyCondition('importer_nid', $importer->nid)
+      ->fieldOrderBy('field_vsites_reference', 'target_id')
       ->propertyOrderBy('title')
       ->propertyOrderBy('id')
       ->execute();
 
-    if (empty($result['os_feed_item'])) {
+    if (empty($results['os_feed_item'])) {
       continue;
     }
 
-    $feed_items = os_reader_feed_item_load_multiple(array_keys($result['os_feed_item']));
+    $feed_items = os_reader_feed_item_load_multiple(array_keys($results['os_feed_item']));
     $unique = array();
 
     foreach ($feed_items as $feed_item) {
-      if (in_array($feed_item->title, $unique)) {
+      $wrapper = entity_metadata_wrapper('os_feed_item', $feed_item);
+
+      if (in_array($feed_item->title, $unique) && empty($feed_item->field_vsites_reference)) {
+        // Delete only feed item which are duplicate and not imported.
         $delete[] = $feed_item->id;
       }
       else {
         // Set the OG group ref field of this feed to the group which the node
         // importer belong to.
         $unique[] = $feed_item->title;
+        $wrapper->{OG_AUDIENCE_FIELD}->set(array($gid));
+        $wrapper->save();
       }
     }
 
+    // Delete all the feeds importers.
     entity_delete_multiple('os_feed_item', $delete);
+
+    // Save the last node, increase the node and check if the import finished.
+    $sandbox['nid'] = $importer->nid;
+    $sandbox['progress']++;
+    $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
   }
 }
