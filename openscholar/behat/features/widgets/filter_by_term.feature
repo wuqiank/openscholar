@@ -140,3 +140,4 @@ Feature:
     When I click "Fire (1)"
     Then I should see "This is a new site generated via the vsite options in open scholar."
      And I should not see "There are more tests available on the tests list"
+
