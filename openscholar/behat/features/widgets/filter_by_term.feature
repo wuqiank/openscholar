@@ -126,7 +126,7 @@ Feature:
      Then I should see "This is a new site generated via the vsite options in open scholar."
       And I should not see "There are more tests available on the tests list"
 
-  @api @foo
+  @api
   Scenario: Verify the nodes are filtered by the selected term when using a custom domain.
     Given I am logging in as "admin"
       And the widget "Filter by term" is set in the "News" page with the following <settings>:
