@@ -1429,6 +1429,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
    */
   public function iSetFeatureStatus ($feature, $status, $group) {
+
     return array(
       new Step\When('I visit "' . $group . '"'),
       new Step\When('I click "Build"'),
