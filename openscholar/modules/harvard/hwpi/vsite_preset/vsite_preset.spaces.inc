@@ -14,7 +14,7 @@ function vsite_preset_spaces_presets() {
   $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
   $spaces_presets->api_version = 3;
   $spaces_presets->name = 'hwp_administrative';
-  $spaces_presets->title = 'HWP Administrative';
+  $spaces_presets->title = 'Administrative';
   $spaces_presets->description = 'The Harvard Web Publishing standard Adminstrative Department site.';
   $spaces_presets->space_type = 'og';
   $spaces_presets->value = array(
@@ -183,7 +183,7 @@ function vsite_preset_spaces_presets() {
   $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
   $spaces_presets->api_version = 3;
   $spaces_presets->name = 'hwp_project';
-  $spaces_presets->title = 'HWP Project';
+  $spaces_presets->title = 'Project';
   $spaces_presets->description = 'The Harvard Web Publishing standard Project site.';
   $spaces_presets->space_type = 'og';
   $spaces_presets->value = array(
@@ -349,7 +349,7 @@ function vsite_preset_spaces_presets() {
   $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
   $spaces_presets->api_version = 3;
   $spaces_presets->name = 'hwp_lab_research_group';
-  $spaces_presets->title = 'HWP Lab/Research Group';
+  $spaces_presets->title = 'Lab/Research Group';
   $spaces_presets->description = 'The Harvard Web Publishing standard Lab and Research Group site.';
   $spaces_presets->space_type = 'og';
   $spaces_presets->value = array(
@@ -542,7 +542,7 @@ function vsite_preset_spaces_presets() {
   $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
   $spaces_presets->api_version = 3;
   $spaces_presets->name = 'hwp_personal';
-  $spaces_presets->title = 'HWP Personal';
+  $spaces_presets->title = 'Personal';
   $spaces_presets->description = 'The Harvard Web Publishing standard Personal site.';
   $spaces_presets->space_type = 'og';
   $spaces_presets->value = array(

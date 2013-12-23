@@ -73,3 +73,22 @@ function _vsite_preset_new_section_task($title, $info = array()) {
 
   return $task;
 }
+
+/**
+ * Implements hook_spaces_presets_alter().
+ */
+function vsite_preset_spaces_presets_alter(&$presets) {
+  if (module_exists('hwpi')) {
+    $presets['os_department']->title = t('HWP Academic');
+    $presets['hwp_administrative']->title = t('HWP Administrative');
+    $presets['hwp_personal']->title = t('HWP Personal');
+    $presets['hwp_lab_research_group']->title = t('HWP Lab/Research Group');
+    $presets['hwp_project']->title = t('HWP Project');
+  }
+
+  foreach ($presets as &$preset) {
+    if (!empty($preset->value['variable']['theme_default'])) {
+      $preset->value['variable']['theme_default'] = 'hwpi_classic';
+    }
+  }
+}
