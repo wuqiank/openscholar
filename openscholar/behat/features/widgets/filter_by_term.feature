@@ -134,6 +134,9 @@ Feature:
       # After changing to a custom domain admin will be logged out
       # and the rest of the scenario deals with an anonymous user.
      And I define "john" domain to "lincoln.local"
+
+     And I should print page
+    
      And I visit "http://lincoln.local/john/news"
      And I should see "This is a new site generated via the vsite options in open scholar."
      And I should see "There are more tests available on the tests list"
