@@ -125,3 +125,18 @@ Feature:
      When I click "Fire (1)"
      Then I should see "This is a new site generated via the vsite options in open scholar."
       And I should not see "There are more tests available on the tests list"
+
+  @api @foo
+  Scenario: Verify the nodes are filtered by the selected term when using a custom domain.
+    Given I am logging in as "admin"
+      And the widget "Filter by term" is set in the "News" page with the following <settings>:
+        | Vocabularies         | science   | list |
+      # After changing to a custom domain admin will be logged out
+      # and the rest of the scenario deals with an anonymous user.
+     And I define "john" domain to "lincoln.local"
+     And I visit "http://lincoln.local/john/news"
+     And I should see "This is a new site generated via the vsite options in open scholar."
+     And I should see "There are more tests available on the tests list"
+    When I click "Fire (1)"
+    Then I should see "This is a new site generated via the vsite options in open scholar."
+     And I should not see "There are more tests available on the tests list"
