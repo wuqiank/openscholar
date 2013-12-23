@@ -28,6 +28,20 @@ function hwpi_init() {
 }
 
 /**
+ * Implements hook_spaces_presets_alter().
+ */
+function hwpi_spaces_presets_alter(&$presets) {
+  $presets['os_department']->title = t('HWP Academic');
+
+  foreach ($presets as &$preset) {
+    if (!empty($preset->value['variable']['theme_default'])) {
+      $preset->value['variable']['theme_default'] = 'hwpi_classic';
+    }
+  }
+
+}
+
+/**
  * Implements hook_preprocess_HOOK() for page.
  */
 function hwpi_preprocess_page(&$vars) {
