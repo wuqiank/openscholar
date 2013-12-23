@@ -60,9 +60,3 @@ Feature:
     Given I am logging in as "alexander"
       And I visit "obama"
      Then I should get a "200" HTTP response
-
-
-
-
-
-

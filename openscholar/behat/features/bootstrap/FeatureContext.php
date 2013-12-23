@@ -314,9 +314,9 @@ class FeatureContext extends DrupalContext {
    */
   public function iChangePrivacyTo($vsite, $visibility) {
     $privacy_level = array(
-      'Public on the web. ' => 0,
-      'Anyone with the link. ' => 2,
-      'Invite only during site creation. ' => 1,
+      'Public on the web. ' => VSITE_ACCESS_PUBLIC,
+      'Anyone with the link. ' => VSITE_ACCESS_UNINDEXED,
+      'Invite only during site creation. ' => VSITE_ACCESS_PRIVATE,
     );
 
     return array(
