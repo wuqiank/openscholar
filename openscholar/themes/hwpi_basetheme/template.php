@@ -289,6 +289,11 @@ function hwpi_basetheme_node_view_alter(&$build) {
         $build['website_details']['field_website'] = $build['field_website'];
         unset($build['field_website']);
       }
+      
+      //Don't show an empty contact details section.
+      if (!element_children($build['contact_details'])) {
+        unset($build['contact_details']);
+      }
     }
 
     if (isset($build['og_vocabulary'])) {
