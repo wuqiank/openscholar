@@ -45,7 +45,7 @@ Feature:
       And I click "Unsubscribe obama"
       And I should see "Are you sure you want to unsubscribe from the group"
       And I press "Remove"
-     Then I should see "Access denied"
+     Then I should see "Support obama"
 
   @api
   Scenario: Testing public vsite can be viewed by anonymous users.
