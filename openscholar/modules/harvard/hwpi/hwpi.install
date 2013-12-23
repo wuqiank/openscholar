@@ -93,3 +93,22 @@ function hwpi_update_7005() {
   $value = drupal_map_assoc(array('hwpi_classic', 'hwpi_modern', 'hwpi_vibrant', 'hwpi_college'));
   variable_set($name, $value);
 }
+
+/**
+ * Updates the enabled presets value to expose HWP related presets.
+ */
+function hwpi_update_7006() {
+  // Sets the available presets variable (instead of reverting vsite strongarm).
+  $default = array(
+    'os_department' => 'os_department',
+    'os_department_minimal' => 'os_department_minimal',
+    'os_scholar' => 'os_scholar',
+    'os_project' => 'os_project',
+    'hwp_administrative' => 'hwp_administrative',
+    'hwp_lab_research_group' => 'hwp_lab_research_group',
+    'hwp_project' => 'hwp_project',
+  );
+  $value = variable_get('os_enabled_spaces_presets', $default);
+  $value['hwp_personal'] = 'hwp_personal';
+  variable_set('os_enabled_spaces_presets', $value);
+}

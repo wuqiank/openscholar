@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implements hook_init
+ * Implements hook_init().
  */
 function hwpi_init() {
   global $conf;
@@ -25,6 +25,23 @@ function hwpi_init() {
       }
     }
   }
+}
+
+/**
+ * Implements hook_strongarm_alter().
+ */
+function hwpi_strongarm_alter(&$strongarms) {
+  if (empty($strongarms['os_enabled_spaces_presets'])) {
+    return;
+  }
+
+  $hwp_presetes = array(
+    'hwp_administrative' => 'hwp_administrative',
+    'hwp_lab_research_group' => 'hwp_lab_research_group',
+    'hwp_project' => 'hwp_project',
+  );
+
+  $strongarms['os_enabled_spaces_presets'] = array_merge($strongarms['os_enabled_spaces_presets'], $hwp_presetes);
 }
 
 /**

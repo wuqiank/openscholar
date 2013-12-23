@@ -396,18 +396,6 @@ function vsite_update_7012() {
 
   // Reverts the existing spaces in module os.
   features_revert(array('os' => array('spaces_presets')));
-
-  // Sets the available presets variable (instead of reverting vsite strongarm).
-  $value = array(
-    'os_department' => 'os_department',
-    'os_department_minimal' => 'os_department_minimal',
-    'os_scholar' => 'os_scholar',
-    'os_project' => 'os_project',
-    'hwp_administrative' => 'hwp_administrative',
-    'hwp_lab_research_group' => 'hwp_lab_research_group',
-    'hwp_project' => 'hwp_project',
-  );
-  variable_set('os_enabled_spaces_presets', $value);
 }
 
 /**
@@ -536,21 +524,9 @@ function vsite_update_7015() {
   }
 }
 
- /**
+/**
  * Updates the enabled presets value to expose new `HWP Personal` preset.
  */
 function vsite_update_7016() {
-  // Sets the available presets variable (instead of reverting vsite strongarm).
-  $default = array(
-    'os_department' => 'os_department',
-    'os_department_minimal' => 'os_department_minimal',
-    'os_scholar' => 'os_scholar',
-    'os_project' => 'os_project',
-    'hwp_administrative' => 'hwp_administrative',
-    'hwp_lab_research_group' => 'hwp_lab_research_group',
-    'hwp_project' => 'hwp_project',
-  );
-  $value = variable_get('os_enabled_spaces_presets', $default);
-  $value['hwp_personal'] = 'hwp_personal';
-  variable_set('os_enabled_spaces_presets', $value);
+
 }
