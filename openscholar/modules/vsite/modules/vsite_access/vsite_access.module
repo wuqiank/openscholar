@@ -118,7 +118,7 @@ function vsite_access_node_access($node, $op, $account) {
         case VSITE_ACCESS_INTRANET_PRIVATE:
         case VSITE_ACCESS_PRIVATE:
           // Private group.
-          if (!user_access('administer group') && !og_is_member('node', $node->nid, 'user', $account)) {
+          if (!user_access('administer group') && !og_is_member('node', $node->nid, 'user', $account) && !user_access('subscribe as support team', $account)) {
             // They are not a member, deny access
             return NODE_ACCESS_DENY;
           }
