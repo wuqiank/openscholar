@@ -136,6 +136,24 @@ function hwpi_basetheme_process_node(&$vars) {
 }
 
 /**
+ * Implements hook_field_display_ENTITY_TYPE_alter().
+ */
+function hwpi_basetheme_field_display_node_alter(&$display, $context) {
+  if ($context['entity']->type == 'event' && $context['instance']['field_name'] == 'field_date') {
+    if (($context['view_mode'] != 'full') || (isset($context['entity']->os_sv_list_box) && $context['entity']->os_sv_list_box)) {
+      
+      if (isset($context['entity']->field_date[LANGUAGE_NONE][0]['value2']) && 
+          (strtotime($context['entity']->field_date[LANGUAGE_NONE][0]['value2']) - strtotime($context['entity']->field_date[LANGUAGE_NONE][0]['value']) > 24*60*60)) {
+        return; //event is more than one day long - keep both dates visible
+      }
+      
+      //hide the date - it's already visible in the shield
+      $display['settings']['format_type'] = 'os_time';
+    }
+  }
+}
+
+/**
  * Alter the results of node_view().
  */
 function hwpi_basetheme_node_view_alter(&$build) {
@@ -270,6 +288,11 @@ function hwpi_basetheme_node_view_alter(&$build) {
         $build['field_website']['#label_display'] = 'hidden';
         $build['website_details']['field_website'] = $build['field_website'];
         unset($build['field_website']);
+      }
+      
+      //Don't show an empty contact details section.
+      if (!element_children($build['contact_details'])) {
+        unset($build['contact_details']);
       }
     }
 
@@ -547,6 +570,12 @@ function hwpi_basetheme_date_formatter_pre_view_alter(&$entity, $vars) {
 
   // only display the start time for this particular instance of a repeat event
   $entity->view = views_get_current_view();
+
+  // Don't remove the field date when exporting the calendar. This the unique
+  // identifier of Google calendar.
+  if ($entity->view->plugin_name == 'date_ical') {
+    return;
+  }
 
   if (isset($entity->view) && isset($entity->view->row_index) && isset($entity->view->result[$entity->view->row_index])) {
     $result = $entity->view->result[$entity->view->row_index];

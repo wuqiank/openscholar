@@ -58,7 +58,10 @@ class OsImporterNodeProcessor extends FeedsNodeProcessor {
    * Return available mapping targets.
    */
   public function getMappingTargets() {
+    self::loadMappers();
     $targets = parent::getMappingTargets();
+    $entity_type = $this->entityType();
+    $bundle = $this->config['content_type'];
 
     $targets['file'] = array(
       'name' => t('Files'),
@@ -66,11 +69,13 @@ class OsImporterNodeProcessor extends FeedsNodeProcessor {
       'callback' => 'os_importer_map_files',
     );
 
-    $targets['author'] = array(
-      'name' => t('Author'),
-      'description' => t('The author name of the node. If not entered the current user will be the author.'),
-      'callback' => 'os_importer_map_author',
-    );
+    if ($bundle == 'event') {
+      $targets['registration'] = array(
+        'name' => t('Registration'),
+        'description' => t('Enable the registration for the event.'),
+        'callback' => 'os_importer_event_registration',
+      );
+    }
 
     // Let other modules expose mapping targets.
     drupal_alter('feeds_processor_targets', $targets, $entity_type, $bundle);

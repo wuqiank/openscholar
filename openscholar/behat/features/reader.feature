@@ -36,14 +36,11 @@ Feature:
      Then I should see the feed item "Four more years is the most re-tweeted tweet" was imported
       And I should see "Four more years is the most re-tweeted tweet"
 
-  @api @wip
+  @api
   Scenario: Verify images in feed item description are imported as images.
     Given I am logging in as "admin"
-      And I import feed items for "john"
-      And I visit "john/cp/os-importer/news/manage"
-     When I import the feed item "JFK was murdered"
+     When I visit "john/cp/os-importer/news/manage"
       And I should see the feed item "JFK was murdered" was imported
-      And I display watchdog
      Then I should see the news photo "druplicon.small__"
 
   @api
@@ -76,3 +73,10 @@ Feature:
      When I visit "john/news"
       And I click "Lee Harvey Oswald"
      Then I should see "November 22, 1963"
+
+  @api
+  Scenario: Verify a the same feed can be imported to two different vsites.
+    Given I am logging in as "john"
+      And I import "john" feed items for "obama"
+     When I visit "obama/cp/os-importer/news/manage"
+     Then I should see "JFK was murdered"

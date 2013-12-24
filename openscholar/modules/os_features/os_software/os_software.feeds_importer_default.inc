@@ -53,13 +53,13 @@ function os_software_feeds_importer_default() {
             'unique' => FALSE,
           ),
           2 => array(
-            'source' => 'Files',
-            'target' => 'file',
+            'source' => 'Packing method',
+            'target' => 'field_software_method',
             'unique' => FALSE,
           ),
           3 => array(
-            'source' => 'Author',
-            'target' => 'author',
+            'source' => 'Files',
+            'target' => 'file',
             'unique' => FALSE,
           ),
         ),

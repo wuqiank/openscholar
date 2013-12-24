@@ -55,22 +55,17 @@ function os_image_gallery_feeds_importer_default() {
           ),
           2 => array(
             'source' => 'Rows',
-            'target' => 'media_gallery_block_rows',
+            'target' => 'media_gallery_rows',
             'unique' => FALSE,
           ),
           3 => array(
             'source' => 'Columns',
-            'target' => 'media_gallery_block_columns',
+            'target' => 'media_gallery_columns',
             'unique' => FALSE,
           ),
           4 => array(
             'source' => 'Images',
             'target' => 'file',
-            'unique' => FALSE,
-          ),
-          5 => array(
-            'source' => 'Author',
-            'target' => 'author',
             'unique' => FALSE,
           ),
         ),
