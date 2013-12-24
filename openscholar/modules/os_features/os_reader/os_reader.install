@@ -180,6 +180,7 @@ function os_reader_update_7003(&$sandbox) {
  *  The last feed item ID we processed.
  */
 function _os_reader_update_7003($feed_items, &$unique) {
+  $delete = array();
 
   foreach ($feed_items as $feed_item) {
     $wrapper = entity_metadata_wrapper('os_feed_item', $feed_item);
@@ -187,15 +188,15 @@ function _os_reader_update_7003($feed_items, &$unique) {
     if (in_array($feed_item->title, $unique[$feed_item->importer_nid])) {
       // Delete only feed item which are duplicate and not imported.
       $delete[] = $feed_item->id;
-//      print_r($feed_item->id . ' deleted: ' . $feed_item->title);
+      print_r($feed_item->id . ' deleted: ' . $feed_item->title);
     }
     else {
       // Set the OG group ref field of this feed to the group which the node
       // importer belong to.
       $unique[$feed_item->importer_nid][] = $feed_item->title;
-//      print_r($feed_item->id . ' is unique: ' . $feed_item->title);
-//      $wrapper->{OG_AUDIENCE_FIELD}->set($wrapper->importer_nid->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE)));
-//      $wrapper->save();
+      print_r($feed_item->id . ' is unique: ' . $feed_item->title);
+      $wrapper->{OG_AUDIENCE_FIELD}->set($wrapper->importer_nid->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE)));
+      $wrapper->save();
     }
   }
 
