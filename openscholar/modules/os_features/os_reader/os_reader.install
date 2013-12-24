@@ -154,13 +154,11 @@ function os_reader_update_7003(&$sandbox) {
       ->range(0, 500)
       ->execute();
 
-    if (empty($results['os_feed_item'])) {
-      return;
+    if (!empty($results['os_feed_item'])) {
+      // We found items to process.
+      $feed_items = os_reader_feed_item_load_multiple(array_keys($results['os_feed_item']));
+      $sandbox['feed_id'] = _os_reader_update_7003($feed_items, $sandbox['unique']);
     }
-
-    // We found items to process.
-    $feed_items = os_reader_feed_item_load_multiple(array_keys($results['os_feed_item']));
-    $sandbox['feed_id'] = _os_reader_update_7003($feed_items, $sandbox);
 
     // Increase the progress.
     $sandbox['progress']++;
@@ -175,14 +173,13 @@ function os_reader_update_7003(&$sandbox) {
  *
  * @param $feed_items
  *  The loaded feed items objects to process in the current batch.
- * @param $sandbox
+ * @param $unique
  *  The sandbox variable of the current batch.
  *
  * @return int
  *  The last feed item ID we processed.
  */
-function _os_reader_update_7003($feed_items, &$sandbox) {
-  $unique = $delete = array();
+function _os_reader_update_7003($feed_items, &$unique) {
 
   foreach ($feed_items as $feed_item) {
     $wrapper = entity_metadata_wrapper('os_feed_item', $feed_item);
@@ -190,20 +187,22 @@ function _os_reader_update_7003($feed_items, &$sandbox) {
     if (in_array($feed_item->title, $unique[$feed_item->importer_nid])) {
       // Delete only feed item which are duplicate and not imported.
       $delete[] = $feed_item->id;
-      print_r($feed_item->id . ' deleted: ' . $feed_item->title);
+//      print_r($feed_item->id . ' deleted: ' . $feed_item->title);
     }
     else {
       // Set the OG group ref field of this feed to the group which the node
       // importer belong to.
-      $sandbox['unique'][$feed_item->importer_nid][] = $feed_item->title;
-      print_r($feed_item->id . ' is unique: ' . $feed_item->title);
+      $unique[$feed_item->importer_nid][] = $feed_item->title;
+//      print_r($feed_item->id . ' is unique: ' . $feed_item->title);
 //      $wrapper->{OG_AUDIENCE_FIELD}->set($wrapper->importer_nid->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE)));
 //      $wrapper->save();
     }
   }
 
   // Delete all the feeds importers.
-  entity_delete_multiple('os_feed_item', $delete);
+  if ($delete) {
+    entity_delete_multiple('os_feed_item', $delete);
+  }
 
   return $feed_item->id;
 }
