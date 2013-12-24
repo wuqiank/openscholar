@@ -3,14 +3,14 @@ span.publication-abstract {
 }
 
 span.publication-abstract a.show-abstract {
-  background: url('../images/biblio-example-sprite.png') no-repeat 0 1px transparent;
+  background: url('../images/sprite.png') no-repeat 0 1px transparent;
   padding-left: 12px;
   text-decoration: none;
   color: #336599;
 }
 
 span.publication-abstract a.show-abstract.open {
-  background: url('../images/biblio-example-sprite.png') no-repeat 0 -12px transparent;
+  background: url('../images/sprite.png') no-repeat 0 -12px transparent;
   padding-left: 12px;
   text-decoration: none;
   color: #336599;
@@ -54,4 +54,9 @@ div.single-publication .pdf-wrapper ul li {
 div.single-publication .publication-pdf {
   background: url('../images/biblio-pdf.png') no-repeat 0px 0px transparent;
   padding-left: 16px;
+}
+
+.entry-link {
+  font-style: normal;
+  font-weight: bold;
 }
