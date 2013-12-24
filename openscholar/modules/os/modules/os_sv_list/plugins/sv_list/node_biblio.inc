@@ -65,6 +65,9 @@ class sv_list_node_biblio extends sv_list_plugin {
   
   
   private function _biblio_types() {
+    return array();
+
+    // @todo: fix.
     $rows = db_select('biblio_types', 'bt')
       ->fields('bt', array('tid', 'name'))
       ->condition('tid', 0, '>')
