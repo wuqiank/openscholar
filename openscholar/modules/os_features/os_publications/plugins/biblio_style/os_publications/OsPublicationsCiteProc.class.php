@@ -32,11 +32,14 @@ class OsPublicationsCiteProc extends BiblioStyleCiteProc {
       $items[] = l($pdf_file['filename'], $url, $options);
     }
 
-    $image = $wrapper->biblio_image->value();
+    $image = NULL;
+    if ($image_info = $wrapper->biblio_image->value()) {
+      $image = theme('image', array('path' => $image_info['uri'], 'width' => 50, 'height' => 50));
+    }
 
     $variables = array(
       'bid' => $wrapper->getIdentifier(),
-      'image' => theme('image', array('path' => $image['uri'], 'width' => 50, 'height' => 50)),
+      'image' => $image,
       'citation' => $citation,
       'abstract' => $abstract,
       'pdf_list' => theme('item_list', array('items' => $items)),

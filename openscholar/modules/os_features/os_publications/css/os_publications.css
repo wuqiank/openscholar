@@ -33,12 +33,10 @@ div.abstract-body {
 div.single-publication > .first {
   float: left;
   width: 60px;
-  margin-right: -60px;
 }
 
 div.single-publication > .second {
   float: left;
-  margin-left: 70px;
 }
 
 div.single-publication span.publication-citation {
