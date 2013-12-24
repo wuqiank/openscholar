@@ -313,20 +313,11 @@ class FeatureContext extends DrupalContext {
    * @When /^I change privacy of the site "([^"]*)" to "([^"]*)"$/
    */
   public function iChangePrivacyTo($vsite, $visibility) {
-    // Since in behat we don't include the modules, this is taken from vsite_access.module
-    // Publicly avalible and Indexed
-    define('VSITE_ACCESS_PUBLIC', 0);
-    // Temporarially Private, access restricted to logged in users. Files Public.
-    define('VSITE_ACCESS_PRIVATE', 1);
-    // Public and accesible but in ulisted/indexed.
-    define('VSITE_ACCESS_UNINDEXED', 2);
-    // Perminantly Private, access restricted to logged in users. All files Private.
-    define('VSITE_ACCESS_INTRANET_PRIVATE', 3);
 
     $privacy_level = array(
-      'Public on the web. ' => VSITE_ACCESS_PUBLIC,
-      'Anyone with the link. ' => VSITE_ACCESS_UNINDEXED,
-      'Invite only during site creation. ' => VSITE_ACCESS_PRIVATE,
+      'Public on the web. ' => 0,
+      'Anyone with the link. ' => 2,
+      'Invite only during site creation. ' => 1,
     );
 
     return array(
@@ -335,7 +326,6 @@ class FeatureContext extends DrupalContext {
       new Step\When('I press "edit-submit"'),
     );
   }
-
 
   /**
    * @Then /^I should verify the node "([^"]*)" not exists$/
