@@ -133,8 +133,8 @@ Feature:
         | Vocabularies         | science   | list |
       # After changing to a custom domain admin will be logged out
       # and the rest of the scenario deals with an anonymous user.
-     And I define "john" domain to "lincoln.local"
 
+     And I define "john" domain to "lincoln.local"
      And I should print page
     
      And I visit "http://lincoln.local/john/news"
