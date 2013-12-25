@@ -302,13 +302,13 @@ function hwpi_spaces_presets_alter(&$presets) {
   if (module_exists('hwpi')) {
     $presets['os_department']->title = t('HWP Academic');
     $presets['hwp_administrative']->title = t('HWP Administrative');
-    $presets['hwp_administrative']->description = 'The Harvard Web Publishing standard Adminstrative Department site.';
+    $presets['hwp_administrative']->description = t('The Harvard Web Publishing standard Adminstrative Department site.');
     $presets['hwp_personal']->title = t('HWP Personal');
-    $presets['hwp_personal']->description = 'The Harvard Web Publishing standard Personal site.';
+    $presets['hwp_personal']->description = t('The Harvard Web Publishing standard Personal site.');
     $presets['hwp_lab_research_group']->title = t('HWP Lab/Research Group');
-    $presets['hwp_lab_research_group']->description = 'The Harvard Web Publishing standard Lab and Research Group site.';
+    $presets['hwp_lab_research_group']->description = t('The Harvard Web Publishing standard Lab and Research Group site.');
     $presets['hwp_project']->title = t('HWP Project');
-    $presets['hwp_project']->description = 'The Harvard Web Publishing standard Project site.';
+    $presets['hwp_project']->description = t('The Harvard Web Publishing standard Project site.');
   }
 
   foreach ($presets as &$preset) {
