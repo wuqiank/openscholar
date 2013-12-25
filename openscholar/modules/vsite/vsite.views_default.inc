@@ -8,10 +8,6 @@
  * Implements hook_views_default_views().
  */
 function vsite_views_default_views() {
-  // Use the default logo from the os_boxes_site_logo image.
-  $default_image_path = drupal_get_path('module', 'os_boxes')."/plugins/os_boxes_site_logo/default_logo.jpg";
-  $default_img = !empty($default_image_path) ? '<img src="'.$default_image_path.'" alt="default logo">' : '';
-
   $export = array();
 
   $view = new view();
@@ -315,7 +311,7 @@ function vsite_views_default_views() {
     'project' => 'project',
     'department' => 'department',
   );
-  /* Filter criterion: Content: Group visibility (group_access) */
+  /* Filter criterion: Content: Site visibility (group_access) */
   $handler->display->display_options['filters']['group_access_value']['id'] = 'group_access_value';
   $handler->display->display_options['filters']['group_access_value']['table'] = 'field_data_group_access';
   $handler->display->display_options['filters']['group_access_value']['field'] = 'group_access_value';
@@ -362,7 +358,7 @@ function vsite_views_default_views() {
   $handler->display->display_options['fields']['field_site_logo']['alter']['make_link'] = TRUE;
   $handler->display->display_options['fields']['field_site_logo']['alter']['path'] = '[field_group_path]';
   $handler->display->display_options['fields']['field_site_logo']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['field_site_logo']['empty'] = $default_img;
+  $handler->display->display_options['fields']['field_site_logo']['empty'] = '<img src="profiles/openscholar/modules/os/modules/os_boxes/plugins/os_boxes_site_logo/default_logo.jpg" alt="default logo">';
   $handler->display->display_options['fields']['field_site_logo']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_site_logo']['settings'] = array(
     'image_style' => 'square_thumbnail',
@@ -426,8 +422,8 @@ function vsite_views_default_views() {
   $handler->display->display_options['fields']['field_site_logo']['alter']['make_link'] = TRUE;
   $handler->display->display_options['fields']['field_site_logo']['alter']['path'] = '[field_group_path]';
   $handler->display->display_options['fields']['field_site_logo']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_site_logo']['empty'] = '<img src="profiles/openscholar/modules/os/modules/os_boxes/plugins/os_boxes_site_logo/default_logo.jpg" alt="default logo">';
   $handler->display->display_options['fields']['field_site_logo']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['field_site_logo']['empty'] = $default_img;
   $handler->display->display_options['fields']['field_site_logo']['settings'] = array(
     'image_style' => 'iqss_scholars_front_websites_180_x_140',
     'image_link' => '',
@@ -460,7 +456,6 @@ function vsite_views_default_views() {
   $handler->display->display_options['sorts']['random']['id'] = 'random';
   $handler->display->display_options['sorts']['random']['table'] = 'views';
   $handler->display->display_options['sorts']['random']['field'] = 'random';
-
   $export['os_websites'] = $view;
 
   return $export;

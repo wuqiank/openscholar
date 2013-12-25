@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Code for the OpenScholar: Mailchimp feature.
+ */
+
+include_once 'os_mailchimp.features.inc';
 
 /**
  * @file os_mailchimp.module
@@ -200,6 +206,7 @@ function os_mailchimp_subscribe($api, $listid, $email, $fn=NULL, $ln=NULL) {
 /**
  * Implements hook_ctools_plugin_api().
  */
+/*
 function os_mailchimp_ctools_plugin_api() {
   list($module, $api) = func_get_args();
 
@@ -207,16 +214,18 @@ function os_mailchimp_ctools_plugin_api() {
     return array("version" => 1);
   }
 }
+*/
 
 /**
  * Implements hook_default_box().
  */
+/*
 function os_mailchimp_default_box() {
   $export = array();
 
   $box = new stdClass;
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
-  $box->api_version = 1;
+ /* $box->api_version = 1;
   $box->delta = 'os_box_mailchimp';
   $box->plugin_key = 'os_boxes_mailchimp';
   $box->title = '';
@@ -231,6 +240,7 @@ function os_mailchimp_default_box() {
   $export['os_box_mailchimp'] = $box;
   return $export;
 }
+*/
 
 /**
  * @function os_mailchimp_form

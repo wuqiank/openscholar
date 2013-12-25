@@ -8,39 +8,9 @@
  * Implements hook_context_default_contexts().
  */
 function os_search_solr_context_default_contexts() {
-  // First get the delta's for facetapi blocks.
-  if (module_exists('facetapi')) {
-    //
-    $delta_created = '';
-    $delta_bundle = '';
-    $delta_og = '';
   $export = array();
 
-  	$searcher_name = os_search_solr_get_searcher_name();
-    // Gets delta map
-    $map = facetapi_get_delta_map();
-    if(isset($map) && is_array($map)) {
-
-      // Filter by Post Date block.
-      $string_created = facetapi_build_delta($searcher_name, 'block', 'created');
-      $delta_created = array_search($string_created, $map);
-
-      // Filter by Post Type block.
-      $string_bundle = facetapi_build_delta($searcher_name, 'block', 'bundle');
-      $delta_bundle = array_search($string_bundle, $map);
-
-      // Filter by Site block.
-      $string_og = facetapi_build_delta($searcher_name, 'block', 'sm_og_group_ref');
-      $delta_og = array_search($string_og, $map);
-
-      // Filter by OG vocab.
-      $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
-      $delta_og_vocab = array_search($string_og_vocab, $map);
-
-    }
-  }
   $context = new stdClass();
-
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
   $context->name = 'os_search';
@@ -74,21 +44,21 @@ function os_search_solr_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-9',
         ),
-        'facetapi-'.$delta_created => array(
+        'facetapi-n18E4x0qRRaIP7nV6I0SDYiCJsq77HCB' => array(
           'module' => 'facetapi',
-          'delta' => $delta_created,
+          'delta' => 'n18E4x0qRRaIP7nV6I0SDYiCJsq77HCB',
           'region' => 'sidebar_second',
           'weight' => '-8',
         ),
-        'facetapi'.$delta_bundle => array(
+        'facetapiGiIy4zr9Gu0ZSa0bumw1Y9qIIpIDf1wu' => array(
           'module' => 'facetapi',
-          'delta' => $delta_bundle,
+          'delta' => 'GiIy4zr9Gu0ZSa0bumw1Y9qIIpIDf1wu',
           'region' => 'sidebar_second',
           'weight' => '-7',
         ),
-        'facetapi-'.$delta_og => array(
+        'facetapi-CpjIe0iO04QY4VGdG5PfZfBQqRWCmc4G' => array(
           'module' => 'facetapi',
-          'delta' => $delta_og,
+          'delta' => 'CpjIe0iO04QY4VGdG5PfZfBQqRWCmc4G',
           'region' => 'sidebar_second',
           'weight' => '-6',
         ),
@@ -98,9 +68,9 @@ function os_search_solr_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-5',
         ),
-        'facetapi-' . $delta_og_vocab => array(
+        'facetapi-CIWqxieiSlmL8r64OBPFrpQKCrfcgjJA' => array(
           'module' => 'facetapi',
-          'delta' => $delta_og_vocab,
+          'delta' => 'CIWqxieiSlmL8r64OBPFrpQKCrfcgjJA',
           'region' => 'sidebar_second',
           'weight' => '-4',
         ),
