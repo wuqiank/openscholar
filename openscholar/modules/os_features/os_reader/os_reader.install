@@ -157,7 +157,7 @@ function os_reader_update_7003(&$sandbox) {
     if (!empty($results['os_feed_item'])) {
       // We found items to process.
       $feed_items = os_reader_feed_item_load_multiple(array_keys($results['os_feed_item']));
-      $sandbox['feed_id'] = _os_reader_update_7003($feed_items, $sandbox['unique']);
+      _os_reader_update_7003($feed_items, $sandbox['unique'], $sandbox['feed_id']);
     }
 
     // Increase the progress.
@@ -175,11 +175,10 @@ function os_reader_update_7003(&$sandbox) {
  *  The loaded feed items objects to process in the current batch.
  * @param $unique
  *  The sandbox variable of the current batch.
- *
- * @return int
- *  The last feed item ID we processed.
+ * @param $feed_item_id
+ *  The last feed item id we processed.
  */
-function _os_reader_update_7003($feed_items, &$unique) {
+function _os_reader_update_7003($feed_items, &$unique, &$feed_item_id) {
   $delete = array();
 
   foreach ($feed_items as $feed_item) {
@@ -188,22 +187,34 @@ function _os_reader_update_7003($feed_items, &$unique) {
     if (in_array($feed_item->title, $unique[$feed_item->importer_nid])) {
       // Delete only feed item which are duplicate and not imported.
       $delete[] = $feed_item->id;
-      print_r($feed_item->id . ' deleted: ' . $feed_item->title);
+      drupal_is_cli() ? drush_print_r('Deleted ' . $feed_item->title . ' ' . $feed_item->id) : '';
     }
     else {
       // Set the OG group ref field of this feed to the group which the node
       // importer belong to.
       $unique[$feed_item->importer_nid][] = $feed_item->title;
-      print_r($feed_item->id . ' is unique: ' . $feed_item->title);
-      $wrapper->{OG_AUDIENCE_FIELD}->set($wrapper->importer_nid->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE)));
-      $wrapper->save();
+      drupal_is_cli() ? drush_print_r('Saved ' . $feed_item->title . ' ' . $feed_item->id) : '';
+      try {
+        $gid = $wrapper->importer_nid->{OG_AUDIENCE_FIELD}->get(0)->getIdentifier();
+        $wrapper->{OG_AUDIENCE_FIELD}->set(array($gid));
+        $wrapper->save();
+      } catch (Exception $e) {
+        $text = 'Group the feed item ' . $feed_item->title . '( ' . $feed_item->id . ') failed due to: ' . $e->getMessage();
+
+        if (drupal_is_cli()) {
+          drush_print($text);
+        }
+        else {
+          watchdog('OS reader importer', $text);
+        }
+      }
     }
+
+    $feed_item_id = $feed_item->id;
   }
 
   // Delete all the feeds importers.
   if ($delete) {
     entity_delete_multiple('os_feed_item', $delete);
   }
-
-  return $feed_item->id;
 }
