@@ -118,7 +118,21 @@ function os_front_default_box() {
     );
     $value = drupal_render($build);
   }
- 
+
+  $box = new stdClass();
+  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
+  $box->api_version = 1;
+  $box->delta = 'os_front_main_configure';
+  $box->plugin_key = 'os_boxes_html';
+  $box->title = 'Main configure';
+  $box->description = 'Main configure';
+  $box->options = array(
+    'text' => array(
+      'value' => $value,
+      'format' => 'filtered_html',
+    ),
+    'additional_classes' => '',
+  );
   $export['os_front_main_configure'] = $box;
 
 
