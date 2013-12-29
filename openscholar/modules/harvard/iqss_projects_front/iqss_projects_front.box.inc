@@ -95,22 +95,6 @@ function iqss_projects_front_default_box() {
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
-  $box->delta = 'iqss_projects_fp_infoblock';
-  $box->plugin_key = 'simple';
-  $box->title = '';
-  $box->description = 'Projects Info text';
-  $box->options = array(
-    'body' => array(
-      'value' => iqss_projects_front_infoblock_content(),
-      'format' => 'filtered_html',
-    ),
-    'additional_classes' => '',
-  );
-  $export['iqss_projects_fp_infoblock'] = $box;
-
-  $box = new stdClass();
-  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
-  $box->api_version = 1;
   $box->delta = 'iqss_projects_fp_logoblock';
   $box->plugin_key = 'simple';
   $box->title = '';
@@ -123,22 +107,6 @@ function iqss_projects_front_default_box() {
     'additional_classes' => '',
   );
   $export['iqss_projects_fp_logoblock'] = $box;
-
-  $box = new stdClass();
-  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
-  $box->api_version = 1;
-  $box->delta = 'iqss_projects_fp_navblock';
-  $box->plugin_key = 'simple';
-  $box->title = '';
-  $box->description = 'OpenScholar: Top Links';
-  $box->options = array(
-    'body' => array(
-      'value' => iqss_projects_front_navblock_content(),
-      'format' => 'filtered_html',
-    ),
-    'additional_classes' => '',
-  );
-  $export['iqss_projects_fp_navblock'] = $box;
 
   return $export;
 }
