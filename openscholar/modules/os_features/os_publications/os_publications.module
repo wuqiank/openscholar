@@ -70,9 +70,17 @@ function os_publications_theme() {
 
 /**
  * Implements hook_migrate_api_alter().
+ *
+ * Replace BiblioMigrateEntries with OS own implementation that maintains the
+ * group audience field.
+ *
  */
 function os_publications_migrate_api_alter(&$info) {
+  if (!db_table_exists('_biblio_1x')) {
+    return;
+  }
 
+  $info['biblio']['migrations']['BiblioMigrateEntries'] = array('class_name' => 'OsBiblioMigrateEntries', 'group_name' => 'biblio_3');
 }
 
 
