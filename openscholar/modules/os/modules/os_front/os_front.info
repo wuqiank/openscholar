@@ -3,9 +3,4 @@ description = The front page of an OpenScholar install.
 core = 7.x
 package = OpenScholar
 dependencies[] = boxes
-features[box][] = os_front_header
-features[box][] = os_front_main_configure
-features[box][] = os_front_main_support
-features[box][] = os_front_sample
-features[ctools][] = boxes:box:1
-features[features_api][] = api:2
+

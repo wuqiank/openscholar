@@ -2,12 +2,12 @@
 
 # Modify the MySQL settings below so they will match your own.
 MYSQL_USERNAME="root"
-MYSQL_PASSWORD="1234"
+MYSQL_PASSWORD="root"
 MYSQL_HOST="localhost"
-MYSQL_DB_NAME="openscholar"
+MYSQL_DB_NAME="openscholar2"
 
 # Modify the URL below to match your OpenScholar base domain URL.
-BASE_DOMAIN_URL="http://localhost/openscholar"
+BASE_DOMAIN_URL="http://localhost/openscholar2/www"
 
 # Modify the login details below to be the desired login details for the Administrator account.
 ADMIN_USERNAME="admin"
