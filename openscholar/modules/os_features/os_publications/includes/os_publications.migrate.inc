@@ -10,7 +10,7 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
       ->fields('ogm', array('gid'))
       ->condition('ogm.entity_type', 'node');
 
-    $this->addFieldMapping(OG_AUDIENCE_FIELD, 'ogm.gid');
+    $this->addFieldMapping(OG_AUDIENCE_FIELD, 'gid');
 
   }
 }
