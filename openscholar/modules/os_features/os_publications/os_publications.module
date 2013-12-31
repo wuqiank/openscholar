@@ -83,4 +83,42 @@ function os_publications_migrate_api_alter(&$info) {
   $info['biblio']['migrations']['BiblioMigrateEntries'] = array('class_name' => 'OsBiblioMigrateEntries', 'group_name' => 'biblio_3');
 }
 
+/**
+ * Implements hook_biblio_fields_info().
+ */
+function os_publications_biblio_fields_info() {
+  // Add biblio_extra field to a Biblio entry.
+  $items['biblio_extra'] = array(
+    'field' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'entity_types' => array(),
+      'field_name' => 'biblio_extra',
+      'module' => 'dyntextfield',
+      'settings' => array(
+        'size' => '60',
+      ),
+      'translatable' => '0',
+      'type' => 'dyntextfield',
+    ),
+    'instance' => array(
+      'default_value' => NULL,
+      'label' => 'Extra Fields',
+      'description' => 'You may use these fields to add extra information about your publication that may not be common to publications if this type. For example, key "Publication Global ID" and value "http://hdl.handle.net/1902.1".',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'dyntextfield',
+        'settings' => array(),
+        'type' => 'dyntextfield_widget',
+        'weight' => '34',
+      ),
+    ),
+  );
+
+  return $items;
+}
 

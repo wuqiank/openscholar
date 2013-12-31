@@ -28,7 +28,10 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
     // In Biblio 3.x the upload field is named "biblio_pdf".
     $entity->biblio_pdf = $node->field_upload;
 
-    // @TODO: add mapping to remaining fields:
-    // path, redirect, field_biblio_extra, ,og_vocabulary
+    // In Biblio 3.x the extra field is named "biblio_extra".
+    $entity->biblio_extra = $node->field_biblio_extra;
+
+    // @todo: add mapping to remaining fields:
+    // path, redirect, ,og_vocabulary
   }
 }
