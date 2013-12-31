@@ -18,7 +18,7 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
    * Map field API fields from the node to the new Biblio entity.
    */
   public function prepare($entity, $row) {
-    // Load the Biblio node form to populate the appropriate field
+    // Load the Biblio node form to populate the appropriate fields
     // in the new created Biblio entity.
     $node = node_load($row->nid);
 
@@ -33,5 +33,12 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
 
     // @todo: add mapping to remaining fields:
     // path, redirect, ,og_vocabulary
+  }
+
+  /**
+   * Apply needed changes to the new Biblio entity.
+   */
+  public function complete($entity, $row) {
+
   }
 }
