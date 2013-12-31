@@ -17,7 +17,7 @@ abstract class OsMigrate extends Migration {
     parent::__construct();
 
     // Make sure we can use it for node and term only.
-    if (!in_array($this->entityType, array('node', 'taxonomy_term', 'og_vocab'))) {
+    if (!in_array($this->entityType, array('node', 'taxonomy_term', 'og_vocab', 'biblio'))) {
       throw new Exception(format_string('OsMigrate does not support @type', array('@type' => $this->entityType)));
     }
 
@@ -50,6 +50,9 @@ abstract class OsMigrate extends Migration {
       $this->csvColumns = $csv_columns;
     }
     elseif ($this->entityType == 'og_vocab') {
+      $class_name = 'MigrateDestinationEntityAPI';
+    }
+    elseif ($this->entityType == 'biblio') {
       $class_name = 'MigrateDestinationEntityAPI';
     }
 
