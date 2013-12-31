@@ -71,8 +71,7 @@ function os_publications_theme() {
 /**
  * Implements hook_menu().
  */
-function os_publications_menu_alter() {
-  $items = array();
+function os_publications_menu_alter($items) {
 
   $items['features/os_publications'] = array(
     'title' => 'Settings',
@@ -82,8 +81,6 @@ function os_publications_menu_alter() {
     'access arguments' => module_exists('vsite') ? array() : array('administer site configuration'),
     'type' => MENU_CALLBACK,
   );
-
-  return $items;
 }
 
 /**
