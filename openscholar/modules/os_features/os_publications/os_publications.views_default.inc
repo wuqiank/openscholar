@@ -119,7 +119,7 @@ function os_publications_views_default_views() {
   $handler->display->display_options['fields']['biblio_year']['label'] = '';
   $handler->display->display_options['fields']['biblio_year']['exclude'] = TRUE;
   $handler->display->display_options['fields']['biblio_year']['alter']['alter_text'] = TRUE;
-  $handler->display->display_options['fields']['biblio_year']['alter']['text'] = '<div class=\'year-bar\'>[biblio_year]</div>';
+  $handler->display->display_options['fields']['biblio_year']['alter']['text'] = '<div class=\'biblio-separator-bar\'>[biblio_year]</div>';
   $handler->display->display_options['fields']['biblio_year']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['biblio_year']['settings'] = array(
     'thousand_separator' => '',
