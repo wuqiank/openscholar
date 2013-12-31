@@ -140,14 +140,22 @@ function os_publications_settings() {
     '#type' => 'radios',
     '#title' => t('Select default order of the sort category'),
     '#default_value' => variable_get('biblio_order', 'DESC'),
-    '#options' => array('DESC' => t('Descending'), 'ASC' => t('Ascending')),
+    '#options' => array(
+      'DESC' => t('Descending'),
+      'ASC' => t('Ascending')
+    ),
   );
 
   $form['left']['biblio_sort'] = array(
     '#type' => 'radios',
     '#title' => t('By default, sort publications by which category'),
     '#default_value' => variable_get('biblio_sort', 'year'),
-    '#options' => array('author' => t('Author'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
+    '#options' => array(
+      'title' => t('Title'),
+      'type' => t('Type'),
+      'field_biblio_author' => t('Author'),
+      'field_biblio_published' => t('Year'),
+    ),
   );
 
   $types = biblio_types();
@@ -166,4 +174,18 @@ function os_publications_settings() {
   );
 
   return system_settings_form($form);
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
+  if ($view->name != 'os_publications_issued') {
+    return;
+  }
+
+  $query->orderby[] = array(
+    'field' => variable_get('biblio_sort'),
+    'direction' => variable_get('biblio_order', 'ASC'),
+  );
 }
