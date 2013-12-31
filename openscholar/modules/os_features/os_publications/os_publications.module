@@ -119,7 +119,7 @@ function os_publications_preprocess_ctools_dropdown(&$variables) {
 }
 
 /**
- * @return mixed
+ * Define the behaviour of OS publications settings page.
  */
 function os_publications_settings() {
   $form['left'] = array(
