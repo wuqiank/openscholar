@@ -61,6 +61,10 @@ div.single-publication .publication-pdf {
   font-weight: bold;
 }
 
+.biblio-separator-bar {
+  margin: 1.5em 0 1em 0;
+}
+
 .view-os-publications-issued li {
   list-style: none;
 }
