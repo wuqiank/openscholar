@@ -437,6 +437,10 @@ libraries[spyc][type] = "libraries"
 libraries[spyc][download][type] = "file"
 libraries[spyc][download][url] = "http://spyc.googlecode.com/files/spyc-0.5.zip"
 
+libraries[styles][type] = "libraries"
+libraries[styles][download][type] = "git"
+libraries[styles][download][url] = "https://github.com/citation-style-language/styles.git"
+
 libraries[respondjs][type] = "libraries"
 libraries[respondjs][download][type] = "file"
 libraries[respondjs][download][url] = "https://github.com/scottjehl/Respond/archive/1.3.0.zip"
