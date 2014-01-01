@@ -18,24 +18,25 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
    * Map field API fields from the node to the new Biblio entity.
    */
   public function prepare($entity, $row) {
-    // Load the Biblio node form to populate the appropriate fields
+    // Load the Biblio node to populate the appropriate fields
     // in the new created Biblio entity.
     $node = node_load($row->nid);
 
-    // In Biblio 3.x the image field is named "biblio_image".
-    $entity->biblio_image = $node->field_biblio_image;
+    // An array of fields to be added to the entry keyed by the new field name
+    // and keyd by the old field name.
+    $info = array(
+      'biblio_image' => 'field_biblio_image',
+      'biblio_pdf' => 'field_upload',
+      'biblio_extra' => 'field_biblio_extra',
+      'og_vocabulary' => 'og_vocabulary',
+    );
 
-    // In Biblio 3.x the upload field is named "biblio_pdf".
-    $entity->biblio_pdf = $node->field_upload;
-
-    // In Biblio 3.x the extra field is named "biblio_extra".
-    $entity->biblio_extra = $node->field_biblio_extra;
-
-    // Add og_vocabulary field to a Biblio entry.
-    $entity->og_vocabulary = $node->og_vocabulary;
-    if (!empty($node->og_vocabulary)) {
-      $this->createBiblioVocab($entity);
+    foreach ($info as $new_field => $old_field) {
+      $entity->$new_field = $node->$old_field;
     }
+
+    // Create a Biblio vocabulary.
+    $this->createBiblioVocab($entity, $node);
 
     // @todo: add mapping to remaining fields:
     // path, redirect
@@ -49,13 +50,19 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
   }
 
   /**
-   * Create an og_vocab entity if the vocabulary is not linked yet to
-   * the biblio entity and its bundle.
+   * Create an OG vocab entity.
+   *
+   * If the vocabulary is not linked yet to the biblio entity and its bundle,
+   * add the vocab and the relation to the group.
    *
    * @param $entity
-   *    The biblio entity.
+   *    The Biblio entity.
    */
-  private function createBiblioVocab($entity) {
+  private function createBiblioVocab($entity, $node) {
+    if (empty($node->og_vocabulary)) {
+      return;
+    }
+
     $wrapper = entity_metadata_wrapper('biblio', $entity);
 
     foreach ($wrapper->{OG_VOCAB_FIELD} as $terms) {
