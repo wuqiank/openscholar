@@ -130,6 +130,27 @@ function os_publications_settings() {
     ),
   );
 
+  // Iterate over the files in the styles directory.
+  $files = new DirectoryIterator(libraries_get_path('citeproc-php') . '/style');
+  foreach ($files as $file) {
+
+    if ($file->isDot()) {
+      continue;
+    }
+
+    // Get the title of the style and his name.
+    $xml = simplexml_load_file($file->getRealPath());
+    $name = str_replace('.csl' , '', $file->getFilename());
+    $styles[$name] = $xml->info->title;
+  }
+
+  $form['left']['os_publications_style_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Select the style type'),
+    '#default_value' => variable_get('os_publications_style_type', 'chicago-author-date'),
+    '#options' => $styles,
+  );
+
   $form['left']['biblio_order'] = array(
     '#type' => 'radios',
     '#title' => t('Select default order of the sort category'),
