@@ -35,7 +35,7 @@ function os_publications_os_add_new_links_alter(&$links) {
   }
 
   $links['add_publication'] = array(
-    'title' => t('publication'),
+    'title' => t('Publications'),
     'href' => 'biblio/add',
   );
 }
