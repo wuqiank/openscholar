@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Code for the os_publications feature.
@@ -174,7 +175,7 @@ function os_publications_settings() {
  */
 function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
   if ($view->name != 'os_publications') {
-//    return;
+    return;
   }
   // @todo: Support old biblio settings.
 
@@ -183,11 +184,25 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
   $order_type = variable_get('biblio_order', 'ASC');
   $filter_type = variable_get('os_publications_filter_publication_types', array_keys(biblio_types()));
 
+  $field = 'biblio.' . $order_field;
+
   // Order the publication by types.
   if (in_array($order_field, array('biblio_year', 'biblio_publisher'))) {
+    $field_info = field_info_field($order_field);
+    $storage_info = $field_info['storage']['details']['sql'][FIELD_LOAD_CURRENT];
+    $table = key($storage_info);
+    $field = $storage_info[$table]['value'];
+
+    $query->add_field($table, $field, 'field');
+    $field = $table . '.' . $field;
   }
-  else {
-  }
+
+  $query->orderby = array(
+    array(
+      'field' => $field,
+      'direction' => $order_type,
+    )
+  );
 
   // Filter types the user selected.
   if ($filter_type) {
