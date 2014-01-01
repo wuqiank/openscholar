@@ -46,17 +46,21 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
    * Apply needed changes to the new Biblio entity.
    */
   public function complete($entity, $row) {
-
+    // Map the path property (update the URL alias table).
+    // This is done here and not in the "prepare()" since we need the entity id (bid).
+    $this->createPath($entity, $row);
   }
 
   /**
    * Create an OG vocab entity.
    *
-   * If the vocabulary is not linked yet to the biblio entity and its bundle,
+   * If the vocabulary is not linked yet to the Biblio entity and its bundle,
    * add the vocab and the relation to the group.
    *
    * @param $entity
-   *    The Biblio entity.
+   *    The new Biblio entity.
+   * @param $node
+   *    The old Biblio node.
    */
   private function createBiblioVocab($entity, $node) {
     if (empty($node->og_vocabulary)) {
@@ -74,5 +78,24 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
         og_vocab_relation_save($vid, 'node', $wrapper->{OG_AUDIENCE_FIELD}->get(0)->getIdentifier());
       }
     }
+  }
+
+  /**
+   * Create the path (URL alias) for the new Biblio entry.
+   *
+   * @param $entity
+   *    The new Biblio entity.
+   * @param $row
+   *    Tepresents the old Biblio node.
+   */
+  private function createPath($entity, $row) {
+    $conditions = array(
+      'source' => 'node/' . $row->nid,
+      'language' => LANGUAGE_NONE,
+    );
+    $old_path = path_load($conditions);
+    $new_path = $old_path;
+    $new_path['source'] = 'biblio/' . $entity->bid;
+    path_save($new_path);
   }
 }
