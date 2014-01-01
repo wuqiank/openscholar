@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /**
  * @file
  * Code for the os_publications feature.
@@ -71,15 +69,13 @@ function os_publications_theme() {
 /**
  * Implements hook_menu().
  */
-function os_publications_menu_alter($items) {
-
+function os_publications_menu_alter(&$items) {
   $items['features/os_publications'] = array(
     'title' => 'Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_publications_settings'),
     'access callback' => module_exists('vsite') ? 'spaces_access_admin' : 'user_access',
     'access arguments' => module_exists('vsite') ? array() : array('administer site configuration'),
-    'type' => MENU_CALLBACK,
   );
 }
 
@@ -146,12 +142,12 @@ function os_publications_settings() {
   $form['left']['biblio_sort'] = array(
     '#type' => 'radios',
     '#title' => t('By default, sort publications by which category'),
-    '#default_value' => variable_get('biblio_sort', 'year'),
+    '#default_value' => variable_get('biblio_sort', 'biblio_publisher'),
     '#options' => array(
       'title' => t('Title'),
       'type' => t('Type'),
-      'field_biblio_author' => t('Author'),
-      'field_biblio_published' => t('Year'),
+      'biblio_publisher' => t('Author'),
+      'biblio_year' => t('Year'),
     ),
   );
 
@@ -177,12 +173,25 @@ function os_publications_settings() {
  * Implements hook_views_query_alter().
  */
 function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
-  if ($view->name != 'os_publications_issued') {
-    return;
+  if ($view->name != 'os_publications') {
+//    return;
+  }
+  // @todo: Support old biblio settings.
+
+  // Store the settings of OS publication in variables.
+  $order_field = variable_get('biblio_sort', 'biblio_year');
+  $order_type = variable_get('biblio_order', 'ASC');
+  $filter_type = variable_get('os_publications_filter_publication_types', array_keys(biblio_types()));
+
+  // Order the publication by types.
+  if (in_array($order_field, array('biblio_year', 'biblio_publisher'))) {
+  }
+  else {
   }
 
-  $query->orderby[] = array(
-    'field' => variable_get('biblio_sort'),
-    'direction' => variable_get('biblio_order', 'ASC'),
-  );
+  // Filter types the user selected.
+  if ($filter_type) {
+    $group_key = key($query->where);
+    $query->add_where($group_key, 'biblio.type', $filter_type, 'IN');
+  }
 }
