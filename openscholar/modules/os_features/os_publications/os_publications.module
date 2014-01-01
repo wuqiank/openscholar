@@ -163,10 +163,22 @@ function os_publications_settings() {
     ),
   );
 
+  // Backward compatibility with the old OS publication field order settings.
+  $order_field = variable_get('biblio_sort', 'biblio_publisher');
+  switch ($order_field) {
+    case 'author':
+      $order_field = 'biblio_publisher';
+      break;
+
+    case 'year':
+      $order_field = 'biblio_year';
+      break;
+  }
+
   $form['left']['biblio_sort'] = array(
     '#type' => 'radios',
     '#title' => t('By default, sort publications by which category'),
-    '#default_value' => variable_get('biblio_sort', 'biblio_publisher'),
+    '#default_value' => $order_field,
     '#options' => array(
       'title' => t('Title'),
       'type' => t('Type'),
@@ -215,12 +227,22 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
   if ($view->name != 'os_publications') {
     return;
   }
-  // @todo: Support old biblio settings.
 
   // Store the settings of OS publication in variables.
   $order_field = variable_get('biblio_sort', 'biblio_year');
   $order_type = variable_get('biblio_order', 'ASC');
   $filter_type = variable_get('os_publications_filter_publication_types', array_keys(biblio_types()));
+
+  // Backward compatibility with the old OS publication field order settings.
+  switch ($order_field) {
+    case 'author':
+      $order_field = 'biblio_publisher';
+      break;
+
+    case 'year':
+      $order_field = 'biblio_year';
+      break;
+  }
 
   $field = 'biblio.' . $order_field;
 
