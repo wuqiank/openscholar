@@ -2878,13 +2878,18 @@ function vsite_redirect_hash_alter(&$hash, $redirect) {
  * Implements hook_redirect_parse_url_alter().
  */
 function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
+  // Only continues if this is an internal path.
+  if (isset($parsed['scheme']) && !empty($parsed['scheme'])) {
+    return;
+  }
+
   // Prepends the "From" internal path value with purl in some cases.
   if ($vsite = vsite_get_vsite()) {
     if ($purl = vsite_get_purl()) {
       // Determines whether this vsite should have paths prefixed or not.
       $domain = variable_get('vsite_domain_name', '');
       $shared = variable_get('vsite_domain_shared', '');
-      $is_standard = (bool) strlen($domain) === 0;
+      $is_standard = (bool) empty($domain);
       $is_shared = (bool) strlen($domain) > 0 && !empty($shared);
       // Prepends the internal path with purl for standard and shared domain
       // sites only. Custom domain sites will keep the original relative path
