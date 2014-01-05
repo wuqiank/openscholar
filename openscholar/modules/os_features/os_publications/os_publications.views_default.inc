@@ -130,6 +130,11 @@ function os_publications_views_default_views() {
     'prefix_suffix' => 1,
   );
   /* Field: Biblio: Render bilbio (Get text) */
+  /* Header: Publication: Export links */
+  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
+  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
+  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
+  /* Field: Publication: Render bilbio (Get text) */
   $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
   $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
   $handler->display->display_options['fields']['biblio_render']['field'] = 'biblio_render';
