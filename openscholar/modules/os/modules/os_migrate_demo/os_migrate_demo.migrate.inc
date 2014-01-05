@@ -349,6 +349,13 @@ class OsMigratePublicationBook extends OsMigrate {
   public $csvColumns = array(
     array('id', 'ID'),
     array('title', 'Title'),
+    array('biblio_place_published', 'Publisher'),
+    array('biblio_year', 'Year'),
+    array('biblio_place_published', 'Publish location'),
+    array(OG_AUDIENCE_FIELD, 'Site'),
+    array(OG_VOCAB_FIELD, 'Terms'),
+    array('uid', 'UID'),
+    array('created', 'Created'),
   );
 
   public $dependencies = array(
@@ -362,10 +369,22 @@ class OsMigratePublicationBook extends OsMigrate {
     parent::__construct($arguments);
     $this->addFieldMapping('title', 'title');
 
-    /*
+
+    $this->addFieldMapping('biblio_place_published', 'biblio_place_published');
+    $this->addFieldMapping('biblio_year', 'biblio_year');
+    $this->addFieldMapping('biblio_place_published', 'biblio_place_published');
+
+    $this
+      ->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
+      ->sourceMigration(array('OsMigratePersonalNode', 'OsMigrateProjectNode'));
+
+    $this
+      ->addFieldMapping(OG_VOCAB_FIELD, OG_VOCAB_FIELD)
+      ->sourceMigration(array('OsMigrateScienceTaxonomyTerm'))
+      ->separator('|');
+
     $this->addFieldMapping('uid', 'uid')
       ->sourceMigration('OsMigrateUsers');
-    */
 
     $this->addFieldMapping('created', 'created');
   }
