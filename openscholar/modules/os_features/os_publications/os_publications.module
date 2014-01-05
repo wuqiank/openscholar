@@ -116,6 +116,7 @@ function os_publications_settings() {
   $biblio_views_settings = variable_get('biblio_views_biblio_render_options');
 
   // Iterate over the files in the styles directory.
+  $styles = array();
   $files = new DirectoryIterator(libraries_get_path('citeproc-php') . '/style');
   foreach ($files as $file) {
 
@@ -264,9 +265,8 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
   // Order the publication by types.
   if (in_array($order_field, array('biblio_year', 'biblio_publisher'))) {
     $field_info = field_info_field($order_field);
-    $storage_info = $field_info['storage']['details']['sql'][FIELD_LOAD_CURRENT];
-    $table = key($storage_info);
-    $field = $storage_info[$table]['value'];
+    $table = _field_sql_storage_tablename($field_info);
+    $field = $order_field . '_value';
 
     $query->add_field($table, $field, 'field');
     $field = $table . '.' . $field;
