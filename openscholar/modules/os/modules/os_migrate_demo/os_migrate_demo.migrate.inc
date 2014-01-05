@@ -394,10 +394,16 @@ class OsMigrateBookBiblio extends OsMigrate {
     $this->addFieldMapping('changed', 'created');
   }
 
-
   public function prepareRow($row) {
     // The 'Created' column is optional and defaults to now.
     $row->created = !empty($row->created) ? $row->created : time();
+  }
+
+  /**
+   * Add Biblio contributors.
+   */
+  public function prepare($entity, $row) {
+    $entity->addContributors($row->author);
   }
 }
 
