@@ -32,4 +32,7 @@ function os_migrate_demo_install() {
 
   // Attach field to the Biblio's Book bundle.
   biblio_create_fields_by_bundle(array('book'));
+
+  // Register statically-defined classes.
+  migrate_static_registration();
 }
