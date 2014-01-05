@@ -68,7 +68,7 @@ function os_publications_theme() {
 }
 
 /**
- * Implements hook_menu().
+ * Implements hook_menu_alter().
  */
 function os_publications_menu_alter(&$items) {
   $items['features/os_publications'] = array(
@@ -140,7 +140,7 @@ function os_publications_settings() {
       continue;
     }
 
-    // Get the title of the style and his name.
+    // Get the title of the style and its name.
     $xml = simplexml_load_file($file->getRealPath());
     $name = str_replace('.csl' , '', $file->getFilename());
     $styles[$name] = $xml->info->title;
@@ -165,15 +165,6 @@ function os_publications_settings() {
 
   // Backward compatibility with the old OS publication field order settings.
   $order_field = variable_get('biblio_sort', 'biblio_publisher');
-  switch ($order_field) {
-    case 'author':
-      $order_field = 'biblio_publisher';
-      break;
-
-    case 'year':
-      $order_field = 'biblio_year';
-      break;
-  }
 
   $form['left']['biblio_sort'] = array(
     '#type' => 'radios',
@@ -209,6 +200,8 @@ function os_publications_settings() {
 
 /**
  * Submit handler; set the style name of citeproc.
+ *
+ * @see biblio_handler_field_biblio_render::render();
  */
 function os_publications_set_style_name($form, $form_state) {
   $settings = variable_get('biblio_views_biblio_render_options');
@@ -216,7 +209,7 @@ function os_publications_set_style_name($form, $form_state) {
   variable_set('biblio_views_biblio_render_options', $settings);
 
   // The variable 'os_publications_style_type' created automatically during the
-  // form submit; Delete him.
+  // form submit; Delete it.
   variable_del('os_publications_style_type');
 }
 
@@ -263,14 +256,14 @@ function os_publications_biblio_fields_info() {
  * Implements hook_views_query_alter().
  */
 function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
-  if ($view->name != 'os_publications') {
+  if ($view->name != 'os_publications_issued') {
     return;
   }
 
-  // Store the settings of OS publication in variables.
+  // Get the settings of OS publication in variables.
   $order_field = variable_get('biblio_sort', 'biblio_year');
   $order_type = variable_get('biblio_order', 'ASC');
-  $filter_type = variable_get('os_publications_filter_publication_types', array_keys(biblio_types()));
+  $filter_types = variable_get('os_publications_filter_publication_types', array_keys(biblio_types()));
 
   // Backward compatibility with the old OS publication field order settings.
   switch ($order_field) {
@@ -304,8 +297,8 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
   );
 
   // Filter types the user selected.
-  if ($filter_type) {
+  if ($filter_types) {
     $group_key = key($query->where);
-    $query->add_where($group_key, 'biblio.type', $filter_type, 'IN');
+    $query->add_where($group_key, 'biblio.type', $filter_types, 'IN');
   }
 }
