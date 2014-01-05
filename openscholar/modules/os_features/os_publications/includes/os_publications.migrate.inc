@@ -39,40 +39,66 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
     $this->createBiblioVocab($entity, $node);
 
     // @todo: add mapping to remaining fields:
-    // path, redirect
   }
 
   /**
    * Apply needed changes to the new Biblio entity.
    */
   public function complete($entity, $row) {
-
+    // Map the path property (update the URL alias table).
+    // This is done here and not in the "prepare()" since we need the Biblio ID.
+    $this->updatePathAlias($entity, $row);
   }
 
   /**
    * Create an OG vocab entity.
    *
-   * If the vocabulary is not linked yet to the biblio entity and its bundle,
+   * If the vocabulary is not linked yet to the Biblio entity and its bundle,
    * add the vocab and the relation to the group.
    *
-   * @param $entity
-   *    The Biblio entity.
+   * @param Biblio $biblio
+   *    The saved Biblio.
+   * @param $node
+   *    The old Biblio node.
    */
-  private function createBiblioVocab($entity, $node) {
+  private function createBiblioVocab($biblio, $node) {
     if (empty($node->og_vocabulary)) {
       return;
     }
 
-    $wrapper = entity_metadata_wrapper('biblio', $entity);
+    $wrapper = entity_metadata_wrapper('biblio', $biblio);
 
     foreach ($wrapper->{OG_VOCAB_FIELD} as $terms) {
       $vid = $terms->vocabulary->getIdentifier();
 
       // Create the OG vocabulary and the relation to the group.
-      if (!og_vocab_load_og_vocab($vid, 'biblio', $entity->type)) {
-        og_vocab_create_og_vocab($vid, 'biblio', $entity->type)->save();
+      if (!og_vocab_load_og_vocab($vid, 'biblio', $biblio->type)) {
+        og_vocab_create_og_vocab($vid, 'biblio', $biblio->type)->save();
         og_vocab_relation_save($vid, 'node', $wrapper->{OG_AUDIENCE_FIELD}->get(0)->getIdentifier());
       }
     }
+  }
+
+  /**
+   * Create the path (URL alias) for the new Biblio entry.
+   *
+   * @param Biblio $biblio
+   *    The saved Biblio.
+   * @param $row
+   *    The old Biblio node.
+   */
+  private function updatePathAlias($biblio, $row) {
+    $conditions = array(
+      'source' => 'node/' . $row->nid,
+      'language' => LANGUAGE_NONE,
+    );
+
+    if (!$path = path_load($conditions)) {
+      return;
+    }
+
+    $path = path_load($conditions);
+    $path['source'] = 'biblio/' . $biblio->bid;
+    path_save($new_path);
   }
 }

@@ -36,6 +36,10 @@ function os_publications_views_default_views() {
   $handler->display->display_options['pager']['options']['quantity'] = '9';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'fields';
+  /* Header: Publication: Export links */
+  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
+  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
+  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
   /* Relationship: OG membership: OG membership from Publication */
   $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'biblio';
@@ -125,7 +129,11 @@ function os_publications_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Field: Biblio: Render bilbio (Get text) */
+  /* Header: Publication: Export links */
+  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
+  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
+  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
+  /* Field: Publication: Render bilbio (Get text) */
   $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
   $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
   $handler->display->display_options['fields']['biblio_render']['field'] = 'biblio_render';

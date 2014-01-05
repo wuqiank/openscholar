@@ -360,7 +360,6 @@ class OsMigratePublicationBook extends OsMigrate {
 
   public function __construct($arguments = array()) {
     parent::__construct($arguments);
-
     $this->addFieldMapping('title', 'title');
 
     $this->addFieldMapping('uid', 'uid')
