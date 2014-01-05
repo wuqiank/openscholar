@@ -362,8 +362,10 @@ class OsMigratePublicationBook extends OsMigrate {
     parent::__construct($arguments);
     $this->addFieldMapping('title', 'title');
 
+    /*
     $this->addFieldMapping('uid', 'uid')
       ->sourceMigration('OsMigrateUsers');
+    */
 
     $this->addFieldMapping('created', 'created');
   }
@@ -372,10 +374,6 @@ class OsMigratePublicationBook extends OsMigrate {
   public function prepareRow($row) {
     // The 'Created' column is optional and defaults to now.
     $row->created = !empty($row->created) ? $row->created : time();
-  }
-
-  public function prepare($entity, $row) {
-
   }
 }
 

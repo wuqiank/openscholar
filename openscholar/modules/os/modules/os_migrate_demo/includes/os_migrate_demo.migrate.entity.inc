@@ -49,11 +49,13 @@ abstract class OsMigrate extends Migration {
       }
       $this->csvColumns = $csv_columns;
     }
-    elseif ($this->entityType == 'og_vocab') {
+
+    if (in_array($this->entityType, array('biblio', 'og_vocab'))) {
       $class_name = 'MigrateDestinationEntityAPI';
+      $this->destination = new $class_name($this->entityType, $this->bundle, array('text_format' => 'filtered_html'));
     }
-    elseif ($this->entityType == 'biblio') {
-      $class_name = 'MigrateDestinationEntityAPI';
+    else {
+      $this->destination = new $class_name($this->bundle, array('text_format' => 'filtered_html'));
     }
 
     // Create a map object for tracking the relationships between source rows
@@ -68,7 +70,6 @@ abstract class OsMigrate extends Migration {
 
     // Create a MigrateSource object.
     $this->source = new MigrateSourceCSV(drupal_get_path('module', 'os_migrate_demo') . '/csv/' . $this->entityType . '/' . $this->bundle . '.csv', $this->csvColumns, array('header_rows' => 1));
-    $this->destination = new $class_name($this->bundle, array('text_format' => 'filtered_html'));
   }
 
   public function prepareRow($row) {
