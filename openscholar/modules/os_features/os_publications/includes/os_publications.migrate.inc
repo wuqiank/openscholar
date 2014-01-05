@@ -47,8 +47,8 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
    */
   public function complete($entity, $row) {
     // Map the path property (update the URL alias table).
-    // This is done here and not in the "prepare()" since we need the entity id (bid).
-    $this->createPath($entity, $row);
+    // This is done here and not in the "prepare()" since we need the Biblio ID.
+    $this->updatePathAlias($entity, $row);
   }
 
   /**
@@ -83,19 +83,23 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
   /**
    * Create the path (URL alias) for the new Biblio entry.
    *
-   * @param $entity
-   *    The new Biblio entity.
+   * @param Biblio $biblio
+   *    The saved Biblio.
    * @param $row
-   *    Tepresents the old Biblio node.
+   *    The old Biblio node.
    */
-  private function createPath($entity, $row) {
+  private function updatePathAlias($entity, $row) {
     $conditions = array(
       'source' => 'node/' . $row->nid,
       'language' => LANGUAGE_NONE,
     );
-    $old_path = path_load($conditions);
-    $new_path = $old_path;
-    $new_path['source'] = 'biblio/' . $entity->bid;
+    
+    if (!$path = path_load($conditions)) {
+      return;
+    }
+
+    $path = path_load($conditions);
+    $path['source'] = 'biblio/' . $entity->bid;
     path_save($new_path);
   }
 }
