@@ -1,7 +1,4 @@
 <?php
-// $Id$
-
-
 /**
  * @file
  * os_publications.context.inc
@@ -14,21 +11,12 @@ function os_publications_context_default_contexts() {
   $export = array();
 
   $context = new stdClass();
-  /* Edit this to true to make a default context disabled initially */
-  $context->disabled = FALSE;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
   $context->name = 'publications_publications';
   $context->description = 'List of publications';
   $context->tag = 'OS features';
   $context->conditions = array(
-    'node' => array(
-      'values' => array(
-        'biblio' => 'biblio',
-      ),
-      'options' => array(
-        'node_form' => '0',
-      ),
-    ),
     'path' => array(
       'values' => array(
         'publications' => 'publications',
@@ -37,25 +25,23 @@ function os_publications_context_default_contexts() {
     ),
   );
   $context->reactions = array(
-    'menu' => 'publications',
     'block' => array(
       'blocks' => array(
         'boxes-os_publications_recent' => array(
           'module' => 'boxes',
           'delta' => 'os_publications_recent',
-          'weight' => 21,
           'region' => 'sidebar_second',
-          'label' => 'Recent publications',
+          'weight' => '21',
         ),
         'boxes-os_addthis' => array(
           'module' => 'boxes',
           'delta' => 'os_addthis',
-          'label' => 'AddThis Button',
-          'weight' => 22,
           'region' => 'sidebar_second',
+          'weight' => '22',
         ),
       ),
     ),
+    'menu' => 'publications',
   );
   $context->condition_mode = 0;
 
@@ -67,4 +53,3 @@ function os_publications_context_default_contexts() {
 
   return $export;
 }
-
