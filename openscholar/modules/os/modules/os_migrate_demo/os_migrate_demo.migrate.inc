@@ -340,9 +340,9 @@ class OsMigrateSoftwareNode extends OsMigrate {
 }
 
 /**
- * Migrating books.
+ * Migrate Biblio books.
  */
-class OsMigratePublicationNode extends OsMigrate {
+class OsMigratePublicationBook extends OsMigrate {
   public $entityType = 'biblio';
   public $bundle = 'book';
 
