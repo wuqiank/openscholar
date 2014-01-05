@@ -100,6 +100,6 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
 
     $path = path_load($conditions);
     $path['source'] = 'biblio/' . $biblio->bid;
-    path_save($new_path);
+    path_save($path);
   }
 }
