@@ -351,7 +351,7 @@ class OsMigratePublicationBook extends OsMigrate {
     array('title', 'Title'),
     array('biblio_place_published', 'Publisher'),
     array('biblio_year', 'Year'),
-    array('biblio_place_published', 'Publish location'),
+    array('biblio_location', 'Publish location'),
     array(OG_AUDIENCE_FIELD, 'Site'),
     array(OG_VOCAB_FIELD, 'Terms'),
     array('uid', 'UID'),
@@ -367,12 +367,16 @@ class OsMigratePublicationBook extends OsMigrate {
 
   public function __construct($arguments = array()) {
     parent::__construct($arguments);
-    $this->addFieldMapping('title', 'title');
 
+    $field_names = array(
+      'title',
+      'biblio_place_published',
+      'biblio_year',
+      'biblio_location',
+      'created',
+    );
 
-    $this->addFieldMapping('biblio_place_published', 'biblio_place_published');
-    $this->addFieldMapping('biblio_year', 'biblio_year');
-    $this->addFieldMapping('biblio_place_published', 'biblio_place_published');
+    $this->addSimpleMappings($field_names);
 
     $this
       ->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
