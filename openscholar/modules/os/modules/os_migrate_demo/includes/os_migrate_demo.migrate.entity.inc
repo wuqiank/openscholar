@@ -13,8 +13,8 @@ abstract class OsMigrate extends Migration {
    */
   public $ogVocab = FALSE;
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     // Make sure we can use it for node and term only.
     if (!in_array($this->entityType, array('node', 'taxonomy_term', 'og_vocab', 'biblio'))) {

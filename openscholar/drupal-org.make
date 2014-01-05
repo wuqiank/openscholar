@@ -241,7 +241,7 @@ projects[memcache][subdir] = "contrib"
 projects[memcache][version] = 1.0
 
 projects[migrate][subdir] = "contrib"
-projects[migrate][version] = 2.5
+projects[migrate][version] = 2.6-rc1
 
 projects[migrate_extras][subdir] = "contrib"
 projects[migrate_extras][version] = 2.5

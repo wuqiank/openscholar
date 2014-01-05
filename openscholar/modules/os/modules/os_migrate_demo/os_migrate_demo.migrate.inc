@@ -105,8 +105,8 @@ class OsMigratePersonalNode extends OsMigrate {
     'OsMigrateDepartmentNode',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
     $this->addFieldMapping('purl', 'purl');
     $this->addFieldMapping('field_site_address', 'purl');
     $this->addFieldMapping(VSITE_ACCESS_FIELD, VSITE_ACCESS_FIELD);
@@ -178,8 +178,8 @@ class OsMigrateDepartmentNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
     $this->addFieldMapping('purl', 'purl');
     $this->addFieldMapping('field_site_address', 'purl');
     $this->addFieldMapping(VSITE_ACCESS_FIELD, VSITE_ACCESS_FIELD);
@@ -249,8 +249,8 @@ class OsMigrateProjectNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
     $this->addFieldMapping('purl', 'purl');
     $this->addFieldMapping('field_site_address', 'purl');
 
@@ -290,8 +290,8 @@ class OsMigrateBioagrphyNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -324,8 +324,8 @@ class OsMigrateSoftwareNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -358,8 +358,8 @@ class OsMigratePublicationBook extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('title', 'title');
 
@@ -406,8 +406,8 @@ class OsMigrateClassesNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping('field_semester', 'semester');
@@ -464,8 +464,8 @@ class OsMigrateClassesMaterialNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -499,8 +499,8 @@ class OsMigrateCurriculumVitaeNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -533,8 +533,8 @@ class OsMigrateNewsNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -573,8 +573,8 @@ class OsMigrateEventsNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping('field_date', 'field_date');
@@ -633,8 +633,8 @@ class OsMigrateFAQNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -671,8 +671,8 @@ class OsMigrateBlogNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -716,8 +716,8 @@ class OsMigrateBookNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -769,8 +769,8 @@ class OsMigratePeopleNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('field_middle_name_or_initial', 'middle_name');
     $this->addFieldMapping('field_last_name', 'last_name');
@@ -832,8 +832,8 @@ class OsMigrateLinkNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -876,8 +876,8 @@ class OsMigratePresntationsNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping('field_presentation_location', 'location');
@@ -925,8 +925,8 @@ class OsMigrateFeedsNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping('address', 'field_url');
@@ -970,8 +970,8 @@ class OsMigrateGalleryNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     // $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -1015,8 +1015,8 @@ class OsMigratePageNode extends OsMigrate {
     'OsMigrateUsers',
   );
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping(OG_AUDIENCE_FIELD, OG_AUDIENCE_FIELD)
@@ -1046,8 +1046,8 @@ class OsMigrateUsers extends Migration {
 
   public $entityType = 'user';
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
     $this->description = t('Import users from a CSV file.');
 
     $this->addFieldMapping('name', 'name');
@@ -1119,8 +1119,8 @@ class OsMigrateOgVocab extends OsMigrate {
 
   protected $enabled = FALSE;
 
-  public function __construct() {
-    parent::__construct();
+  public function __construct($arguments = array()) {
+    parent::__construct($arguments);
 
     $this->addFieldMapping('vocabulary', 'vocabulary');
     $this
