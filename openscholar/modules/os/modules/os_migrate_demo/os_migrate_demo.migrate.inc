@@ -349,6 +349,7 @@ class OsMigratePublicationBook extends OsMigrate {
   public $csvColumns = array(
     array('id', 'ID'),
     array('title', 'Title'),
+    array('Author', 'Author'),
     array('biblio_place_published', 'Publisher'),
     array('biblio_year', 'Year'),
     array('biblio_location', 'Publish location'),
