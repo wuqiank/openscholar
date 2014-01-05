@@ -342,7 +342,7 @@ class OsMigrateSoftwareNode extends OsMigrate {
 /**
  * Migrate Biblio books.
  */
-class OsMigratePublicationBook extends OsMigrate {
+class OsMigrateBookBiblio extends OsMigrate {
   public $entityType = 'biblio';
   public $bundle = 'book';
 
@@ -1168,8 +1168,5 @@ class OsMigrateOgVocab extends OsMigrate {
     foreach ($keys as $key) {
       $row->settings[$key] = $row->{$key};
     }
-  }
-
-  public function prepare($entity, $row) {
   }
 }
