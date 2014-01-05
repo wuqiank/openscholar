@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file
@@ -69,6 +68,19 @@ function os_publications_theme() {
 }
 
 /**
+ * Implements hook_menu_alter().
+ */
+function os_publications_menu_alter(&$items) {
+  $items['features/os_publications'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_publications_settings'),
+    'access callback' => module_exists('vsite') ? 'spaces_access_admin' : 'user_access',
+    'access arguments' => module_exists('vsite') ? array() : array('administer site configuration'),
+  );
+}
+
+/**
  * Implements hook_migrate_api_alter().
  *
  * Replace BiblioMigrateEntries with OS own implementation that maintains the
@@ -81,6 +93,108 @@ function os_publications_migrate_api_alter(&$info) {
   }
 
   $info['biblio']['migrations']['BiblioMigrateEntries'] = array('class_name' => 'OsBiblioMigrateEntries', 'group_name' => 'biblio_3');
+}
+
+/**
+ * Define the behaviour of OS publications settings page.
+ */
+function os_publications_settings() {
+  $form['left'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array('column', 'column-left'),
+    ),
+  );
+
+  $form['right'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array('column', 'column-right'),
+    ),
+  );
+
+  $biblio_views_settings = variable_get('biblio_views_biblio_render_options');
+
+  // Iterate over the files in the styles directory.
+  $styles = array();
+  $files = new DirectoryIterator(libraries_get_path('citeproc-php') . '/style');
+  foreach ($files as $file) {
+
+    if ($file->isDot()) {
+      continue;
+    }
+
+    // Get the title of the style and its name.
+    $xml = simplexml_load_file($file->getRealPath());
+    $name = str_replace('.csl' , '', $file->getFilename());
+    $styles[$name] = $xml->info->title;
+  }
+
+  $form['left']['os_publications_style_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Select the style type'),
+    '#default_value' => empty($biblio_views_settings['style_name']) ? 'chicago-author-date' : $biblio_views_settings['style_name'],
+    '#options' => $styles,
+  );
+
+  $form['left']['biblio_order'] = array(
+    '#type' => 'radios',
+    '#title' => t('Select default order of the sort category'),
+    '#default_value' => variable_get('biblio_order', 'DESC'),
+    '#options' => array(
+      'DESC' => t('Descending'),
+      'ASC' => t('Ascending')
+    ),
+  );
+
+  // Backward compatibility with the old OS publication field order settings.
+  $order_field = variable_get('biblio_sort', 'biblio_publisher');
+
+  $form['left']['biblio_sort'] = array(
+    '#type' => 'radios',
+    '#title' => t('By default, sort publications by which category'),
+    '#default_value' => $order_field,
+    '#options' => array(
+      'title' => t('Title'),
+      'type' => t('Type'),
+      'biblio_publisher' => t('Author'),
+      'biblio_year' => t('Year'),
+    ),
+  );
+
+  $types = biblio_types();
+  foreach ($types as $type => $info) {
+    $results[$type] = $info->name;
+  }
+  asort($results);
+
+  $form['right']['os_publications_filter_publication_types'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Show only publications of type'),
+    '#default_value' => variable_get('os_publications_filter_publication_types', array_keys($results)),
+    '#options' => $results,
+    '#description' => t('The main list of publications on your publications page will list the types selected here.'),
+    '#attributes' => array('class' => array('form-checkboxes-scrolling')),
+  );
+
+  $form['#submit'][] = 'os_publications_set_style_name';
+
+  return system_settings_form($form);
+}
+
+/**
+ * Submit handler; set the style name of citeproc.
+ *
+ * @see biblio_handler_field_biblio_render::render();
+ */
+function os_publications_set_style_name($form, $form_state) {
+  $settings = variable_get('biblio_views_biblio_render_options');
+  $settings['style_name'] = $form_state['values']['os_publications_style_type'];
+  variable_set('biblio_views_biblio_render_options', $settings);
+
+  // The variable 'os_publications_style_type' created automatically during the
+  // form submit; Delete it.
+  variable_del('os_publications_style_type');
 }
 
 /**
@@ -122,3 +236,52 @@ function os_publications_biblio_fields_info() {
   return $items;
 }
 
+/**
+ * Implements hook_views_query_alter().
+ */
+function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
+  if ($view->name != 'os_publications_issued') {
+    return;
+  }
+
+  // Get the settings of OS publication in variables.
+  $order_field = variable_get('biblio_sort', 'biblio_year');
+  $order_type = variable_get('biblio_order', 'ASC');
+  $filter_types = variable_get('os_publications_filter_publication_types', array_keys(biblio_types()));
+
+  // Backward compatibility with the old OS publication field order settings.
+  switch ($order_field) {
+    case 'author':
+      $order_field = 'biblio_publisher';
+      break;
+
+    case 'year':
+      $order_field = 'biblio_year';
+      break;
+  }
+
+  $field = 'biblio.' . $order_field;
+
+  // Order the publications by the selected field in OS publications settings.
+  if (in_array($order_field, array('biblio_year', 'biblio_publisher'))) {
+    $field_info = field_info_field($order_field);
+    $table = _field_sql_storage_tablename($field_info);
+    $field = $order_field . '_value';
+
+    $query->add_field($table, $field, 'field');
+    $field = $table . '.' . $field;
+  }
+
+  $query->orderby = array(
+    array(
+      'field' => $field,
+      'direction' => $order_type,
+    )
+  );
+
+  // Filter types the user selected.
+  if ($filter_types) {
+    $group_key = key($query->where);
+    $query->add_where($group_key, 'biblio.type', $filter_types, 'IN');
+  }
+}
