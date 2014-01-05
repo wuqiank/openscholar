@@ -262,7 +262,7 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
 
   $field = 'biblio.' . $order_field;
 
-  // Order the publication by types.
+  // Order the publications by the selected field in OS publications settings.
   if (in_array($order_field, array('biblio_year', 'biblio_publisher'))) {
     $field_info = field_info_field($order_field);
     $table = _field_sql_storage_tablename($field_info);
