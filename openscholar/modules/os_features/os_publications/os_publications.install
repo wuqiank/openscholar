@@ -31,9 +31,6 @@ function os_publications_install() {
     );
     og_create_field(OG_AUDIENCE_FIELD, 'biblio', $type, $og_field);
   }
-
-  // Attaching fields to all Biblio bundles.
-  biblio_create_fields_by_bundle();
 }
 
 // Implements hook_update_N().
@@ -1049,9 +1046,6 @@ function os_publications_update_7016() {
     );
     og_create_field(OG_AUDIENCE_FIELD, 'biblio', $type, $og_field);
   }
-
-  // Attaching fields to all Biblio bundles.
-  biblio_create_fields_by_bundle();
 }
 
 // @todo: Add "American chemical society.csl" and "American chemical society with titles.csl"
