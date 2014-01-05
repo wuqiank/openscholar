@@ -1015,7 +1015,7 @@ function os_publications_update_7013() {
 /**
  * Make the "Data" biblio type visible.
  */
-function os_publications_update_7014() {
+function os_publications_update_7015() {
   db_update('biblio_types')
     ->fields(array('visible' => 1))
     ->condition('name', 'data')
@@ -1025,7 +1025,7 @@ function os_publications_update_7014() {
 /**
  * Attaching fields to the biblio bundles.
  */
-function os_publications_update_7015() {
+function os_publications_update_7016() {
   // Attaching OG audience fields to the Biblio bundles.
   $types = biblio_get_types_info();
   foreach (array_keys($types) as $type) {
