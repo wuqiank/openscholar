@@ -31,6 +31,9 @@ function os_publications_install() {
     );
     og_create_field(OG_AUDIENCE_FIELD, 'biblio', $type, $og_field);
   }
+
+  // Attach all fields to all Biblio bundles.
+  biblio_create_fields_by_bundle();
 }
 
 // Implements hook_update_N().
@@ -1010,28 +1013,9 @@ function os_publications_update_7013() {
 }
 
 /**
- * Add "American chemical society.csl" and "American chemical society with titles.csl"
- * to Biblio.
- */
-function os_publications_update_7014() {
-  module_load_include('inc', 'biblio_citeproc', 'biblio_citeproc.admin');
-
-  $files = array(
-    'american-chemical-society',
-    'american-chemical-society-with-titles',
-  );
-
-  foreach ($files as $file) {
-    // Read the CSL file from the directory.
-    $csl = file_get_contents(drupal_get_path('module', 'biblio_citeproc') . '/style/' . $file . '.csl');
-    _install_csl($file . '.csl', $csl);
-  }
-}
-
-/**
  * Make the "Data" biblio type visible.
  */
-function os_publications_update_7015() {
+function os_publications_update_7014() {
   db_update('biblio_types')
     ->fields(array('visible' => 1))
     ->condition('name', 'data')
@@ -1039,10 +1023,10 @@ function os_publications_update_7015() {
 }
 
 /**
- * Attaching OG audience fields to the new biblio bundles.
+ * Attaching fields to the biblio bundles.
  */
-function os_publications_update_7016() {
-  // Attaching OG audience fields to the biblio bundles.
+function os_publications_update_7015() {
+  // Attaching OG audience fields to the Biblio bundles.
   $types = biblio_get_types_info();
   foreach (array_keys($types) as $type) {
     $og_field = og_fields_info(OG_AUDIENCE_FIELD);
@@ -1065,4 +1049,9 @@ function os_publications_update_7016() {
     );
     og_create_field(OG_AUDIENCE_FIELD, 'biblio', $type, $og_field);
   }
+
+  // Attach all fields to all Biblio bundles.
+  biblio_create_fields_by_bundle();
 }
+
+// @todo: Add "American chemical society.csl" and "American chemical society with titles.csl"
