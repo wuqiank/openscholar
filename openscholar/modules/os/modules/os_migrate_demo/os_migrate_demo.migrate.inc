@@ -389,8 +389,6 @@ class OsMigratePublicationBook extends OsMigrate {
 
     $this->addFieldMapping('uid', 'uid')
       ->sourceMigration('OsMigrateUsers');
-
-    $this->addFieldMapping('created', 'created');
   }
 
 
