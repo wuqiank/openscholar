@@ -285,3 +285,37 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
     $query->add_where($group_key, 'biblio.type', $filter_types, 'IN');
   }
 }
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function os_publications_theme_registry_alter(&$theme_registry) {
+  if (!empty($theme_registry['biblio_ui_entity_export_area'])) {
+    $theme_registry['biblio_ui_entity_export_area']['function'] = 'os_publications_biblio_ui_entity_export_area';
+  }
+  if (!empty($theme_registry['biblio_ui_view_export_area'])) {
+    $theme_registry['biblio_ui_view_export_area']['function'] = 'os_publications_biblio_ui_view_export_area';
+  }
+}
+
+/**
+ * Add os_publications CSS before calling theme_biblio_ui_entity_export_area.
+ * @param $variables
+ * @return string
+ */
+function os_publications_biblio_ui_entity_export_area($variables) {
+  drupal_add_css(drupal_get_path('module', 'os_publications') . '/css/os_publications.css');
+  return theme_biblio_ui_entity_export_area($variables);
+}
+
+/**
+ * Add os_publications CSS before calling theme_biblio_ui_view_export_area.
+ *
+ * @param $variables
+ * @return string
+ */
+function os_publications_biblio_ui_view_export_area($variables) {
+  drupal_add_css(drupal_get_path('module', 'os_publications') . '/css/os_publications.css');
+  return theme_biblio_ui_view_export_area($variables);
+}
+

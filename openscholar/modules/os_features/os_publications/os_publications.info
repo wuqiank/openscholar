@@ -73,4 +73,3 @@ files[] = os_publications_autopager.js
 files[] = includes/os_publications.migrate.inc
 spaces[types][] = og
 spaces[types][] = site
-stylesheets[all][] = css/os_publications.css
