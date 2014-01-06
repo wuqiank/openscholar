@@ -19,7 +19,7 @@ function os_stats_menu() {
   $items['geckoboard'] = array(
     'title' => 'Geckoboard Widget',
     'page callback' => 'os_stats_page',
-    'page arguments' => array('geckoboard'),
+    'page arguments' => array('geckoboard', 'websites'),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
@@ -135,9 +135,10 @@ function os_stats_content() {
  * @return NULL
  * - Content printed directly to screen without rendering page.
  */
-function os_stats_page($style = 'default') {
+function os_stats_page($style = FALSE, $type = FALSE) {
   // Sets defaults for possible query parameters.
   $version_default = OS_STATS_API_VERSION_DEFAULT;
+  $style_default   = 'default';
   $type_default    = 'all';
   $format_default  = 'json'; // One day: xml?
   // Fetches query parameters and sets defaults.
@@ -147,10 +148,12 @@ function os_stats_page($style = 'default') {
     drupal_not_found();
     return NULL;
   }
-  $type = isset($_GET['type']) ? $_GET['type'] : $type_default;
+  if (!$type) {
+    $type = isset($_GET['type']) ? $_GET['type'] : $type_default;
+  }
   $format = isset($_GET['format']) ? $_GET['format'] : $format_default;
-  if ($style == 'default') {
-    $style = isset($_GET['style']) ? $_GET['style'] : $style;
+  if (!$style) {
+    $style = isset($_GET['style']) ? $_GET['style'] : $style_default;
   }
   $cid = 'os_stats_' . $version . '_' . $type . '_' . $format . '_' . $style;
 
