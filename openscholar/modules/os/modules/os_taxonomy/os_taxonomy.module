@@ -916,21 +916,30 @@ function theme_os_taxonomy_tagged_nodes($variables) {
       $options['bundles'] = (empty($options['bundles'])) ? $v_bundles : array_intersect($options['bundles'], $v_bundles);
     } 
     
-    $entities = os_taxonomy_list_attached_entities($taxonomy_term->tid, $options['bundles'], $options['range'], $options['offset']);
-    $tid = $taxonomy_term->tid;
-    
-    //this array map is only necessary when entity types are mixed.  would it be more efficient to use the TYPE_load_multiple and TYPE_view_multipe options when the bundles are all within one entity?
-    $build += array_map(function ($a) use ($tid) {
-      $entity = entity_load_single($a['entity_type'], $a['entity_id']);
-      $entity->contextual_annotation_key = 'tid-' . $tid;
-      return entity_view($a['entity_type'], array($entity));
-    }, $entities);
+    //Load all our items with fast ${type}_load_multiple functions when available.
+    $tagged_entities = os_taxonomy_list_attached_entities($taxonomy_term->tid, $options['bundles'], $options['range'], $options['offset']);
+    $entities = array();
+    $types = array_unique(array_map(function($a) {return $a['entity_type'];}, $tagged_entities));
 
-//     $nodes = node_load_multiple($nids);
-//     array_walk($nodes, create_function('&$n', '$n->contextual_annotation_key = "tid-'.$taxonomy_term->tid.'";'));
-//     $build += node_view_multiple($nodes);
-  }
-  else if ((int) $options['cur_depth'] === 0 && !$has_children_to_display) {
+    foreach ($types as $type) {
+      $ids = array_filter(array_map(function ($a) use ($type) {return ($a['entity_type'] == $type) ? $a['entity_id'] : NULL;}, $tagged_entities));
+      $load_func = $type . '_load_multiple';
+      $view_func = $type . '_view_multiple';
+      
+      $loaded = (function_exists($load_func)) ? $load_func($ids) : entity_load($type, $ids);
+      array_walk($loaded, function(&$n) use ($taxonomy_term) {$n->contextual_annotation_key = "tid-".$taxonomy_term->tid;});
+      $rendered = (function_exists($view_func)) ? $view_func($loaded, 'teaser') : entity_view($type, $loaded, 'teaser');
+      $entities[$type] = ($type == 'node') ? $rendered['nodes'] : $rendered;
+    } 
+    
+    //Now collate them according to original order.
+    $build['entities'] = array_reduce($tagged_entities, function($ret, $a) use ($entities) {
+      $ret[$a['entity_type'] . '-' . $a['entity_id']] = $entities[ $a['entity_type'] ][$a['entity_id']];
+      return $ret;
+    }, array());
+    $build['entities']['#sorted'] = TRUE;
+    
+  } elseif ((int) $options['cur_depth'] === 0 && !$has_children_to_display) {
     $pager = '';
     $build['no_content'] = array(
       '#prefix' => '<p>',
@@ -1081,7 +1090,7 @@ function os_taxonomy_count_attached_entities($tid, $bundles = array()) {
 }
 
 /**
- * Returns an array of node IDs tagged in a given taxonomy term.
+ * Returns an array of entity IDs tagged in a given taxonomy term.
  *
  *  @param $tid
  *    Using the taxonomy_get_tree function, or taxonomy_term_load_multiple ,
@@ -1094,7 +1103,7 @@ function os_taxonomy_count_attached_entities($tid, $bundles = array()) {
  *    Location of an element to start from.
  *
  *  @return array $nids
- *    Array of tagged node IDs.
+ *    Ordered array of tagged node IDs.
  */
 function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = NULL, $offset = NULL) {
   $query = os_taxonomy_count_attached_entities_query_object($tid, $bundles);
