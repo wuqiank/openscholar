@@ -41,7 +41,7 @@ function os_publications_user_default_permissions() {
       0 => 'administrator',
       2 => 'manager',
     ),
-    'module' => 'node',
+    'module' => 'biblio',
   );
 
   // Exported permission: delete biblio content.
@@ -50,7 +50,7 @@ function os_publications_user_default_permissions() {
     'roles' => array(
       0 => 'administrator',
     ),
-    'module' => 'node',
+    'module' => 'biblio',
   );
 
   // Exported permission: delete own biblio content.
@@ -60,7 +60,7 @@ function os_publications_user_default_permissions() {
       0 => 'administrator',
       2 => 'manager',
     ),
-    'module' => 'node',
+    'module' => 'biblio',
   );
 
   // Exported permission: edit biblio content.
@@ -69,7 +69,7 @@ function os_publications_user_default_permissions() {
     'roles' => array(
       0 => 'administrator',
     ),
-    'module' => 'node',
+    'module' => 'biblio',
   );
 
   // Exported permission: edit biblio contributor.
@@ -88,7 +88,7 @@ function os_publications_user_default_permissions() {
       0 => 'administrator',
       2 => 'manager',
     ),
-    'module' => 'node',
+    'module' => 'biblio',
   );
 
   // Exported permission: import from file.
@@ -142,21 +142,6 @@ function os_publications_user_default_permissions() {
       3 => 'manager',
       4 => 'vsite admin',
       5 => 'vsite user',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: view full text.
-  $_permissions['view full text'] = array(
-    'name' => 'view full text',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'anonymous user',
-      2 => 'authenticated user',
-      3 => 'content editor',
-      4 => 'manager',
-      5 => 'vsite admin',
-      6 => 'vsite user',
     ),
     'module' => 'biblio',
   );
