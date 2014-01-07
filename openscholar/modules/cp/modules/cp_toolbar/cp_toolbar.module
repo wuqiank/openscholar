@@ -182,6 +182,7 @@ function cp_toolbar_view() {
       );
     }
   }
+
   $l = menu_get_item('cp/build');
   if ($l['access']) {
     $l['title'] = t('Build');
@@ -285,11 +286,19 @@ function cp_toolbar_fill_drawer() {
     }
     $url_str = str_replace('_', '-', $type);
     foreach ($content as $link) {
-      if ($link['access'] && $link['link_path'] == 'node/add/'.$url_str) {
+      if ($link['access'] && $link['link_path'] == 'node/add/' . $url_str) {
         $links[] = $link;
       }
     }
   }
+
+  // Adding the link for creating new publications.
+  $menu_item = menu_get_item('biblio/add');
+  if ($menu_item['access']) {
+    $menu_item['title'] = t('Publication');
+    $links[] = $menu_item;
+  }
+
   $drawer['content-drawer']['add'] = array(
     '#theme' => 'links',
     '#links' => $links,
