@@ -39,7 +39,6 @@ class OsBiblioMigrateEntries extends BiblioMigrateEntries {
     $this->createBiblioVocab($entity, $node);
 
     // @todo: add mapping to remaining fields:
-    // redirect
   }
 
   /**

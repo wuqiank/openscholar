@@ -131,7 +131,6 @@ function os_publications_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Field: Biblio: Render bilbio (Get text) */
   /* Header: Publication: Export links */
   $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
   $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
