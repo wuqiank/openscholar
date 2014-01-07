@@ -33,8 +33,9 @@ function vsite_user_default_permissions() {
   $permissions['create personal content'] = array(
     'name' => 'create personal content',
     'roles' => array(
-      'authenticated user' => 'authenticated user',
-      'web services' => 'web services',
+      'administrator' => 'administrator',
+      'manager' => 'manager',
+      'support team' => 'support team'
     ),
     'module' => 'node',
   );
@@ -211,6 +212,27 @@ function vsite_user_default_permissions() {
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'spaces_og',
+  );
+
+  // Exported permission: create subsites.
+  $permissions['create subsites'] = array(
+    'name' => 'create subsites',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'manager' => 'manager',
+      'vsite admin' => 'vsite admin',
+    ),
+    'module' => 'vsite',
+  );
+
+  // Exported permission: change vsite domain.
+  $permissions['change vsite domain'] = array(
+    'name' => 'change vsite domain',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'support team' => 'support team',
+    ),
+    'module' => 'vsite_domain',
   );
 
   return $permissions;

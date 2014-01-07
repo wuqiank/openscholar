@@ -1,4 +1,4 @@
-name = OpenScholar WYSIWYG
+name = OS WYSIWYG
 description = Configuration settings for WYSIWYG editors
 core = 7.x
 package = Features

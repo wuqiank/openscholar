@@ -459,11 +459,29 @@ body.sitewide-front {
 	line-height:19px;
 }
 
+
+.os-align-center img {
+   display:inline-block;
+    
+}
+
+.os-title-text a:hover,
 .sitewide-front a {
 	text-decoration:underline;
 	color:#007aff;
 
 }
+
+.os-title-text a,
+.os-title-text {
+	font-size: 50px;
+color: #777;
+height: 70px;
+display: inline-block;
+vertical-align: middle;
+text-decoration:none;
+}
+
 
 .not-logged-in.sitewide-front #columns {min-height:50px;}
 
@@ -616,12 +634,12 @@ body.sitewide-front {
 
 .sitewide-front #block-os-search-solr-site-search #edit-submit:hover,
 .sitewide-front #block-os-search-db-site-search #edit-submit:hover {
-    background: #df1f25;
-    background-image: -webkit-linear-gradient(top, #df1f25, #BB2127);
-    background-image: -moz-linear-gradient(top, #df1f25, #BB2127);
-    background-image: -ms-linear-gradient(top, #df1f25, #BB2127);
-    background-image: -o-linear-gradient(top, #df1f25, #BB2127);
-    background-image: linear-gradient(to bottom, #df1f25, #BB2127);
+    background: #919191;
+    background-image: -webkit-linear-gradient(top, #919191, #6b6b6b);
+    background-image: -moz-linear-gradient(top, #919191, #6b6b6b);
+    background-image: -ms-linear-gradient(top, #919191, #6b6b6b);
+    background-image: -o-linear-gradient(top, #919191, #6b6b6b);
+    background-image: linear-gradient(to bottom, #919191, #6b6b6b);
     text-decoration: none;
     cursor: pointer;
 }
@@ -664,13 +682,12 @@ body.sitewide-front {
     margin: 40px 0 40px 0 !important;
 }
 
+.sitewide-front #block-vsite-register-get-your-site-block {
+margin: 10px 0 40px 0 !important;
+}
+
 #block-vsite-register-get-your-site-block .get-your-site-button {
-    background: #919191;
-    background-image: -webkit-linear-gradient(top, #919191, #6b6b6b);
-    background-image: -moz-linear-gradient(top, #919191, #6b6b6b);
-    background-image: -ms-linear-gradient(top, #919191, #6b6b6b);
-    background-image: -o-linear-gradient(top, #919191, #6b6b6b);
-    background-image: linear-gradient(to bottom, #919191, #6b6b6b);
+    background: #4CD964;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3;
     border-radius: 3px;
@@ -681,15 +698,12 @@ body.sitewide-front {
 }
 
 #block-vsite-register-get-your-site-block .get-your-site-button:hover {
-    background: #df1f25;
-    background-image: -webkit-linear-gradient(top, #df1f25, #BB2127);
-    background-image: -moz-linear-gradient(top, #df1f25, #BB2127);
-    background-image: -ms-linear-gradient(top, #df1f25, #BB2127);
-    background-image: -o-linear-gradient(top, #df1f25, #BB2127);
-    background-image: linear-gradient(to bottom, #df1f25, #BB2127);
+    background: #4CD964;
     text-decoration: none;
 }
 
 .os-align-center {
     text-align: center;
+    
+    
 }

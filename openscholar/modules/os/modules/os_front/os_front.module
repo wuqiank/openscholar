@@ -15,8 +15,8 @@ function os_front_context_default_contexts_alter($contexts) {
   }
   $blocks = &$contexts['os_sitewide_front']->reactions['block']['blocks'];
 
-  $blocks['boxes-os_front_header'] = array(
-    'module' => 'boxes',
+  $blocks['os_front-os_front_header'] = array(
+    'module' => 'os_front',
     'delta' => 'os_front_header',
     'weight' => 0,
     'region' => 'header_second',
@@ -29,11 +29,11 @@ function os_front_context_default_contexts_alter($contexts) {
     'region' => 'content_first',
   );
 
-  $blocks['boxes-os_front_sample'] = array(
+  $blocks['boxes-os_front_main_configure'] = array(
     'module' => 'boxes',
-    'delta' => 'os_front_sample',
-    'weight' => 1,
-    'region' => 'footer',
+    'delta' => 'os_front_main_configure',
+    'weight' => 0,
+    'region' => 'content_second',
   );
 
   // Positions existing SOLR and drupal search widget.
@@ -45,6 +45,88 @@ function os_front_context_default_contexts_alter($contexts) {
   // Modifies existing "Get your site now" block.
   $blocks['vsite_register-get_your_site_block']['weight'] = 2;
   $blocks['vsite_register-get_your_site_block']['region'] = 'header_second';
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function os_front_block_info() {
+  $blocks = array();
+
+  $blocks['os_front_header'] = array(
+    'info' => 'Front Page Header',
+    'cache' => DRUPAL_CACHE_GLOBAL,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function os_front_block_view($delta) {
+  switch($delta) {
+    case 'os_front_header':
+      $output = array(
+        'banner' => array(
+          '#type' => 'container',
+          '#attributes' => array(
+            'class' => array(
+              'os-align-center',
+            ),
+          ),
+          'image' => array(
+            '#theme' => 'image',
+            '#path' => drupal_get_path('theme', 'os_default')."/images/osfrontpg_logo.gif",
+            '#alt' => t('OpenScholar'),
+            '#title' => t('OpenScholar'),
+            '#attributes' => array(
+              'class' => array(
+                'os-title-image',
+              ),
+            ),
+          ),
+          'text' => array(
+            '#prefix' => '<span class="os-title-text">',
+            '#suffix' => '</span>',
+            'text-anon' => array(
+              '#markup' => variable_get('os_front_site_title', 'Change Me'),
+              '#access' => !user_access('administer content'),
+            ),
+            'text-auth' => array(
+              '#markup' => l(variable_get('os_front_site_title', 'Change Me'), 'admin/config/openscholar/site-title'),
+              '#access' => user_access('administer content'),
+            )
+          )
+        ),
+      );
+
+      $block = array(
+        'subject' => NULL,
+        'content' => $output,
+      );
+
+      return $block;
+    break;
+  }
+}
+
+/**
+ * Implements hook_form_os_settings_form_alter().
+ */
+function os_front_form_os_settings_form_alter(&$form, &$form_state) {
+  $form['front-page'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => empty($form_state['build_info']['args']) || $form_state['build_info']['args'][0] != 'site-title',
+    '#title' => t('Front Page'),
+    'os_front_site_title' => array(
+      '#type' => 'textfield',
+      '#title' => t('Title of Site'),
+      '#description' => t('Appears on the default front page'),
+      '#default_value' => variable_get('os_front_site_title', 'Change Me')
+    )
+  );
 }
 
 /**
