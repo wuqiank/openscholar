@@ -132,20 +132,6 @@ function os_publications_user_default_permissions() {
     'module' => 'biblio',
   );
 
-  // Exported permission: show filter tab.
-  $_permissions['show filter tab'] = array(
-    'name' => 'show filter tab',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'anonymous user',
-      2 => 'authenticated user',
-      3 => 'manager',
-      4 => 'vsite admin',
-      5 => 'vsite user',
-    ),
-    'module' => 'biblio',
-  );
-
   // Exported permission: show sort links.
   $_permissions['show sort links'] = array(
     'name' => 'show sort links',
@@ -174,4 +160,6 @@ function os_publications_user_default_permissions() {
     ),
     'module' => 'biblio',
   );
+
+  return $permissions;
 }
