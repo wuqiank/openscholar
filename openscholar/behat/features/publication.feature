@@ -7,6 +7,7 @@ Feature:
      When I click "Publications"
       And I click "The Little Prince"
      Then I should see "The Little Prince. United States; 1943."
+     Then I should see "The Little Prince (Book)"
 
   @api @wip
   Scenario: Test the Publication tab allows caching of anonymous user
@@ -22,6 +23,9 @@ Feature:
      When I edit the node "The Little Prince"
      Then I should see "Authors"
       And I should see "Enter a single name per line"
+     When I edit the publication "The Little Prince"
+     Then I should see "You have added 1 out of 1 allowed entities."
+      And I should see "Contributor role"
 
   @api
   Scenario: Verify publications are sorted by the creation date of the node.
