@@ -8,7 +8,6 @@
  * Implements hook_user_default_permissions().
  */
 function os_publications_user_default_permissions() {
-  return;
   $permissions = array();
 
   // Exported permission: access biblio content.
@@ -45,9 +44,9 @@ function os_publications_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: delete any biblio content.
-  $permissions['delete any biblio content'] = array(
-    'name' => 'delete any biblio content',
+  // Exported permission: delete biblio content.
+  $permissions['delete biblio content'] = array(
+    'name' => 'delete biblio content',
     'roles' => array(
       0 => 'administrator',
     ),
@@ -64,18 +63,18 @@ function os_publications_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: edit any biblio content.
-  $permissions['edit any biblio content'] = array(
-    'name' => 'edit any biblio content',
+  // Exported permission: edit biblio content.
+  $permissions['edit biblio content'] = array(
+    'name' => 'edit biblio content',
     'roles' => array(
       0 => 'administrator',
     ),
     'module' => 'node',
   );
 
-  // Exported permission: edit biblio authors.
-  $permissions['edit biblio authors'] = array(
-    'name' => 'edit biblio authors',
+  // Exported permission: edit biblio contributor.
+  $permissions['edit biblio contributor'] = array(
+    'name' => 'edit biblio contributor',
     'roles' => array(
       0 => 'administrator',
     ),
@@ -106,7 +105,7 @@ function os_publications_user_default_permissions() {
   );
 
   // Exported permission: show download links.
-  $permissions['show download links'] = array(
+  $_permissions['show download links'] = array(
     'name' => 'show download links',
     'roles' => array(
       0 => 'administrator',
@@ -134,7 +133,7 @@ function os_publications_user_default_permissions() {
   );
 
   // Exported permission: show filter tab.
-  $permissions['show filter tab'] = array(
+  $_permissions['show filter tab'] = array(
     'name' => 'show filter tab',
     'roles' => array(
       0 => 'administrator',
@@ -148,7 +147,7 @@ function os_publications_user_default_permissions() {
   );
 
   // Exported permission: show sort links.
-  $permissions['show sort links'] = array(
+  $_permissions['show sort links'] = array(
     'name' => 'show sort links',
     'roles' => array(
       0 => 'administrator',
@@ -161,66 +160,8 @@ function os_publications_user_default_permissions() {
     'module' => 'biblio',
   );
 
-    // Exported permission: create biblio content.
-  $permissions['create biblio content'] = array(
-    'name' => 'create biblio content',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'manager',
-      2 => 'vsite admin',
-      3 => 'vsite user',
-      4 => 'content editor',
-    ),
-    'module' => 'node',
-  );
-
-  // Exported permission: delete biblios.
-  $permissions['delete biblio entries'] = array(
-    'name' => 'delete biblio entries',
-    'roles' => array(
-      0 => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
-  // Exported permission: delete own biblio content.
-  $permissions['delete own biblio entries'] = array(
-    'name' => 'delete own biblio entries',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'manager',
-      2 => 'vsite admin',
-      3 => 'vsite user',
-      4 => 'content editor',
-    ),
-    'module' => 'node',
-  );
-
-  // Exported permission: edit all biblio entries.
-  $permissions['edit all biblio entries'] = array(
-    'name' => 'edit all biblio entries',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'content editor',
-    ),
-    'module' => 'node',
-  );
-
-  // Exported permission: edit own biblio entries.
-  $permissions['edit own biblio entries'] = array(
-    'name' => 'edit own biblio entries',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'manager',
-      2 => 'vsite admin',
-      3 => 'vsite user',
-      4 => 'content editor',
-    ),
-    'module' => 'node',
-  );
-
-  // Exported permission: view full text
-  $permissions['view full text'] = array(
+  // Exported permission: view full text.
+  $_permissions['view full text'] = array(
     'name' => 'view full text',
     'roles' => array(
       0 => 'administrator',
@@ -233,6 +174,4 @@ function os_publications_user_default_permissions() {
     ),
     'module' => 'biblio',
   );
-
-  return $permissions;
 }
