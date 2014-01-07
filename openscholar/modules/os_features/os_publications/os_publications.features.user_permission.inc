@@ -41,7 +41,7 @@ function os_publications_user_default_permissions() {
       0 => 'administrator',
       2 => 'manager',
     ),
-    'module' => 'biblio',
+    'module' => 'node',
   );
 
   // Exported permission: delete biblio content.
@@ -50,7 +50,7 @@ function os_publications_user_default_permissions() {
     'roles' => array(
       0 => 'administrator',
     ),
-    'module' => 'biblio',
+    'module' => 'node',
   );
 
   // Exported permission: delete own biblio content.
@@ -60,7 +60,7 @@ function os_publications_user_default_permissions() {
       0 => 'administrator',
       2 => 'manager',
     ),
-    'module' => 'biblio',
+    'module' => 'node',
   );
 
   // Exported permission: edit biblio content.
@@ -69,7 +69,7 @@ function os_publications_user_default_permissions() {
     'roles' => array(
       0 => 'administrator',
     ),
-    'module' => 'biblio',
+    'module' => 'node',
   );
 
   // Exported permission: edit biblio contributor.
@@ -88,7 +88,7 @@ function os_publications_user_default_permissions() {
       0 => 'administrator',
       2 => 'manager',
     ),
-    'module' => 'biblio',
+    'module' => 'node',
   );
 
   // Exported permission: import from file.
@@ -160,56 +160,7 @@ function os_publications_user_default_permissions() {
     'module' => 'biblio',
   );
 
-    // Exported permission: create biblio content.
-  $permissions['create biblio content'] = array(
-    'name' => 'create biblio content',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'manager',
-      2 => 'vsite admin',
-      3 => 'vsite user',
-      4 => 'content editor',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: delete own biblio content.
-  $permissions['delete own biblio entries'] = array(
-    'name' => 'delete own biblio entries',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'manager',
-      2 => 'vsite admin',
-      3 => 'vsite user',
-      4 => 'content editor',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: edit biblio entries.
-  $permissions['edit biblio entries'] = array(
-    'name' => 'edit biblio entries',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'content editor',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: edit own biblio entries.
-  $permissions['edit own biblio entries'] = array(
-    'name' => 'edit own biblio entries',
-    'roles' => array(
-      0 => 'administrator',
-      1 => 'manager',
-      2 => 'vsite admin',
-      3 => 'vsite user',
-      4 => 'content editor',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: view full text
+  // Exported permission: view full text.
   $_permissions['view full text'] = array(
     'name' => 'view full text',
     'roles' => array(
@@ -223,6 +174,4 @@ function os_publications_user_default_permissions() {
     ),
     'module' => 'biblio',
   );
-
-  return $permissions;
 }
