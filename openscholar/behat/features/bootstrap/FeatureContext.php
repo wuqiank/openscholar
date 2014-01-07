@@ -1116,6 +1116,20 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @When /^I edit the publication "([^"]*)" in the vsite "([^"]*)"$/
+   */
+  public function iEditThePublicationInVsite($title, $vsite) {
+    $title = str_replace("'", "\'", $title);
+    $bid = $this->invoke_code('os_migrate_demo_get_biblio_bid', array("'{$title}'"));
+
+    print_r(array('I visit "' . $vsite . '/biblio/' . $bid . '/edit"'));
+
+    return array(
+      new Step\When('I visit "' . $vsite . '/biblio/' . $bid . '/edit"'),
+    );
+  }
+
+  /**
    * @When /^I edit the node of type "([^"]*)" named "([^"]*)" using contextual link$/
    */
   public function iEditTheNodeOfTypeNamedUsingContextualLink($type, $title) {
