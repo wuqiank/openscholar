@@ -274,22 +274,37 @@ function os_pinserver_auth_vsite_private_file_settings_submit(&$form, &$form_sta
 }
 
 /**
- * Init the variables $conf without loading all of the bootstrap modules.
- * This prevents hook_init from running on modules the js hook does not list.
+ * Initilize domain specific pin variables that need to either be loaded early or can
+ * not be handled via the standard overrides mechinisims.
+ *
+ *  @param $boot
+ *    Init the variables $conf without loading all of the bootstrap modules.
+ *    This prevents hook_init from running on modules the js hook does not list.
  */
-function _os_pinserver_auth_init_variables(){
+function _os_pinserver_auth_init_variables($boot = FALSE){
   global $conf, $base_url;
 
-  // Initialize the lock system.
-  require_once DRUPAL_ROOT . '/' . variable_get('lock_inc', 'includes/lock.inc');
-  lock_initialize();
+  if($boot){
+	  // Initialize the lock system.
+	  require_once DRUPAL_ROOT . '/' . variable_get('lock_inc', 'includes/lock.inc');
+	  lock_initialize();
 
-  // Load variables from the database, but do not overwrite variables set in settings.php.
-  $conf = variable_initialize(isset($conf) ? $conf : array());
+	  // Load variables from the database, but do not overwrite variables set in settings.php.
+	  $conf = variable_initialize(isset($conf) ? $conf : array());
+  }
+
+  $url_info = parse_url($base_url);
+  $default = "{$url_info['scheme']}://{$url_info['host']}}";
+
+  //If this is a secure URL and there are no overrides for it, use the insecure
+  if($url_info['scheme'] == "https" && is_array($conf['os_fastpath_domain_pinapps']) && !isset($conf['os_fastpath_domain_pinapps'][$default])){
+    $default = "http://{$url_info['host']}}";
+  }
+
 
   // Does this host have a seperate pinserver config?
-  if(is_array($conf['os_fastpath_domain_pinapps']) && isset($conf['os_fastpath_domain_pinapps'][parse_url($base_url,PHP_URL_HOST)])){
-    foreach ($conf['os_fastpath_domain_pinapps'][parse_url($base_url,PHP_URL_HOST)] as $var => $value) {
+  if(is_array($conf['os_fastpath_domain_pinapps']) && isset($conf['os_fastpath_domain_pinapps'][$default])){
+    foreach ($conf['os_fastpath_domain_pinapps'][$default] as $var => $value) {
     	$conf[$var] = $value;
     }
   }

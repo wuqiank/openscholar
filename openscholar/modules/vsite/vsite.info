@@ -1,4 +1,4 @@
-name = Openscholar Vsite
+name = OpenScholar Virtual Site
 description = OpenScholar Vsite
 core = 7.x
 package = OpenScholar vsite
@@ -40,6 +40,7 @@ features[node][] = personal
 features[node][] = project
 features[taxonomy][] = organization
 features[user_permission][] = administer group
+features[user_permission][] = change vsite domain
 features[user_permission][] = create department content
 features[user_permission][] = create personal content
 features[user_permission][] = create project content
