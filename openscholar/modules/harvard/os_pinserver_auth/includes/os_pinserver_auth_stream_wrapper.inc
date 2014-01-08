@@ -20,7 +20,7 @@ class OSPinserverPrivateStreamWrapper extends DrupalPrivateStreamWrapper {
     $private_pin_files = variable_get('os_files_private_pinserver', 0);
 
     $options = array('absolute' => TRUE, 'purl' => array('disabled' => TRUE));
-    if ($custom_pin_domain && ($private_pin_files || $custom_pin_domain != "http://$purl_base_domain")){
+    if ($custom_pin_domain && ($private_pin_files || $custom_pin_domain != $purl_base_domain)){
       $options['base_url'] = variable_get('os_pinserver_custom_domain', FALSE);
     }
 
