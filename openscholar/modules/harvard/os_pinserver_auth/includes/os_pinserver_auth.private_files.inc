@@ -298,7 +298,7 @@ function _os_pinserver_auth_init_variables($boot = FALSE){
 
   //If this is a secure URL and there are no overrides for it, use the insecure
   if($url_info['scheme'] == "https" && is_array($conf['os_fastpath_domain_pinapps']) && !isset($conf['os_fastpath_domain_pinapps'][$default])){
-    $default = "http://{$url_info['host']}}";
+    $default = "http://{$url_info['host']}";
   }
 
 
