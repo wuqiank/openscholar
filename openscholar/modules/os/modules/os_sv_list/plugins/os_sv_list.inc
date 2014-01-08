@@ -1,7 +1,7 @@
 <?php
 
 class os_sv_list extends os_boxes_default {
-  
+
   private $plugins = array();
   protected $entity_type;
   protected $bundle;
@@ -9,12 +9,12 @@ class os_sv_list extends os_boxes_default {
   public $embed_as = array(
     'iframe',
   );
-  
+
   public function __construct() {
     parent::__construct();
     $this->entity_type = $this->bundle = NULL;
   }
-  
+
   /**
    * Implementation of boxes_content::options_defaults().
    */
@@ -29,7 +29,7 @@ class os_sv_list extends os_boxes_default {
       'more' => FALSE,
       'more_text' => t('More'),
       'more_link' => '',
-  
+
       'pager' => FALSE,
       'number_of_items' => 6,
       'sort_by' => 'sort_newest',
@@ -39,24 +39,24 @@ class os_sv_list extends os_boxes_default {
     if (empty($this->plugins)) {
       $this->_set_plugins($this->entity_type);
     }
-    
+
     foreach ($this->plugins as $plugin) {
       if (method_exists($plugin['instance'], 'options_defaults')) {
         $options += $plugin['instance']->options_defaults();
       }
     }
-    
-  
+
+
     return $options;
   }
-  
+
   /**
    * Implementation of boxes_content::options_form().
    */
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
     $this->options = ($this->options) ? array_merge($this->options_defaults(), $this->options) : $this->options_defaults();
-    
+
     $form['#submit'] = array('os_sv_list_form_submit');
     $form['#attached'] = array(
       'css' => array(drupal_get_path('module', 'os_sv_list') . '/os_sv_list.css',),
@@ -67,7 +67,7 @@ class os_sv_list extends os_boxes_default {
       '#collapsible' => FALSE,
     );
 
-    
+
     //content fieldset
     $form['content']['content_type'] = array(
       '#type' => 'select',
@@ -81,7 +81,7 @@ class os_sv_list extends os_boxes_default {
         ),
       ),
     );
-    
+
     $form['content']['display'] = array(
       '#type' => 'select',
       '#title' => 'Display style',
@@ -94,7 +94,7 @@ class os_sv_list extends os_boxes_default {
         ),
       ),
     );
-    
+
 
     $form['content']['sort_by'] = array(
       '#type' => 'select',
@@ -107,28 +107,28 @@ class os_sv_list extends os_boxes_default {
         )
       )
     );
-  
+
 
 
     //details fieldset
     $form['details']['more_div'] = array(
       '#prefix' => '<div class="more-wrapper">',
-      '#suffix' => '</div>',  
+      '#suffix' => '</div>',
     );
-    
+
     $form['details']['more_div']['more'] = array(
       '#title' => 'Show "more" link',
       '#type' => 'checkbox',
       '#default_value' => $this->options['more'],
     );
- 
+
     if (!empty($form_state['values']['more_link'])) {
     // Unset the values from the text field, as otherwise FAPI will add
     // it to the #value of the form-element.
     // @see http://drupal.org/node/1024962#comment-4021826
         unset($form_state['input']['more_link']);
     }
-    
+
     $form['details']['more_div']['more_link'] = array(
       '#title' => t('URL for the more link'),
       '#type' => 'textfield',
@@ -146,7 +146,7 @@ class os_sv_list extends os_boxes_default {
         )
       )
     );
-    
+
     $form['details']['more_div']['more_text'] = array(
       '#title' => 'Label of the more link (default: "more")',
       '#size' => 15,
@@ -156,20 +156,20 @@ class os_sv_list extends os_boxes_default {
           'visible' => array('input[name=more]' => array('checked' => TRUE)),
         ),
     );
-    
+
     $form['details']['pager'] = array(
       '#title' => 'Show pager',
       '#type' => 'checkbox',
       '#default_value' => $this->options['pager'],
     );
-  
+
     $form['details']['number_of_items'] = array(
       '#title' => 'Number of items to display',
       '#type' => 'select',
       '#options' => array_slice(range(0, 20), 1, NULL, TRUE),
       '#default_value' => $this->options['number_of_items'],
     );
-    
+
     //get options from plugins
     $this->_plugins_invoke('options_form', $form);
 
@@ -182,21 +182,21 @@ class os_sv_list extends os_boxes_default {
 
     return $form;
   }
-    
+
   public function render() {
     if (module_exists('vsite') && !vsite_get_vsite()) {
       return;
     }
-    
+
     $bundle = ($this->options['content_type'] != 'all') ? $this->options['content_type'] : NULL;
     $this->_set_plugins($this->entity_type, $bundle);
-    
+
     $block = parent::render();
     $this->options += $this->options_defaults();
     $page_num = (isset($_GET['page'])) ? $_GET['page'] : 0;
     $page = 0;
     $ids = $this->get_ids($page_num, $page);
-   
+
     //add the pager
     if ($this->options['pager'] && $ids) {
       $parameters = array(
@@ -210,10 +210,10 @@ class os_sv_list extends os_boxes_default {
         'element' => $this->pager_element,
         'quantity' => $this->options['number_of_items'],
       ));
-      
+
       drupal_add_library('system', 'drupal.ajax');
-      drupal_add_js(drupal_get_path('module', 'os_sv_list'). '/os_sv_list_display.js');      
-      
+      drupal_add_js(drupal_get_path('module', 'os_sv_list'). '/os_sv_list_display.js');
+
       //if the pager is active, the more link needs its vars to know whether or not to display.
       global $pager_page_array, $pager_total;
       $pager_current = $pager_page_array[$parameters['pager_id']] + 1;
@@ -221,14 +221,14 @@ class os_sv_list extends os_boxes_default {
     } else {
       $pager = '';
     }
-        
+
     //truncate items and prepare the more link
     $more = '';
     if (count($ids) > $this->options['number_of_items'] || ($this->options['pager'] && $ids && $pager_current < $pager_max)) {
       $ids = array_slice($ids, 0, $this->options['number_of_items']);
       $more = ($this->options['more']) ? l($this->options['more_text'], $this->options['more_link'], array('attributes' => array('class' => array('more-link')))) : '';
     }
-    
+
     //give plguins a chance to alter the entities after loading but before rendering.  see events.
     $entities = entity_load($this->entity_type, $ids);
     $entities = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
@@ -236,37 +236,35 @@ class os_sv_list extends os_boxes_default {
     if (empty($entities)) {
       return $block;
     }
-    
+
     if ($this->options['display'] == 'title') {
-      $render = $this->display_title($entities); 
+      $render = $this->display_title($entities);
     } else {
       //let a plugin do the rendering.  if they don't, use the default.
       $render = $this->_plugins_invoke('render', $entities);
       $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
     }
-    
+
     //now render to html.
-    $content = drupal_render($render);   
-    $delta = $this->delta;   
+    $content = drupal_render($render);
+    $delta = $this->delta;
     $class = implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display']));
     $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
     return $block;
   }
-  
+
   public function get_ids($page_num, $page) {
-    // @todo: Fix.
-    return;
     //query for all content of our type
     $query = $this->query();
     $this->_plugins_invoke('query_alter', $query);
-    
+
     if ($this->options['content_type'] != 'all') {
       $query->propertyCondition('type', $this->options['content_type']);
       //any special hook here?
     }
-    
-    
-    
+
+
+
     //pager
     if ($this->options['pager'] && is_int($page)) {
       $query->pager($this->options['number_of_items']);
@@ -274,7 +272,7 @@ class os_sv_list extends os_boxes_default {
     } elseif (is_int($page)) {
       $query->range(0, 1 + $this->options['number_of_items']); //add one so more link knows there's more.
     }
-    
+
     //sort - if $this doesn't have it, one of the plugins will.
     $sort = $this->options['sort_by'];
     if (method_exists($this, $sort)) {
@@ -283,50 +281,50 @@ class os_sv_list extends os_boxes_default {
       $this->_plugins_invoke($sort, $query);
     }
     $this->_plugins_invoke('sort_alter', $query);
-    
+
     //person, !image
     //event exception.  dletas.
 
-    
+
     //execute
     $result = $query->execute();
     return (isset($result[$this->entity_type])) ? array_keys($result[$this->entity_type]) : array();
   }
-  
+
   public function query() {
     $efq = new EntityFieldQuery();
     $efq->entityCondition('entity_type', $this->entity_type);
-    
+
     if (module_exists('vsite') && $space = spaces_get_space()) {
       $efq->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $space->id);
     }
-    
+
     return $efq;
   }
-  
-  
+
+
   /**
    * @function _set_plugins
-   * 
+   *
    * Instantiates all the plugins this box will use.  Call this on demand instead of on __construct,
    * because the plugins loaded will depend on context.  A node box has a fixed entity_type.  During
    * render, its bundle is fixed, but in the options form, its bundle can change.
-   * 
+   *
    * Re-run with new criteria to reset.  This way if a box's option form loads all options for its
-   * entity_type, the render method can reset to only those applicable to the bundle.   
+   * entity_type, the render method can reset to only those applicable to the bundle.
    */
   private function _set_plugins($entity_type = NULL, $bundle = NULL) {
     $this->plugins = array();
-    
+
     foreach (os_sv_list_plugins($entity_type, $bundle) as $plugin) {
       $class = ctools_plugin_get_class($plugin, 'handler');
       $plugin['instance'] = new $class($entity_type, $bundle);
       $this->plugins[$plugin['name']] = $plugin;
     }
-    
+
     return $this->plugins;
   }
-  
+
   /**
    * @function _plugins_invoke
    *
@@ -340,46 +338,46 @@ class os_sv_list extends os_boxes_default {
         $ret[$plugin['name']] = $plugin['instance']->$method($options, $args); //to pass by ref we can't use func_get_args
       }
     }
-    
+
     return (isset($ret)) ? array_filter($ret) : array();
   }
-  
+
   /**
    * @function entity_view_modes
-   * 
+   *
    * Wrapper for os_entity_view_modes.  Also derives common view modes
    * available to all content types.
    */
   private function entity_view_modes() {
     $modes = os_entity_view_modes($this->entity_type);
     $all = array_reduce($modes, 'array_intersect', current($modes)); //starting with an empty array means we'll get an empty back.
-    $modes['all'] = array_values($all);  
+    $modes['all'] = array_values($all);
     return $modes;
   }
-    
+
   protected function _display_options() {
     $defaults = array(  //Display modes will be shown in this order.  If no order is provided, it'll be determined by how the hooks load them.
       'node' => array('title', 'teaser', 'full'),
       'file' => array('os_files_link', 'os_files_link_icon', 'os_files_title', 'teaser', 'full'),
     );
     $defaults = (isset($defaults[$this->entity_type])) ? $defaults[$this->entity_type] : array();
-    
+
     //list all the available view modes for this entity
     $view_modes = os_entity_view_modes($this->entity_type);
-    $view_modes = array_unique(array_reduce($view_modes, 'array_merge', $defaults)); 
-    
+    $view_modes = array_unique(array_reduce($view_modes, 'array_merge', $defaults));
+
     //get labels for these view modes
     $info = entity_get_info($this->entity_type);
     $options = array_reduce($view_modes, function($ret, $mode) use ($info) {$ret[$mode] = $info['view modes'][$mode]['label']; return $ret;});
-    
+
     //rename some options to friendlier titles
     $options = array_merge(array('full' => 'Entire Post'), $options);
-    return $options;    
+    return $options;
   }
-  
+
   /**
    * @function _more_link_defaults()
-   * 
+   *
    * Gets the defaults that fill in for the more link when the content type changes
    */
   protected function _more_link_defaults() {
@@ -387,29 +385,29 @@ class os_sv_list extends os_boxes_default {
     //populate list of content types => paths
     ctools_include('os', 'os');
     $content_types = array('all' => t('All')) + os_get_bundles(array(1));
-    
+
     $content_map = os_get_app_path();
     $content_map = array_diff_key($content_map, array_flip(array('bio', 'cv', 'class_material')));
     if (isset($content_types['image'])) {
       $content_map['image'] = $content_map['media_gallery'];
     }
-    
+
     // Use blank path for unknown paths.
     $content_map += array_fill_keys(array_keys(array_diff_key($content_types, $content_map)),' ');
-    
+
     //Keep user saved more link for this content type
     $content_map[$this->options['content_type']] = $this->options['more_link'];
-    
-    return $content_map;     
+
+    return $content_map;
   }
-  
+
   /**
    * @function _sort_options()
-   * 
+   *
    * Returns hash of sort options and their labels
    */
   protected function _sort_options() {
-    
+
 //     $type_sorts = array();
 //     $sorts = array();
 //     foreach ($this->_plugins_invoke('register_sorts') as $plugin => $sort) {
@@ -417,16 +415,16 @@ class os_sv_list extends os_boxes_default {
 //       $sorts += $sort;
 //       $types = ($info['entity_type']) ? $info['entity_type'] : array('all');
 //       $bundles = ($info['bundle']) ? $info['bundle'] : array('all');
-      
-//       foreach ($types as $type) {          
+
+//       foreach ($types as $type) {
 //         foreach ($bundles as $bundle) {
-//           $type_sorts[$type][$bundle] = (!isset($type_sorts[$type][$bundle])) ? $sort : array_merge($type_sorts[$type][$bundle], $sort); 
-//         } 
+//           $type_sorts[$type][$bundle] = (!isset($type_sorts[$type][$bundle])) ? $sort : array_merge($type_sorts[$type][$bundle], $sort);
+//         }
 //       }
-      
+
 //     }
     $sorts = array_reduce($this->_plugins_invoke('register_sorts'), 'array_merge', array());
-    
+
     return $sorts;
 //     return array(
 //       // Content type sensitive sorts.  // in the future get these from sv render plugins
@@ -434,7 +432,7 @@ class os_sv_list extends os_boxes_default {
 //       'sort_presentation' => t('Recently Presented'),
 //       'sort_biblio' => t('Year of Publication'),
 //       'sort_news' => t('News Date'),
-    
+
 //       // Standard sorts,
 //       'sort_newest' => t('Newest Post'),
 //       'sort_oldest' => t('Oldest Post'),
@@ -442,10 +440,10 @@ class os_sv_list extends os_boxes_default {
 //       'sort_random' => t('Random'),
 //     );
   }
-  
+
   /**
    * @function _sort_options_type_bundles
-   * 
+   *
    * Returns list of sort options, and the entities/bundles that can use them.
    * Items not appearing here are universal.
    */
@@ -455,24 +453,24 @@ class os_sv_list extends os_boxes_default {
       $plugin = $this->plugins[$plugin];
       $return += array_fill_keys(array_keys($sorts), array_filter(array('entity_type' => $plugin['entity_type'], 'bundle' => $plugin['bundle'])));
     }
-    
+
     return $return;
   }
 
   function sort_random(&$efq) {
     $efq->addTag('random');
   }
-  
+
   function display_title($entities) {
     $info = entity_get_info($this->entity_type);
     $id = $info['entity keys']['id'];
     $label = $info['entity keys']['label'];
     $type = $this->entity_type;
-    
+
     $items = array_map(function($e) use ($id, $label, $type) {
       return l($e->{$label}, $type . '/' . $e->{$id});
     }, $entities);
-    
+
     return array(
       '#theme' => 'item_list',
       '#items' => $items,
