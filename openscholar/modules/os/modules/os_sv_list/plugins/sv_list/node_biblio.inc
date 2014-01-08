@@ -1,8 +1,8 @@
-<?php 
+<?php
 
 /**
  * @file node_biblio.inc
- * 
+ *
  * Biblio plugin for sv_list box
  */
 
@@ -17,27 +17,27 @@ class sv_list_node_biblio extends sv_list_plugin {
     parent::__construct($entity_type, $bundle);
     $this->biblio_types = $this->_biblio_types();
   }
-  
+
   public function options_defaults() {
     return array(
-      'biblio_whitelist' => drupal_map_assoc(array_keys($this->biblio_types)), 
+      'biblio_whitelist' => drupal_map_assoc(array_keys($this->biblio_types)),
     );
   }
-  
+
   /**
    * @function register_sorts()
-   * 
+   *
    * Adds a custom sort for this entity/bundle
    */
   public function register_sorts() {
     return array('sort_biblio' => t('Year of Publication'));
   }
-  
+
   public function options_form($box_options, &$form) {
     $form['content']['biblio_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Publication Types'),
-      '#collapsed' => TRUE, 
+      '#collapsed' => TRUE,
       '#collapsible' => TRUE,
       'biblio_whitelist' => array(
         '#type' => 'checkboxes',
@@ -62,9 +62,11 @@ class sv_list_node_biblio extends sv_list_plugin {
       )
     );
   }
-  
-  
+
+
   private function _biblio_types() {
+    // @todo: Fix after Biblio upgrade.
+    return array();
     $rows = db_select('biblio_types', 'bt')
       ->fields('bt', array('tid', 'name'))
       ->condition('tid', 0, '>')
@@ -74,34 +76,34 @@ class sv_list_node_biblio extends sv_list_plugin {
     foreach ($rows as $r) {
       $options[$r->tid] = $r->name;
     }
-  
+
     return $options;
   }
-  
+
   /**
-   * @function query_alter 
-   * 
+   * @function query_alter
+   *
    * Adds a filter to only use the selected biblio types.
    */
   public function query_alter($options, $efq) {
     $types = $this->_biblio_types();
     $whitelist = array_filter($options['biblio_whitelist']);
-    
+
     if (empty($whitelist) || $options['content_type'] != 'biblio') {
       return;
     }
-    
+
     if (count($types) > count($whitelist)) {
-      $nids = db_select('biblio', 'b') 
+      $nids = db_select('biblio', 'b')
         ->condition('biblio_type', array_values($whitelist), 'IN')
         ->fields('b', array('nid'))
         ->execute()
-        ->fetchCol();  
+        ->fetchCol();
 
       $efq->entityCondition('nid', $nids, 'IN');
     }
   }
-  
+
   public function sort_biblio($options, $efq) {
     $efq->addTag('sv_list_biblio');
   }

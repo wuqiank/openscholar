@@ -1,0 +1,8 @@
+ID,Title,Author,Publisher,Year,Publish location,Site,Terms,UID,Created
+biblio1,The Little Prince,George Bush,Antoine de Saint-Exupéry,1943,United States,personal1,ScienceTerm1|ScienceTerm2|ScienceTerm3,user2,
+biblio2,Adventures of Huckleberry Finn,George Bush,Mark Twain,1885,United States,project1,,user2,
+biblio3,John F. Kennedy: A Biography,George Bush,Michael O'Brien,2005,United States,personal1,ScienceTerm2,user2,
+biblio4,Philosophers Stone,George Bush,J K Rowling,1997,United Kingdom,personal1,,user2,3600
+biblio5,Chamber of Secrets,George Bush,J K Rowling,1997,United Kingdom,personal1,,user2,7200
+biblio6,Prisoner of Azkaban,George Bush,J K Rowling,1997,United Kingdom,personal1,,user2,10800
+biblio7,Goblet of Fire,George Bush,J K Rowling,1997,United Kingdom,personal1,,user2,14400

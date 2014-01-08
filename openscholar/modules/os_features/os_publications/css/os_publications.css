@@ -1,0 +1,74 @@
+span.publication-abstract {
+  margin: 0 5px 0 5px;
+}
+
+span.publication-abstract a.show-abstract {
+  background: url('../images/sprite.png') no-repeat 0 1px transparent;
+  padding-left: 12px;
+  text-decoration: none;
+  color: #336599;
+}
+
+span.publication-abstract a.show-abstract.open {
+  background: url('../images/sprite.png') no-repeat 0 -12px transparent;
+  padding-left: 12px;
+  text-decoration: none;
+  color: #336599;
+}
+
+span.publication-abstract a.show-abstract:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+div.abstract-body {
+  line-height: 1.5em;
+  display: none;
+  background: #FAFAFA;
+  padding: 8px;
+  border: 1px solid #CCC;
+}
+
+div.single-publication > .first {
+  float: left;
+  width: 60px;
+}
+
+div.single-publication > .second {
+  float: left;
+}
+
+div.single-publication span.publication-citation {
+  float: left;
+}
+
+div.single-publication .pdf-wrapper ul {
+  list-style: none;
+}
+
+div.single-publication .pdf-wrapper ul li {
+  margin-right: 5px;
+  display: inline;
+}
+
+div.single-publication .publication-pdf {
+  background: url('../images/biblio-pdf.png') no-repeat 0px 0px transparent;
+  padding-left: 16px;
+}
+
+.entry-link {
+  font-style: normal;
+  font-weight: bold;
+}
+
+.biblio-separator-bar {
+  margin: 1.5em 0 1em 0;
+}
+
+.view-os-publications-issued li {
+  list-style: none;
+}
+
+html.js div.biblio-export-buttons.ctools-dropdown a.ctools-dropdown-text-link {
+  color: black;
+}

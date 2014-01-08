@@ -148,7 +148,7 @@ function os_migrate_demo_migrate_api() {
     'OsMigratePersonalNode',
     'OsMigrateProjectNode',
     'OsMigrateBioagrphyNode',
-    'OsMigratePublicationNode',
+    'OsMigrateBookBiblio',
     'OsMigrateClassesNode',
     'OsMigrateClassesMaterialNode',
     'OsMigrateCurriculumVitaeNode',
@@ -171,12 +171,19 @@ function os_migrate_demo_migrate_api() {
   );
 
   foreach ($classes as $class_name) {
-    $migrations[$class_name] = array('class_name' => $class_name);
+    $migrations[$class_name] = array('class_name' => $class_name, 'group_name' => 'os_migrate_demo');
   }
+
+  $groups = array(
+    'os_migrate_demo' => array(
+      'title' => t('OpenScholar migrate demo'),
+    ),
+  );
 
   $api = array(
     'api' => 2,
     'migrations' => $migrations,
+    'groups' => $groups,
   );
   return $api;
 }
@@ -494,7 +501,7 @@ function os_migrate_demo_get_user_by_name($name) {
 
 /**
  * Get a role id.
- * 
+ *
  * @param $name
  * @param $gid
  */

@@ -74,6 +74,14 @@ dl.bibliomultiselect .form-item {
   background-color: #ffe1e1;
 }
 
+.view-os-publications-issued .view-grouping-header {
+  color: #000000;
+  font-weight: bold;
+  margin-top: 1.5em;
+  padding: 0;
+  font-size: 1.5em;
+}
+
 .biblio-separator-bar {
   color: #000000;
   font-weight: bold;
@@ -112,7 +120,7 @@ dl.bibliomultiselect .form-item {
   text-align: left;
   font-family: inherit;
   }
-  
+
 
 .biblio-authors a {
   font-weight: normal;
@@ -177,13 +185,13 @@ a.biblio-abstract-link {
  display:inline;
  font-size:99%;
   }
-  
-  
+
+
 a.biblio-abstract-link.toggle {
 	padding-left:12px;
 	background:url('../images/scholarbase-sprite.png') 0 -399px no-repeat;
 	text-decoration: none;
-	
+
 }
 
 a.biblio-abstract-link.toggle.expanded {
@@ -208,12 +216,12 @@ a.biblio-abstract-link.toggle.expanded {
   font-style: normal;
   font-weight: normal;
   }
-  
+
 .node a.ctools-dropdown-link, .biblio-entry a.ctools-dropdown-link, h2.title a.ctools-dropdown-link, .block a.ctools-dropdown-link, .view a.ctools-dropdown-link {
     background: url("../images/scholarbase-sprite.png") no-repeat scroll 0 -94px transparent !important;
     height: 16px;
     padding: 1px 0 3px 20px !important;
-}  
+}
 
 ul.biblio-export-buttons,ul.biblio-export-buttons li {
   background: transparent;
@@ -258,7 +266,7 @@ ul.biblio-export-buttons,ul.biblio-export-buttons li {
 body.node-type-biblio .node-type-biblio .field-field-biblio-image {
   padding-top:.6em;
   }
-  
+
 .field-name-field-biblio-image {
 	float: left;
     margin: 0 1.5em 0.5em 0;
@@ -280,11 +288,11 @@ body.node-type-biblio .node-type-biblio .field-field-biblio-image {
   border: none !important;
   border-spacing: 0;
   }
-  
+
 .os-files-other-list tr {
 	border:1px solid #ccc;
 	background:#FFF;
-} 
+}
 .os-files-other-list tr:hover {
 	background:#EEE;
 }
@@ -292,7 +300,7 @@ body.node-type-biblio .node-type-biblio .field-field-biblio-image {
 
 .os-files-other-list tr td {
 	padding:3px 6px;
-} 
+}
 
 .node-teaser.node-type-biblio .itu-attachment-list td {
   padding: 0 .4em;
@@ -311,7 +319,7 @@ body.node-type-biblio .node-type-biblio .field-field-biblio-image {
   border: 1px solid #777;
   max-width:100%;
   }
-  
+
 .node.node-type-biblio img.imagecache-book_cover {
 	max-width: none;
 }
@@ -347,7 +355,7 @@ body.node-type-biblio .biblio-export {
 #biblio-node span.biblio-authors {
   font-weight: bold;
   }
-  
+
 .biblio-separator-bar {
 	clear: both;
 }
