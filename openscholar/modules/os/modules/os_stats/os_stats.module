@@ -46,7 +46,7 @@ function os_stats_form_os_settings_form_alter(&$form, &$form_state, $form_id) {
   	'#weight' => 0,
     '#options' => drupal_map_assoc(array('filesize', 'users', 'websites', 'posts', 'publications', 'files'), 'ucfirst'),
     '#default_value' => variable_get('os_stats_enabled', ''),
-    '#description' => t('Enables specific statistics to visitors on the <a href="/stats">Stats page</a>.'),
+    '#description' => t('Enables specific statistics to visitors on the "OpenScholar Stats" (os_stats) block. All statistics are available on the <a href="/stats">Stats JSON endpoint</a>.'),
   );
 }
 
