@@ -206,7 +206,7 @@ function _os_stats_v1_json($type, $style) {
         $enabled = array('websites');
         break;
       case 'all';
-        $enabled = variable_get('os_stats_enabled',array('websites'));
+        $enabled = variable_get('os_stats_enabled', array_keys($queries));
         break;
     }
 
