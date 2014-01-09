@@ -46,7 +46,6 @@ class os_sv_list extends os_boxes_default {
       }
     }
     
-  
     return $options;
   }
   
