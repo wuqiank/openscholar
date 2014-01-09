@@ -162,7 +162,7 @@ class vsite extends space_og {
         if (!$entity_type) {
           break;
         }
-        $this->route_entity($entity, $entity_type);
+        $this->route_entity($entity_type, $entity);
         break;
     }
     parent::router($op, $object);
@@ -170,13 +170,13 @@ class vsite extends space_og {
 
   /**
    * Route entity based on its vsite and existing path alias.
-   * 
-   * @param $entity
-   *   Entity object.
+   *
    * @param $entity_type
    *   Name of the entity.
+   * @param $entity
+   *   Entity object.
    */
-  function route_entity($entity, $entity_type) {
+  function route_entity($entity_type, $entity) {
     $wrapper = entity_metadata_wrapper($entity_type, $entity);
     $entity_id = $wrapper->getIdentifier();
 
