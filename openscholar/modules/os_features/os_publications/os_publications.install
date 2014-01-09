@@ -34,6 +34,7 @@ function os_publications_install() {
 
   // Define the path of auto path for biblio.
   variable_set('pathauto_biblio_pattern', 'publications/[biblio:title]');
+  variable_set('biblio_default_style', 'os_publications');
 }
 
 // Implements hook_update_N().
@@ -1058,4 +1059,5 @@ function os_publications_update_7016() {
  */
 function os_publications_update_7017() {
   variable_set('pathauto_biblio_pattern', 'publications/[biblio:title]');
+  variable_set('biblio_default_style', 'os_publications');
 }
