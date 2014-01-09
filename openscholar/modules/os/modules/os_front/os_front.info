@@ -1,9 +1,6 @@
-name = "OS Front Page"
+name = OS Front Page
+description = The front page of an OpenScholar install.
 core = 7.x
-description = "The front page of an OpenScholar install."
+package = OpenScholar
 dependencies[] = boxes
 
-features[box][] = os_front_header
-features[box][] = os_front_main_support
-features[box][] = os_front_main_configure
-features[box][] = os_front_sample
