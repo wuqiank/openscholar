@@ -153,6 +153,7 @@ class vsite extends space_og {
 
         // Call routing by the available entity.
         // Currently supports only node and biblio.
+        $entity_type = FALSE;
         if ($entity = menu_get_object()) {
           $entity_type = 'node';
         }
