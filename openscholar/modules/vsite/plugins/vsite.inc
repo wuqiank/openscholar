@@ -152,51 +152,102 @@ class vsite extends space_og {
 
         // Redirects to a node alias.
         if ($node = menu_get_object()) {
-          if (isset($node->nid) && !og_is_group_type('node', $node->type)) {
-            // First, redirects if this node does not belong to this vsite,
-            // or if the request URL did not specify a vsite
-            $wrapper = entity_metadata_wrapper('node', $node);
-            $sids = $wrapper->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE));
-            $sid = isset($sids[0]) ? $sids[0] : NULL;
-            // Handles both types of requests:
-            // "node/123" and "wrongsite/node/123"
-            if ((!$this->active && $sid) || ($sids && !in_array((int) $this->id, $sids))) {
-              // Redirects to the correctly aliased node in its own vsite.
-              spaces_load('og', $sid)->activate();
-            }
-            if (!$this->active) {
-              break;
-            }
-
-            // Preventing a redirect loop when a node don't have an alias.
-            if (!drupal_lookup_path('alias', $_GET['q'])) {
-              break;
-            }
-
-            // Then, looks to redirect to node aliases if they exist.
-            // This avoids a false redirect loop detection in purl_goto() when:
-            //  - the path we are going to has an alias
-            //  AND
-            //  - the current page we are on does not use that alias value,
-            $path = $_GET['q'];
-            $aliased_path = url($path);
-            $request_has_alias = (bool) ($path != $aliased_path);
-            $path_parts = explode('/', _purl_cache_q());
-            if ($request_has_alias && sizeof($path_parts) < 4) {
-              // Handles both types of requests:
-              // "mysite/node/123" AND "node/123" (on sites with custom domains)
-              if ((sizeof($path_parts) == 3 && $path_parts[1] == 'node' && $path_parts[2] == $node->nid)
-               || (sizeof($path_parts) == 2 && $path_parts[0] == 'node' && $path_parts[1] == $node->nid)) {
-                // Redirects to the aliased node path.
-                $path = $this->get_absolute_url("node/$node->nid");
-                drupal_goto($path);
-              }
-            }
-          }
+          $this->route_node($node);
+        }
+        else if ($biblio = menu_get_object('biblio')) {
+          $this->route_biblio($biblio);
         }
         break;
     }
     parent::router($op, $node);
+  }
+
+  function route_node($node) {
+    if (isset($node->nid) && !og_is_group_type('node', $node->type)) {
+      // First, redirects if this node does not belong to this vsite,
+      // or if the request URL did not specify a vsite
+      $wrapper = entity_metadata_wrapper('node', $node);
+      $sids = $wrapper->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE));
+      $sid = isset($sids[0]) ? $sids[0] : NULL;
+      // Handles both types of requests:
+      // "node/123" and "wrongsite/node/123"
+      if ((!$this->active && $sid) || ($sids && !in_array((int) $this->id, $sids))) {
+        // Redirects to the correctly aliased node in its own vsite.
+        spaces_load('og', $sid)->activate();
+      }
+      if (!$this->active) {
+        return;
+      }
+
+      // Preventing a redirect loop when a node don't have an alias.
+      if (!drupal_lookup_path('alias', $_GET['q'])) {
+        return;
+      }
+
+      // Then, looks to redirect to node aliases if they exist.
+      // This avoids a false redirect loop detection in purl_goto() when:
+      //  - the path we are going to has an alias
+      //  AND
+      //  - the current page we are on does not use that alias value,
+      $path = $_GET['q'];
+      $aliased_path = url($path);
+      $request_has_alias = (bool) ($path != $aliased_path);
+      $path_parts = explode('/', _purl_cache_q());
+      if ($request_has_alias && sizeof($path_parts) < 4) {
+        // Handles both types of requests:
+        // "mysite/node/123" AND "node/123" (on sites with custom domains)
+        if ((sizeof($path_parts) == 3 && $path_parts[1] == 'node' && $path_parts[2] == $node->nid)
+          || (sizeof($path_parts) == 2 && $path_parts[0] == 'node' && $path_parts[1] == $node->nid)) {
+          // Redirects to the aliased node path.
+          $path = $this->get_absolute_url("node/$node->nid");
+          drupal_goto($path);
+        }
+      }
+    }
+  }
+
+  function route_biblio($biblio) {
+    if (isset($biblio->bid) && !og_is_group_type('biblio', $biblio->type)) {
+      // First, redirects if this node does not belong to this vsite,
+      // or if the request URL did not specify a vsite
+      $wrapper = entity_metadata_wrapper('biblio', $biblio);
+      $sids = $wrapper->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE));
+      $sid = isset($sids[0]) ? $sids[0] : NULL;
+      // Handles both types of requests:
+      // "biblio/123" and "wrongsite/biblio/123"
+      if ((!$this->active && $sid) || ($sids && !in_array((int) $this->id, $sids))) {
+        // Redirects to the correctly aliased node in its own vsite.
+        spaces_load('og', $sid)->activate();
+      }
+      if (!$this->active) {
+        return;
+      }
+
+      // Preventing a redirect loop when a biblio don't have an alias.
+      if (!drupal_lookup_path('alias', $_GET['q'])) {
+        return;
+      }
+
+      // Then, looks to redirect to node aliases if they exist.
+      // This avoids a false redirect loop detection in purl_goto() when:
+      //  - the path we are going to has an alias
+      //  AND
+      //  - the current page we are on does not use that alias value,
+      $path = $_GET['q'];
+      $aliased_path = url($path);
+      $request_has_alias = (bool) ($path != $aliased_path);
+      $path_parts = explode('/', _purl_cache_q());
+      if ($request_has_alias && sizeof($path_parts) < 4) {
+        // Handles both types of requests:
+        // "mysite/biblio/123" AND "biblio/123" (on sites with custom domains)
+        if ((sizeof($path_parts) == 3 && $path_parts[1] == 'biblio' && $path_parts[2] == $biblio->bid)
+          || (sizeof($path_parts) == 2 && $path_parts[0] == 'biblio' && $path_parts[1] == $biblio->bid)) {
+          // Redirects to the aliased node path.
+          $path = $this->get_absolute_url("biblio/$biblio->bid");
+          drupal_goto($path);
+        }
+      }
+    }
   }
 
   /**
