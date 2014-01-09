@@ -61,8 +61,6 @@ class os_boxes_pub_type extends os_boxes_default {
 
     $form += parent::options_form($form_state);
 
-    dpm($form);
-
     return $form;
   }
 
@@ -73,7 +71,7 @@ class os_boxes_pub_type extends os_boxes_default {
     //@todo
     $block = parent::render();
 
-    $delta = 'publication_types-block';
+    $delta = 'biblio_types-block_1';
     list($name, $display_id) = explode('-', $delta);
     if ($view = views_get_view($name)) {
       if ($view->access($display_id)) {
@@ -107,7 +105,7 @@ class os_boxes_pub_type extends os_boxes_default {
         //Tie this view to this box (this tells the view to call this box's view alter)
         $view->dom_id = "boxes-".$this->delta;
 
-        $output = $view->execute_display('block');
+        $output = $view->execute_display($display_id);
         $view->destroy();
         $block['content'] = $output['content'];
       }

@@ -244,6 +244,7 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
     return;
   }
 
+  // todo: Change the query when filtering by publication type.
   // Get the settings of OS publication in variables.
   $order_field = variable_get('biblio_sort', 'biblio_year');
   $order_type = variable_get('biblio_order', 'ASC');

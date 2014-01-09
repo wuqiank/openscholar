@@ -64,6 +64,7 @@ features[variable][] = node_options_biblio
 features[variable][] = node_preview_biblio
 features[variable][] = node_submitted_biblio
 features[variable][] = pathauto_node_biblio_pattern
+features[views_view][] = biblio_types
 features[views_view][] = os_publications
 features[views_view][] = os_publications_issued
 features[views_view][] = publication_contributors
