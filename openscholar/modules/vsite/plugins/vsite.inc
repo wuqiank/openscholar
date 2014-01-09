@@ -162,6 +162,10 @@ class vsite extends space_og {
     parent::router($op, $node);
   }
 
+  /**
+   * Handle routing for node entity.
+   * @param $node
+   */
   function route_node($node) {
     if (isset($node->nid) && !og_is_group_type('node', $node->type)) {
       // First, redirects if this node does not belong to this vsite,
@@ -206,6 +210,10 @@ class vsite extends space_og {
     }
   }
 
+  /**
+   * Handle routing for Biblio entity.
+   * @param $biblio
+   */
   function route_biblio($biblio) {
     if (isset($biblio->bid) && !og_is_group_type('biblio', $biblio->type)) {
       // First, redirects if this node does not belong to this vsite,
