@@ -1,4 +1,4 @@
-name = Openscholar
+name = OpenScholar Core
 description = OpenScholar
 core = 7.x
 package = OpenScholar

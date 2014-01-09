@@ -162,7 +162,7 @@ function vsite_domain_cp_settings() {
   }   
   
   //ensure we have access to change domains or we're in a subsite whose parent provides domains
-  $parent = (isset($vsite->group->field_group_parent)) ? vsite_get_vsite($vsite->group->field_group_parent[LANGUAGE_NONE][0]['target_id']) : FALSE;
+  $parent = (!empty($vsite->group->field_group_parent)) ? vsite_get_vsite($vsite->group->field_group_parent[LANGUAGE_NONE][0]['target_id']) : FALSE;
   if (!(($parent && $parent->group->field_subsite_domains) || user_access('change vsite domain'))) {
     return;
   }

@@ -1,4 +1,4 @@
-name = "os sv list"
+name = OS Simpleview List
 core = "7.x"
 description = "OS Simpleview List"
 package = "OpenScholar"
