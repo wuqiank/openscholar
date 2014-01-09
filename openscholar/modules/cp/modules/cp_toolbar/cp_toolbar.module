@@ -456,7 +456,7 @@ function cp_toolbar_fill_drawer() {
  * Value compare function for the links in the toolbar.
  */
 function cp_links_reorder($link_a, $link_b) {
-  // A link title can be in the the "title" key or "link_title" key.
+  // A link title can be in the "title" key or "link_title" key.
   $a_key = isset($link_a['title']) ? 'title' : 'link_title';
   $b_key = isset($link_b['title']) ? 'title' : 'link_title';
   return strcmp($link_a[$a_key], $link_b[$b_key]);
