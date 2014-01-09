@@ -705,9 +705,9 @@ function os_preprocess_page(&$vars) {
 
   // Integrating with the biblio module.
   if (isset($active['publications_publications'])) {
-
     $publication_context = $active['publications_publications'];
-    if (in_array($menu['path'], $publication_context->conditions['path']['values'])) {
+    $path = str_replace('%', '*', $menu['path']);
+    if (in_array($path, $publication_context->conditions['path']['values'])) {
       $module = 'os_publications';
       $links['add_publication'] = array(
         'href' => 'biblio/add',
