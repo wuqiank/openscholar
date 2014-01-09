@@ -183,7 +183,7 @@ function _os_breadcrumbs_build_app_breadcrumb($menu_active_trail) {
 
   // Check for blog archives or publication filters.
   $item = menu_get_item();
-  if(isset($item) && ($item['path'] == 'blog/archive' || (strpos($item['path'], 'publications') === 0))) {
+  if(isset($item) && ($item['path'] == 'blog/archive' || (strpos($item['path'], 'biblio') === 0))) {
     $map = $item['original_map'];
     if(isset($map) && count($map) > 1) {
       // Rebuild the breadcrumbs.
@@ -217,19 +217,8 @@ function _os_breadcrumbs_build_app_breadcrumb($menu_active_trail) {
             }
           }
           break;
-      	case 'publications':
-          // For now we only want the breadcrumb to maintain the user is in publications.
-          // We won't list the filter in the breadcrumb because it produces unexpected results.
-          $publicaiton_filter_array = array_slice($map,0,2);
-          foreach($publicaiton_filter_array as $key => $pub_link) {
-            if($key == (count($publicaiton_filter_array)) - 1) {
-              // Remove trailing page title for now.
-              $links[] = ''; // t(ucfirst($short_title));
-            } else {
-              $short_title = _os_breadcrumbs_check_custom_title($pub_link) != FALSE ? _os_breadcrumbs_shorten_title(_os_breadcrumbs_check_custom_title($pub_link)) : _os_breadcrumbs_shorten_title($pub_link);
-              $links[] = l(strtoupper($short_title), $pub_link);
-            }
-          }
+      	case 'biblio':
+          $links[] = l(t('Publications'), 'publications');
           break;
       }
     }
