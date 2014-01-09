@@ -15,15 +15,17 @@ function os_breadcrumbs_build_breadcrumbs() {
   $menu_active_trail = menu_get_active_trail();
   $item = menu_get_item();
 
-  if(empty($menu_object)) {
+  if (empty($menu_object)) {
     // Check for taxonomy.
-    if($path = _os_breadcrumbs_check_taxonomy($item)) {
+    if ($path = _os_breadcrumbs_check_taxonomy($item)) {
       $links = _os_breadcrumbs_build_taxonomy_breadcrumb($path);
-    }else {
+    }
+    else {
       // Load top level breadcrumbs.
       $links = _os_breadcrumbs_build_app_breadcrumb($menu_active_trail);
     }
-  }else {
+  }
+  else {
     // Load the app type.
     $bundle = $menu_object->type;
     switch($bundle) {
