@@ -223,7 +223,7 @@ function _os_stats_v1_json($type, $style) {
       else {
         $result = db_query($info['query'])->fetchField();
       }
-      if ($result) {
+      if (isset($result)) {
         // Applies optional formatting callback.
         if (isset($info['callback']) && function_exists($info['callback'])) {
           $result = $info['callback']($result);
