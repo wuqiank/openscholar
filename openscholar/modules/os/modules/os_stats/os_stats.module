@@ -324,7 +324,7 @@ function _os_stats_queries() {
   );
   $queries['websites'] = array(
     'title' => t('Websites'),
-    'description' => t('Virtual sites in this OS installation'),
+    'description' => t('Virtual sites registered'),
     'query' => 'SELECT COUNT(nid) FROM {node} WHERE type IN (:group_types) ',
     'args' => array(
       ':group_types' => $group_types,
