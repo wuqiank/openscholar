@@ -182,6 +182,9 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
     color: #FFF;
 }
 
+.custhtml.bythenumbs h3.custheader {
+	margin-bottom: 13px;
+}
 
 .getsite {
 	z-index:2;
@@ -210,9 +213,12 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 	line-height: 17px;
 }
 
+
 .getsite_content a {
-	text-decoration:none !important;
-	color:#215990;
+	text-decoration: none !important;
+color: #215990;
+margin-left: 2px;
+line-height: 24px;
 }
 
 
@@ -344,6 +350,8 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 }
 
 /* STATS SECTION */
+
+#osactivity,
 ul#firstset,
 ul#secondset {
 	background:#F6F6F6;
@@ -382,35 +390,34 @@ li#posts {
 	}
 	
 li#users {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/users.png') no-repeat;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/users.png') no-repeat -2px 0;
 	}
 	
 li#files {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/files.png') no-repeat;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/files.png') no-repeat -3px 0;
 	}
 	
 li#diskspace {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/diskspace.png') no-repeat;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/diskspace.png') no-repeat 2px 0;
 	}					
 
 
 ul#secondset li {
 	margin: 8px 8px 0 0;
     padding: 0;
-    width: 294px;
+    width: 192px;
     position:relative;
- 
+ 	height: 90px;
 }
 
 li#version {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/currentrel_version.png') no-repeat #F6F6F6 45px 10px;
-	height: 70px !important;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/currentrel_version.png') no-repeat #F6F6F6 1px 18px;
 	}
 	
 li#version span {
-	left: 64px;
-    position: absolute;
-    top: 24px;
+	left: 20px;
+position: absolute;
+top: 32px;
 	}
 
 li#getsat {
@@ -437,14 +444,26 @@ li#servertime {
 
 
 li#newposts {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newpoststoday.png') no-repeat #F6F6F6 70px 12px;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newpoststoday.png') no-repeat #F6F6F6 27px 13px;
 	}
 	
 li#newposts span {
-	left: 78px;
-    position: absolute;
-    top: 58px;
+	left: 32px;
+position: absolute;
+top: 60px;
+	}
+	
+li#newsites {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newsitestoday.png') no-repeat #F6F6F6 27px 13px;
+	margin-right:0 !important;
+	}
+	
+li#newsites span {
+	left: 32px;
+position: absolute;
+top: 60px;
 	}	
+		
 
 li#servertime {
 	 background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/responsetime.png") no-repeat scroll 62px 6px #F6F6F6;
@@ -459,7 +478,12 @@ li#servertime span {
 	}
 		
 	
-
+#osactivity {
+padding: 12px;
+margin-top: 3px;
+width: 575px;
+}
+}
 
 /* ROADMAP PAGE STYLES */
 .page-roadmap #columns {
