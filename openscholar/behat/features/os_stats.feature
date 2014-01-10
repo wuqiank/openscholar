@@ -16,7 +16,7 @@ Feature:
     """
     {"item":[{"value":"{{*}}","text":""}]}
     """
-    When I visit "stats?style=geckoboard"
+    When I visit "stats?style=geckoboard&type=websites"
     Then I should get:
     """
     {"item":[{"value":"{{*}}","text":""}]}

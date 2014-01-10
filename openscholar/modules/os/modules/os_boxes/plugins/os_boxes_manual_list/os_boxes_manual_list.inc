@@ -8,7 +8,7 @@ class os_boxes_manual_list extends os_boxes_default {
   );
 
   public function options_defaults() {
-    return array(
+    return parent::options_defaults() + array(
       'nodes' => array(),
       'style' => 'titles',
       'random' => false,
