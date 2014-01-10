@@ -215,15 +215,13 @@ function _os_stats_v1_json($type, $style) {
         continue;
       }
       // Runs query, handling arguments if present.
-      if ((!empty($info['query_args'])) && (!empty($info['query_args_type']))) {
-        $args_type = $info['query_args_type'];
-        $queryArray = $info['query_args'];
-        $result = db_query($info['query'], array($args_type => $queryArray))->fetchField();
+      if (!empty($info['args'])) {
+        $result = db_query($info['query'], $info['args'])->fetchField();
       }
       else {
         $result = db_query($info['query'])->fetchField();
       }
-      if ($result) {
+      if (isset($result)) {
         // Applies optional formatting callback.
         if (isset($info['callback']) && function_exists($info['callback'])) {
           $result = $info['callback']($result);
@@ -292,7 +290,8 @@ function _os_stats_v1_json_init($type, $style) {
  */
 function _os_stats_queries() {
   $group_types = array_keys(array_intersect(module_invoke_all('vsite_og_node_type_info'), array('group')));
-
+  $day_duration = 60 * 60 * 24;
+  $three_days_ago = time() - ($day_duration * 3);
   $queries = array();
 
   $queries['filesize'] = array(
@@ -314,12 +313,32 @@ function _os_stats_queries() {
     'query' => 'SELECT COUNT(uid) FROM {users}',
     'weight' => -10,
   );
+  $queries['new_users'] = array(
+    'title' => t('New users'),
+    'description' => t('User accounts registered in the past 72 hours'),
+    'query' => 'SELECT COUNT(uid) FROM {users} WHERE created > :three_days_ago',
+    'args' => array(
+      ':three_days_ago' => $three_days_ago,
+    ),
+    'weight' => -10,
+  );
   $queries['websites'] = array(
     'title' => t('Websites'),
-    'description' => t('Virtual sites in this OS installation'),
+    'description' => t('Virtual sites registered'),
     'query' => 'SELECT COUNT(nid) FROM {node} WHERE type IN (:group_types) ',
-    'query_args' => $group_types,
-    'query_args_type' => ':group_types',
+    'args' => array(
+      ':group_types' => $group_types,
+    ),
+    'weight' => 0,
+  );
+  $queries['new_websites'] = array(
+    'title' => t('New websites'),
+    'description' => t('Virtual sites registered in the past 72 hours'),
+    'query' => 'SELECT COUNT(nid) FROM {node} WHERE type IN (:group_types) AND created > :three_days_ago',
+    'args' => array(
+      ':group_types' => $group_types,
+      ':three_days_ago' => $three_days_ago,
+    ),
     'weight' => 0,
   );
   $queries['posts'] = array(
@@ -328,10 +347,28 @@ function _os_stats_queries() {
     'query' => 'SELECT COUNT(nid) FROM {node}',
     'weight' => 10,
   );
+  $queries['new_posts'] = array(
+    'title' => t('New posts'),
+    'description' => t('Drupal nodes in the past 72 hours'),
+    'query' => 'SELECT COUNT(nid) FROM {node} WHERE created > :three_days_ago',
+    'args' => array(
+      ':three_days_ago' => $three_days_ago,
+    ),
+    'weight' => 10,
+  );
   $queries['publications'] = array(
     'title' => t('Publications'),
     'description' => t('Biblio publications'),
     'query' => 'SELECT COUNT(nid) FROM {node} WHERE type=\'biblio\'',
+    'weight' => 20,
+  );
+  $queries['new_publications'] = array(
+    'title' => t('New publications'),
+    'description' => t('Biblio publications in the past 72 hours'),
+    'query' => 'SELECT COUNT(nid) FROM {node} WHERE type=\'biblio\' AND created > :three_days_ago',
+    'args' => array(
+      ':three_days_ago' => $three_days_ago,
+    ),
     'weight' => 20,
   );
   $queries['files'] = array(
