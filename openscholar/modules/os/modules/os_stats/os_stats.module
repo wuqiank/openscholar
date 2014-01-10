@@ -215,10 +215,8 @@ function _os_stats_v1_json($type, $style) {
         continue;
       }
       // Runs query, handling arguments if present.
-      if ((!empty($info['query_args'])) && (!empty($info['query_args_type']))) {
-        $args_type = $info['query_args_type'];
-        $queryArray = $info['query_args'];
-        $result = db_query($info['query'], array($args_type => $queryArray))->fetchField();
+      if (!empty($info['args'])) {
+        $result = db_query($info['query'], $info['args'])->fetchField();
       }
       else {
         $result = db_query($info['query'])->fetchField();
@@ -318,8 +316,9 @@ function _os_stats_queries() {
     'title' => t('Websites'),
     'description' => t('Virtual sites in this OS installation'),
     'query' => 'SELECT COUNT(nid) FROM {node} WHERE type IN (:group_types) ',
-    'query_args' => $group_types,
-    'query_args_type' => ':group_types',
+    'args' => array(
+      ':group_types' => $group_types,
+    ),
     'weight' => 0,
   );
   $queries['posts'] = array(
