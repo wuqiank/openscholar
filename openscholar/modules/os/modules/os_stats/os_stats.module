@@ -312,6 +312,11 @@ function _os_stats_queries() {
     'query' => 'SELECT COUNT(uid) FROM {users}',
     'weight' => -10,
   );
+  $queries['new_users'] = array(
+    'title' => t('New users'),
+    'description' => t('User accounts registered in the past 72 hours'),
+    'weight' => -10,
+  );
   $queries['websites'] = array(
     'title' => t('Websites'),
     'description' => t('Virtual sites in this OS installation'),
@@ -321,16 +326,31 @@ function _os_stats_queries() {
     ),
     'weight' => 0,
   );
+  $queries['new_websites'] = array(
+    'title' => t('New websites'),
+    'description' => t('Virtual sites registered in the past 72 hours'),
+    'weight' => 0,
+  );
   $queries['posts'] = array(
     'title' => t('Posts'),
     'description' => t('Drupal nodes'),
     'query' => 'SELECT COUNT(nid) FROM {node}',
     'weight' => 10,
   );
+  $queries['new_posts'] = array(
+    'title' => t('New posts'),
+    'description' => t('Drupal nodes in the past 72 hours'),
+    'weight' => 10,
+  );
   $queries['publications'] = array(
     'title' => t('Publications'),
     'description' => t('Biblio publications'),
     'query' => 'SELECT COUNT(nid) FROM {node} WHERE type=\'biblio\'',
+    'weight' => 20,
+  );
+  $queries['new_publications'] = array(
+    'title' => t('New publications'),
+    'description' => t('Biblio publications in the past 72 hours'),
     'weight' => 20,
   );
   $queries['files'] = array(
