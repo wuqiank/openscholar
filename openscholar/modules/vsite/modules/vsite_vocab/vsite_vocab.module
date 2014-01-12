@@ -139,10 +139,17 @@ function vsite_vocab_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {
   // Add description for the name.
   $form['name']['#description'] = t('The vocabulary name. E.g. "Research interests"');
 
+  $types = biblio_types();
+  $biblio_types = array();
+  foreach ($types as $type => $info) {
+    $biblio_types[$type] = $info->name;
+  }
+
   // Get enabled bundles.
   $all_bundles = array(
     'node' => os_get_bundles(array(1,2)),
     'file' => array_diff_key(os_files_get_bundles(), array('html' => 0, 'undefined' => 0)),
+    'biblio' => $biblio_types,
   );
 
   // Loop through all of the content types and build their checkboxe's.
@@ -161,13 +168,13 @@ function vsite_vocab_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {
       $widget = $widget == 'options_select' ? $widget = $og_vocab->settings['widget_type'] : $widget;
       $cardinality = $cardinality == FIELD_CARDINALITY_UNLIMITED ? $cardinality = $og_vocab->settings['cardinality'] : $cardinality;
     }
-  } 
-  
+  }
+
   $form['bundles'] = array(
     '#type' => 'select',
     '#multiple' => TRUE,
     '#title' => t('Content types'),
-    '#options' => array('Posts' => $all_bundles['node'], 'Files' => $all_bundles['file']),
+    '#options' => array('Posts' => $all_bundles['node'], 'Files' => $all_bundles['file'], 'Biblio' => $all_bundles['biblio']),
     '#default_value' => array_keys($default_bundles),
     '#description' => t('Select the content types to categorize using this vocabulary.'),
     '#required' => TRUE,
@@ -317,9 +324,16 @@ function vsite_vocab_form_taxonomy_form_vocabulary_submit(&$form, &$form_state) 
   $vid = empty($form_state['vocabulary']->vid) ? 0 : $form_state['vocabulary']->vid;
   $values = $form_state['values'];
 
+  $types = biblio_types();
+  $biblio_types = array();
+  foreach ($types as $type => $info) {
+    $biblio_types[$type] = $info->name;
+  }
+
   $all_bundles = array(
     'node' => os_get_bundles(array(1,2)),
     'file' => os_files_get_bundles(),
+    'biblio' => $biblio_types,
   );
 
   foreach ($all_bundles as $entity_type => $bundles) {
