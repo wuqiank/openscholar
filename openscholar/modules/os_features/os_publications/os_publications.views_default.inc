@@ -325,230 +325,99 @@ function os_publications_views_default_views() {
   $view->name = 'publication_types';
   $view->description = 'Publications By Type';
   $view->tag = 'widgets';
-  $view->base_table = 'node';
-  $view->human_name = '';
-  $view->core = 0;
+  $view->base_table = 'biblio';
+  $view->human_name = 'publication_types';
+  $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
-  /* Display: Defaults */
-  $handler = $view->new_display('default', 'Defaults', 'default');
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'spaces_feature';
   $handler->display->display_options['access']['spaces_feature'] = 'os_publications';
   $handler->display->display_options['access']['perm'] = 'access biblio content';
-  $handler->display->display_options['cache']['type'] = 'none';
-  $handler->display->display_options['query']['type'] = 'views_query';
-  $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'mini';
-  $handler->display->display_options['style_plugin'] = 'default';
-  $handler->display->display_options['style_options']['grouping'] = '';
-  $handler->display->display_options['row_plugin'] = 'fields';
-  /* Field: Publication: Type of Publication */
-  $handler->display->display_options['fields']['name']['id'] = 'name';
-  $handler->display->display_options['fields']['name']['table'] = 'biblio_types';
-  $handler->display->display_options['fields']['name']['field'] = 'name';
-  $handler->display->display_options['fields']['name']['label'] = '';
-  $handler->display->display_options['fields']['name']['exclude'] = TRUE;
-  /* Field: Publication: Biblio Citation */
-  $handler->display->display_options['fields']['citation']['id'] = 'citation';
-  $handler->display->display_options['fields']['citation']['table'] = 'biblio';
-  $handler->display->display_options['fields']['citation']['field'] = 'citation';
-  $handler->display->display_options['fields']['citation']['label'] = '';
-  $handler->display->display_options['fields']['citation']['style_name'] = 'cse';
-  /* Sort criterion: Publication: Year of Publication */
-  $handler->display->display_options['sorts']['biblio_year']['id'] = 'biblio_year';
-  $handler->display->display_options['sorts']['biblio_year']['table'] = 'biblio';
-  $handler->display->display_options['sorts']['biblio_year']['field'] = 'biblio_year';
-  $handler->display->display_options['sorts']['biblio_year']['order'] = 'DESC';
-  /* Contextual filter: Publication: Type of Publication */
-  $handler->display->display_options['arguments']['name']['id'] = 'name';
-  $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
-  $handler->display->display_options['arguments']['name']['field'] = 'name';
-  $handler->display->display_options['arguments']['name']['exception']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title'] = '%1';
-  $handler->display->display_options['arguments']['name']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['name']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['name']['specify_validation'] = TRUE;
-  $handler->display->display_options['arguments']['name']['limit'] = '0';
-  $handler->display->display_options['arguments']['name']['case'] = 'ucwords';
-  $handler->display->display_options['arguments']['name']['path_case'] = 'lower';
-  $handler->display->display_options['arguments']['name']['transform_dash'] = TRUE;
-  /* Contextual filter: Publication: Type of Publication */
-  $handler->display->display_options['arguments']['tid']['id'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['table'] = 'biblio_types';
-  $handler->display->display_options['arguments']['tid']['field'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
-  /* Filter criterion: Content: Published */
-  $handler->display->display_options['filters']['status']['id'] = 'status';
-  $handler->display->display_options['filters']['status']['table'] = 'node';
-  $handler->display->display_options['filters']['status']['field'] = 'status';
-  $handler->display->display_options['filters']['status']['value'] = '1';
-  $handler->display->display_options['filters']['status']['group'] = '0';
-  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filter criterion: Content: Type */
-  $handler->display->display_options['filters']['type']['id'] = 'type';
-  $handler->display->display_options['filters']['type']['table'] = 'node';
-  $handler->display->display_options['filters']['type']['field'] = 'type';
-  $handler->display->display_options['filters']['type']['value'] = array(
-    'biblio' => 'biblio',
-  );
-  $handler->display->display_options['filters']['type']['group'] = '0';
-  $handler->display->display_options['filters']['type']['expose']['operator'] = FALSE;
-  /* Filter criterion: Spaces: Content in current space */
-  $handler->display->display_options['filters']['current']['id'] = 'current';
-  $handler->display->display_options['filters']['current']['table'] = 'spaces';
-  $handler->display->display_options['filters']['current']['field'] = 'current';
-  $handler->display->display_options['filters']['current']['operator'] = 'all';
-  $handler->display->display_options['filters']['current']['group'] = '0';
-  $handler->display->display_options['filters']['current']['expose']['operator'] = FALSE;
-
-  /* Display: Page */
-  $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['defaults']['cache'] = FALSE;
   $handler->display->display_options['cache']['type'] = 'time_per_gorup';
   $handler->display->display_options['cache']['results_lifespan'] = '518400';
   $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
   $handler->display->display_options['cache']['output_lifespan'] = '518400';
   $handler->display->display_options['cache']['output_lifespan_custom'] = '0';
-  $handler->display->display_options['cache']['og_access'] = 0;
-  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'full';
   $handler->display->display_options['style_plugin'] = 'default';
-  $handler->display->display_options['style_options']['grouping'] = '';
-  $handler->display->display_options['defaults']['style_options'] = FALSE;
-  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
-  $handler->display->display_options['row_plugin'] = 'node';
-  $handler->display->display_options['defaults']['row_options'] = FALSE;
-  $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Publication: Type of Publication */
-  $handler->display->display_options['arguments']['name']['id'] = 'name';
-  $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
-  $handler->display->display_options['arguments']['name']['field'] = 'name';
-  $handler->display->display_options['arguments']['name']['exception']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title'] = '%1';
-  $handler->display->display_options['arguments']['name']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['name']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['name']['specify_validation'] = TRUE;
-  $handler->display->display_options['arguments']['name']['limit'] = '0';
-  $handler->display->display_options['arguments']['name']['case'] = 'ucwords';
-  $handler->display->display_options['arguments']['name']['path_case'] = 'lower';
-  $handler->display->display_options['arguments']['name']['transform_dash'] = TRUE;
-  /* Contextual filter: Publication: Type of Publication */
-  $handler->display->display_options['arguments']['tid']['id'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['table'] = 'biblio_types';
-  $handler->display->display_options['arguments']['tid']['field'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['exception']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['tid']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['tid']['title'] = 'Publication Type: (%2)';
-  $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
-  $handler->display->display_options['arguments']['tid']['break_phrase'] = TRUE;
-  $handler->display->display_options['arguments']['tid']['reduce_duplicates'] = TRUE;
-  $handler->display->display_options['path'] = 'publications/types/%';
+  $handler->display->display_options['row_plugin'] = 'fields';
+  /* Field: Publication: Type */
+  $handler->display->display_options['fields']['type']['id'] = 'type';
+  $handler->display->display_options['fields']['type']['table'] = 'biblio';
+  $handler->display->display_options['fields']['type']['field'] = 'type';
+  /* Sort criterion: Publication: Year of Publication (biblio_year) */
+  $handler->display->display_options['sorts']['biblio_year_value']['id'] = 'biblio_year_value';
+  $handler->display->display_options['sorts']['biblio_year_value']['table'] = 'field_data_biblio_year';
+  $handler->display->display_options['sorts']['biblio_year_value']['field'] = 'biblio_year_value';
+  $handler->display->display_options['sorts']['biblio_year_value']['order'] = 'DESC';
+  /* Contextual filter: Publication: Type */
+  $handler->display->display_options['arguments']['type']['id'] = 'type';
+  $handler->display->display_options['arguments']['type']['table'] = 'biblio';
+  $handler->display->display_options['arguments']['type']['field'] = 'type';
+  $handler->display->display_options['arguments']['type']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['type']['summary']['format'] = 'default_summary';
+  /* Filter criterion: Publication: Publication status (biblio_status) */
+  $handler->display->display_options['filters']['biblio_status_value']['id'] = 'biblio_status_value';
+  $handler->display->display_options['filters']['biblio_status_value']['table'] = 'field_data_biblio_status';
+  $handler->display->display_options['filters']['biblio_status_value']['field'] = 'biblio_status_value';
+  $handler->display->display_options['filters']['biblio_status_value']['value'] = array(
+    'published' => 'published',
+  );
 
   /* Display: Block */
-  $handler = $view->new_display('block', 'Block', 'block');
-  $handler->display->display_options['defaults']['title'] = FALSE;
-  $handler->display->display_options['title'] = 'Publications By Type';
-  $handler->display->display_options['defaults']['use_ajax'] = FALSE;
-  $handler->display->display_options['use_ajax'] = TRUE;
+  $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['defaults']['pager'] = FALSE;
-  $handler->display->display_options['pager']['type'] = 'mini';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '10';
-  $handler->display->display_options['pager']['options']['offset'] = '0';
-  $handler->display->display_options['pager']['options']['id'] = '1';
-  $handler->display->display_options['pager']['options']['tags']['previous'] = decode_entities('&laquo;');
-  $handler->display->display_options['pager']['options']['tags']['next'] = decode_entities('&raquo;');
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Publication: Type of Publication */
-  $handler->display->display_options['arguments']['name']['id'] = 'name';
-  $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
-  $handler->display->display_options['arguments']['name']['field'] = 'name';
-  $handler->display->display_options['arguments']['name']['default_action'] = 'summary';
-  $handler->display->display_options['arguments']['name']['exception']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title'] = '%1';
-  $handler->display->display_options['arguments']['name']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['name']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['name']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['name']['summary_options']['base_path'] = 'publications/type';
-  $handler->display->display_options['arguments']['name']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['name']['specify_validation'] = TRUE;
-  $handler->display->display_options['arguments']['name']['limit'] = '0';
-  $handler->display->display_options['arguments']['name']['path_case'] = 'lower';
-  $handler->display->display_options['arguments']['name']['transform_dash'] = TRUE;
+  /* Contextual filter: Publication: Type */
+  $handler->display->display_options['arguments']['type']['id'] = 'type';
+  $handler->display->display_options['arguments']['type']['table'] = 'biblio';
+  $handler->display->display_options['arguments']['type']['field'] = 'type';
+  $handler->display->display_options['arguments']['type']['default_action'] = 'summary';
+  $handler->display->display_options['arguments']['type']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['type']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['type']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['type']['summary_options']['base_path'] = 'publications/type';
+  $handler->display->display_options['arguments']['type']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['type']['limit'] = '0';
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Publication: Render bilbio (Get text) */
+  $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
+  $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
+  $handler->display->display_options['fields']['biblio_render']['field'] = 'biblio_render';
+  $handler->display->display_options['fields']['biblio_render']['label'] = '';
+  $handler->display->display_options['fields']['biblio_render']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['biblio_render']['style_name'] = 'os_publications';
+  $handler->display->display_options['path'] = 'publications/types/%';
 
   /* Display: Block By Taxonomy */
   $handler = $view->new_display('block', 'Block By Taxonomy', 'block_by_taxonomy');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Tag by Type';
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['defaults']['relationships'] = FALSE;
-  /* Relationship: Content: Taxonomy terms on node */
-  $handler->display->display_options['relationships']['term_node_tid']['id'] = 'term_node_tid';
-  $handler->display->display_options['relationships']['term_node_tid']['table'] = 'node';
-  $handler->display->display_options['relationships']['term_node_tid']['field'] = 'term_node_tid';
-  $handler->display->display_options['relationships']['term_node_tid']['required'] = TRUE;
-  $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Taxonomy term: Term ID */
-  $handler->display->display_options['arguments']['tid']['id'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_term_data';
-  $handler->display->display_options['arguments']['tid']['field'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['relationship'] = 'term_node_tid';
-  $handler->display->display_options['arguments']['tid']['default_action'] = 'not found';
-  $handler->display->display_options['arguments']['tid']['exception']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
-  /* Contextual filter: Publication: Type of Publication */
-  $handler->display->display_options['arguments']['name']['id'] = 'name';
-  $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
-  $handler->display->display_options['arguments']['name']['field'] = 'name';
-  $handler->display->display_options['arguments']['name']['default_action'] = 'summary';
-  $handler->display->display_options['arguments']['name']['exception']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['name']['title'] = '%1';
-  $handler->display->display_options['arguments']['name']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['name']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['name']['specify_validation'] = TRUE;
-  $handler->display->display_options['arguments']['name']['limit'] = '0';
-  $handler->display->display_options['arguments']['name']['path_case'] = 'lower';
-  $handler->display->display_options['arguments']['name']['transform_dash'] = TRUE;
-  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
-  $handler->display->display_options['defaults']['filters'] = FALSE;
-  /* Filter criterion: Content: Published */
-  $handler->display->display_options['filters']['status']['id'] = 'status';
-  $handler->display->display_options['filters']['status']['table'] = 'node';
-  $handler->display->display_options['filters']['status']['field'] = 'status';
-  $handler->display->display_options['filters']['status']['value'] = '1';
-  $handler->display->display_options['filters']['status']['group'] = '0';
-  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filter criterion: Spaces: Content in current space */
-  $handler->display->display_options['filters']['current']['id'] = 'current';
-  $handler->display->display_options['filters']['current']['table'] = 'spaces';
-  $handler->display->display_options['filters']['current']['field'] = 'current';
-  $handler->display->display_options['filters']['current']['operator'] = 'all';
-  $handler->display->display_options['filters']['current']['group'] = '0';
-  $handler->display->display_options['filters']['current']['expose']['operator'] = FALSE;
+  $handler->display->display_options['defaults']['cache'] = FALSE;
+  $handler->display->display_options['cache']['type'] = 'none';
 
   /* Display: List of Publications */
   $handler = $view->new_display('block', 'List of Publications', 'block_3');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['defaults']['cache'] = FALSE;
-  $handler->display->display_options['cache']['type'] = 'none';
-  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
-  $handler->display->display_options['style_plugin'] = 'default';
-  $handler->display->display_options['style_options']['grouping'] = '';
-  $handler->display->display_options['defaults']['style_options'] = FALSE;
-  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
-  $handler->display->display_options['row_plugin'] = 'node';
-  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Publication: Render bilbio (Get text) */
+  $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
+  $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
+  $handler->display->display_options['fields']['biblio_render']['field'] = 'biblio_render';
+  $handler->display->display_options['fields']['biblio_render']['label'] = '';
+  $handler->display->display_options['fields']['biblio_render']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['biblio_render']['style_name'] = 'os_publications';
   $export['publication_types'] = $view;
 
   $view = new view();

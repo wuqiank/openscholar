@@ -240,11 +240,18 @@ function os_publications_biblio_fields_info() {
  * Implements hook_views_query_alter().
  */
 function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
+  $item = menu_get_item();
+
+  // Change the query when filtering by publication type.
+  if ($item['original_map'][0] == 'publications' && $item['original_map'][1] == 'type' && !empty($item['original_map'][2])) {
+    $group_key = key($query->where);
+    $query->add_where($group_key, 'biblio.type', array($item['original_map'][2]), 'IN');
+  }
+
   if ($view->name != 'os_publications_issued') {
     return;
   }
 
-  // todo: Change the query when filtering by publication type.
   // Get the settings of OS publication in variables.
   $order_field = variable_get('biblio_sort', 'biblio_year');
   $order_type = variable_get('biblio_order', 'ASC');
