@@ -330,7 +330,7 @@ function theme_os_taxonomy_vocabulary_item_list($variables) {
   $path_prefix = '';
 
   // If there is more than 0 bundles using this vocabulary.
-  os_taxonomy_get_prefix_path($options);
+  os_taxonomy_get_prefix_path($options, $variables['original_path']);
   $data = array();
    // process all root term.
   foreach ($terms as $tid => $term) {
@@ -470,10 +470,7 @@ function os_taxonomy_is_tagged_tree($term, $node_bundles, $depth = NULL, &$retur
  *  @param $options
  *    Referenced array of the options variable from the theme functions.
  */
-function os_taxonomy_get_prefix_path(&$options) {
-  if (!count($options['bundles'])) {
-    return;
-  }
+function os_taxonomy_get_prefix_path(&$options, $original_path = NULL) {
   $map = features_get_component_map('node');
 
   foreach ($options['bundles'] as $bundle) {
@@ -501,13 +498,26 @@ function os_taxonomy_get_prefix_path(&$options) {
 
   $options['path_prefix'] = isset($feature) ? variable_get("os_taxonomy_app_path_{$feature}", strval(os_get_app_path($feature))) : 'taxonomy';
 
+  if (isset($feature)) {
+    $options['path_prefix'] = variable_get("os_taxonomy_app_path_{$feature}", strval(os_get_app_path($feature)));
+  }
+  elseif (isset($original_path) && $original_path == 'publications') {
+    $options['path_prefix'] = 'publications';
+  }
+  else {
+    $options['path_prefix'] = 'taxonomy';
+  }
+
   if (strlen($options['path_prefix'])) {
     $options['path_prefix'] = $options['path_prefix'] . "/";
   }
 
-  $info = os_app_info($feature);
-  if (!empty($info['nodetypes']))
-  $options['nodetype'] = ucwords($info['nodetypes'][0]);
+  if (isset($feature)) {
+    $info = os_app_info($feature);
+    if (!empty($info['nodetypes'])) {
+      $options['nodetype'] = ucwords($info['nodetypes'][0]);
+    }
+  }
 }
 
 /**

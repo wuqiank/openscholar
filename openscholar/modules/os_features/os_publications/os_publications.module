@@ -243,7 +243,7 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
   $item = menu_get_item();
 
   // Change the query when filtering by publication type.
-  if ($item['original_map'][0] == 'publications' && $item['original_map'][1] == 'type' && !empty($item['original_map'][2])) {
+  if ($item['original_map'][0] == 'publications' && isset($item['original_map'][1]) && $item['original_map'][1] == 'type' && !empty($item['original_map'][2])) {
     $group_key = key($query->where);
     $query->add_where($group_key, 'biblio.type', array($item['original_map'][2]), 'IN');
   }

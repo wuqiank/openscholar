@@ -194,6 +194,7 @@ class os_taxonomy_fbt extends os_boxes_default {
     }
     ctools_include('layout', 'os');
 
+    $menu = menu_get_item();
     if ($this->options['behavior'] == '--all--') {
       $this->options['bundles'] = array();
     }
@@ -204,7 +205,6 @@ class os_taxonomy_fbt extends os_boxes_default {
         // 2. If the widget defined as a "Determine for me" set the bundles
         //    whcih related to the app.
         $paths = os_get_app_path();
-        $menu = menu_get_item();
 
         $this->options['bundles'] = array();
         if ($menu['map'][0] == 'node') {
@@ -232,7 +232,8 @@ class os_taxonomy_fbt extends os_boxes_default {
     $block['content'] = theme('os_taxonomy_vocabulary_item_list', array(
       'vid' => $this->options['vocabulary'],
       'options' => $this->options,
-    ));
+      'original_path' => $menu['path'],
+  ));
 
     return $block;
   }
