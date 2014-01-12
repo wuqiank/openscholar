@@ -219,6 +219,7 @@ function _os_breadcrumbs_build_app_breadcrumb($menu_active_trail) {
           break;
       	case 'biblio':
           $links[] = l(t('Publications'), 'publications');
+          $links[] = NULL;
           break;
       }
     }
