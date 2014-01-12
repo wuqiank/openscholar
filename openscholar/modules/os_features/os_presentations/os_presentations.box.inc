@@ -14,7 +14,7 @@ function os_presentations_default_box() {
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
   $box->delta = 'os_presentations_recent';
-  $box->plugin_key = 'os_sv_list_box';
+  $box->plugin_key = 'os_sv_list_node';
   $box->title = 'Recent Presentations';
   $box->description = 'Recent Presentations';
   $box->options = array(

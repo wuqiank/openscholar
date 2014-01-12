@@ -14,7 +14,7 @@ function os_news_default_box() {
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
   $box->delta = 'os_news_latest';
-  $box->plugin_key = 'os_sv_list_box';
+  $box->plugin_key = 'os_sv_list_node';
   $box->title = 'Latest News';
   $box->description = 'Latest News';
   $box->options = array(

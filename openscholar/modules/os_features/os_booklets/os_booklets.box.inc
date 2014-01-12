@@ -18,7 +18,7 @@ function os_booklets_default_box() {
   $box->disabled    = FALSE;
   $box->api_version = 1;
   $box->delta       = 'os_booklets_recent_docs';
-  $box->plugin_key  = 'os_sv_list_box';
+  $box->plugin_key  = 'os_sv_list_node';
   $box->title       = 'Recent Documents';
   $box->description = 'Recent Documents';
   $box->options     = array(

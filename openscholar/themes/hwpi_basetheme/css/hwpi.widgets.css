@@ -599,15 +599,15 @@ table td.mini .mini-day-on a {
 
 
 /* Latest News */
-.block-boxes-os_sv_list_box li {
+.block-boxes-os_sv_list_node li {
   list-style: none;
 }
 
-.block-boxes-os_sv_list_box .os-slider li {
+.block-boxes-os_sv_list_node .os-slider li {
      list-style: disc;
 }
 
-.block-boxes-os_sv_list_box .os-slider li ~ ul li {
+.block-boxes-os_sv_list_node .os-slider li ~ ul li {
      list-style: circle;
 }
 
