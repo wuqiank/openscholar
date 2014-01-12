@@ -15,7 +15,7 @@ function os_publications_views_default_views() {
   $view->description = 'OS Publications > Recent Publications';
   $view->tag = 'default';
   $view->base_table = 'biblio';
-  $view->human_name = 'os_publications';
+  $view->human_name = 'OS Publications';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
