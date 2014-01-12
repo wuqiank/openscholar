@@ -317,3 +317,15 @@ function os_publications_preprocess_biblio_ui_entity_export_area(&$variables) {
 function os_publications_preprocess_biblio_ui_view_export_area(&$variables) {
   drupal_add_css(drupal_get_path('module', 'os_publications') . '/css/os_publications.css');
 }
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function os_publications_entity_view_alter(&$build, $type) {
+  if ($type != 'biblio') {
+    return;
+  }
+
+  $build['biblio_get_text']['#prefix'] = '<h3>'. t('Citation') . ':</h3><div id="citation-wrapper">';
+  $build['export']['#suffix'] = '</div>';
+}
