@@ -103,10 +103,13 @@ class os_taxonomy_fbt extends os_boxes_default {
       '#description' => t('The post types that will included in the count. Determine for me will filter the content on the "current page".'),
     );
 
+    // Add "Publications" to the possible post types.
+    $options = os_get_bundles(array(1,2)) + array("publications" => "Publications");
+    ksort($options);
     $form['bundles'] = array(
       '#type' => 'select',
       '#title' => t('Select Post types'),
-      '#options' => os_get_bundles(array(1,2)),
+      '#options' => $options,
       '#description' => t('The post types that will be included in the count'),
       '#multiple' => TRUE,
       '#size' => count(os_get_bundles(array(1,2))) / 2,
