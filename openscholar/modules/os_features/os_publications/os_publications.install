@@ -35,6 +35,12 @@ function os_publications_install() {
   // Define the path of auto path for biblio.
   variable_set('pathauto_biblio_pattern', 'publications/[biblio:title]');
   variable_set('biblio_default_style', 'os_publications');
+
+  // Hide the contributor field.
+  // todo: Hide all the contributor in the biblio fields.
+  $instances = field_info_instances('biblio', 'book');
+  $instances['contributor_field_collection']['display']['default']['type'] = 'hidden';
+  field_update_instance($instances['contributor_field_collection']);
 }
 
 // Implements hook_update_N().
