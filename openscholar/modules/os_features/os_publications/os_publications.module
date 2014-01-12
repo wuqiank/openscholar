@@ -61,7 +61,7 @@ function os_publications_os_add_new_links_alter(&$links) {
   }
 
   $links['add_publication'] = array(
-    'title' => t('Publications'),
+    'title' => t('Biblio'),
     'href' => 'biblio/add',
   );
 }
@@ -79,19 +79,19 @@ function os_publications_ctools_plugin_directory($module, $plugin) {
  * Implements hook_theme().
  */
 function os_publications_theme() {
-  $theme['os_publications_citeproc'] = array(
-    'variables' => array(
-      'id' => NULL,
-      'image' => NULL,
-      'citation' => NULL,
-      'abstract' => NULL,
-      'pdf_list' => NULL,
+  return array(
+    'os_publications_citeproc' => array(
+      'variables' => array(
+        'id' => NULL,
+        'image' => NULL,
+        'citation' => NULL,
+        'abstract' => NULL,
+        'pdf_list' => NULL,
+      ),
+      'path' => drupal_get_path('module', 'os_publications') . '/templates',
+      'template' => 'os-publications-citeproc',
     ),
-    'path' => drupal_get_path('module', 'os_publications') . '/templates',
-    'template' => 'os-publications-citeproc',
   );
-
-  return $theme;
 }
 
 /**
