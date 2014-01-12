@@ -95,7 +95,7 @@ function os_sv_list_plugins($entity_type = NULL, $bundle = NULL) {
 /**
  * Implements hook_boxes_plugins
  */
-function os_sv_list_nodees_plugins() {
+function os_sv_list_boxes_plugins() {
   $plugins = array();
 
   //load the base class for node and file lists
