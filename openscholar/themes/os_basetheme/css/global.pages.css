@@ -612,7 +612,7 @@ ul.class_material_field_class a.class_material_field_class_anchor {
 /* CTools MODAL OVERRIDES */
 
 #modalContent {
-  top: 0;
+  top: 0 !important;
   color: #666;
   position: fixed !important;
 }
@@ -908,6 +908,24 @@ border-top:1px solid #ccc;
     background: #EEE;
     border: none;
     color: #333;
+}
+
+.accordion .ui-widget-content {
+     color: inherit;
+}
+
+.ui-widget-content {
+     color: inherit;
+}
+
+.ui-helper-reset {
+     font-size: 1em;
+      line-height: inherit;
+}
+
+.ui-widget {
+     font-family: inherit;
+     font-size: 1em;
 }
 	
 /* JCAROUSEL OVERRIDE STYLES */

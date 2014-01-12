@@ -36,6 +36,12 @@ class os_sv_list extends os_boxes_default {
     );
 
     //get options from plugins
+    if (empty($this->entity_type) && get_class($this) == 'os_sv_list_file') {
+      $this->entity_type = 'file';
+    } elseif (empty($this->entity_type) && get_class($this) == 'os_sv_list_box') {
+      $this->entity_type = 'node';
+    }
+    
     if (empty($this->plugins)) {
       $this->_set_plugins($this->entity_type);
     }
@@ -46,7 +52,6 @@ class os_sv_list extends os_boxes_default {
       }
     }
     
-  
     return $options;
   }
   
@@ -231,15 +236,19 @@ class os_sv_list extends os_boxes_default {
     
     //give plguins a chance to alter the entities after loading but before rendering.  see events.
     $entities = entity_load($this->entity_type, $ids);
-    $entites = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
+    $entities = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
     $this->_plugins_invoke('entities_alter', $entities);
     if (empty($entities)) {
       return $block;
     }
     
-    //let a plugin do the rendering.  if they don't, use the default.
-    $render = $this->_plugins_invoke('render', $entities);
-    $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
+    if ($this->options['display'] == 'title') {
+      $render = $this->display_title($entities); 
+    } else {
+      //let a plugin do the rendering.  if they don't, use the default.
+      $render = $this->_plugins_invoke('render', $entities);
+      $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
+    }
     
     //now render to html.
     $content = drupal_render($render);   
@@ -457,4 +466,22 @@ class os_sv_list extends os_boxes_default {
     $efq->addTag('random');
   }
   
+  function display_title($entities) {
+    $info = entity_get_info($this->entity_type);
+    $id = $info['entity keys']['id'];
+    $label = $info['entity keys']['label'];
+    $type = $this->entity_type;
+    
+    $items = array_map(function($e) use ($id, $label, $type) {
+      return l($e->{$label}, $type . '/' . $e->{$id});
+    }, $entities);
+    
+    return array(
+      '#theme' => 'item_list',
+      '#items' => $items,
+      '#title' => '',
+      '#type' => 'ul',
+      '#attributes' => array(),
+    );
+  }
 }

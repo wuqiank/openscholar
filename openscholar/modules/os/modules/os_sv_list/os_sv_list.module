@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Code for the os sv list feature.
+ */
+
+include_once 'os_sv_list.features.inc';
 
 /**
  * Implements hook_menu()
@@ -38,17 +44,6 @@ function os_sv_list_pager_callback($box) {
   $output = $box->render();
   $commands[] = ajax_command_replace('box-' . $box->delta . '-page', $output['content']);
   return $output['content'];
-}
-
-/**
- * Implements hook_ctools_plugin_api
- */
-function os_sv_list_ctools_plugin_api($module, $api) {
-  if ($module == 'boxes' && $api == 'plugins') {
-    return array(
-      'version' => 1,
-    );
-  }
 }
 
 /**
