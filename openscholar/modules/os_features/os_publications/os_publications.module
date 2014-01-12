@@ -329,3 +329,29 @@ function os_publications_entity_view_alter(&$build, $type) {
   $build['biblio_get_text']['#prefix'] = '<h3>'. t('Citation') . ':</h3><div id="citation-wrapper">';
   $build['export']['#suffix'] = '</div>';
 }
+
+/**
+ * Implements hook_biblio_fields_info_alter().
+ */
+function os_publications_biblio_fields_info_alter(&$fields) {
+  foreach ($fields as &$field) {
+    $field['instance']['display']['default']['type'] = 'hidden';
+  }
+}
+
+function os_publications_field_extra_fields_alter(&$info) {
+  $info = entity_get_info('biblio');
+  foreach (array_keys($info['bundles']) as $bundle) {
+    $info['biblio'][$bundle]['display'] = array(
+      'biblio_get_text' => array(
+        'weight' => 10,
+        'label' => t('Rendered text'),
+      ),
+      'export' => array(
+        'weight' => 15,
+        'label' => t('Export'),
+      ),
+    );
+  }
+}
+
