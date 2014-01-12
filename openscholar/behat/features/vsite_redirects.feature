@@ -41,3 +41,9 @@ Feature:
      When I visit "http://lincoln.local/john/blog/first-blog"
      Then I should be on "john/blog/first-blog"
 
+  @api @momo
+  Scenario: Redirecting when watching Biblio on the wrong vsite.
+    Given I should be redirected in the following <cases>:
+   #  | Request                                 | Code  | Final URL                     |
+      | john/biblio/2                           | 200   | john/biblio/2                 |
+      | obama/biblio/2                          | 302   | john/biblio/2                 |
