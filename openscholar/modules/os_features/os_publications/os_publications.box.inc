@@ -14,7 +14,7 @@ function os_publications_default_box() {
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
   $box->delta = 'os_publications_recent';
-  $box->plugin_key = 'os_sv_list_node';
+  $box->plugin_key = 'os_sv_list_biblio';
   $box->title = ' Recent Publications';
   $box->description = ' Recent Publications';
   $box->options = array(
