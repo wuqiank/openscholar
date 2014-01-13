@@ -117,12 +117,12 @@ function os_reader_update_7002() {
  * Remove duplicate feed importers items.
  */
 function os_reader_update_7003(&$sandbox) {
-  if (!isset($sandbox['progress'])) {
+  if (!isset($sandbox['total'])) {
     // count all the importers.
     $sandbox['progress'] = 0;
 
     $query = new EntityFieldQuery();
-    $sandbox['max'] = $query
+    $sandbox['total'] = $query
       ->entityCondition('entity_type', 'os_feed_item')
       ->count()
       ->execute();
@@ -148,10 +148,10 @@ function os_reader_update_7003(&$sandbox) {
   }
 
   // Increase the progress.
-  $sandbox['progress']++;
+  $sandbox['progress'] += $batch;
 
   // Save the last node, increase the node and check if the import finished.
-  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+  $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
 }
 
 /**
