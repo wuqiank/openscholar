@@ -11,68 +11,6 @@ function os_publications_views_default_views() {
   $export = array();
 
   $view = new view();
-  $view->name = 'biblio_types';
-  $view->description = '';
-  $view->tag = 'default';
-  $view->base_table = 'biblio';
-  $view->human_name = 'biblio_types';
-  $view->core = 7;
-  $view->api_version = '3.0';
-  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
-
-  /* Display: Master */
-  $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['use_more_always'] = FALSE;
-  $handler->display->display_options['access']['type'] = 'spaces_feature';
-  $handler->display->display_options['access']['spaces_feature'] = 'os_publications';
-  $handler->display->display_options['access']['perm'] = 'access biblio content';
-  $handler->display->display_options['cache']['type'] = 'none';
-  $handler->display->display_options['query']['type'] = 'views_query';
-  $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'full';
-  $handler->display->display_options['style_plugin'] = 'default';
-  $handler->display->display_options['row_plugin'] = 'fields';
-  /* Field: Biblio: Type */
-  $handler->display->display_options['fields']['type']['id'] = 'type';
-  $handler->display->display_options['fields']['type']['table'] = 'biblio';
-  $handler->display->display_options['fields']['type']['field'] = 'type';
-  /* Sort criterion: Biblio: Year of Publication (biblio_year) */
-  $handler->display->display_options['sorts']['biblio_year_value']['id'] = 'biblio_year_value';
-  $handler->display->display_options['sorts']['biblio_year_value']['table'] = 'field_data_biblio_year';
-  $handler->display->display_options['sorts']['biblio_year_value']['field'] = 'biblio_year_value';
-  $handler->display->display_options['sorts']['biblio_year_value']['order'] = 'DESC';
-  /* Contextual filter: Biblio: Type */
-  $handler->display->display_options['arguments']['type']['id'] = 'type';
-  $handler->display->display_options['arguments']['type']['table'] = 'biblio';
-  $handler->display->display_options['arguments']['type']['field'] = 'type';
-  $handler->display->display_options['arguments']['type']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['type']['summary']['format'] = 'default_summary';
-  /* Filter criterion: Biblio: Publication status (biblio_status) */
-  $handler->display->display_options['filters']['biblio_status_value']['id'] = 'biblio_status_value';
-  $handler->display->display_options['filters']['biblio_status_value']['table'] = 'field_data_biblio_status';
-  $handler->display->display_options['filters']['biblio_status_value']['field'] = 'biblio_status_value';
-  $handler->display->display_options['filters']['biblio_status_value']['value'] = array(
-    'published' => 'published',
-  );
-
-  /* Display: Block */
-  $handler = $view->new_display('block', 'Block', 'block_1');
-  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Biblio: Type */
-  $handler->display->display_options['arguments']['type']['id'] = 'type';
-  $handler->display->display_options['arguments']['type']['table'] = 'biblio';
-  $handler->display->display_options['arguments']['type']['field'] = 'type';
-  $handler->display->display_options['arguments']['type']['default_action'] = 'summary';
-  $handler->display->display_options['arguments']['type']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['type']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['type']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['type']['summary_options']['base_path'] = 'publications/type';
-  $handler->display->display_options['arguments']['type']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['type']['limit'] = '0';
-  $export['biblio_types'] = $view;
-
-  $view = new view();
   $view->name = 'os_publications';
   $view->description = 'OS Publications > Recent Publications';
   $view->tag = 'default';

@@ -71,7 +71,7 @@ class os_boxes_pub_type extends os_boxes_default {
     //@todo
     $block = parent::render();
 
-    $delta = 'biblio_types-block_1';
+    $delta = 'publication_types-block_1';
     list($name, $display_id) = explode('-', $delta);
     if ($view = views_get_view($name)) {
       if ($view->access($display_id)) {
