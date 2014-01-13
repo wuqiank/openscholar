@@ -62,13 +62,13 @@ class os_sv_list extends os_boxes_default {
       'css' => array(drupal_get_path('module', 'os_sv_list') . '/os_sv_list.css',),
     );
 
-     $form['filters'] = $form['details'] = $form['vocabs'] = $form['content'] = array(
+    $form['filters'] = $form['details'] = $form['vocabs'] = $form['content'] = array(
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
     );
 
-
-    //content fieldset
+    // Content fieldset
+    // @todo: since should work on different entities, this should be named "bundle" or "type", but not "content type".
     $form['content']['content_type'] = array(
       '#type' => 'select',
       '#title' => t('Content Type'),
@@ -170,7 +170,7 @@ class os_sv_list extends os_boxes_default {
     //get options from plugins
     $this->_plugins_invoke('options_form', $form);
 
-    //hide empty fieldsets.  plugins _could_ empty some of the defaults
+    //hide empty fieldsets. plugins _could_ empty some of the defaults
     foreach (array('details', 'content', 'filters', 'vocabs') as $fieldset) {
       if (isset($form[$fieldset]) && count($form[$fieldset]) <= 2) {
         unset($form[$fieldset]);
@@ -219,7 +219,7 @@ class os_sv_list extends os_boxes_default {
       $pager = '';
     }
 
-    //truncate items and prepare the more link
+    // Truncate items and prepare the more link.
     $more = '';
     if (count($ids) > $this->options['number_of_items'] || ($this->options['pager'] && $ids && $pager_current < $pager_max)) {
       $ids = array_slice($ids, 0, $this->options['number_of_items']);
@@ -257,7 +257,6 @@ class os_sv_list extends os_boxes_default {
 
     if ($this->options['content_type'] != 'all') {
       $query->propertyCondition('type', $this->options['content_type']);
-      //any special hook here?
     }
 
     // Pager
