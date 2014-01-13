@@ -1,4 +1,4 @@
-name = OS Virtual Site: Presets
+name = Vsite Presets
 description = Provides presets to automate virtual site creation tasks.
 core = 7.x
 package = OpenScholar vsite

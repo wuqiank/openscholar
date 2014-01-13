@@ -685,8 +685,7 @@ function cp_redirect_get_redirects() {
   $rids = array();
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'redirect');
-  if (module_exists('vsite')) {
-    $vsite = vsite_get_vsite();
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
     $gid = $vsite->id;
     $len = strlen((string) $gid);
     // Matches a serialized array key/value pair like `array('id' => $gid)`.
