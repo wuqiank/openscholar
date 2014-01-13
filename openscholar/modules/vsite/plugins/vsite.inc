@@ -96,10 +96,11 @@ class vsite extends space_og {
   /**
    * Implements space->router().
    */
-  public function router($op, $node = NULL) {
+  public function router($op, $object = NULL) {
     global $user;
     switch ($op) {
       case 'node':
+        $node = $object;
         // If we are viewing the group node
         if (og_is_group_type('node', $node->type)) {
           if (isset($node->nid) && (!(isset($this->active) && $this->active) || ($this->active && $this->id != $node->nid)) && $space = spaces_load('og', $node->nid)) {
@@ -123,7 +124,7 @@ class vsite extends space_og {
         break;
 
       case 'init':
-        if(!$this->active) {
+        if (!$this->active) {
           break;
         }
 
@@ -150,53 +151,79 @@ class vsite extends space_og {
           }
         }
 
-        // Redirects to a node alias.
-        if ($node = menu_get_object()) {
-          if (isset($node->nid) && !og_is_group_type('node', $node->type)) {
-            // First, redirects if this node does not belong to this vsite,
-            // or if the request URL did not specify a vsite
-            $wrapper = entity_metadata_wrapper('node', $node);
-            $sids = $wrapper->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE));
-            $sid = isset($sids[0]) ? $sids[0] : NULL;
-            // Handles both types of requests:
-            // "node/123" and "wrongsite/node/123"
-            if ((!$this->active && $sid) || ($sids && !in_array((int) $this->id, $sids))) {
-              // Redirects to the correctly aliased node in its own vsite.
-              spaces_load('og', $sid)->activate();
-            }
-            if (!$this->active) {
-              break;
-            }
-
-            // Preventing a redirect loop when a node don't have an alias.
-            if (!drupal_lookup_path('alias', $_GET['q'])) {
-              break;
-            }
-
-            // Then, looks to redirect to node aliases if they exist.
-            // This avoids a false redirect loop detection in purl_goto() when:
-            //  - the path we are going to has an alias
-            //  AND
-            //  - the current page we are on does not use that alias value,
-            $path = $_GET['q'];
-            $aliased_path = url($path);
-            $request_has_alias = (bool) ($path != $aliased_path);
-            $path_parts = explode('/', _purl_cache_q());
-            if ($request_has_alias && sizeof($path_parts) < 4) {
-              // Handles both types of requests:
-              // "mysite/node/123" AND "node/123" (on sites with custom domains)
-              if ((sizeof($path_parts) == 3 && $path_parts[1] == 'node' && $path_parts[2] == $node->nid)
-               || (sizeof($path_parts) == 2 && $path_parts[0] == 'node' && $path_parts[1] == $node->nid)) {
-                // Redirects to the aliased node path.
-                $path = $this->get_absolute_url("node/$node->nid");
-                drupal_goto($path);
-              }
-            }
-          }
+        // Call routing by the available entity.
+        // Currently supports only node and biblio.
+        $entity_type = FALSE;
+        if ($entity = menu_get_object()) {
+          $entity_type = 'node';
         }
+        else if ($entity = menu_get_object('biblio')) {
+          $entity_type = 'biblio';
+        }
+        if (!$entity_type) {
+          break;
+        }
+        $this->route_entity($entity_type, $entity);
         break;
     }
-    parent::router($op, $node);
+    parent::router($op, $object);
+  }
+
+  /**
+   * Route entity based on its vsite and existing path alias.
+   *
+   * @param $entity_type
+   *   Name of the entity.
+   * @param $entity
+   *   Entity object.
+   */
+  function route_entity($entity_type, $entity) {
+    $wrapper = entity_metadata_wrapper($entity_type, $entity);
+    $entity_id = $wrapper->getIdentifier();
+
+    if (isset($entity_id) && !og_is_group_type($entity_type, $entity->type)) {
+      // First, redirects if this entity does not belong to this vsite,
+      // or if the request URL did not specify a vsite
+      $sids = $wrapper->{OG_AUDIENCE_FIELD}->value(array('identifier' => TRUE));
+      if (!$sid = reset($sids)) {
+        return;
+      }
+
+      // Handles both types of requests:
+      // "<entity type>/123" and "wrongsite/<entity type>/123"
+      if (!$this->active || !in_array((int) $this->id, $sids)) {
+        // Redirects to the correctly aliased entity in its own vsite.
+        spaces_load('og', $sid)->activate();
+      }
+      if (!$this->active) {
+        return;
+      }
+
+      // Preventing a redirect loop when a entity don't have an alias.
+      if (!drupal_lookup_path('alias', $_GET['q'])) {
+        return;
+      }
+
+      // Then, looks to redirect to entity aliases if they exist.
+      // This avoids a false redirect loop detection in purl_goto() when:
+      //  - the path we are going to has an alias
+      //  AND
+      //  - the current page we are on does not use that alias value,
+      $path = $_GET['q'];
+      $aliased_path = url($path);
+      $request_has_alias = (bool) ($path != $aliased_path);
+      $path_parts = explode('/', _purl_cache_q());
+      if ($request_has_alias && count($path_parts) < 4) {
+        // Handles both types of requests:
+        // "mysite/<entity type>/123" AND "<entity type>/123" (on sites with custom domains)
+        if ((count($path_parts) == 3 && $path_parts[1] == $entity_type && $path_parts[2] == $entity_id)
+          || (count($path_parts) == 2 && $path_parts[0] == $entity_type && $path_parts[1] == $entity_id)) {
+          // Redirects to the aliased entity path.
+          $path = $this->get_absolute_url($entity_type . "/" . $entity_id);
+          drupal_goto($path);
+        }
+      }
+    }
   }
 
   /**
