@@ -684,12 +684,6 @@ function os_preprocess_page(&$vars) {
           $module  = $a->export_module;
         }
       }
-      elseif (in_array($menu['path'], $a->conditions['path']['values'])) {
-        // In case the user isn't watching a node we need to check if the menu
-        // path in the conditions matches the current menu item path.
-        $module  = $a->export_module;
-        break 2;
-      }
     }
 
     // Determine node create access.
@@ -709,9 +703,21 @@ function os_preprocess_page(&$vars) {
     }
   }
 
+  // Integrating with the biblio module.
+  if (isset($active['publications_publications'])) {
+    $publication_context = $active['publications_publications'];
+    if (in_array($menu['path'], $publication_context->conditions['path']['values'])) {
+      $module = 'os_publications';
+      $links['add_publication'] = array(
+        'href' => 'biblio/add',
+        'title' => t('Publications'),
+      );
+    }
+  }
+
   $section_links['header'] = array(
-      'title' => 'This Section',
-    );
+    'title' => 'This Section',
+  );
   if ($module != 'os_front') {
     $section_links['settings'] = array(
       'title' => t('Settings'),
