@@ -339,6 +339,12 @@ function os_publications_biblio_fields_info_alter(&$fields) {
   }
 }
 
+/**
+ * Implements hook_field_extra_fields_alter().
+ *
+ * Set the dummy fields of the biblio rendered text and the export in a specific
+ * order.
+ */
 function os_publications_field_extra_fields_alter(&$info) {
   $info = entity_get_info('biblio');
   foreach (array_keys($info['bundles']) as $bundle) {
