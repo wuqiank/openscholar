@@ -668,6 +668,12 @@ function os_files_entity_info_alter(&$info){
       'label' => t('Thumbnail'),
       'custom settings' => TRUE
     ),
+    
+    'os_files_grid' => array(
+      'label' => t('Grid'),
+      'custom settings' => TRUE,
+      'grid' => TRUE, //can we designate grid-ness this way?
+    ),
   );
 
   $info['file']['bundles']['undefined'] = array(
@@ -1295,7 +1301,7 @@ function os_files_file_download($uri){
  * @see http://community.openscholar.harvard.edu/openscholar/topics/better_files_media_management_and_display
  */
 function os_files_file_view($file, $view_mode, $langcode) {
-  if ($file->type == 'html' || !in_array($view_mode, array('os_files_title', 'teaser', 'full', 'os_files_thumbnail'))) {
+  if (!in_array($view_mode, array('os_files_title', 'teaser', 'full', 'os_files_thumbnail', 'os_files_grid'))) {
     return;
   }
   
@@ -1365,6 +1371,24 @@ function os_files_file_view($file, $view_mode, $langcode) {
           '#options' => array('attributes' => array(), 'html' => TRUE),
         );
         break;
+        
+      case 'os_files_grid':
+        $img = array(
+          '#theme' => 'image_style',
+          '#style_name' => 'os_square_100_100',
+          '#path' => $file->content['file']['#file']->uri,
+          '#title' => $file->field_file_image_title_text ? $file->field_file_image_title_text[LANGUAGE_NONE][0]['safe_value'] : $file->filename,
+          '#alt' => $file->field_file_image_alt_text ? $file->field_file_image_alt_text[LANGUAGE_NONE][0]['safe_value'] : $file->filename,
+          
+        );
+        
+        $content = array(
+          '#theme' => 'link',
+          '#text' => render($img), 
+          '#path' => 'file/' . $file->fid,
+          '#options' => array('attributes' => array(), 'html' => TRUE),
+        );
+        break;
     }
   }
   
@@ -1384,6 +1408,12 @@ function os_files_file_view($file, $view_mode, $langcode) {
           //audio thumbnails are unreliable.  don't use them if we can't offer them consistently.
           if ($file->filemime == 'video/oembed') {
             $content = array_merge(array('video_thumb' => _os_files_video_thumb($file, 200, 200)), $content);
+          }
+          break;
+          
+        case 'os_files_grid':
+          if ($file->filemime == 'video/oembed') {
+            $content = array('video_thumb' => _os_files_video_thumb($file));
           }
           break;
       }
@@ -1664,11 +1694,13 @@ function os_files_views_data_alter(&$data){
  */
 function os_files_os_entity_view_modes() {
   $modes = array('file' => array_fill_keys(
-    array('image', 'video', 'audio', 'document', 'executable'),
+    array('image', 'video', 'audio', 'document', 'executable', 'html'),
     array('os_files_link', 'os_files_link_icon', 'teaser', 'full', 'os_files_title')
   ));
   
   $modes['file']['image'][] = 'os_files_thumbnail';
+  $modes['file']['image'][] = 'os_files_grid';
+  $modes['file']['video'][] = 'os_files_grid';
   
   return $modes;
 }
@@ -1841,13 +1873,13 @@ function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
     if ($w > $width_max) {
       $w = $width_max;
       $ratio = $w/$data['width'];
-      $h = $ratio * $h;
+      $h = intval($ratio * $h);
     }
     
     if ($h > $height_max) {
       $h = $height_max;
       $ratio = $h/$data['height'];
-      $w = $ratio * $data['height'];
+      $w = intval($ratio * $data['height']);
     }
   } else {
     $w = $h = min($height_max, $width_max);
@@ -1857,7 +1889,7 @@ function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
     '#type' => 'oembed',
     '#url' => $url,
     '#options' => array('maxwidth' => $w),
-    '#parameters' => array('width' => $w, 'height' => $h),
+    '#parameters' => array('width' => $w, 'height' => $h, 'maxwidth' => $w),
   );
   
   $box_html = drupal_render($filebox); 

@@ -86,6 +86,19 @@ class os_sv_list extends os_boxes_default {
         ),
       ),
     );
+
+    $form['content']['layout'] = array(
+      '#type' => 'select',
+      '#title' => 'Layout',
+      '#default_value' => $this->options['layout'],
+      '#options' => drupal_map_assoc(array('List', 'Grid'), 't'),
+      // Subsite content can only show titles, so hide this element when subsites are active
+      '#states' => array(
+        'visible' => array(// action to take.
+          ':input[name="query_scope[subsites]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
     
     $form['content']['display'] = array(
       '#type' => 'select',
@@ -253,7 +266,8 @@ class os_sv_list extends os_boxes_default {
     //now render to html.
     $content = drupal_render($render);   
     $delta = $this->delta;   
-    $class = implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display']));
+    $class = strtolower(implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display'], 'sv-list-layout-' . $this->options['layout'])));
+    
     $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
     return $block;
   }
