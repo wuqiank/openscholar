@@ -308,20 +308,14 @@ function os_publications_preprocess_biblio_ui_view_export_area(&$variables) {
  * Implements hook_os_entity_view_modes()
  */
 function os_publications_os_entity_view_modes() {
-  return array('biblio' => array(
-    'person' => array('sidebar_teaser')
-  ));
-}
+  // @todo: Now we return all of the bundles. We might want to return just the
+  // @todo: here or on the alter() ?
+  $info = array();
+  // ones relevant for the specific space.
+  $entity_info = entity_get_info('biblio');
 
-/**
- * Implements os_entity_view_modes_alter
- *
- * Adds full and teaser display to all Biblio bundles.
- */
-function os_publications_os_entity_view_modes_alter(&$info) {
-
-  // @todo: get Biblio bundles
-  $bundles = array_keys(os_get_bundles(TRUE));
+  $bundles = array_keys($entity_info['bundles']);
   $bundle_views = array_fill_keys($bundles, array('full', 'teaser', 'title'));
-  $info['biblio'] = array_merge_recursive($info['biblio'], $bundle_views);
+  $info['biblio'] = $bundle_views;
+  return $info;
 }
