@@ -95,7 +95,6 @@ class os_sv_list extends os_boxes_default {
       ),
     );
 
-
     $form['content']['sort_by'] = array(
       '#type' => 'select',
       '#title' => 'Sorted By',
@@ -108,9 +107,7 @@ class os_sv_list extends os_boxes_default {
       )
     );
 
-
-
-    //details fieldset
+    // Details fieldset
     $form['details']['more_div'] = array(
       '#prefix' => '<div class="more-wrapper">',
       '#suffix' => '</div>',
@@ -254,7 +251,7 @@ class os_sv_list extends os_boxes_default {
   }
 
   public function get_ids($page_num, $page) {
-    //query for all content of our type
+    // Query for all content of our type
     $query = $this->query();
     $this->_plugins_invoke('query_alter', $query);
 
@@ -263,9 +260,7 @@ class os_sv_list extends os_boxes_default {
       //any special hook here?
     }
 
-
-
-    //pager
+    // Pager
     if ($this->options['pager'] && is_int($page)) {
       $query->pager($this->options['number_of_items']);
       $this->pager_element = $query->pager['element'];
@@ -282,10 +277,6 @@ class os_sv_list extends os_boxes_default {
     }
     $this->_plugins_invoke('sort_alter', $query);
 
-    //person, !image
-    //event exception.  dletas.
-
-
     //execute
     $result = $query->execute();
     return (isset($result[$this->entity_type])) ? array_keys($result[$this->entity_type]) : array();
@@ -301,7 +292,6 @@ class os_sv_list extends os_boxes_default {
 
     return $efq;
   }
-
 
   /**
    * @function _set_plugins
@@ -407,38 +397,8 @@ class os_sv_list extends os_boxes_default {
    * Returns hash of sort options and their labels
    */
   protected function _sort_options() {
-
-//     $type_sorts = array();
-//     $sorts = array();
-//     foreach ($this->_plugins_invoke('register_sorts') as $plugin => $sort) {
-//       $info = $this->plugins[$plugin];
-//       $sorts += $sort;
-//       $types = ($info['entity_type']) ? $info['entity_type'] : array('all');
-//       $bundles = ($info['bundle']) ? $info['bundle'] : array('all');
-
-//       foreach ($types as $type) {
-//         foreach ($bundles as $bundle) {
-//           $type_sorts[$type][$bundle] = (!isset($type_sorts[$type][$bundle])) ? $sort : array_merge($type_sorts[$type][$bundle], $sort);
-//         }
-//       }
-
-//     }
     $sorts = array_reduce($this->_plugins_invoke('register_sorts'), 'array_merge', array());
-
     return $sorts;
-//     return array(
-//       // Content type sensitive sorts.  // in the future get these from sv render plugins
-//       'sort_event' => t('Event Date'),
-//       'sort_presentation' => t('Recently Presented'),
-//       'sort_biblio' => t('Year of Publication'),
-//       'sort_news' => t('News Date'),
-
-//       // Standard sorts,
-//       'sort_newest' => t('Newest Post'),
-//       'sort_oldest' => t('Oldest Post'),
-//       'sort_alpha' => t('Alphabetical'),
-//       'sort_random' => t('Random'),
-//     );
   }
 
   /**

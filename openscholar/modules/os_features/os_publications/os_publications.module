@@ -303,3 +303,25 @@ function os_publications_preprocess_biblio_ui_entity_export_area(&$variables) {
 function os_publications_preprocess_biblio_ui_view_export_area(&$variables) {
   drupal_add_css(drupal_get_path('module', 'os_publications') . '/css/os_publications.css');
 }
+
+/**
+ * Implements hook_os_entity_view_modes()
+ */
+function os_publications_os_entity_view_modes() {
+  return array('biblio' => array(
+    'person' => array('sidebar_teaser')
+  ));
+}
+
+/**
+ * Implements os_entity_view_modes_alter
+ *
+ * Adds full and teaser display to all Biblio bundles.
+ */
+function os_publications_os_entity_view_modes_alter(&$info) {
+
+  // @todo: get Biblio bundles
+  $bundles = array_keys(os_get_bundles(TRUE));
+  $bundle_views = array_fill_keys($bundles, array('full', 'teaser', 'title'));
+  $info['biblio'] = array_merge_recursive($info['biblio'], $bundle_views);
+}
