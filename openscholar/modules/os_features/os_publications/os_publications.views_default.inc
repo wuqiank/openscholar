@@ -110,6 +110,10 @@ function os_publications_views_default_views() {
   );
   $handler->display->display_options['row_plugin'] = 'fields';
   /* Field: Biblio: Publication status */
+  /* Relationship: OG membership: OG membership from Publication */
+  $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
+  $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'biblio';
+  $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
   $handler->display->display_options['fields']['biblio_status']['id'] = 'biblio_status';
   $handler->display->display_options['fields']['biblio_status']['table'] = 'field_data_biblio_status';
   $handler->display->display_options['fields']['biblio_status']['field'] = 'biblio_status';
