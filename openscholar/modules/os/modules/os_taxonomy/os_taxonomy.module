@@ -1043,9 +1043,12 @@ function os_taxonomy_count_attached_entities_query_object($tid, $bundles = array
   if (empty($bundles) || in_array('node', $entities)) {
     $query->leftJoin('node', 'n', '(ogv.entity_id = n.nid AND ogv.entity_type = :node)', array(':node' => 'node'));
   }
-  
-  if (!empty($bundles)) {
+
+  if (!empty($bundles) && !in_array('publications', $bundles)) {
     $query->condition('ogv.bundle', $bundles, 'IN');
+  }
+  elseif (!empty($bundles) && in_array('publications', $bundles)) {
+    $query->condition('ogv.entity_type', 'biblio');
   }
 
   return $query;
