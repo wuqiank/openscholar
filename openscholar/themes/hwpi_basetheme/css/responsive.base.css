@@ -79,8 +79,8 @@ iframe {
 @media (max-width: 479px){
 	
 /*Layout*/	
-.block-boxes-os_sv_list_box .node.node-news.node-promoted .field-type-image.view-mode-sidebar_teaser,
-.block-boxes-os_sv_list_box .node.node-person.article.with-person-photo .pic-bio,
+.block-boxes-os_sv_list_box .node.node-news.node-promoted .field-type-image.view-mode-sidebar_teaser, 
+.block-boxes-os_sv_list_box .node.node-person.article.with-person-photo .pic-bio, 
 .block-boxes-os_sv_list_box .node.node-person .field-name-field-person-photo {
     float: none;
     margin-right: 0!important;
@@ -90,7 +90,7 @@ iframe {
     display: inline;
 }
 
-.block-boxes-os_sv_list_box .node.node-news.node-promoted.article .field-type-image ~ .node-content,
+.block-boxes-os_sv_list_box .node.node-news.node-promoted.article .field-type-image ~ .node-content, 
 .block-boxes-os_sv_list_box .node.node-person.article.with-person-photo .node-content {
     margin-left: 0!important;
     width: 100%;
