@@ -41,6 +41,7 @@ function os_profiles_os_entity_view_modes() {
   ));
 }
 
+
 /**
  * Implements hook_process_hook() for node.
  *
