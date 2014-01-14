@@ -18,12 +18,6 @@ class os_sv_list_biblio extends os_sv_list {
     return $form;
   }
 
-  public function query() {
-    $efq = parent::query();
-    $efq->propertyCondition('status', 1);
-    return $efq;
-  }
-
   //add our node specific sorts
   protected function _sort_options() {
     $sorts = array(
