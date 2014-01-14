@@ -122,6 +122,18 @@ function os_sv_list_boxes_plugins() {
     'factory' => TRUE,
   );
 
+  $plugins['os_sv_list_biblio'] = array(
+    'title' => 'List of Publications',
+    'tags' => array('Content'),
+    'handler' => array(
+      'class' => 'os_sv_list_biblio',
+      'file' => 'os_sv_list_biblio.inc',
+      'path' => drupal_get_path('module', 'os_sv_list') . '/plugins/',
+      'parent' => 'os_sv_list',
+    ),
+    'factory' => TRUE,
+  );
+
   $plugins['os_sv_list_file'] = array(
     'title' => 'List of Files',
     'tags' => array('Content'),
