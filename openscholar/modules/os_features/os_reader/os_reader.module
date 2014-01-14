@@ -622,23 +622,10 @@ function os_reader_get_feed_item_by_nid($nid) {
 }
 
 /**
- * Implements hook_cron_queue_info().
+ * Implements hook_cron().
  */
-function os_reader_cron_queue_info() {
-  $items['os_reader_remove_feed_items'] = array(
-    'title' => t('OS reader remove feed items'),
-    'worker callback' => 'os_reader_remove_feed_items',
-    'time' => 60,
-  );
-  return $items;
-}
-
-/**
- * Queue worker; Delete feed items which not imported and older then 1 month.
- */
-function os_reader_remove_feed_items($data) {
-
-  $data['id'] = isset($data['id']) ? $data['id'] : 0;
+function os_reader_cron() {
+  $id = variable_get('os_reader_last_feed_item', 0);
 
   // Get all the orphans feed items which older then 1 month.
   $query = db_select('os_feed_item', 'ofi');
@@ -647,7 +634,7 @@ function os_reader_remove_feed_items($data) {
     ->fields('ofi', array('id'))
     ->condition('ofi.id', 0, '>')
     ->condition('ofi.created', strtotime("1 month ago"), '<')
-    ->condition('ofi.id', $data['id'], '>=')
+    ->condition('ofi.id', $id, '>=')
     ->isNull('ogm.etid')
     ->range(0, 500)
     ->orderBy('ofi.created', 'DESC')
@@ -660,9 +647,5 @@ function os_reader_remove_feed_items($data) {
 
   // Delete the feed items and save the last one we processed.
   os_reader_feed_item_delete_multiple(array_keys($results));
-  $data['id'] = end($results)->id;
-
-  // Set the next queue worker.
-  $queue = DrupalQueue::get('os_reader_remove_feed_items');
-  return $queue->createItem($data);
+  variable_set('os_reader_last_feed_item', end($results)->id);
 }
