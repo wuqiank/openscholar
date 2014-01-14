@@ -48,6 +48,8 @@ function os_wysiwyg_media_token_to_markup_alter(&$element, $tag_info, $settings)
  * Implements hook_wysiwyg_editor_settings_alter().
  */
 function os_wysiwyg_wysiwyg_editor_settings_alter(&$settings, $context) {
+  dpm($context);
+
   // Settings there are no UI options for.
   $settings['gecko_spellcheck'] = true;
   $settings['theme_advanced_path'] = false;
@@ -202,16 +204,25 @@ function os_wysiwyg_field_widget_info() {
  * Implements hook_field_widget_form.
  */
 function os_wysiwyg_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  dpm($field);
-  dpm($instance);
-  $element['#attached']['js'] = array(
-    drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.widget.js'
+
+  $element += array(
+    '#type' => 'text_format',
+    '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+    '#rows' => $instance['widget']['settings']['rows'],
+    '#attributes' => array(
+      'class' => array(
+        'text-full',
+        'os-wysiwyg-expandable'
+      ),
+      'data-maxrows' => $instance['widget']['settings']['max_rows'],
+      'data-minrows' => $instance['widget']['settings']['rows']
+    ),
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.widget.js',
+      )
+    )
   );
-
-  $element['#attributes']['class'][] = 'os-wysiwyg-expandable';
-  $element['#attributes']['data-maxrows'] = $instance['widget']['settings']['max_rows'];
-
-  dpm($element);
 
   return $element;
 }
