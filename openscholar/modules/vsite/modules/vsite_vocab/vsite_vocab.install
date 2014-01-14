@@ -23,9 +23,12 @@ function vsite_vocab_install(){
       og_create_field(OG_VOCAB_FIELD, 'node', $bundle, $og_field);
     }
   }
-  
-  //Add og_vocab instance to file bundles
+
+  // Add og_vocab instance to file bundles.
   _vsite_vocab_files_add_vocab_field();
+
+  // Add og_vocab instance to biblio bundles.
+  _vsite_vocab_biblio_add_vocab_field();
 }
 
 /**
@@ -36,9 +39,7 @@ function vsite_vocab_update_7001() {
 }
 
 /**
- * @function _vsite_vocab_files_add_vocab_field()
- * 
- * Add og_vocab instance to file bundles
+ * Add og_vocab instance to file bundles.
  */
 function _vsite_vocab_files_add_vocab_field() {
   $bundles = og_get_all_group_content_bundle();
@@ -47,5 +48,18 @@ function _vsite_vocab_files_add_vocab_field() {
   $og_field['instance']['display']['default']['settings']['concatenate'] = TRUE;
   foreach ($bundles['file'] as $bundle => $name) {
     og_create_field(OG_VOCAB_FIELD, 'file', $bundle, $og_field);
+  }
+}
+/**
+ * Add og_vocab instance to biblio bundles.
+ */
+function _vsite_vocab_biblio_add_vocab_field() {
+  $types = array_keys(biblio_types());
+  $og_field = og_fields_info(OG_VOCAB_FIELD);
+  $og_field['instance']['display']['default']['label'] = 'hidden';
+  $og_field['instance']['display']['default']['settings']['concatenate'] = TRUE;
+  $og_field['instance']['display']['default']['weight'] = 20;
+  foreach ($types as $bundle) {
+    og_create_field(OG_VOCAB_FIELD, 'biblio', $bundle, $og_field);
   }
 }

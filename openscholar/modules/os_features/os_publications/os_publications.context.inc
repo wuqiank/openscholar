@@ -20,7 +20,7 @@ function os_publications_context_default_contexts() {
     'path' => array(
       'values' => array(
         'publications' => 'publications',
-        'publications/*' => 'publications/*',
+        'biblio/*' => 'biblio/*',
       ),
     ),
   );

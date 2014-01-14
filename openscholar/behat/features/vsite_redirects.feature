@@ -41,3 +41,12 @@ Feature:
      When I visit "http://lincoln.local/john/blog/first-blog"
      Then I should be on "john/blog/first-blog"
 
+  @api
+  Scenario: Redirecting when watching Biblio on the wrong vsite.
+    Given I am logging in as "john"
+     When I visit "john/biblio/2"
+     Then I should get a 200 HTTP response
+      And I should be on "john/biblio/2
+     When I visit "obama/biblio/2"
+     Then I should get a 302 HTTP response
+      And I should be on "john/biblio/2

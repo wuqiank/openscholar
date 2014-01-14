@@ -217,7 +217,7 @@ a.biblio-abstract-link.toggle.expanded {
   font-weight: normal;
   }
 
-.node a.ctools-dropdown-link, .biblio-entry a.ctools-dropdown-link, h2.title a.ctools-dropdown-link, .block a.ctools-dropdown-link, .view a.ctools-dropdown-link {
+#citation-wrapper a.ctools-dropdown-link, .biblio-entry a.ctools-dropdown-link, h2.title a.ctools-dropdown-link, .block a.ctools-dropdown-link, .view a.ctools-dropdown-link {
     background: url("../images/scholarbase-sprite.png") no-repeat scroll 0 -94px transparent !important;
     height: 16px;
     padding: 1px 0 3px 20px !important;

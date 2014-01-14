@@ -15,7 +15,7 @@ function os_publications_views_default_views() {
   $view->description = 'OS Publications > Recent Publications';
   $view->tag = 'default';
   $view->base_table = 'biblio';
-  $view->human_name = 'os_publications';
+  $view->human_name = 'OS Publications';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -109,18 +109,22 @@ function os_publications_views_default_views() {
     ),
   );
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Field: Biblio: Publication status */
+  /* Header: Publication: Export links */
+  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
+  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
+  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
   /* Relationship: OG membership: OG membership from Publication */
   $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'biblio';
   $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
+  /* Field: Publication: Publication status */
   $handler->display->display_options['fields']['biblio_status']['id'] = 'biblio_status';
   $handler->display->display_options['fields']['biblio_status']['table'] = 'field_data_biblio_status';
   $handler->display->display_options['fields']['biblio_status']['field'] = 'biblio_status';
   $handler->display->display_options['fields']['biblio_status']['label'] = '';
   $handler->display->display_options['fields']['biblio_status']['exclude'] = TRUE;
   $handler->display->display_options['fields']['biblio_status']['element_label_colon'] = FALSE;
-  /* Field: Biblio: Year of Publication */
+  /* Field: Publication: Year of Publication */
   $handler->display->display_options['fields']['biblio_year']['id'] = 'biblio_year';
   $handler->display->display_options['fields']['biblio_year']['table'] = 'field_data_biblio_year';
   $handler->display->display_options['fields']['biblio_year']['field'] = 'biblio_year';
@@ -135,10 +139,6 @@ function os_publications_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Header: Publication: Export links */
-  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
-  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
-  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
   /* Field: Publication: Render bilbio (Get text) */
   $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
   $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
@@ -146,7 +146,7 @@ function os_publications_views_default_views() {
   $handler->display->display_options['fields']['biblio_render']['label'] = '';
   $handler->display->display_options['fields']['biblio_render']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['biblio_render']['style_name'] = 'os_publications';
-  /* Sort criterion: Biblio: Year of Publication (biblio_year) */
+  /* Sort criterion: Publication: Year of Publication (biblio_year) */
   $handler->display->display_options['sorts']['biblio_year_value']['id'] = 'biblio_year_value';
   $handler->display->display_options['sorts']['biblio_year_value']['table'] = 'field_data_biblio_year';
   $handler->display->display_options['sorts']['biblio_year_value']['field'] = 'biblio_year_value';
