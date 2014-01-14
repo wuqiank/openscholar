@@ -10,7 +10,7 @@ features[box][] = simpleview_box
 
 files[] = plugins/os_sv_list.inc
 files[] = plugins/os_sv_list_file.inc
-files[] = plugins/os_sv_list_box.inc
+files[] = plugins/os_sv_list_node.inc
 
 files[] = plugins/sv_list/node_book.inc
 files[] = plugins/sv_list/file_video.inc

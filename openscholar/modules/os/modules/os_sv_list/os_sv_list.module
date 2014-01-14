@@ -115,7 +115,7 @@ function os_sv_list_boxes_plugins() {
     'tags' => array('Content'),
     'handler' => array(
       'class' => 'os_sv_list_box',
-      'file' => 'os_sv_list_box.inc',
+      'file' => 'os_sv_list_node.inc',
       'path' => drupal_get_path('module', 'os_sv_list') . '/plugins/',
       'parent' => 'os_sv_list',
     ),

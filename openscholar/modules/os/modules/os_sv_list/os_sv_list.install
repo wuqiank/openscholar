@@ -22,8 +22,6 @@ function os_sv_list_update_7001() {
       $box->plugin_key = 'os_sv_list_file';
       $box->options['display'] = 'os_files_thumbnail';
     } else {
-      //$box->plugin_key = 'os_sv_list_box'; //necessary now.  are we going to keep the original key later tho? //TODO
-      
       //view modes for all the node types
       $view_modes = array(
         'display_title' => 'title',
