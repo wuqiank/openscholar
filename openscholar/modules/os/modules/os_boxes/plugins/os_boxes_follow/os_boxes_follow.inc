@@ -7,7 +7,7 @@ class os_boxes_follow extends os_boxes_default {
   );
 
   public function options_defaults() {
-    return array(
+    return parent::options_defaults() + array(
       'links' => array(),
       'display_service_name' => 1,
     );

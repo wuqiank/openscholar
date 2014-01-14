@@ -105,7 +105,7 @@ function os_pinserver_auth_file_download($uri) {
 function os_pinserver_auth_stream_wrappers_alter(&$wrappers){
 
   // Use OS Pinserver Auth Stream Wrapper.
-  if (variable_get('os_files_private_pinserver', 0) && isset($wrappers['private'])) {
+  if (isset($wrappers['private'])) {
     $wrappers['private']['class'] = 'OSPinserverPrivateStreamWrapper';
   }
 }

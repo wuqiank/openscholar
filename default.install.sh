@@ -2,7 +2,7 @@
 
 # Modify the MySQL settings below so they will match your own.
 MYSQL_USERNAME="root"
-MYSQL_PASSWORD="1234"
+MYSQL_PASSWORD="root"
 MYSQL_HOST="localhost"
 MYSQL_DB_NAME="openscholar"
 

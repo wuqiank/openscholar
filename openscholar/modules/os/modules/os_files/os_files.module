@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Code for the OpenScholar: Files feature.
+ */
+
+include_once 'os_files.features.inc';
 
 /**
  * @file
@@ -7,29 +13,6 @@
 
 define('OS_FILE_FILEPATH_MULTITENANT', '[vsite:site-purl]/files');
 define('OS_FILE_FILEPATH_SINGLETENANT', 'share');
-
-/**
- * Implements hook_ctools_plugin_api().
- *
- * Leave this one.
- */
-function os_files_ctools_plugin_api($module, $api){
-  if ($module == 'file_entity' && $api == 'file_default_displays') {
-    return array(
-      'version' => 1
-    );
-  }
-  elseif ($module == 'file_entity' && $api == 'file_type') {
-    return array(
-      'version' => 1
-    );
-  }
-  elseif ($module == "strongarm" && $api == "strongarm") {
-    return array(
-      "version" => "1"
-    );
-  }
-}
 
 /**
  * Implements hook_menu().
@@ -630,6 +613,22 @@ function os_files_download(){
   call_user_func_array('file_download', $args);
 }
 
+/**
+ * Implements hook_ctools_plugin_api_alter().
+ */
+function os_files_ctools_plugin_api_alter($value, $context) {
+  if (!isset($context['module']) || $context['module'] != 'file_entity') {
+    return;
+  }
+
+  if (in_array($context['api'], array('file_default_displays', 'file_type'))) {
+    return array('version' => 1);
+  }
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
 function os_files_entity_info_alter(&$info){
   $info['file']['view modes'] += array(
     'os_files_xxlarge' => array(
