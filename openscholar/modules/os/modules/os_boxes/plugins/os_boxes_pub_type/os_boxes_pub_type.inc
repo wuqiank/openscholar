@@ -34,8 +34,10 @@ class os_boxes_pub_type extends os_boxes_default {
     $value = $this->options['whitelist'];
     $all = in_array('all', $value) && isset($value['all']) && $value['all'] === 'all';
     foreach ($rows as $key => $r) {
-      $options[$key] = $r->name;
-      if ($all) $value[$key] = $r->name;
+      $options[$r->name] = $r->name;
+      if ($all) {
+        $value[$r->name] = $r->name;
+      }
     }
 
     $form['whitelist'] = array(
@@ -71,7 +73,7 @@ class os_boxes_pub_type extends os_boxes_default {
     //@todo
     $block = parent::render();
 
-    $delta = 'publication_types-block_1';
+    $delta = 'publication_types-block';
     list($name, $display_id) = explode('-', $delta);
     if ($view = views_get_view($name)) {
       if ($view->access($display_id)) {
@@ -94,7 +96,7 @@ class os_boxes_pub_type extends os_boxes_default {
             ),
             'relationship' => 'none',
           );
-          $view->set_item('block', 'filter', 'tid', $filter);
+          $view->set_item('block', 'filter', 'type', $filter);
         }
 
   	//Set the display num in the view (the count)
