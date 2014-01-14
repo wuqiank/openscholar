@@ -658,8 +658,8 @@ function os_reader_remove_feed_items($data) {
     return;
   }
 
+  // Delete the feed items and save the last one we processed.
   os_reader_feed_item_delete_multiple(array_keys($results));
-
   $data['id'] = end($results)->id;
 
   // Set the net queue worker.
