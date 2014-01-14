@@ -91,8 +91,6 @@ function os_publications_theme() {
       'path' => drupal_get_path('module', 'os_publications') . '/templates',
       'template' => 'os-publications-citeproc',
     ),
-    'path' => drupal_get_path('module', 'os_publications') . '/templates',
-    'template' => 'os-publications-citeproc',
   );
 
   return $theme;
