@@ -29,21 +29,17 @@ define('OS_PRIVATE_APP', 2);
 /**
  * Returns available bundles, with option to filter by spaces_features status.
  *
- * @param $privacy
+ * @param $include_status
  *  Can be array:
  *    - 0: disabled
  *    - 2: private
  *    - 1: public
  *  TRUE returns all
  *
- * @param $space_type
- * @param $reset
- *   (reset features cache)
- *
  * @return
  *  Array keyed with the bundle ID and the bundle name as value.
  */
-function os_get_bundles($include_status = array(OS_PUBLIC_APP), $space_type = 'og', $reset = FALSE) {
+function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
   $return_all = FALSE;
   if ($include_status === TRUE) {
     $return_all = TRUE;

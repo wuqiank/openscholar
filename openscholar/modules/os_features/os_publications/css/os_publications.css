@@ -68,3 +68,7 @@ div.single-publication .publication-pdf {
 .view-os-publications-issued li {
   list-style: none;
 }
+
+html.js div.biblio-export-buttons.ctools-dropdown a.ctools-dropdown-text-link {
+  color: black;
+}
