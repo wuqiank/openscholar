@@ -253,7 +253,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   // Only CRUD permissions should be displayed in the UI. Create an array of
   // the allowed permissions so we can filter the list by it.
   $allowed_permissions = array();
-  foreach (node_permissions_get_configured_types() as $type) {
+  foreach (os_get_bundles(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $type => $name) {
     $allowed_permissions = array_merge($allowed_permissions, og_list_permissions($type));
   }
   $allowed_permissions = array_keys($allowed_permissions);

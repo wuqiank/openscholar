@@ -1,27 +1,9 @@
 name = OS Simpleview List
-core = "7.x"
-description = "OS Simpleview List"
-package = "OpenScholar"
-version = "7.x-rc1"
-
-dependencies[] = "boxes"
-dependencies[] = "ctools"
-features[box][] = simpleview_box
-
-files[] = plugins/os_sv_list.inc
-files[] = plugins/os_sv_list_file.inc
-files[] = plugins/os_sv_list_node.inc
-files[] = plugins/os_sv_list_biblio.inc
-
-files[] = plugins/sv_list/node_book.inc
-files[] = plugins/sv_list/file_video.inc
-files[] = plugins/sv_list/node_news.inc
-files[] = plugins/sv_list/plugin.inc
-files[] = plugins/sv_list/file_audio.inc
-files[] = plugins/sv_list/file_image.inc
-files[] = plugins/sv_list/node_biblio.inc
-files[] = plugins/sv_list/node_person.inc
-files[] = plugins/sv_list/node_presentation.inc
-files[] = plugins/sv_list/node_event.inc
-files[] = plugins/sv_list/subsites.inc
-files[] = plugins/sv_list/taxonomy.inc
+description = OS Simpleview List
+core = 7.x
+package = OpenScholar
+version = 7.x-rc1
+dependencies[] = boxes
+dependencies[] = ctools
+features[ctools][] = boxes:box:1
+features[features_api][] = api:2

@@ -13,166 +13,193 @@ function os_publications_views_default_views() {
   $view = new view();
   $view->name = 'os_publications';
   $view->description = 'OS Publications > Recent Publications';
-  $view->tag = 'default';
-  $view->base_table = 'biblio';
-  $view->human_name = 'OS Publications';
-  $view->core = 7;
+  $view->tag = 'os_feature';
+  $view->base_table = 'node';
+  $view->human_name = 'os_publications';
+  $view->core = 0;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
-  /* Display: Master */
-  $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Publications';
+  /* Display: Defaults */
+  $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->display->display_options['title'] = 'Recent Publications';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'spaces_feature';
   $handler->display->display_options['access']['spaces_feature'] = 'os_publications';
+  $handler->display->display_options['access']['perm'] = 'access biblio content';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['distinct'] = TRUE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'full';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '25';
-  $handler->display->display_options['pager']['options']['offset'] = '0';
-  $handler->display->display_options['pager']['options']['id'] = '0';
-  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['type'] = 'none';
   $handler->display->display_options['style_plugin'] = 'default';
-  $handler->display->display_options['row_plugin'] = 'fields';
-  /* Header: Publication: Export links */
-  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
-  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
-  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
-  /* Relationship: OG membership: OG membership from Publication */
-  $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'biblio';
-  $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['label'] = 'OG';
-  /* Field: Publication: Render bilbio (Get text) */
-  $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
-  $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
-  $handler->display->display_options['fields']['biblio_render']['field'] = 'biblio_render';
-  $handler->display->display_options['fields']['biblio_render']['label'] = '';
-  $handler->display->display_options['fields']['biblio_render']['element_label_colon'] = FALSE;
-  /* Sort criterion: Publication: Year of Publication (biblio_year) */
-  $handler->display->display_options['sorts']['biblio_year_value']['id'] = 'biblio_year_value';
-  $handler->display->display_options['sorts']['biblio_year_value']['table'] = 'field_data_biblio_year';
-  $handler->display->display_options['sorts']['biblio_year_value']['field'] = 'biblio_year_value';
-  $handler->display->display_options['sorts']['biblio_year_value']['order'] = 'DESC';
-  /* Contextual filter: Field: Groups audience (og_group_ref) */
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['id'] = 'og_group_ref_target_id';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['table'] = 'og_membership';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['field'] = 'og_group_ref_target_id';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['default_argument_type'] = 'og_context';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['row_plugin'] = 'node';
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  /* Sort criterion: Content: Sticky */
+  $handler->display->display_options['sorts']['sticky']['id'] = 'sticky';
+  $handler->display->display_options['sorts']['sticky']['table'] = 'node';
+  $handler->display->display_options['sorts']['sticky']['field'] = 'sticky';
+  $handler->display->display_options['sorts']['sticky']['order'] = 'DESC';
+  /* Sort criterion: Biblio: Year of Publication */
+  $handler->display->display_options['sorts']['biblio_year']['id'] = 'biblio_year';
+  $handler->display->display_options['sorts']['biblio_year']['table'] = 'biblio';
+  $handler->display->display_options['sorts']['biblio_year']['field'] = 'biblio_year';
+  $handler->display->display_options['sorts']['biblio_year']['order'] = 'DESC';
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  $handler->display->display_options['filters']['status']['group'] = '0';
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'biblio' => 'biblio',
+  );
+  $handler->display->display_options['filters']['type']['group'] = '0';
+  $handler->display->display_options['filters']['type']['expose']['operator'] = FALSE;
+  /* Filter criterion: Spaces: Content in current space */
+  $handler->display->display_options['filters']['current']['id'] = 'current';
+  $handler->display->display_options['filters']['current']['table'] = 'spaces';
+  $handler->display->display_options['filters']['current']['field'] = 'current';
+  $handler->display->display_options['filters']['current']['operator'] = 'all';
+  $handler->display->display_options['filters']['current']['group'] = '0';
+  $handler->display->display_options['filters']['current']['expose']['operator'] = FALSE;
 
   /* Display: Block */
-  $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler = $view->new_display('block', 'Block', 'block');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $export['os_publications'] = $view;
-
-  $view = new view();
-  $view->name = 'os_publications_issued';
-  $view->description = '';
-  $view->tag = 'default';
-  $view->base_table = 'biblio';
-  $view->human_name = 'OS publications Issued';
-  $view->core = 7;
-  $view->api_version = '3.0';
-  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
-
-  /* Display: Master */
-  $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Publications';
-  $handler->display->display_options['use_more_always'] = FALSE;
-  $handler->display->display_options['access']['type'] = 'none';
-  $handler->display->display_options['cache']['type'] = 'none';
-  $handler->display->display_options['query']['type'] = 'views_query';
-  $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'full';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '25';
-  $handler->display->display_options['pager']['options']['offset'] = '0';
-  $handler->display->display_options['pager']['options']['id'] = '0';
-  $handler->display->display_options['pager']['options']['quantity'] = '9';
-  $handler->display->display_options['style_plugin'] = 'list';
-  $handler->display->display_options['style_options']['grouping'] = array(
-    0 => array(
-      'field' => 'biblio_status',
-      'rendered' => 0,
-      'rendered_strip' => 0,
-    ),
-    1 => array(
-      'field' => 'biblio_year',
-      'rendered' => 0,
-      'rendered_strip' => 0,
-    ),
-  );
+  $handler->display->display_options['defaults']['use_more'] = FALSE;
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Header: Publication: Export links */
-  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
-  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
-  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
-  /* Relationship: OG membership: OG membership from Publication */
-  $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'biblio';
-  $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['required'] = TRUE;
-  /* Field: Publication: Publication status */
-  $handler->display->display_options['fields']['biblio_status']['id'] = 'biblio_status';
-  $handler->display->display_options['fields']['biblio_status']['table'] = 'field_data_biblio_status';
-  $handler->display->display_options['fields']['biblio_status']['field'] = 'biblio_status';
-  $handler->display->display_options['fields']['biblio_status']['label'] = '';
-  $handler->display->display_options['fields']['biblio_status']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['biblio_status']['element_label_colon'] = FALSE;
-  /* Field: Publication: Year of Publication */
-  $handler->display->display_options['fields']['biblio_year']['id'] = 'biblio_year';
-  $handler->display->display_options['fields']['biblio_year']['table'] = 'field_data_biblio_year';
-  $handler->display->display_options['fields']['biblio_year']['field'] = 'biblio_year';
-  $handler->display->display_options['fields']['biblio_year']['label'] = '';
-  $handler->display->display_options['fields']['biblio_year']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['biblio_year']['alter']['alter_text'] = TRUE;
-  $handler->display->display_options['fields']['biblio_year']['alter']['text'] = '<div class=\'biblio-separator-bar\'>[biblio_year]</div>';
-  $handler->display->display_options['fields']['biblio_year']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['biblio_year']['hide_empty'] = TRUE;
-  $handler->display->display_options['fields']['biblio_year']['empty_zero'] = TRUE;
-  $handler->display->display_options['fields']['biblio_year']['settings'] = array(
-    'thousand_separator' => '',
-    'prefix_suffix' => 1,
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['text']['id'] = 'area';
+  $handler->display->display_options['footer']['text']['table'] = 'views';
+  $handler->display->display_options['footer']['text']['field'] = 'area';
+  $handler->display->display_options['footer']['text']['content'] = '<div class="more-link">
+  <?php print l("more","publications"); ?>
+</div>
+';
+  $handler->display->display_options['footer']['text']['format'] = '3';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['defaults']['sorts'] = FALSE;
+  /* Sort criterion: Content: Sticky */
+  $handler->display->display_options['sorts']['sticky']['id'] = 'sticky';
+  $handler->display->display_options['sorts']['sticky']['table'] = 'node';
+  $handler->display->display_options['sorts']['sticky']['field'] = 'sticky';
+  $handler->display->display_options['sorts']['sticky']['order'] = 'DESC';
+  /* Sort criterion: Biblio: Year of Publication */
+  $handler->display->display_options['sorts']['biblio_year']['id'] = 'biblio_year';
+  $handler->display->display_options['sorts']['biblio_year']['table'] = 'biblio';
+  $handler->display->display_options['sorts']['biblio_year']['field'] = 'biblio_year';
+  $handler->display->display_options['sorts']['biblio_year']['order'] = 'DESC';
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  $handler->display->display_options['filters']['status']['group'] = '0';
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'biblio' => 'biblio',
   );
-  /* Field: Publication: Render bilbio (Get text) */
-  $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
-  $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
-  $handler->display->display_options['fields']['biblio_render']['field'] = 'biblio_render';
-  $handler->display->display_options['fields']['biblio_render']['label'] = '';
-  $handler->display->display_options['fields']['biblio_render']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['biblio_render']['style_name'] = 'os_publications';
-  /* Sort criterion: Publication: Year of Publication (biblio_year) */
-  $handler->display->display_options['sorts']['biblio_year_value']['id'] = 'biblio_year_value';
-  $handler->display->display_options['sorts']['biblio_year_value']['table'] = 'field_data_biblio_year';
-  $handler->display->display_options['sorts']['biblio_year_value']['field'] = 'biblio_year_value';
-  $handler->display->display_options['sorts']['biblio_year_value']['order'] = 'DESC';
-  /* Contextual filter: Field: Groups audience (og_group_ref) */
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['id'] = 'og_group_ref_target_id';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['table'] = 'og_membership';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['field'] = 'og_group_ref_target_id';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['default_argument_type'] = 'og_context';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['filters']['type']['group'] = '0';
+  $handler->display->display_options['filters']['type']['expose']['operator'] = FALSE;
+  /* Filter criterion: Spaces: Content in current space */
+  $handler->display->display_options['filters']['current']['id'] = 'current';
+  $handler->display->display_options['filters']['current']['table'] = 'spaces';
+  $handler->display->display_options['filters']['current']['field'] = 'current';
+  $handler->display->display_options['filters']['current']['operator'] = 'active';
+  $handler->display->display_options['filters']['current']['group'] = '0';
+  $handler->display->display_options['filters']['current']['expose']['operator'] = FALSE;
+  $handler->display->display_options['block_description'] = 'Recent publications';
 
-  /* Display: Page */
-  $handler = $view->new_display('page', 'Page', 'page');
+  /* Display: Node Block */
+  $handler = $view->new_display('block', 'Node Block', 'node_block');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['path'] = 'publications';
-  $handler->display->display_options['menu']['type'] = 'normal';
-  $handler->display->display_options['menu']['title'] = 'Publications';
-  $handler->display->display_options['menu']['weight'] = '0';
-  $handler->display->display_options['menu']['name'] = 'primary-menu';
-  $handler->display->display_options['menu']['context'] = 0;
-  $export['os_publications_issued'] = $view;
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['text']['id'] = 'area';
+  $handler->display->display_options['footer']['text']['table'] = 'views';
+  $handler->display->display_options['footer']['text']['field'] = 'area';
+  $handler->display->display_options['footer']['text']['content'] = '<?php
+if(module_exists(\'apachesolr_search\')){
+  print l("More",\'search/apachesolr_search/\',array(\'query\' => array(\'filters\' => \'type:biblio\')));
+}';
+  $handler->display->display_options['footer']['text']['format'] = '3';
+  $handler->display->display_options['defaults']['sorts'] = FALSE;
+  /* Sort criterion: Content: Sticky */
+  $handler->display->display_options['sorts']['sticky']['id'] = 'sticky';
+  $handler->display->display_options['sorts']['sticky']['table'] = 'node';
+  $handler->display->display_options['sorts']['sticky']['field'] = 'sticky';
+  $handler->display->display_options['sorts']['sticky']['order'] = 'DESC';
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Sort criterion: Biblio: Year of Publication */
+  $handler->display->display_options['sorts']['biblio_year']['id'] = 'biblio_year';
+  $handler->display->display_options['sorts']['biblio_year']['table'] = 'biblio';
+  $handler->display->display_options['sorts']['biblio_year']['field'] = 'biblio_year';
+  $handler->display->display_options['sorts']['biblio_year']['order'] = 'DESC';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  $handler->display->display_options['filters']['status']['group'] = '0';
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'biblio' => 'biblio',
+  );
+  $handler->display->display_options['filters']['type']['group'] = '0';
+  $handler->display->display_options['filters']['type']['expose']['operator'] = FALSE;
+  /* Filter criterion: Spaces: Content in current space */
+  $handler->display->display_options['filters']['current']['id'] = 'current';
+  $handler->display->display_options['filters']['current']['table'] = 'spaces';
+  $handler->display->display_options['filters']['current']['field'] = 'current';
+  $handler->display->display_options['filters']['current']['operator'] = 'active';
+  $handler->display->display_options['filters']['current']['group'] = '0';
+  $handler->display->display_options['filters']['current']['expose']['operator'] = FALSE;
+  $export['os_publications'] = $view;
 
   $view = new view();
   $view->name = 'publication_contributors';
@@ -200,23 +227,23 @@ function os_publications_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['style_options']['grouping'] = 'name';
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Field: Publication: Type of Publication */
+  /* Field: Biblio: Type of Publication */
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'biblio_types';
   $handler->display->display_options['fields']['name']['field'] = 'name';
   $handler->display->display_options['fields']['name']['label'] = '';
   $handler->display->display_options['fields']['name']['exclude'] = TRUE;
-  /* Field: Publication: Biblio Citation */
+  /* Field: Biblio: Biblio Citation */
   $handler->display->display_options['fields']['citation']['id'] = 'citation';
   $handler->display->display_options['fields']['citation']['table'] = 'biblio';
   $handler->display->display_options['fields']['citation']['field'] = 'citation';
   $handler->display->display_options['fields']['citation']['label'] = '';
   $handler->display->display_options['fields']['citation']['style_name'] = 'cse';
-  /* Sort criterion: Publication: Type of Publication */
+  /* Sort criterion: Biblio: Type of Publication */
   $handler->display->display_options['sorts']['name']['id'] = 'name';
   $handler->display->display_options['sorts']['name']['table'] = 'biblio_types';
   $handler->display->display_options['sorts']['name']['field'] = 'name';
-  /* Contextual filter: Publication: Author last name */
+  /* Contextual filter: Biblio: Author last name */
   $handler->display->display_options['arguments']['lastname']['id'] = 'lastname';
   $handler->display->display_options['arguments']['lastname']['table'] = 'biblio_contributor_data';
   $handler->display->display_options['arguments']['lastname']['field'] = 'lastname';
@@ -270,8 +297,8 @@ function os_publications_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '1';
-  $handler->display->display_options['pager']['options']['tags']['previous'] = decode_entities('&laquo;');
-  $handler->display->display_options['pager']['options']['tags']['next'] = decode_entities('&raquo;');
+  $handler->display->display_options['pager']['options']['tags']['previous'] = '«';
+  $handler->display->display_options['pager']['options']['tags']['next'] = '»';
   $export['publication_contributors'] = $view;
 
   $view = new view();
@@ -297,24 +324,24 @@ function os_publications_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['style_options']['grouping'] = '';
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Field: Publication: Type of Publication */
+  /* Field: Biblio: Type of Publication */
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'biblio_types';
   $handler->display->display_options['fields']['name']['field'] = 'name';
   $handler->display->display_options['fields']['name']['label'] = '';
   $handler->display->display_options['fields']['name']['exclude'] = TRUE;
-  /* Field: Publication: Biblio Citation */
+  /* Field: Biblio: Biblio Citation */
   $handler->display->display_options['fields']['citation']['id'] = 'citation';
   $handler->display->display_options['fields']['citation']['table'] = 'biblio';
   $handler->display->display_options['fields']['citation']['field'] = 'citation';
   $handler->display->display_options['fields']['citation']['label'] = '';
   $handler->display->display_options['fields']['citation']['style_name'] = 'cse';
-  /* Sort criterion: Publication: Year of Publication */
+  /* Sort criterion: Biblio: Year of Publication */
   $handler->display->display_options['sorts']['biblio_year']['id'] = 'biblio_year';
   $handler->display->display_options['sorts']['biblio_year']['table'] = 'biblio';
   $handler->display->display_options['sorts']['biblio_year']['field'] = 'biblio_year';
   $handler->display->display_options['sorts']['biblio_year']['order'] = 'DESC';
-  /* Contextual filter: Publication: Type of Publication */
+  /* Contextual filter: Biblio: Type of Publication */
   $handler->display->display_options['arguments']['name']['id'] = 'name';
   $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
   $handler->display->display_options['arguments']['name']['field'] = 'name';
@@ -328,7 +355,7 @@ function os_publications_views_default_views() {
   $handler->display->display_options['arguments']['name']['case'] = 'ucwords';
   $handler->display->display_options['arguments']['name']['path_case'] = 'lower';
   $handler->display->display_options['arguments']['name']['transform_dash'] = TRUE;
-  /* Contextual filter: Publication: Type of Publication */
+  /* Contextual filter: Biblio: Type of Publication */
   $handler->display->display_options['arguments']['tid']['id'] = 'tid';
   $handler->display->display_options['arguments']['tid']['table'] = 'biblio_types';
   $handler->display->display_options['arguments']['tid']['field'] = 'tid';
@@ -376,7 +403,7 @@ function os_publications_views_default_views() {
   $handler->display->display_options['row_plugin'] = 'node';
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Publication: Type of Publication */
+  /* Contextual filter: Biblio: Type of Publication */
   $handler->display->display_options['arguments']['name']['id'] = 'name';
   $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
   $handler->display->display_options['arguments']['name']['field'] = 'name';
@@ -390,7 +417,7 @@ function os_publications_views_default_views() {
   $handler->display->display_options['arguments']['name']['case'] = 'ucwords';
   $handler->display->display_options['arguments']['name']['path_case'] = 'lower';
   $handler->display->display_options['arguments']['name']['transform_dash'] = TRUE;
-  /* Contextual filter: Publication: Type of Publication */
+  /* Contextual filter: Biblio: Type of Publication */
   $handler->display->display_options['arguments']['tid']['id'] = 'tid';
   $handler->display->display_options['arguments']['tid']['table'] = 'biblio_types';
   $handler->display->display_options['arguments']['tid']['field'] = 'tid';
@@ -416,10 +443,10 @@ function os_publications_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '1';
-  $handler->display->display_options['pager']['options']['tags']['previous'] = decode_entities('&laquo;');
-  $handler->display->display_options['pager']['options']['tags']['next'] = decode_entities('&raquo;');
+  $handler->display->display_options['pager']['options']['tags']['previous'] = '«';
+  $handler->display->display_options['pager']['options']['tags']['next'] = '»';
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Publication: Type of Publication */
+  /* Contextual filter: Biblio: Type of Publication */
   $handler->display->display_options['arguments']['name']['id'] = 'name';
   $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
   $handler->display->display_options['arguments']['name']['field'] = 'name';
@@ -459,7 +486,7 @@ function os_publications_views_default_views() {
   $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
-  /* Contextual filter: Publication: Type of Publication */
+  /* Contextual filter: Biblio: Type of Publication */
   $handler->display->display_options['arguments']['name']['id'] = 'name';
   $handler->display->display_options['arguments']['name']['table'] = 'biblio_types';
   $handler->display->display_options['arguments']['name']['field'] = 'name';
@@ -533,19 +560,19 @@ function os_publications_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['style_options']['grouping'] = 'name';
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Field: Publication: Type of Publication */
+  /* Field: Biblio: Type of Publication */
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'biblio_types';
   $handler->display->display_options['fields']['name']['field'] = 'name';
   $handler->display->display_options['fields']['name']['label'] = '';
   $handler->display->display_options['fields']['name']['exclude'] = TRUE;
-  /* Field: Publication: Biblio Citation */
+  /* Field: Biblio: Biblio Citation */
   $handler->display->display_options['fields']['citation']['id'] = 'citation';
   $handler->display->display_options['fields']['citation']['table'] = 'biblio';
   $handler->display->display_options['fields']['citation']['field'] = 'citation';
   $handler->display->display_options['fields']['citation']['label'] = '';
   $handler->display->display_options['fields']['citation']['style_name'] = 'cse';
-  /* Sort criterion: Publication: Type of Publication */
+  /* Sort criterion: Biblio: Type of Publication */
   $handler->display->display_options['sorts']['name']['id'] = 'name';
   $handler->display->display_options['sorts']['name']['table'] = 'biblio_types';
   $handler->display->display_options['sorts']['name']['field'] = 'name';
@@ -583,8 +610,8 @@ function os_publications_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '1';
-  $handler->display->display_options['pager']['options']['tags']['previous'] = decode_entities('&laquo;');
-  $handler->display->display_options['pager']['options']['tags']['next'] = decode_entities('&raquo;');
+  $handler->display->display_options['pager']['options']['tags']['previous'] = '«';
+  $handler->display->display_options['pager']['options']['tags']['next'] = '»';
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['style_options']['grouping'] = '';
@@ -597,14 +624,14 @@ function os_publications_views_default_views() {
   $handler->display->display_options['row_options']['hide_empty'] = TRUE;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
-  /* Field: Publication: Year of Publication */
+  /* Field: Biblio: Year of Publication */
   $handler->display->display_options['fields']['biblio_year']['id'] = 'biblio_year';
   $handler->display->display_options['fields']['biblio_year']['table'] = 'biblio';
   $handler->display->display_options['fields']['biblio_year']['field'] = 'biblio_year';
   $handler->display->display_options['fields']['biblio_year']['label'] = '';
   $handler->display->display_options['fields']['biblio_year']['biblio_label'] = 0;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Publication: Year of Publication */
+  /* Contextual filter: Biblio: Year of Publication */
   $handler->display->display_options['arguments']['biblio_year']['id'] = 'biblio_year';
   $handler->display->display_options['arguments']['biblio_year']['table'] = 'biblio';
   $handler->display->display_options['arguments']['biblio_year']['field'] = 'biblio_year';
@@ -625,7 +652,7 @@ function os_publications_views_default_views() {
   $handler->display->display_options['enabled'] = FALSE;
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Publication: Year of Publication */
+  /* Contextual filter: Biblio: Year of Publication */
   $handler->display->display_options['arguments']['biblio_year']['id'] = 'biblio_year';
   $handler->display->display_options['arguments']['biblio_year']['table'] = 'biblio';
   $handler->display->display_options['arguments']['biblio_year']['field'] = 'biblio_year';
