@@ -12,7 +12,7 @@ class os_sv_list_biblio extends os_sv_list {
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
 
-    $content_types = array('all' => t('All')) + os_get_bundles(array(1));
+    $content_types = array('all' => t('All')) + os_publications_get_bundles();
     $form['content']['content_type']['#options'] = $content_types;
 
     return $form;
