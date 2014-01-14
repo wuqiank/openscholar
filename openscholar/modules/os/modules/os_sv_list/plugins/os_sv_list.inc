@@ -112,9 +112,6 @@ class os_sv_list extends os_boxes_default {
         )
       )
     );
-
-
-
     //details fieldset
     $form['details']['more_div'] = array(
       '#prefix' => '<div class="more-wrapper">',
@@ -412,38 +409,18 @@ class os_sv_list extends os_boxes_default {
    * Returns hash of sort options and their labels
    */
   protected function _sort_options() {
-
-//     $type_sorts = array();
-//     $sorts = array();
-//     foreach ($this->_plugins_invoke('register_sorts') as $plugin => $sort) {
-//       $info = $this->plugins[$plugin];
-//       $sorts += $sort;
-//       $types = ($info['entity_type']) ? $info['entity_type'] : array('all');
-//       $bundles = ($info['bundle']) ? $info['bundle'] : array('all');
-
-//       foreach ($types as $type) {
-//         foreach ($bundles as $bundle) {
-//           $type_sorts[$type][$bundle] = (!isset($type_sorts[$type][$bundle])) ? $sort : array_merge($type_sorts[$type][$bundle], $sort);
-//         }
-//       }
-
-//     }
     $sorts = array_reduce($this->_plugins_invoke('register_sorts'), 'array_merge', array());
 
-    return $sorts;
-//     return array(
-//       // Content type sensitive sorts.  // in the future get these from sv render plugins
-//       'sort_event' => t('Event Date'),
-//       'sort_presentation' => t('Recently Presented'),
-//       'sort_biblio' => t('Year of Publication'),
-//       'sort_news' => t('News Date'),
+    $stadndard_sorts = array(
+      // Standard sorts,
+      'sort_newest' => t('Newest Post'),
+      'sort_oldest' => t('Oldest Post'),
+      'sort_alpha' => t('Alphabetical'),
+      'sort_random' => t('Random'),
+    );
 
-//       // Standard sorts,
-//       'sort_newest' => t('Newest Post'),
-//       'sort_oldest' => t('Oldest Post'),
-//       'sort_alpha' => t('Alphabetical'),
-//       'sort_random' => t('Random'),
-//     );
+    $sorts = $sorts + $stadndard_sorts;
+    return $sorts;
   }
 
   /**
@@ -460,6 +437,23 @@ class os_sv_list extends os_boxes_default {
     }
 
     return $return;
+  }
+
+  /**
+   * Sorting functions.
+   */
+  function sort_newest(&$efq) {
+    // Could these be made generic by using entity_get_info to figure out
+    // $created and $title per type ?
+    $efq->propertyOrderBy('created', 'DESC');
+  }
+
+  function sort_oldest(&$efq) {
+    $efq->propertyOrderBy('created', 'ASC');
+  }
+
+  function sort_alpha(&$efq) {
+    $efq->propertyOrderBy('title', 'ASC');
   }
 
   function sort_random(&$efq) {
