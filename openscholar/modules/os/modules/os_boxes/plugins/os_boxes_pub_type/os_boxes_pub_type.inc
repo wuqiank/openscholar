@@ -99,19 +99,12 @@ class os_boxes_pub_type extends os_boxes_default {
           $view->set_item('block', 'filter', 'type', $filter);
         }
 
-  	//Set the display num in the view (the count)
-  	$arguments = $view->display_handler->get_option('arguments');
-  	$arguments['name']['summary_options']['count'] = ($this->options['display_num'])?1:0;
-  	$view->display_handler->override_option('arguments', $arguments);
-
         //Tie this view to this box (this tells the view to call this box's view alter)
         $view->dom_id = "boxes-".$this->delta;
 
-        $output = $view->execute_display($display_id);
-        $view->destroy();
-        $block['content'] = $output['content'];
+        $view->set_display($display_id);
+        $block['content'] = $view->preview();
       }
-      $view->destroy();
     }
 
     return $block;
