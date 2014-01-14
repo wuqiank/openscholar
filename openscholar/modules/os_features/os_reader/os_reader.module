@@ -662,7 +662,7 @@ function os_reader_remove_feed_items($data) {
   os_reader_feed_item_delete_multiple(array_keys($results));
   $data['id'] = end($results)->id;
 
-  // Set the net queue worker.
+  // Set the next queue worker.
   $queue = DrupalQueue::get('os_reader_remove_feed_items');
   return $queue->createItem($data);
 }
