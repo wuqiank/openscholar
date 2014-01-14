@@ -15,7 +15,7 @@ function os_publications_views_default_views() {
   $view->description = 'OS Publications > Recent Publications';
   $view->tag = 'default';
   $view->base_table = 'biblio';
-  $view->human_name = 'os_publications';
+  $view->human_name = 'OS Publications';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -109,14 +109,23 @@ function os_publications_views_default_views() {
     ),
   );
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Field: Biblio: Publication status */
+  /* Header: Publication: Export links */
+  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
+  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
+  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
+  /* Relationship: OG membership: OG membership from Publication */
+  $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
+  $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'biblio';
+  $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
+  $handler->display->display_options['relationships']['og_membership_rel']['required'] = TRUE;
+  /* Field: Publication: Publication status */
   $handler->display->display_options['fields']['biblio_status']['id'] = 'biblio_status';
   $handler->display->display_options['fields']['biblio_status']['table'] = 'field_data_biblio_status';
   $handler->display->display_options['fields']['biblio_status']['field'] = 'biblio_status';
   $handler->display->display_options['fields']['biblio_status']['label'] = '';
   $handler->display->display_options['fields']['biblio_status']['exclude'] = TRUE;
   $handler->display->display_options['fields']['biblio_status']['element_label_colon'] = FALSE;
-  /* Field: Biblio: Year of Publication */
+  /* Field: Publication: Year of Publication */
   $handler->display->display_options['fields']['biblio_year']['id'] = 'biblio_year';
   $handler->display->display_options['fields']['biblio_year']['table'] = 'field_data_biblio_year';
   $handler->display->display_options['fields']['biblio_year']['field'] = 'biblio_year';
@@ -131,10 +140,6 @@ function os_publications_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Header: Publication: Export links */
-  $handler->display->display_options['header']['biblio_export']['id'] = 'biblio_export';
-  $handler->display->display_options['header']['biblio_export']['table'] = 'biblio';
-  $handler->display->display_options['header']['biblio_export']['field'] = 'biblio_export';
   /* Field: Publication: Render bilbio (Get text) */
   $handler->display->display_options['fields']['biblio_render']['id'] = 'biblio_render';
   $handler->display->display_options['fields']['biblio_render']['table'] = 'biblio';
@@ -142,11 +147,21 @@ function os_publications_views_default_views() {
   $handler->display->display_options['fields']['biblio_render']['label'] = '';
   $handler->display->display_options['fields']['biblio_render']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['biblio_render']['style_name'] = 'os_publications';
-  /* Sort criterion: Biblio: Year of Publication (biblio_year) */
+  /* Sort criterion: Publication: Year of Publication (biblio_year) */
   $handler->display->display_options['sorts']['biblio_year_value']['id'] = 'biblio_year_value';
   $handler->display->display_options['sorts']['biblio_year_value']['table'] = 'field_data_biblio_year';
   $handler->display->display_options['sorts']['biblio_year_value']['field'] = 'biblio_year_value';
   $handler->display->display_options['sorts']['biblio_year_value']['order'] = 'DESC';
+  /* Contextual filter: Field: Groups audience (og_group_ref) */
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['id'] = 'og_group_ref_target_id';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['table'] = 'og_membership';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['field'] = 'og_group_ref_target_id';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['relationship'] = 'og_membership_rel';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['default_argument_type'] = 'og_context';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['og_group_ref_target_id']['summary_options']['items_per_page'] = '25';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');

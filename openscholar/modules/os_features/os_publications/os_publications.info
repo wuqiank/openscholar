@@ -8,6 +8,7 @@ dependencies[] = boxes
 dependencies[] = context
 dependencies[] = ctools
 dependencies[] = dyntextfield
+dependencies[] = entity_token
 dependencies[] = features
 dependencies[] = filefield_paths
 dependencies[] = image

@@ -8,6 +8,33 @@
 include_once 'os_publications.features.inc';
 
 /**
+ * Implements hook_menu_alter().
+ */
+function os_publications_menu_alter(&$items) {
+  $items['features/os_publications'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_publications_settings'),
+    'access callback' => module_exists('vsite') ? 'spaces_access_admin' : 'user_access',
+    'access arguments' => module_exists('vsite') ? array() : array('administer site configuration'),
+  );
+
+  $items['biblio/%biblio']['title callback'] = 'os_publications_biblio_title_callback';
+  $items['biblio/%biblio']['title arguments'] = array(1);
+
+  // Don't display the tabs of the edit and delete.
+  $items['biblio/%biblio/edit']['type'] = MENU_CALLBACK;
+  $items['biblio/%biblio/delete']['type'] = MENU_CALLBACK;
+}
+
+/**
+ * Title callback; Change the title of a single biblio page.
+ */
+function os_publications_biblio_title_callback(Biblio $biblio) {
+  return $biblio->label();
+}
+
+/**
  * Implements hook_os_app_info().
  */
 function os_publications_os_app_info() {
@@ -34,7 +61,7 @@ function os_publications_os_add_new_links_alter(&$links) {
   }
 
   $links['add_publication'] = array(
-    'title' => t('Publications'),
+    'title' => t('Biblio'),
     'href' => 'biblio/add',
   );
 }
@@ -52,32 +79,23 @@ function os_publications_ctools_plugin_directory($module, $plugin) {
  * Implements hook_theme().
  */
 function os_publications_theme() {
-  $theme['os_publications_citeproc'] = array(
-    'variables' => array(
-      'id' => NULL,
-      'image' => NULL,
-      'citation' => NULL,
-      'abstract' => NULL,
-      'pdf_list' => NULL,
+  return array(
+    'os_publications_citeproc' => array(
+      'variables' => array(
+        'id' => NULL,
+        'image' => NULL,
+        'citation' => NULL,
+        'abstract' => NULL,
+        'pdf_list' => NULL,
+      ),
+      'path' => drupal_get_path('module', 'os_publications') . '/templates',
+      'template' => 'os-publications-citeproc',
     ),
     'path' => drupal_get_path('module', 'os_publications') . '/templates',
     'template' => 'os-publications-citeproc',
   );
 
   return $theme;
-}
-
-/**
- * Implements hook_menu_alter().
- */
-function os_publications_menu_alter(&$items) {
-  $items['features/os_publications'] = array(
-    'title' => 'Settings',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('os_publications_settings'),
-    'access callback' => module_exists('vsite') ? 'spaces_access_admin' : 'user_access',
-    'access arguments' => module_exists('vsite') ? array() : array('administer site configuration'),
-  );
 }
 
 /**
@@ -305,6 +323,49 @@ function os_publications_preprocess_biblio_ui_view_export_area(&$variables) {
 }
 
 /**
+ * Implements hook_entity_view_alter().
+ */
+function os_publications_entity_view_alter(&$build, $type) {
+  if ($type != 'biblio') {
+    return;
+  }
+
+  $build['biblio_get_text']['#prefix'] = '<h3>'. t('Citation') . ':</h3><div id="citation-wrapper">';
+  $build['export']['#suffix'] = '</div>';
+}
+
+/**
+ * Implements hook_biblio_fields_info_alter().
+ */
+function os_publications_biblio_fields_info_alter(&$fields) {
+  foreach ($fields as &$field) {
+    $field['instance']['display']['default']['type'] = 'hidden';
+  }
+}
+
+/**
+ * Implements hook_field_extra_fields_alter().
+ *
+ * Set the dummy fields of the biblio rendered text and the export in a specific
+ * order.
+ */
+function os_publications_field_extra_fields_alter(&$info) {
+  $info = entity_get_info('biblio');
+  foreach (array_keys($info['bundles']) as $bundle) {
+    $info['biblio'][$bundle]['display'] = array(
+      'biblio_get_text' => array(
+        'weight' => 10,
+        'label' => t('Rendered text'),
+      ),
+      'export' => array(
+        'weight' => 15,
+        'label' => t('Export'),
+      ),
+    );
+  }
+}
+
+/**
  * Implements hook_os_entity_view_modes()
  */
 function os_publications_os_entity_view_modes() {
@@ -319,3 +380,4 @@ function os_publications_os_entity_view_modes() {
   $info['biblio'] = $bundle_views;
   return $info;
 }
+
