@@ -230,7 +230,7 @@ function os_migrate_demo_set_box_in_region($nid, $box, $page, $region = 'sidebar
   //  If this is a block, the value will be MODULE-BLOCK_DELTA-BLOCK.
   $boxes_mapping = array(
     'Filter by term' => 'os_taxonomy_fbt',
-    'Simple view list' => 'os_sv_list_node',
+    'Simple view list' => 'os_sv_list_box',
     'Search' => 'os_search_db-site-search',
     'Active book TOC' => 'os_boxes_booktoc',
     'Bio' => 'os_boxes_bio',

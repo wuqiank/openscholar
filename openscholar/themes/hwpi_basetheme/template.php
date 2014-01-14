@@ -99,7 +99,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
       // Default image.
       $vars['content']['field_person_photo'][0] = array('#markup' => $image);
     }
-    elseif ((!empty($vars['os_sv_list_node']) && $vars['os_sv_list_node']) || $vars['view_mode'] == 'full') {
+    elseif ((!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box']) || $vars['view_mode'] == 'full') {
       $path = variable_get('os_person_default_image_big', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image-big.png');
       $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
       // Big image.
@@ -140,7 +140,7 @@ function hwpi_basetheme_process_node(&$vars) {
  */
 function hwpi_basetheme_field_display_node_alter(&$display, $context) {
   if ($context['entity']->type == 'event' && $context['instance']['field_name'] == 'field_date') {
-    if (($context['view_mode'] != 'full') || (isset($context['entity']->os_sv_list_node) && $context['entity']->os_sv_list_node)) {
+    if (($context['view_mode'] != 'full') || (isset($context['entity']->os_sv_list_box) && $context['entity']->os_sv_list_box)) {
       
       if (isset($context['entity']->field_date[LANGUAGE_NONE][0]['value2']) && 
           (strtotime($context['entity']->field_date[LANGUAGE_NONE][0]['value2']) - strtotime($context['entity']->field_date[LANGUAGE_NONE][0]['value']) > 24*60*60)) {

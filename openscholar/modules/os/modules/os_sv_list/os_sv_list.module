@@ -110,24 +110,12 @@ function os_sv_list_boxes_plugins() {
     'factory' => FALSE,
   );
   
-  $plugins['os_sv_list_node'] = array(
+  $plugins['os_sv_list_box'] = array(
     'title' => 'List of Posts',
     'tags' => array('Content'),
     'handler' => array(
-      'class' => 'os_sv_list_node',
-      'file' => 'os_sv_list_node.inc',
-      'path' => drupal_get_path('module', 'os_sv_list') . '/plugins/',
-      'parent' => 'os_sv_list',
-    ),
-    'factory' => TRUE,
-  );
-
-  $plugins['os_sv_list_biblio'] = array(
-    'title' => 'List of Publications',
-    'tags' => array('Content'),
-    'handler' => array(
-      'class' => 'os_sv_list_biblio',
-      'file' => 'os_sv_list_biblio.inc',
+      'class' => 'os_sv_list_box',
+      'file' => 'os_sv_list_box.inc',
       'path' => drupal_get_path('module', 'os_sv_list') . '/plugins/',
       'parent' => 'os_sv_list',
     ),

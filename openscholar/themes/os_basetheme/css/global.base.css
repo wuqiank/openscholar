@@ -179,9 +179,9 @@ h4 a {
     font-size: 1.3em;
 }
 
-.block-boxes-os_sv_list_node .sv-list-view-title .node {margin-bottom:12px;}
+.block-boxes-os_sv_list_box .sv-list-view-title .node {margin-bottom:12px;}
 
-.block-boxes-os_sv_list_node .sv-list-view-title h1 {font-weight:normal;font-size:1em !important;}
+.block-boxes-os_sv_list_box .sv-list-view-title h1 {font-weight:normal;font-size:1em !important;}
 
 
 

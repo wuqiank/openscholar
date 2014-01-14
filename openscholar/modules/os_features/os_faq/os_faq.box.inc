@@ -18,7 +18,7 @@ function os_faq_default_box() {
   $box->disabled    = FALSE;
   $box->api_version = 1;
   $box->delta       = 'os_faq_sv_list';
-  $box->plugin_key  = 'os_sv_list_node';
+  $box->plugin_key  = 'os_sv_list_box';
   $box->title       = 'Recent FAQs';
   $box->description = 'Recent FAQs';
   $box->options     = array(
