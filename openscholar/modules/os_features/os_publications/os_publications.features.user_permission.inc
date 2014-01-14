@@ -38,8 +38,9 @@ function os_publications_user_default_permissions() {
   $permissions['create biblio content'] = array(
     'name' => 'create biblio content',
     'roles' => array(
-      'administrator' => 'administrator',
-      'manager' => 'manager',
+      0 => 'administrator',
+      1 => 'manager',
+      2 => 'authenticated user',
     ),
     'module' => 'biblio',
   );
@@ -57,8 +58,9 @@ function os_publications_user_default_permissions() {
   $permissions['delete own biblio content'] = array(
     'name' => 'delete own biblio content',
     'roles' => array(
-      'administrator' => 'administrator',
-      'manager' => 'manager',
+      0 => 'administrator',
+      1 => 'manager',
+      2 => 'authenticated user',
     ),
     'module' => 'biblio',
   );
@@ -85,8 +87,9 @@ function os_publications_user_default_permissions() {
   $permissions['edit own biblio content'] = array(
     'name' => 'edit own biblio content',
     'roles' => array(
-      'administrator' => 'administrator',
-      'manager' => 'manager',
+      0 => 'administrator',
+      1 => 'manager',
+      2 => 'authenticated user',
     ),
     'module' => 'biblio',
   );

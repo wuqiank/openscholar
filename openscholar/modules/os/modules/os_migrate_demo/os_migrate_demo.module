@@ -467,6 +467,26 @@ function os_migrate_demo_get_node_id($title, $return = FALSE) {
 }
 
 /**
+ * Get the biblio ID.
+ */
+function os_migrate_demo_get_biblio_bid($title, $return = FALSE) {
+  $query = new entityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'biblio')
+    ->propertyCondition('title', $title)
+    ->execute();
+
+  $bid = reset($result['biblio'])->bid;
+
+  if ($return) {
+    return $bid;
+  }
+  else {
+    print($bid);
+  }
+}
+
+/**
  * Get the role of a user in a group.
  *
  *  @return
