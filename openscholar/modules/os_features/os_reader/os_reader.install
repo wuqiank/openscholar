@@ -117,17 +117,17 @@ function os_reader_update_7002() {
  * Remove duplicate feed importers items.
  */
 function os_reader_update_7003(&$sandbox) {
-  if (!isset($sandbox['progress'])) {
+  if (!isset($sandbox['total'])) {
     // count all the importers.
     $sandbox['progress'] = 0;
 
     $query = new EntityFieldQuery();
-    $sandbox['max'] = $query
+    $sandbox['total'] = $query
       ->entityCondition('entity_type', 'os_feed_item')
       ->count()
       ->execute();
   }
-  $batch = 250;
+  $batch = 750;
 
   $last_feed = isset($sandbox['feed_id']) ? $sandbox['feed_id'] : 0;
 
@@ -148,10 +148,10 @@ function os_reader_update_7003(&$sandbox) {
   }
 
   // Increase the progress.
-  $sandbox['progress']++;
+  $sandbox['progress'] += $batch;
 
   // Save the last node, increase the node and check if the import finished.
-  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+  $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
 }
 
 /**
@@ -199,6 +199,19 @@ function _os_reader_update_7003($feed_items, &$unique, &$feed_item_id) {
 
   // Delete all the feeds importers.
   if ($delete) {
-    entity_delete_multiple('os_feed_item', $delete);
+    // Delete the entities.
+    db_delete('os_feed_item')
+      ->condition('id', $delete, 'IN')
+      ->execute();
+
+    db_delete('field_data_field_vsites_reference')
+      ->condition('entity_id', $delete, 'IN')
+      ->condition('entity_type', 'os_feed_item')
+      ->execute();
+
+    db_delete('field_data_field_nodes_reference')
+      ->condition('entity_id', $delete, 'IN')
+      ->condition('entity_type', 'os_feed_item')
+      ->execute();
   }
 }
