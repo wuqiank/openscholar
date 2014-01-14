@@ -2103,3 +2103,12 @@ function os_requirements($phase) {
   }
   return $requirements;
 }
+
+/**
+ * implementation of hook_context_default_contexts_alter
+ */
+function os_context_default_contexts_alter(&$contexts){
+  if (module_exists('olark') && isset($contexts['os_public'])) {
+    $contexts['os_public']->reactions['olark_add'] = array('add' => 1);
+  }
+}

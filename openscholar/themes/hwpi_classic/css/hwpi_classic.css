@@ -180,6 +180,12 @@ margin-left:6em;
     font-family: arial;
 }
 
+.region-content-first .block,
+.region-content-second .block,
+.region-content-bottom .block {
+	margin-bottom:12px;
+}
+
 /* Footer */
 #footer {
 	background: url(../images/footer-top-gradiant.png) repeat-x 0 0 #f3f3f1;
