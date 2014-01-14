@@ -1067,3 +1067,10 @@ function os_publications_update_7017() {
   variable_set('pathauto_biblio_pattern', 'publications/[biblio:title]');
   variable_set('biblio_default_style', 'os_publications');
 }
+
+/**
+ * Enable migrate and migrate extras modules.
+ */
+function os_publications_update_7018() {
+  module_enable(array('migrate, migrate_extras'));
+}
