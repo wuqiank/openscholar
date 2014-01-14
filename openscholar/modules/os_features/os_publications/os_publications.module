@@ -379,3 +379,13 @@ function os_publications_os_entity_view_modes() {
   return $info;
 }
 
+/**
+ * Implements hook_entity_info_alter().
+ * Adds title view mode for Biblio.
+ */
+function os_publications_entity_info_alter(&$entity_info) {
+  $entity_info['biblio']['view modes']['title'] = array(
+    'label' => t('Title'),
+    'custom settings' => TRUE,
+  );
+}
