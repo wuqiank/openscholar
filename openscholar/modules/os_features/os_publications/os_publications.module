@@ -245,21 +245,21 @@ function os_publications_biblio_fields_info() {
 function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
   $item = menu_get_item();
 
+  // Show only the publications that belong to the current vsite.
+  $group_key = key($query->where);
+  $vsite = vsite_get_vsite();
+  $query->add_table('og_membership');
+  $query->add_where($group_key, 'og_membership_biblio.gid', $vsite->id, '=');
+  
   // Change the query when filtering by publication type.
   if ($item['original_map'][0] == 'publications' && isset($item['original_map'][1]) && $item['original_map'][1] == 'type' && !empty($item['original_map'][2])) {
     $group_key = key($query->where);
     $query->add_where($group_key, 'biblio.type', array($item['original_map'][2]), 'IN');
   }
 
-  if ($view->name != 'os_publications_issued' || $view->name != 'publication_types') {
+  if ($view->name != 'os_publications_issued') {
     return;
   }
-
-  // Show only the publications that belong to the current vsite.
-  $group_key = key($query->where);
-  $vsite = vsite_get_vsite();
-  $query->add_table('og_membership');
-  $query->add_where($group_key, 'og_membership_biblio.gid', $vsite->id, '=');
 
   // Get the settings of OS publication in variables.
   $order_field = variable_get('biblio_sort', 'biblio_year');
