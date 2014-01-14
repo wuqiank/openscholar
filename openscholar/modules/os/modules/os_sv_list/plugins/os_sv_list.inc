@@ -36,6 +36,12 @@ class os_sv_list extends os_boxes_default {
     );
 
     //get options from plugins
+    if (empty($this->entity_type) && get_class($this) == 'os_sv_list_file') {
+      $this->entity_type = 'file';
+    } elseif (empty($this->entity_type) && get_class($this) == 'os_sv_list_box') {
+      $this->entity_type = 'node';
+    }
+
     if (empty($this->plugins)) {
       $this->_set_plugins($this->entity_type);
     }
@@ -45,7 +51,6 @@ class os_sv_list extends os_boxes_default {
         $options += $plugin['instance']->options_defaults();
       }
     }
-
 
     return $options;
   }

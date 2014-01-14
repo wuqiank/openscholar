@@ -1,7 +1,7 @@
 Feature:
   Testing the publication tab and application.
 
-  @api
+  @api @wip
   Scenario: Test the Publication tab
     Given I visit "john"
      When I click "Publications"

@@ -13,19 +13,25 @@ function os_user_default_roles() {
   // Exported role: administrator.
   $roles['administrator'] = array(
     'name' => 'administrator',
-    'weight' => '2',
+    'weight' => 2,
+  );
+
+  // Exported role: content editor.
+  $roles['content editor'] = array(
+    'name' => 'content editor',
+    'weight' => 6,
   );
 
   // Exported role: manager.
   $roles['manager'] = array(
     'name' => 'manager',
-    'weight' => '3',
+    'weight' => 3,
   );
 
   // Exported role: vsite admin.
   $roles['vsite admin'] = array(
     'name' => 'vsite admin',
-    'weight' => '4',
+    'weight' => 4,
   );
 
   // Exported role: vsite user.
@@ -42,7 +48,7 @@ function os_user_default_roles() {
   // Exported role: web services.
   $roles['web services'] = array(
     'name' => 'web services',
-    'weight' => '7',
+    'weight' => 7,
   );
 
   return $roles;

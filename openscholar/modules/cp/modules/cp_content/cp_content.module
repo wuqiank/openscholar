@@ -1,5 +1,11 @@
 <?php
 /**
+ * @file
+ * Code for the Control Panel: Content feature.
+ */
+
+include_once 'cp_content.features.inc';
+/**
  * Implements hook_menu().
  */
 function cp_content_menu() {
@@ -14,16 +20,6 @@ function cp_content_menu() {
   );
 
   return $items;
-}
-
-/**
- * Implements hook_views_api().
- */
-function cp_content_views_api() {
-  return array(
-    'version' => '3.0',
-    'path' => drupal_get_path('module', 'cp_content') . '/views',
-  );
 }
 
 /**
