@@ -26,6 +26,16 @@ function os_publications_user_default_permissions() {
   );
 
   // Exported permission: 'administer biblio'.
+  $permissions['manage biblio structure'] = array(
+    'name' => 'manage biblio structure',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'manager' => 'manager',
+    ),
+    'module' => 'biblio',
+  );
+
+  // Exported permission: 'administer biblio'.
   $permissions['administer biblio'] = array(
     'name' => 'administer biblio',
     'roles' => array(
@@ -44,9 +54,9 @@ function os_publications_user_default_permissions() {
     'module' => 'biblio',
   );
 
-  // Exported permission: 'delete any biblio content'.
-  $permissions['delete any biblio content'] = array(
-    'name' => 'delete any biblio content',
+  // Exported permission: 'delete biblio content'.
+  $permissions['delete biblio content'] = array(
+    'name' => 'delete biblio content',
     'roles' => array(
       'administrator' => 'administrator',
     ),
@@ -63,9 +73,9 @@ function os_publications_user_default_permissions() {
     'module' => 'biblio',
   );
 
-  // Exported permission: 'edit any biblio content'.
-  $permissions['edit any biblio content'] = array(
-    'name' => 'edit any biblio content',
+  // Exported permission: 'edit biblio content'.
+  $permissions['edit biblio content'] = array(
+    'name' => 'edit biblio content',
     'roles' => array(
       'administrator' => 'administrator',
     ),
@@ -104,20 +114,6 @@ function os_publications_user_default_permissions() {
     'module' => 'biblio',
   );
 
-  // Exported permission: 'show download links'.
-  $permissions['show download links'] = array(
-    'name' => 'show download links',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
-      'authenticated user' => 'authenticated user',
-      'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
-    ),
-    'module' => 'biblio',
-  );
-
   // Exported permission: 'show export links'.
   $permissions['show export links'] = array(
     'name' => 'show export links',
@@ -125,49 +121,6 @@ function os_publications_user_default_permissions() {
       'administrator' => 'administrator',
       'anonymous user' => 'anonymous user',
       'authenticated user' => 'authenticated user',
-      'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: 'show filter tab'.
-  $permissions['show filter tab'] = array(
-    'name' => 'show filter tab',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
-      'authenticated user' => 'authenticated user',
-      'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: 'show sort links'.
-  $permissions['show sort links'] = array(
-    'name' => 'show sort links',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
-      'authenticated user' => 'authenticated user',
-      'manager' => 'manager',
-      'vsite admin' => 'vsite admin',
-      'vsite user' => 'vsite user',
-    ),
-    'module' => 'biblio',
-  );
-
-  // Exported permission: 'view full text'.
-  $permissions['view full text'] = array(
-    'name' => 'view full text',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
-      'authenticated user' => 'authenticated user',
-      'content editor' => 'content editor',
       'manager' => 'manager',
       'vsite admin' => 'vsite admin',
       'vsite user' => 'vsite user',
