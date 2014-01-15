@@ -780,7 +780,7 @@ function os_taxonomy_build_child_item($items, $parent, $options) {
 
       $content[] = array(
         'data' => theme('os_taxonomy_term_item', array(
-          'number' => $number,
+          'number' => ($options['show_count']) ? $number : NULL,
           'name' => $item->name,
           'link_options' => empty($options['tid_active_class']) ? array() : array('attributes' => array('class' => $options['tid_active_class'] == $item->tid ? 'active' : '',)),
           'url_path' => $term_path,
