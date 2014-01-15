@@ -7,7 +7,7 @@ class os_sv_list_biblio extends os_sv_list {
   }
   
   /**
-   * Implementation of boxes_content::options_form().
+   * Implements boxes_content::options_form().
    */
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
