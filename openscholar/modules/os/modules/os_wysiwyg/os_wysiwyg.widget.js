@@ -21,7 +21,10 @@
     editor.css('height', height+'px')
       .addClass('os-wysiwyg-collapsed');
     $('iframe', editor).css('height', height+1+'px');
+  }
 
+  function blurHandler (e) {
+    wysiwyg_minimize(e.currentTarget);
   }
 
   Drupal.behaviors.osWysiwygExpandingTextarea = {
@@ -39,10 +42,6 @@
             setTimeout(bindHandlers, 500);
           }
         });
-      }
-
-      function blurHandler (e) {
-        wysiwyg_minimize(e.currentTarget);
       }
 
       setTimeout(bindHandlers, 500);
