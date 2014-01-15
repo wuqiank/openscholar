@@ -132,6 +132,10 @@ function os_image_gallery_node_view($node, $view_mode) {
  */
 function os_image_gallery_form_alter(&$form, &$form_state, $form_id) {
   if (@is_array($form_state['build_info']['args'][0]) && @$form_state['build_info']['args'][0]['id'] == 'media_gallery') {
+    $field_info = field_info_instance('node', 'media_gallery_file', 'media_gallery');
+    $max = parse_size($field_info['settings']['max_filesize']);
+    $form['upload']['#upload_validators']['file_validate_size'][0] = min($max, $form['upload']['#upload_validators']['file_validate_size']);
+    
     $form['upload']['#upload_validators']['os_image_gallery_upload_filesize'] = array();
   }
 }
