@@ -47,6 +47,13 @@ function vsite_vocab_admin_paths() {
 }
 
 /**
+ * Implements hook_entity_info_alter().
+ */
+function vsite_vocab_entity_info_alter(&$info) {
+  $info['og_vocab']['redirect'] = FALSE;
+}
+
+/**
  * Implements hook_menu_alter().
  *
  * Adding custom paths to the vocabulary actions.
