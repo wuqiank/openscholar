@@ -65,6 +65,13 @@ margin-top: 12px;
 }
 
 
+.block-boxes-os_taxonomy_fbt.navigation a {
+	font-size: 16px;
+	font-family:georgia;
+
+	}
+
+
 
 h1#page-title,
 h1.node-title, 
@@ -178,6 +185,12 @@ margin-left:6em;
 
 #content-column .item-list ul.pager li {
     font-family: arial;
+}
+
+.region-content-first .block,
+.region-content-second .block,
+.region-content-bottom .block {
+	margin-bottom:12px;
 }
 
 /* Footer */

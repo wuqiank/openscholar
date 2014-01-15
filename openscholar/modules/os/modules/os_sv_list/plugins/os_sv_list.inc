@@ -48,7 +48,8 @@ class os_sv_list extends os_boxes_default {
     
     foreach ($this->plugins as $plugin) {
       if (method_exists($plugin['instance'], 'options_defaults')) {
-        $options += $plugin['instance']->options_defaults();
+        $defaults = $plugin['instance']->options_defaults();
+        $options += ($defaults) ? $defaults : array();
       }
     }
     

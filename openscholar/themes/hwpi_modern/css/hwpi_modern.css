@@ -420,6 +420,24 @@ background-color: #e3e3e1 !important;
 }
 
 
+.block-boxes-os_taxonomy_fbt.navigation a {
+	font-weight: bold;
+}
+
+
+.block-boxes-os_taxonomy_fbt.navigation ul {
+    border-bottom: 1px solid #959595;
+    border-left: 1px solid #959595;
+    border-right: 1px solid #959595;
+  }
+
+
+.block-boxes-os_taxonomy_fbt.navigation ul li {
+	border-top: 1px solid #959595;
+}
+
+
+
 /* Footer */
 #footer {
   background: url(../images/footer-top-gradient.png) repeat-x 0 0 #ebebeb;
