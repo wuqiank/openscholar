@@ -479,11 +479,26 @@ li#servertime span {
 		
 	
 #osactivity {
-padding: 12px;
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/whatshappening.png") no-repeat scroll 225px 9px #F6F6F6;
+ padding: 25px 12px 5px;
 margin-top: 3px;
 width: 575px;
 }
+
+
+#osactivity ul {
+margin-left:0;
 }
+
+#osactivity ul li {
+list-style-type:none;
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/activitylibg.png") no-repeat;
+padding-left:35px;
+}
+
+
+
+
 
 /* ROADMAP PAGE STYLES */
 .page-roadmap #columns {
