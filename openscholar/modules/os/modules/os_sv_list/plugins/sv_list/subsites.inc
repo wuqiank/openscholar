@@ -15,7 +15,9 @@ $plugin = array(
 class sv_list_subsites extends sv_list_plugin  {
   
   public function options_defaults() {
-    return array('query_scope' => array('current' => 'current'));
+    if (module_exists('vsite') && $space = spaces_get_space()) {
+      return array('query_scope' => array($space->id => $space->id));
+    }
   }
   
   public function options_form($options, &$form) {

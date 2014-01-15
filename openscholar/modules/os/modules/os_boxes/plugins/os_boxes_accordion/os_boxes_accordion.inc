@@ -6,6 +6,26 @@ class os_boxes_accordion extends os_boxes_widget_collection {
     'iframe',
   );
 
+  function options_defaults() {
+    return parent::options_defaults() + array(
+      'collapsed' => false,
+    );
+  }
+
+  function options_form(&$form_state) {
+    $form = parent::options_form($form_state);
+
+    $form['collapsed'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => $this->options['collapsed'],
+      '#title' => t('Open First Panel Automatically?'),
+      '#description' => t('By default, the first panel of the Accordion will be opened. Checking this will leave it
+        closed until the user opens it.')
+    );
+
+    return $form;
+  }
+
   function render() {
     $output = parent::render();
 
@@ -18,7 +38,19 @@ class os_boxes_accordion extends os_boxes_widget_collection {
         ),
         'js' => array(
           drupal_get_path('module', 'os_boxes').'/plugins/os_boxes_accordion/os_boxes_accordion.render.js',
-        )
+          array(
+            'type' => 'setting',
+            'data' => array(
+              'os_boxes' => array(
+                'accordion' => array(
+                  $this->delta => array(
+                    'active' => $this->options['collapsed']?false:0,
+                  )
+                )
+              )
+            )
+          ),
+        ),
       )
     );
 
