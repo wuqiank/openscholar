@@ -25,7 +25,7 @@ class os_sv_list extends os_boxes_default {
       'content_type' => 'all',
       'display' => 'teaser',
       'layout' => 'list',
-      'grid_size' => 3,
+     // 'grid_size' => 3,
       'more' => FALSE,
       'more_text' => t('More'),
       'more_link' => '',
@@ -92,12 +92,6 @@ class os_sv_list extends os_boxes_default {
       '#title' => 'Layout',
       '#default_value' => $this->options['layout'],
       '#options' => drupal_map_assoc(array('List', 'Grid'), 't'),
-      // Subsite content can only show titles, so hide this element when subsites are active
-      '#states' => array(
-        'visible' => array(// action to take.
-          ':input[name="query_scope[subsites]"]' => array('checked' => FALSE),
-        ),
-      ),
     );
     
     $form['content']['display'] = array(
@@ -264,6 +258,7 @@ class os_sv_list extends os_boxes_default {
     }
     
     //now render to html.
+    dpm($render);
     $content = drupal_render($render);   
     $delta = $this->delta;   
     $class = strtolower(implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display'], 'sv-list-layout-' . $this->options['layout'])));

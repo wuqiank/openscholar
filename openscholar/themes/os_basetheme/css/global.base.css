@@ -213,14 +213,7 @@ a img {
 
 }
 
-.os_sv_list_file.sv-list-view-os_files_grid > div {
-	float: left;
-  padding: .25em;
-}
 
-.sv-list-video.sv-list-view-os_files_grid > div.file {
-  width: 23%;
-}
 
 .block-boxes-os_sv_list_file .file img {margin-right:15px;display:block;}
 .block-boxes-os_sv_list_file .file img.file-icon {margin-right:8px;}
@@ -272,6 +265,24 @@ div.content a.download-link {
 	}
 	
 .sv-list-all.sv-list-view-teaser .file-info {display:table;}
+
+	/** SV LIST GRID VIEW **/
+.os_sv_list_file.sv-list-layout-grid > div {
+  float: left;
+  padding-left: .25em;
+	display: inline-block !important;
+	clear: none !important;
+}
+
+.os_sv_list_file.sv-list-layout-grid > div.file {
+  width: 200px;
+  overflow: hidden;
+
+}
+
+.os_sv_list_file.sv-list-layout-grid img {
+
+}
 
 
 p {
