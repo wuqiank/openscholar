@@ -398,7 +398,6 @@ function os_search_solr_cron() {
 
   foreach ($values as $vsite_id => $values) {
     os_search_solr_mark_entity_by_bundles($vsite_id, $values['bundles'], $values['last_nid']);
-    return;
   }
 }
 
@@ -442,8 +441,10 @@ function os_search_solr_mark_entity_by_bundles($vsite_id, $bundles = array(), $l
     return;
   }
 
-  foreach (array_keys($result['node']) as $nid) {
-    apachesolr_mark_entity('node', $nid);
+  foreach ($result['node'] as $nid => $object) {
+    // The object returned by EFQ has nid / vid / type whcich is good enough for
+    // entity_extract_ids() so we can pass that as the node object.
+    apachesolr_entity_update($object, 'node');
   }
 
   // Set last processed node ID.
