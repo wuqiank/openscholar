@@ -33,3 +33,8 @@ fieldset#edit-content>.fieldset-wrapper>div {
 	display: inline-block;
 	margin-right: 2em;
 }
+
+#edit-query-scope > div.form-item {
+	display: inline-block;
+  margin-left: 1em;
+}
