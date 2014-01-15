@@ -27,24 +27,28 @@
     wysiwyg_minimize(e.currentTarget);
   }
 
+  function bindHandlers(ctx) {
+    $('.os-wysiwyg-expandable', ctx).each(function () {
+      var edit_id = $(this).attr('id');
+      if (typeof tinyMCE.editors[edit_id] !== 'undefined' && typeof tinyMCE.editors[edit_id].contentDocument !== 'undefined') {
+        tinyMCE.editors[edit_id].contentDocument.getElementsByTagName('body')[0].onfocus = wysiwyg_focus;
+        tinyMCE.editors[edit_id].contentDocument.getElementsByTagName('body')[0].onblur = blurHandler;
+        wysiwyg_minimize($('#'+edit_id+' + .mceEditor .mceIframeContainer iframe').get(0));
+        $('.os-wysiwyg-expandable ~ .wysiwyg-toggle-wrapper a').click(toggleHandlers);
+      }
+      else {
+        setTimeout(function () { bindHandlers(ctx); }, 500);
+      }
+    });
+  }
+
+  function toggleHandlers(e) {
+    bindHandlers($(this).parents('.text-format-wrapper'));
+  }
+
   Drupal.behaviors.osWysiwygExpandingTextarea = {
     attach: function (ctx) {
-
-      function bindHandlers() {
-        $('.os-wysiwyg-expandable', ctx).each(function () {
-          var edit_id = $(this).attr('id');
-          if (typeof tinyMCE.editors[edit_id].contentDocument !== 'undefined') {
-            tinyMCE.editors[edit_id].contentDocument.getElementsByTagName('body')[0].onfocus = wysiwyg_focus;
-            tinyMCE.editors[edit_id].contentDocument.getElementsByTagName('body')[0].onblur = blurHandler;
-            wysiwyg_minimize($('#'+edit_id+' + .mceEditor .mceIframeContainer iframe').get(0));
-          }
-          else {
-            setTimeout(bindHandlers, 500);
-          }
-        });
-      }
-
-      setTimeout(bindHandlers, 500);
+      setTimeout(function () { bindHandlers(ctx); }, 500);
     }
-  }
+  };
 })(jQuery);
