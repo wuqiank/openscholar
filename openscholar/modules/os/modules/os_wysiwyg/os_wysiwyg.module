@@ -172,3 +172,83 @@ function os_wysiwyg_wysiwyg_include_directory($type) {
 function os_wysiwyg_element_info_alter(&$elements) {
   $elements['text_format']['#attached']['js'][] = drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.js';
 }
+
+/**
+ * Implements hook_field_widget_info.
+ * Defines a field form widget for expanding textarea wysiwygs
+ */
+function os_wysiwyg_field_widget_info() {
+  return array(
+    'os_wysiwyg_expanding_textarea' => array(
+      'label' => t('Expanding Textarea'),
+      'field types' => array(
+        'text_long',
+        'text_with_summary',
+      ),
+      'settings' => array(
+        'rows' => 1,
+        'max_rows' => 10,
+      ),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+        'default value' => FIELD_BEHAVIOR_DEFAULT,
+      ),
+      'weight' => 3,
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form.
+ */
+function os_wysiwyg_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+
+  $element += array(
+    'text_field' => array(
+      '#type' => 'text_format',
+      '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+      '#rows' => 5,
+      '#attributes' => array(
+        'class' => array(
+          'text-full',
+          'os-wysiwyg-expandable'
+        ),
+        'data-maxrows' => $instance['widget']['settings']['max_rows'],
+        'data-minrows' => $instance['widget']['settings']['rows']
+      )
+    ),
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.widget.js',
+      ),
+      'css' => array(
+        drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.widget.css',
+      )
+    )
+  );
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_settings_form.
+ */
+function os_wysiwyg_field_widget_settings_form($field, $instance) {
+  $form = text_field_widget_settings_form($field, $instance);
+
+  $widget = $instance['widget'];
+  $settings = $widget['settings'];
+
+  $form['rows']['#weight'] = -2;
+  $form['rows']['#title'] = t('Collapsed Rows');
+  $form['max_rows'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Expanded Rows'),
+    '#default_value' => $settings['max_rows'],
+    '#required' => TRUE,
+    '#element_validate' => array('element_validate_integer_positive'),
+    '#weight' => -1
+  );
+
+  return $form;
+}
