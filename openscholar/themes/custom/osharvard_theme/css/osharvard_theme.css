@@ -232,6 +232,7 @@ line-height: 24px;
 
 .getsite .textside {
     margin: 70px 0 0 0;
+    background:#373737;
     }
 
 .getsite .textside p {
@@ -515,10 +516,9 @@ right: -160px;
 }
 
 
-.block-boxes-os_boxes_html.os-boxes-embedded h3, 
-.block-boxes-os_boxes_html.os-boxes-embedded p {color:#555 !important;text-shadow: none !important;}
 .block-boxes-os_boxes_html.os-boxes-embedded .getsite .textside {
 margin: 5px 0 0 0 !important;
+padding:12px;
 }
 
 
