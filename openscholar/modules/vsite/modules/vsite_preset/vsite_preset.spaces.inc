@@ -181,15 +181,9 @@ function vsite_preset_spaces_presets() {
   $spaces_presets = new stdClass();
   $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
   $spaces_presets->api_version = 3;
-<<<<<<< HEAD
   $spaces_presets->name = 'hwp_project';
   $spaces_presets->title = 'Project';
   $spaces_presets->description = 'Standard Project site.';
-=======
-  $spaces_presets->name = 'hwp_lab_research_group';
-  $spaces_presets->title = 'HWP Lab/Research Group';
-  $spaces_presets->description = 'The Harvard Web Publishing standard Lab and Research Group site.';
->>>>>>> SCHOLAR-3.x
   $spaces_presets->space_type = 'og';
   $spaces_presets->value = array(
     'bundles' => array(
@@ -382,15 +376,9 @@ function vsite_preset_spaces_presets() {
   $spaces_presets = new stdClass();
   $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
   $spaces_presets->api_version = 3;
-<<<<<<< HEAD
   $spaces_presets->name = 'hwp_lab_research_group';
   $spaces_presets->title = 'Lab/Research Group';
   $spaces_presets->description = 'Standard Lab and Research Group site.';
-=======
-  $spaces_presets->name = 'hwp_project';
-  $spaces_presets->title = 'HWP Project';
-  $spaces_presets->description = 'The Harvard Web Publishing standard Project site.';
->>>>>>> SCHOLAR-3.x
   $spaces_presets->space_type = 'og';
   $spaces_presets->value = array(
     'bundles' => array(
