@@ -4,7 +4,7 @@ class os_boxes_columns extends os_boxes_default {
 
   public function options_defaults() {
     return array(
-      'layout' => 'two-2x50',
+      'layout' => 'three-3x33',
       'widgets' => array(
         'region-1' => '',
         'region-2' => '',
@@ -26,12 +26,13 @@ class os_boxes_columns extends os_boxes_default {
     $form['layout_select']['num_cols'] = array(
       '#type' => 'radios',
       '#options' => array(
+        '0' => t('All'),
         '2' => t('Two'),
         '3' => t('Three'),
         '4' => t('Four'),
         '5' => t('Five')
       ),
-      '#default_value' => $this->options['num_cols'],
+      '#default_value' => '0',
     );
 
     $form['layout_select']['layout'] = array(
