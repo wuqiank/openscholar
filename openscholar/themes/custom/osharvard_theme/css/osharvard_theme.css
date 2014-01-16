@@ -58,6 +58,12 @@ body.front.no-sidebars #content-panels .region-inner {
     z-index: 0;
 }
 
+
+.region-content-top .block-boxes-os_boxes_html {
+    background: #373737;
+  }
+
+
 #header,
 #menu-bar,
 #columns {
