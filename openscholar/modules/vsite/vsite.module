@@ -1521,6 +1521,9 @@ function _vsite_purl_init(){
  */
 function vsite_menu_alter(&$items){
   $items['user/%user/edit/groups']['access callback'] = FALSE;
+  if (isset($items['file/ajax'])) {
+    $items['file/ajax/vsite_favicon/favicon'] = $items['file/ajax'];
+  }
 }
 
 /**
@@ -2739,13 +2742,33 @@ function vsite_cp_settings() {
   if (!$vsite || !isset($vsite->group->type)) {
     return;
   }
+
+  module_load_include('inc', 'node', 'node.pages');
+  $settings = array();
+  $form = array();
+  $form_state = array();
+  $form = node_form($form, $form_state, $vsite->group);
+  $keep = array('field_favicon');
+  foreach ($form as $key => $value) {
+    if (!in_array($key, $keep) && strpos($key, '#') !== 0) {
+      unset($form[$key]);
+    }
+  }
+  $settings['favicon'] = array(
+    'form' => $form,
+    'group' => array(
+      '#id' => 'vsite_favicon',
+      '#title' => t('Site favicon'),
+      '#weight' => 30,
+    ),
+  );
+
+  // Only continues to show subsite settings for parent sites.
   $default = array('department', 'project');
   $subsite_parents = variable_get('subsite_parents', $default);
   if (!in_array($vsite->group->type, $subsite_parents)) {
-    return;
+    return $settings;
   }
-
-  $settings = array();
 
   $default = 0;
   $inherit_theme = variable_get('vsite_subsite_inherit_theme', $default);
@@ -2898,5 +2921,42 @@ function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
         $parsed['url'] = "{$purl}/{$parsed['url']}";
       }
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for cp_settings_form().
+ */
+function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
+  $form_state['build_info']['files'][] = array(
+    'type' => 'inc',
+    'module' => 'node',
+    'name' => 'node.pages',
+  );
+  form_load_include($form_state, 'inc', 'node', 'node.pages');
+}
+
+function vsite_field_widget_form_alter(&$element, &$form_state, $context) {
+  // Add a css class to widget form elements for all fields of type mytype.
+  if ($element[0]['#field_name'] !== 'field_favicon') {
+    return;
+  }
+  $element[0]['#process'][] = 'vsite_file_field_widget_process';
+}
+
+function vsite_file_field_widget_process($element, &$form_state, $form) {
+  foreach (element_children($element) as $key) {
+    if (isset($element[$key]['#ajax'])) {
+      $element[$key]['#ajax']['path'] = str_replace('vsite_favicon/favicon/', '', $element[$key]['#ajax']['path']);
+      $element[$key]['#ajax']['path'] = str_replace('und/f', 'und/0/f', $element[$key]['#ajax']['path']);
+    }
+  }
+
+  return $element;
+}
+
+function vsite_init() {
+  if (($_GET['q'] == 'system/ajax' || strstr($_GET['q'], 'file/ajax/')) && preg_match('/^[a-z_]+_node_form/', $_POST['form_id'])) {
+    module_load_include('inc', 'node', 'node.pages');
   }
 }
