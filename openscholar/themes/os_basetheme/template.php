@@ -28,9 +28,12 @@ function os_basetheme_preprocess_html(&$vars) {
 function os_basetheme_preprocess_page(&$vars) {
   $item = menu_get_item();
 
-  // remove all local action tabs
-  // we don't want any of them ever
-  $vars['tabs']['#primary'] = array();
+  // remove the node view tab
+  foreach ($vars['tabs']['#primary'] as $k => $l) {
+    if ($l['#link']['path'] == 'node/%/view') {
+      unset($vars['tabs']['#primary'][$k]);
+    }
+  }
 
   //Adds OpenScholar header region awareness to body classes
   $header = array(
