@@ -444,24 +444,24 @@ li#servertime {
 
 
 li#newposts {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newpoststoday.png') no-repeat #F6F6F6 27px 13px;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newpoststoday.png') no-repeat #F6F6F6 35px 14px;
 	}
 	
 li#newposts span {
-	left: 32px;
+	left: 45px;
 position: absolute;
-top: 60px;
+top: 61px;
 	}
 	
 li#newsites {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newsitestoday.png') no-repeat #F6F6F6 27px 13px;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newsitestoday.png') no-repeat #F6F6F6 35px 14px;
 	margin-right:0 !important;
 	}
 	
 li#newsites span {
-	left: 36px;
+	left: 41px;
 position: absolute;
-top: 60px;
+top: 61px;
 	}	
 		
 
@@ -488,6 +488,7 @@ width: 575px;
 
 #osactivity ul {
 margin-left:0;
+margin-bottom:0;
 }
 
 #osactivity ul li {
