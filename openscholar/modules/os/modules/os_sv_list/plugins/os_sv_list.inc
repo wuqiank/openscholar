@@ -257,6 +257,35 @@ class os_sv_list extends os_boxes_default {
       $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
     }
     
+    if ($this->options['layout'] == 'Grid') {
+      //fix the thumbnail for our grid.  
+      switch ($this->options['content_type']) {
+        
+        case 'image':
+          foreach (element_children($render) as $id) {
+            $render[$id]['file']['file']['#style_name'] = 'os_square_100_100'; //teaser, thumb
+            if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
+              $img = array(
+                '#theme' => 'image_style',
+                '#style_name' => 'os_square_100_100',
+                '#attributes' => array(),
+                '#path' => $render[$id]['#file']->uri,
+                '#width' => 100,
+                '#height' => 100,
+              );
+              
+              $elem = ($this->options['display'] == 'os_files_title') ? 'img' : '#text';
+              $img = ($this->options['display'] == 'os_files_thumbnail') ? render($img) : $img;
+              $render[$id]['file']['file-info'][$elem] = $img; //does thumb need rednered?
+            }
+          }
+          break;
+          
+        case 'video':
+          break;
+      }
+    }
+    
     //now render to html.
     dpm($render);
     $content = drupal_render($render);   

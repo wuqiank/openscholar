@@ -1361,12 +1361,15 @@ function os_files_file_view($file, $view_mode, $langcode) {
       
       case 'os_files_thumbnail':        
         $img = $file->content['file'];
+        $img['#theme'] = 'image_style';
         $img['#style_name'] = 'os_square_50_50';
         $img['#attributes']['class'] = array('recent-images-list');
+        $img['#path'] = $img['#file']->uri;
         
         $content['file-info'] = array(
           '#theme' => 'link',
           '#text' => render($img),
+//           '#text' => $img,
           '#path' => 'file/' . $file->fid,
           '#options' => array('attributes' => array(), 'html' => TRUE),
         );
