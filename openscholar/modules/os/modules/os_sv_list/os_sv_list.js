@@ -6,7 +6,7 @@
   Drupal.behaviors.os_sv_list = {
     attach : function(context) {
       $('#os_sv_list_content_type').once('once', function() {
-        // when content type changes, update sorting options list.
+        // when content type changes, update all the options
         $('#os_sv_list_content_type').change(function() {
           var $sortby = $('#edit-sort-by');
           var $display_style = $('#edit-display');
@@ -29,11 +29,18 @@
           //uncheck if selected option is no longer valid.
           $sortby.children('option:checked').filter(':disabled').attr('selected', false);
   
-          
-          //apply content_type appropriate sorts when ct changes
+          //if the content type has hidden the grid layout, switch back to list.
+          //this must happen BEFORE display styles are chosen
+          if ($('.form-item-layout').css('display') == 'none') {
+            jQuery('#edit-layout').attr('value', 'List');
+          }
+                  
+          //only show the content appropriate display styles
           $display_style.children('option').each(function() {
             var this_display = $(this).attr('value');
-            var hide = ($.inArray(this_display, Drupal.settings.entity_view_modes[content_type]) == -1)
+            var this_layout = $('#edit-layout').attr('value').toLowerCase();
+            
+            var hide = ($.inArray(this_display, Drupal.settings.entity_view_modes[this_layout][content_type]) == -1)
             $(this).attr('hidden', hide).attr('disabled', hide);
           });
           
@@ -42,9 +49,7 @@
 
           // swap out the more link url.
           more_link.val(defaults[content_type]);
-          
-          
-          
+                
           //apply content type to available vocabs
           var hidden = true;
           for (var vid in Drupal.settings.sv_list_vocab_bundles) {
@@ -63,6 +68,12 @@
           } else {
             $vocabs.show();
           }
+          
+          //layout changes should trigger the display style refresh
+          $('#edit-layout').change(function() {
+            $('#os_sv_list_content_type').change();
+          });
+
         });
   
         // perform the change callback once now.

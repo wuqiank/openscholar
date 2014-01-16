@@ -25,7 +25,6 @@ class os_sv_list extends os_boxes_default {
       'content_type' => 'all',
       'display' => 'teaser',
       'layout' => 'list',
-     // 'grid_size' => 3,
       'more' => FALSE,
       'more_text' => t('More'),
       'more_link' => '',
@@ -92,6 +91,12 @@ class os_sv_list extends os_boxes_default {
       '#title' => 'Layout',
       '#default_value' => $this->options['layout'],
       '#options' => drupal_map_assoc(array('List', 'Grid'), 't'),
+      '#states' => array(
+        'invisible' => array(// action to take.
+          ':input[name="content_type"],0' => array('!value' => 'image'),
+          ':input[name="content_type"],1' => array('!value' => 'video'),
+        ),
+      ),
     );
     
     $form['content']['display'] = array(
@@ -392,11 +397,22 @@ class os_sv_list extends os_boxes_default {
    * available to all content types.
    */
   private function entity_view_modes() {
-    $modes = os_entity_view_modes($this->entity_type);
-    $all = array_reduce($modes, 'array_intersect', current($modes)); //starting with an empty array means we'll get an empty back.
-    $modes['all'] = array_values($all);  
+    $modes = array();
+    $modes['list'] = os_entity_view_modes($this->entity_type);
+    $all = array_reduce($modes['list'], 'array_intersect', current($modes['list'])); //starting with an empty array means we'll get an empty back.
+    $modes['list']['all'] = array_values($all);
+
+    if ($this->entity_type == 'file') {
+      $modes['grid'] = array(
+        'image' => array('os_files_title', 'os_files_thumbnail', 'teaser'),
+        'video' => array('os_files_title', 'os_files_thumbnail', 'teaser'),
+      ) + array_fill_keys(array('html', 'audio', 'executable', 'document', 'undefined', 'all'), array());
+    } else {
+      $modes['grid'] = array_fill_keys(array_keys(os_get_bundles(TRUE)), array());
+    }
     return $modes;
   }
+  
     
   protected function _display_options() {
     $defaults = array(  //Display modes will be shown in this order.  If no order is provided, it'll be determined by how the hooks load them.
