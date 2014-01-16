@@ -55,19 +55,20 @@ function os_pages_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'body',
     'label' => 'Body',
-    'required' => FALSE,
+    'required' => 0,
     'settings' => array(
       'display_summary' => 0,
       'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'module' => 'text',
+      'active' => 1,
+      'module' => 'os_wysiwyg',
       'settings' => array(
-        'rows' => 20,
-        'summary_rows' => 5,
+        'max_rows' => 10,
+        'rows' => 1,
       ),
-      'type' => 'text_textarea_with_summary',
+      'type' => 'os_wysiwyg_expanding_textarea',
       'weight' => -4,
     ),
   );
