@@ -28,36 +28,90 @@
 
 (function ($) {
 
+  var layout = '';
+  var textContent;
+
+  /**
+   * Filters the list of layouts by the number of columns they contain
+   */
   function filterLayouts(e) {
-    $('#edit-layout .form-type-radio').hide().find('input').each(function (){
-      var layout_count = this.value.split('-')[0];
-      switch (layout_count) {
-        case 'two':
-          layout_count = 2;
-          break;
-        case 'three':
-          layout_count = 3;
-          break;
-        case 'four':
-          layout_count = 4;
-          break;
-        case 'five':
-          layout_count = 5;
-          break;
-        default:
-          return;
+    if (e.currentTarget.value != "0") {
+      $('#edit-layout .form-type-radio').hide().find('input').each(function (){
+        var layout_count = this.value.split('-')[0];
+        switch (layout_count) {
+          case 'two':
+            layout_count = 2;
+            break;
+          case 'three':
+            layout_count = 3;
+            break;
+          case 'four':
+            layout_count = 4;
+            break;
+          case 'five':
+            layout_count = 5;
+            break;
+          default:
+            layout_count = 0;
+        }
+
+        if (layout_count == e.currentTarget.value) {
+          $(this).parents('.form-type-radio').show();
+        }
+      });
+    }
+    else {
+      $('#edit-layout .form-type-radio').show();
+    }
+  }
+
+  /**
+   * Changes out the classes
+   */
+  function changeLayout(new_layout) {
+    $('#edit-regions').removeClass(layout).addClass(new_layout);
+    layout = new_layout;
+  }
+
+  /**
+   * Filter widgets by the text given in the Search field
+   */
+  function filterWidgets(e) {
+    var str = e.currentTarget.value.toLowerCase();
+
+    $('#unused-widgets .cp-layout-widget').each(function () {
+      if (typeof this.actual === 'undefined') {
+        if (textContent) {
+          var first = this.textContent.indexOf('\n'),
+              second = this.textContent.indexOf('\n', first+1);
+
+          this.actual = this.textContent.substring(first, second).trim().toLowerCase();
+        }
+        else {
+          this.actual = this.innerText.toLowerCase();
+        }
       }
 
-      if (layout_count == e.currentTarget.value) {
-        $(this).parents('.form-type-radio').show();
+      if (this.actual.indexOf(str) != -1) {
+        $(this).show();
+      }
+      else {
+        $(this).hide();
       }
     });
   }
 
   Drupal.behaviors.osBoxesColumns = {
     attach: function (ctx) {
+      textContent = typeof document.body.textContent !== 'undefined';
+      changeLayout(layout = $('input[name="layout"]:checked').val());
+
       $('input[name="num_cols"]:radio').change(filterLayouts);
-      $('input[name="layout"]:radio').change(regionsArrange);
+      $('input[name="layout"]:radio').change(function(e) {
+        changeLayout(e.currentTarget.value);
+      });
+
+      $('#edit-search').keyup(filterWidgets);
     }
   };
 
