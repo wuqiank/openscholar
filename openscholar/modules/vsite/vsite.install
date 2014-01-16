@@ -562,3 +562,9 @@ function vsite_update_7017() {
   features_revert(array('vsite' => array('user_permission')));
 }
 
+/**
+ * Reverts vsite group fields to allow new favicon field.
+ */
+function vsite_update_7018() {
+  features_revert(array('vsite' => array('field_base', 'field_instance')));
+}
