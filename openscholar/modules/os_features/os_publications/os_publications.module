@@ -361,3 +361,40 @@ function os_publications_field_extra_fields_alter(&$info) {
   }
 }
 
+/**
+ * Implements hook_os_entity_view_modes()
+ */
+function os_publications_os_entity_view_modes() {
+  $info = array();
+  $bundle_views = array_fill_keys(array_keys(os_publications_get_bundles()), array('full', 'teaser', 'title'));
+  $info['biblio'] = $bundle_views;
+  return $info;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ * Adds title view mode for Biblio.
+ */
+function os_publications_entity_info_alter(&$entity_info) {
+  $entity_info['biblio']['view modes']['title'] = array(
+    'label' => t('Title'),
+    'custom settings' => TRUE,
+  );
+}
+
+/**
+ * Utility to get list of Biblio bundles.
+ *
+ * @return array
+ *   List of Biblio bundles and their labels.
+ */
+function os_publications_get_bundles() {
+  $bundles = array();
+  $entity_info = entity_get_info('biblio');
+  foreach ($entity_info['bundles'] as $name => $bundle) {
+    if (!empty($bundle['admin'])) {
+      $bundles[$name] = $bundle['label'];
+    }
+  }
+  return $bundles;
+}

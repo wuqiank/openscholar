@@ -29,8 +29,7 @@ class os_sv_list_file extends os_sv_list {
     $efq->entityCondition('bundle', 'html', '!=');
     return $efq;
   }
-  
-  
+
   protected function _sort_options() {
     return array(
       'sort_newest' => t('Newest'),
@@ -40,7 +39,6 @@ class os_sv_list_file extends os_sv_list {
       'sort_random' => t('Random'),
     );
   }
-  
 
   /**
    * sorting functions
