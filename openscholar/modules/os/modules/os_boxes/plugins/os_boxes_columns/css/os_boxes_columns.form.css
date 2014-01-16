@@ -49,3 +49,146 @@
   height: 4em;
   background: url('') red;
 }
+
+/**
+ * Styling for Unused Widgets container
+ */
+
+#unused-widgets {
+  width: 200px;
+  float: left;
+  background-color: #d3d3d3;
+  border: 1px solid black;
+  padding: 5px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+#unused-widgets #edit-search {
+  width: 90%;
+}
+
+.cp-layout-widget {
+  display: block;
+  width: calc(100% - 37px);
+  height: 20px;
+  padding: 5px 0 5px 35px;
+  border: 1px solid black;
+  background-color: #eeeeee;
+  margin-bottom: -1px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: relative;
+}
+
+.cp-layout-widget:before {
+  content: '';
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: url('') red;
+}
+
+.cp-layout-widget .widget-controls {
+  display: none;
+}
+
+#edit-regions {
+  float: left;
+  width: 600px;
+  height: 600px;
+  clear: right;
+  margin-top: 10px;
+  border: 1px solid black;
+  background-color: #d3d3d3;
+}
+
+.region {
+  border: 1px solid darkslategrey;
+  background-color: #dddddd;
+  height: 100%;
+  display: none;
+  float: left;
+}
+
+/**
+ * Two region layout
+ */
+#edit-regions.two-2x50 #region-1-container,
+#edit-regions.two-2x50 #region-2-container {
+  width: calc(50% - 5px);
+  display: block;
+}
+
+#edit-regions.two-33-66 #region-1-container,
+#edit-regions.two-66-33 #region-2-container {
+  width: 33%;
+  display: block;
+}
+
+#edit-regions.two-33-66 #region-2-container,
+#edit-regions.two-66-33 #region-1-container {
+  width: 66%;
+  display: block;
+}
+
+/**
+ * Three region layouts
+ */
+#edit-regions.three-3x33 #region-1-container,
+#edit-regions.three-3x33 #region-2-container,
+#edit-regions.three-3x33 #region-3-container {
+  width: 33%;
+  display: block;
+}
+
+#edit-regions.three-25-25-50 #region-1-container,
+#edit-regions.three-25-25-50 #region-2-container,
+#edit-regions.three-25-50-25 #region-1-container,
+#edit-regions.three-25-50-25 #region-3-container,
+#edit-regions.three-50-25-25 #region-2-container,
+#edit-regions.three-50-25-25 #region-3-container {
+  width: 25%;
+  display: block;
+}
+
+#edit-regions.three-25-25-50 #region-3-container,
+#edit-regions.three-25-50-25 #region-2-container,
+#edit-regions.three-50-25-25 #region-1-container {
+  width: 50%;
+  display: block;
+}
+
+/**
+ * Four region layouts
+ */
+#edit-regions.four-4x25 #region-1-container,
+#edit-regions.four-4x25 #region-2-container,
+#edit-regions.four-4x25 #region-3-container,
+#edit-regions.four-4x25 #region-4-container {
+  width: 25%;
+  display: block;
+}
+
+/**
+ * Five region layouts
+ */
+#edit-regions.five-5x20 #region-1-container,
+#edit-regions.five-5x20 #region-2-container,
+#edit-regions.five-5x20 #region-3-container,
+#edit-regions.five-5x20 #region-4-container,
+#edit-regions.five-5x20 #region-5-container {
+  width: 20%;
+  display: block;
+}
+
+/**
+ * Misc.
+ */
+
+#edit-submit {
+  clear: left;
+}

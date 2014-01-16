@@ -4,9 +4,14 @@ class os_boxes_columns extends os_boxes_default {
 
   public function options_defaults() {
     return array(
-      'num_cols' => 2,
       'layout' => 'two-2x50',
-      'widgets' => array(),
+      'widgets' => array(
+        'region-1' => '',
+        'region-2' => '',
+        'region-3' => '',
+        'region-4' => '',
+        'region-5' => '',
+      ),
     );
   }
 
@@ -19,7 +24,7 @@ class os_boxes_columns extends os_boxes_default {
     );
 
     $form['layout_select']['num_cols'] = array(
-      '#type' => 'radio',
+      '#type' => 'radios',
       '#options' => array(
         '2' => t('Two'),
         '3' => t('Three'),
@@ -30,7 +35,7 @@ class os_boxes_columns extends os_boxes_default {
     );
 
     $form['layout_select']['layout'] = array(
-      '#type' => 'radio',
+      '#type' => 'radios',
       '#options' => array(
         'two-2x50' => 'two-2x50',
         'two-33-66' => 'two-33-66',
@@ -46,8 +51,11 @@ class os_boxes_columns extends os_boxes_default {
 
     // set up unused widget container
     $form['unused'] = array(
+      '#type' => 'container',
+      '#id' => 'unused-widgets',
       'search' => array(
         '#type' => 'textfield',
+        '#title' => t('Filter by Name'),
       ),
       'widgets' => array(
         '#type' => 'container',
@@ -80,7 +88,7 @@ class os_boxes_columns extends os_boxes_default {
       '#type' => 'container',
     );
 
-    for ($i = 1; $i < 5; $i++) {
+    for ($i = 1; $i <= 5; $i++) {
       $form['regions']['reg-'.$i] = array(
         '#type' => 'container',
         '#id' => 'region-'.$i.'-container',
@@ -98,9 +106,9 @@ class os_boxes_columns extends os_boxes_default {
         '#attributes' => array(
           'class' => array(
             'region_storage'
-          )
+          ),
+          'data-region_id' => $i
         ),
-        'data-region_id' => $i
       );
     }
 
@@ -111,6 +119,15 @@ class os_boxes_columns extends os_boxes_default {
       ),
       'css' => array(
         drupal_get_path('module', 'os_boxes').'/plugins/os_boxes_columns/css/os_boxes_columns.form.css'
+      )
+    );
+
+    $form['clear'] = array(
+      '#type' => 'container',
+      '#attributes' => array(
+        'class' => array(
+          'clearfix'
+        )
       )
     );
 
