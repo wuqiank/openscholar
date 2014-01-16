@@ -916,30 +916,21 @@ function theme_os_taxonomy_tagged_nodes($variables) {
       $options['bundles'] = (empty($options['bundles'])) ? $v_bundles : array_intersect($options['bundles'], $v_bundles);
     } 
     
-    //Load all our items with fast ${type}_load_multiple functions when available.
+    // Load all our items with fast ${type}_load_multiple functions when available.
     $tagged_entities = os_taxonomy_list_attached_entities($taxonomy_term->tid, $options['bundles'], $options['range'], $options['offset']);
-    $entities = array();
-    $types = array_unique(array_map(function($a) {return $a['entity_type'];}, $tagged_entities));
-
-    foreach ($types as $type) {
-      $ids = array_filter(array_map(function ($a) use ($type) {return ($a['entity_type'] == $type) ? $a['entity_id'] : NULL;}, $tagged_entities));
-      $load_func = $type . '_load_multiple';
-      $view_func = $type . '_view_multiple';
-      
-      $loaded = (function_exists($load_func)) ? $load_func($ids) : entity_load($type, $ids);
-      array_walk($loaded, function(&$n) use ($taxonomy_term) {$n->contextual_annotation_key = "tid-".$taxonomy_term->tid;});
-      $rendered = (function_exists($view_func)) ? $view_func($loaded, 'teaser') : entity_view($type, $loaded, 'teaser');
-      $entities[$type] = ($type == 'node') ? $rendered['nodes'] : $rendered;
-    } 
     
-    //Now collate them according to original order.
-    $build['entities'] = array_reduce($tagged_entities, function($ret, $a) use ($entities) {
-      $ret[$a['entity_type'] . '-' . $a['entity_id']] = $entities[ $a['entity_type'] ][$a['entity_id']];
-      return $ret;
-    }, array());
+    foreach ($tagged_entities as $entity) {
+      $id = $entity['entity_id'] . '-' . $entity['entity_type'];
+      $type = $entity['entity_type'];
+      $entity = entity_load($entity['entity_type'], array($entity['entity_id']));
+      $entity->contextual_annotation_key = 'tid-' . $taxonomy_term->tid; 
+      $build['entities'][$id] = entity_view($type, $entity, 'teaser');
+    } 
+
     $build['entities']['#sorted'] = TRUE;
     
-  } elseif ((int) $options['cur_depth'] === 0 && !$has_children_to_display) {
+  } 
+  elseif ((int) $options['cur_depth'] === 0 && !$has_children_to_display) {
     $pager = '';
     $build['no_content'] = array(
       '#prefix' => '<p>',
@@ -1103,7 +1094,7 @@ function os_taxonomy_count_attached_entities($tid, $bundles = array()) {
  *    Location of an element to start from.
  *
  *  @return array $nids
- *    Ordered array of tagged node IDs.
+ *    Ordered array of tagged entity IDs.  Order is sticky > created by default, some entities/bundles have exceptions.
  */
 function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = NULL, $offset = NULL) {
   $query = os_taxonomy_count_attached_entities_query_object($tid, $bundles);
