@@ -146,6 +146,9 @@ border-top: none;
      padding: 7px 15px !important;
 }
 
+#content-column .block.block-boxes-os_boxes_manual_list h2.block-title {
+    padding: 7px 0;
+}
 
 #content-panels .block-inner {
      margin-top: 0px;
