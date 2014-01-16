@@ -28,6 +28,10 @@ function os_basetheme_preprocess_html(&$vars) {
 function os_basetheme_preprocess_page(&$vars) {
   $item = menu_get_item();
 
+  // remove all local action tabs
+  // we don't want any of them ever
+  $vars['tabs']['#primary'] = array();
+
   //Adds OpenScholar header region awareness to body classes
   $header = array(
     'header-left' => $vars['page']['header_first'],
