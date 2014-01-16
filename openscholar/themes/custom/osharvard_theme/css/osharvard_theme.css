@@ -59,10 +59,6 @@ body.front.no-sidebars #content-panels .region-inner {
 }
 
 
-.region-content-top .block-boxes-os_boxes_html {
-    background: #373737;
-  }
-
 
 #header,
 #menu-bar,
@@ -517,6 +513,14 @@ right: -160px;
      color:#fff;
      width:250px;
 }
+
+
+.block-boxes-os_boxes_html.os-boxes-embedded h3, 
+.block-boxes-os_boxes_html.os-boxes-embedded p {color:#555 !important;text-shadow: none !important;}
+.block-boxes-os_boxes_html.os-boxes-embedded .getsite .textside {
+margin: 5px 0 0 0 !important;
+}
+
 
 
 /* ROADMAP PAGE STYLES */
