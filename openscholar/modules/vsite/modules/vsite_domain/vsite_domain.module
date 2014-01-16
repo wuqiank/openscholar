@@ -184,12 +184,8 @@ function vsite_domain_cp_settings() {
   $form = purl_form('vsite_domain', $vsite->group->nid, $domain);
   $form['value']['#title'] = t('Custom domain name');
   $form['value']['#field_prefix'] = 'http://';
-
-  // Leaving the vsite domain name field blank means use purl base domain.
-  $form['value']['#required'] = FALSE;
-
-  // Use our validate function (which still invokes purl's validate).
-  $form['#element_validate'] = array('vsite_domain_cp_settings_domain_validate');
+  $form['value']['#required'] = FALSE;   // Leaving the vsite domain name field blank means use purl base domain.
+  $form['#element_validate'] = array('vsite_domain_cp_settings_domain_validate');  // Use our validate function (which still invokes purl's validate).
   $form['sid'] = array(
     '#type' => 'hidden',
     '#value' => isset($vsite->group->nid) ? $vsite->group->nid : 0,
@@ -265,13 +261,3 @@ function _vsite_domain_processed_purls($purl = FALSE) {
   return $processed;
 }
 
-/**
- * Implements hook_form_FORM_ID_alter() for cp_settings_form().
- */
-function vsite_domain_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
-  $form_state['build_info']['files'][] = array(
-    'type' => 'inc',
-    'module' => 'vsite_domain',
-    'name' => 'includes/form',
-  );
-}
