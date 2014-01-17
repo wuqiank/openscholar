@@ -71,6 +71,15 @@
   function changeLayout(new_layout) {
     $('#edit-regions').removeClass(layout).addClass(new_layout);
     layout = new_layout;
+
+    // Remove widgets from no longer visible regions. Place them back in unused widgets
+    var hidden = $('.region:hidden .cp-layout-widget');
+    if (hidden.length) {
+      hidden.each(function () {
+        $(this).remove().appendTo('#unused-widgets');
+      })
+      $('#unused-widgets, .region:hidden').sortable('refresh');
+    }
   }
 
   /**
