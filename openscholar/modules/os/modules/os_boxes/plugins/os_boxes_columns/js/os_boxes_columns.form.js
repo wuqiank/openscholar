@@ -125,7 +125,14 @@
    * Save the region widgets to the hidden input elements
    */
   function saveForm() {
-
+    $('.region').each(function () {
+      var ids = [],
+        rid = $(this).attr('data-region_id');
+      $('.cp-layout-widget', this).each(function () {
+        ids.push(this.id);
+      })
+      $('.region_storage[data-region_id="'+rid+'"').val(ids.join('|'));
+    })
   }
 
   Drupal.behaviors.osBoxesColumns = {
