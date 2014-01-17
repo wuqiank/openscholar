@@ -96,7 +96,10 @@
   top: 0;
   left: 0;
   bottom: 0;
-  background: url('') red;
+  background-color: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('../images/widget-bg.png');
 }
 
 .cp-layout-widget .widget-controls {
@@ -211,4 +214,89 @@
 
 #edit-submit {
   clear: left;
+}
+
+/**
+ * Widget Type Icons
+ */
+.os_boxes_addthis:before {
+  background-image: url("../images/addThis.png");
+}
+
+.os_boxes_bio:before {
+  background-image: url("../images/bio.png")
+}
+
+.os_boxes_rss:before,
+.os_boxes_feedreader:before {
+  background-image: url("../images/rss.png");
+}
+
+#boxes-os_booklets_recent_docs:before,
+.os_boxes_booktoc:before,
+#views-os_booklets-block:before {
+  background-image: url("../images/book.png");
+}
+
+.os_boxes_slideshow:before {
+  background-image: url("../images/slideshow.png");
+}
+
+.os_boxes_html:before {
+  background-image: url("../images/text.png");
+}
+
+#views-os_events-block_1:before,
+#views-os_events-block_2:before {
+  background-image: url("../images/calendar.png");
+}
+
+#views-os_software_releases-block_1:before {
+  background-image: url("../images/software.png");
+}
+
+#boxes-os_news_latest:before {
+  background-image: url("../images/announcement.png");
+}
+
+#boxes-os_presentations_recent:before {
+  background-image: url("../images/presentation.png");
+}
+
+#boxes-os_publications_recent:before,
+.os_boxes_pub_ca:before,
+.os_boxes_pub_year:before {
+  background-image: url("../images/publications.png");
+}
+
+.os_boxes_media:before {
+  background-image: url("../images/camera.png");
+}
+
+.os_taxonomy_fbt:before {
+  background-image: url("../images/addThis.png");
+}
+
+#views-os_blog-block:before {
+  background-image: url("../images/post.png");
+}
+
+.fb_social_activityf:before,
+.fb_social_recommend:before,
+.fb_social_comments:before,
+.fb_social_livestream:before,
+.fb_social_facepile:before,
+.fb_social_send:before,
+.fb_social_likebox:before,
+.fb_social_like:before {
+  background-image: url("../images/facebook.png");
+}
+
+
+.os_boxes_twitterfeed:before {
+  background-image: url("../images/twitter.png");
+}
+
+.os_taxonomy_fbt:before {
+  background-image: url("../images/taxo.png");
 }
