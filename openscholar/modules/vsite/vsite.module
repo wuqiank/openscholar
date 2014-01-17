@@ -2733,6 +2733,10 @@ function vsite_get_entity_alias($entity_type, $entity, $alias = NULL) {
 
 /**
  * Implements hook_cp_settings().
+ *
+ * Note: Site favicon settings are provided in a hook_form_FORM_ID_alter().
+ *
+ * @see vsite_form_cp_settings_form_alter()
  */
 function vsite_cp_settings() {
   $vsite = vsite_get_vsite();
@@ -2898,5 +2902,69 @@ function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
         $parsed['url'] = "{$purl}/{$parsed['url']}";
       }
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for cp_settings_form().
+ *
+ * Note: Normally, this setting on a CP > Settings form should be provided in
+ * hook_cp_settings(). We can't use hook_cp_settings() for this field, however,
+ * because the file field widget requires AJAX, which requires the form_state
+ * to be modified. As of OpenScholar API version 7.x-3.10, we cannot modify
+ * form_state in hook_cp_settings().
+ */
+function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
+  // Builds the "Site favicon" file field widget.
+  $vsite = vsite_get_vsite();
+  $langcode = LANGUAGE_NONE;
+  $field_name = 'field_favicon';
+  $field = field_info_field($field_name);
+  $instance = field_info_instance('node', $field_name, $vsite->group->type);
+  $items = field_get_items('node', $vsite->group, $field_name);
+  $field_favicon = field_default_form('node', $vsite->group, $field, $instance, $langcode, $items, $form, $form_state);
+
+  // Renders a fieldset and adds the markup as prefix and suffix.
+  // If we try to move the position of the file widget inside a wrapper render
+  // element, then the AJAX fails to update.
+  $fieldset = array(
+    'vsite_favicon' => array(
+      '#type' => 'fieldset',
+      '#title' => t('Site favicon'),
+      '#weight' => 30,
+      'field_favicon' => array('#markup' => '%MARKUP%'),
+    ),
+  );
+  $output = drupal_render($fieldset);
+  list($prefix, $suffix) = explode('%MARKUP%', $output);
+  $field_favicon['field_favicon'] += array(
+    '#prefix' => $prefix,
+    '#suffix' => $suffix,
+  );
+
+  // Adds the fieldset to the form.
+  $form += $field_favicon;
+
+  // Adds the submit handler to update the node upon submit.
+  $form['#submit'][] = 'vsite_cp_settings_form_submit';
+}
+
+/**
+ * Submit callback for cp_settings_form().
+ *
+ * Updates the 'field_favicon' value on the vsite node.
+ *
+ * @see vsite_form_cp_settings_form_alter()
+ */
+function vsite_cp_settings_form_submit($form, &$form_state) {
+  // Get the current vsite.
+  $space = spaces_get_space();
+  $field_name = 'field_favicon';
+  // Get the vsite_privacy value.
+  if (isset($form_state['values'][$field_name]) && $space) {
+    $wrapper = entity_metadata_wrapper('node', $space->group);
+    $value = $form_state['values'][$field_name]['und'][0];
+    $wrapper->{$field_name}->set($value);
+    $wrapper->save();
   }
 }
