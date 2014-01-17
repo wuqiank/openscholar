@@ -652,7 +652,7 @@ LIST OF POSTS - PERSON TEASER IN SIDEBAR
 /* Node FAQ */
 .node-teaser.node-faq {
   line-height: 19px;
-  padding: 5px 0 30px;
+  padding: 5px 0 2px;
 }
 
 .sidebar .node-teaser.node-faq {
