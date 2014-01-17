@@ -2283,30 +2283,44 @@ function vsite_mollom_form_info($form_id){
 }
 
 /**
- * Implements hook_preprocess_html().
- * Set the head_title to the vsite name rather than the site_name, if in a vsite.
+ * Implements hook_preprocess_HOOK() for html.tpl.php.
+ *
+ * Sets the head_title to the vsite name rather than the sitewide site_name.
  */
-function vsite_preprocess_html(&$vars){
-  $spaces = spaces_get_space();
-  if (isset($spaces)) {
-    $vsite_title = isset($spaces->group->title) ? $spaces->group->title : variable_get('site_name');
-
-    // Check for the frontpage.
-    if (drupal_is_front_page()) {
-      $head_title = array(
-        $vsite_title
-      );
-    }
-    else {
-      $head_title = array(
-        strip_tags(drupal_get_title()),
-        $vsite_title
-      );
-    }
-
-    // Set the new page 'head' title.
-    $vars['head_title'] = implode(' | ', $head_title);
+function vsite_preprocess_html(&$vars) {
+  if (!$space = spaces_get_space()) {
+    return;
   }
+
+  $vsite_title = isset($space->group->title) ? $space->group->title : variable_get('site_name');
+
+  // Check for the frontpage.
+  if (drupal_is_front_page()) {
+    $head_title = array(
+      $vsite_title,
+    );
+  }
+  else {
+    $head_title = array(
+      strip_tags(drupal_get_title()),
+      $vsite_title,
+    );
+  }
+
+  // Set the new page 'head' title.
+  $vars['head_title'] = implode(' | ', $head_title);
+
+  // Adds any custom favicon to the page.
+  $favicon = '';
+  $vsite = vsite_get_vsite();
+  $items = field_get_items('node', $vsite->group, 'field_favicon');
+  if (empty($items)) {
+    return;
+  }
+  $file = $items[0];
+  $favicon = file_create_url($file['uri']);
+  $type = theme_get_setting('favicon_mimetype');
+  drupal_add_html_head_link(array('rel' => 'shortcut icon', 'href' => drupal_strip_dangerous_protocols($favicon), 'type' => $type));
 }
 
 /**
@@ -2945,6 +2959,14 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
   // Adds the fieldset to the form.
   $form += $field_favicon;
 
+  // Only once (before AJAX rebuilds), stashes the original favicon fid value.
+  if (!isset($form_state['field_favicon_fid_original'])) {
+    $form_state['field_favicon_fid_original'] = 0;
+    if (isset($field_favicon['field_favicon']['und'][0]['#default_value']['fid'])) {
+      $form_state['field_favicon_fid_original'] = $field_favicon['field_favicon']['und'][0]['#default_value']['fid'];
+    }
+  }
+
   // Adds the submit handler to update the node upon submit.
   $form['#submit'][] = 'vsite_cp_settings_form_submit';
 }
@@ -2957,14 +2979,88 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
  * @see vsite_form_cp_settings_form_alter()
  */
 function vsite_cp_settings_form_submit($form, &$form_state) {
-  // Get the current vsite.
-  $space = spaces_get_space();
   $field_name = 'field_favicon';
-  // Get the vsite_privacy value.
-  if (isset($form_state['values'][$field_name]) && $space) {
-    $wrapper = entity_metadata_wrapper('node', $space->group);
-    $value = $form_state['values'][$field_name]['und'][0];
+
+  $favicon_modified = FALSE;
+  $fid_original = $form_state['field_favicon_fid_original'];
+  $fid_submitted = $form_state['values'][$field_name]['und'][0]['fid'];
+  if ($fid_original != $fid_submitted) {
+    $favicon_modified = TRUE;
+  }
+  if (!$favicon_modified) {
+    return;
+  }
+
+  // Get the current vsite.
+  $vsite = vsite_get_vsite();
+
+  // Gets the value of the favicon field from the form.
+  // If there is a new value...
+  if (isset($form_state['values'][$field_name]) && $vsite) {
+    // Updates the vsite node's field instance value.
+    $wrapper = entity_metadata_wrapper('node', $vsite->group);
+    $value = (empty($form_state['values'][$field_name]['und'][0]['fid'])) ? NULL : $form_state['values'][$field_name]['und'][0];
     $wrapper->{$field_name}->set($value);
     $wrapper->save();
   }
 }
+/*
+    // Saves this favicon as the custom icon filepath for this vsite.
+    $file = $wrapper->{$field_name}->value();
+    $favicon_path = $file['uri'];
+
+  }
+  // If the new value is no favicon...
+  else {
+    // Removes the custom icon filepath for this vsite.
+    $favicon_path = '';
+  }
+
+  // Updates the theme settings.
+  $theme = variable_get('theme_default');
+  if (empty($theme)) {
+    drupal_set_message(t('Unable to save custom shortcut icon (favicon). Contact a system administrator.', 'warning'));
+    return;
+  }
+
+  $names = array(
+    "theme_{$theme}_settings",
+    'theme_settings',
+  );
+  foreach ($names as $name) {
+    $value = $vsite->controllers->variable->get($name);
+    if (empty($favicon_path)) {
+      if (isset($value['favicon_path'])) {
+        unset($value['favicon_path']);
+      }
+      if (isset($value['default_favicon'])) {
+        unset($value['default_favicon']);
+      }
+    }
+    else {
+      $value['favicon_path'] = $favicon_path;
+      $value['default_favicon'] = 0;
+    }
+    $vsite->controllers->variable->set($name, $value);
+    dpm($value, "{$name} (from form_submit)");
+  }
+
+  // @FIXME safe to remove the following?
+  system_rebuild_theme_data();
+}
+
+function vsite_init() {
+  if (!$vsite = vsite_get_vsite()) {
+    return;
+  }
+
+  $theme = variable_get('theme_default');
+  $names = array(
+    "theme_{$theme}_settings",
+    'theme_settings',
+  );
+  foreach ($names as $name) {
+    $value = $vsite->controllers->variable->get($name);
+    dpm($value, "{$name} (from hook_init)");
+  }
+} */
