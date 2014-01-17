@@ -3004,4 +3004,3 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
     $wrapper->save();
   }
 }
-
