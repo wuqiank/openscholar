@@ -140,6 +140,103 @@ class os_boxes_columns extends os_boxes_default {
    * Hmm
    */
   public function render() {
+    module_load_include('module', 'block', 'block');
 
+    $block = parent::render();
+    unset($block['title']);   // having a title here would just be weird
+    $page = array();
+    $layout = $this->options['layout'];
+    $blocks = array();
+    foreach ($this->options['widgets'] as $region => $widgets) {
+      if (empty($widgets)) continue;
+
+      $temp = explode('|', $widgets);
+      $region = $this->get_gpanel_region($region, $layout);
+      foreach ($temp as $weight => $id) {
+        list($module, $delta) = explode('-', $id);
+        $blocks[$region][$id] = (object)array(
+          'module' => $module,
+          'delta' => $delta,
+          'weight' => $weight,
+          'region' => $region
+        );
+      }
+
+      $blocks[$region] = _block_render_blocks($blocks[$region]);
+      $page[$region] = _block_get_renderable_array($blocks[$region]);
+      $page[$region] += array(
+        '#sorted' => true,
+        '#theme_wrappers' => array(
+          'region',
+        ),
+        '#region' => $region
+      );
+    }
+    if (!empty($page)) {
+      $template = drupal_get_path('theme', 'adaptivetheme').'/layouts/gpanels/'.$layout.'.php';
+      $block['content'] = theme_render_template($template, array('page' => $page));
+      drupal_add_css(drupal_get_path('theme', 'adaptivetheme').'/layouts/css/default.css');
+    }
+
+    return $block;
+  }
+
+  /**
+   * For a given psuedo-region and layout, return the gpanel name of that region
+   */
+  private function get_gpanel_region($region, $layout) {
+    $map = &drupal_static(__FUNCTION__, array(
+      // Two column layouts
+      'two-2x50' => array(
+        'region-1' => 'two_50_first',
+        'region-2' => 'two_50_second',
+      ),
+      'two-33-66' => array(
+        'region-1' => 'two_33_66_first',
+        'region-2' => 'two_33_66_second',
+      ),
+      'two-66-33' => array(
+        'region-1' => 'two_66_33_first',
+        'region-2' => 'two_66_33_second',
+      ),
+      // Three column layouts
+      'three-3x33' => array(
+        'region-1' => 'three_33_first',
+        'region-2' => 'three_33_second',
+        'region-3' => 'three_33_third',
+      ),
+      'three-25-25-50' => array(
+        'region-1' => 'three_25_25_50_first',
+        'region-2' => 'three_25_25_50_second',
+        'region-3' => 'three_25_25_50_third',
+      ),
+      'three-25-50-25' => array(
+        'region-1' => 'three_25_50_25_first',
+        'region-2' => 'three_25_50_25_second',
+        'region-3' => 'three_25_50_25_third',
+      ),
+      'three-50-25-25' => array(
+        'region-1' => 'three_50_25_25_first',
+        'region-2' => 'three_50_25_25_second',
+        'region-3' => 'three_50_25_25_third',
+      ),
+      // Four column layouts
+      'four-4x25' => array(
+        'region-1' => 'four_first',
+        'region-2' => 'four_second',
+        'region-3' => 'four_third',
+        'region-4' => 'four_fourth',
+      ),
+      // Five column layouts
+      'five-5x20' => array(
+        'region-1' => 'five_first',
+        'region-2' => 'five_second',
+        'region-3' => 'five_third',
+        'region-4' => 'five_fourth',
+        'region-5' => 'five_fifth',
+      )
+    ));
+
+    return (isset($map[$layout][$region]))?$map[$layout][$region]:$region;
   }
 }
