@@ -200,7 +200,7 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 }
 
 
-/*.getsite .textside {float:right;}*/
+.getsite_link {cursor:pointer;}
 
 
 
@@ -519,6 +519,7 @@ right: -160px;
 .block-boxes-os_boxes_html.os-boxes-embedded .getsite .textside {
 margin: 5px 0 0 0 !important;
 padding:12px;
+min-height:450px;
 }
 
 
