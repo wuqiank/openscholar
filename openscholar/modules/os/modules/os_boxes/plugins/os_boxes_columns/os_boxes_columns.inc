@@ -65,18 +65,6 @@ class os_boxes_columns extends os_boxes_default {
       )
     );
 
-    ctools_include('layout', 'os');
-    $blocks = os_layout_get_multiple(array('os_public'), true, true);
-
-    foreach ($blocks as $bid => $b) {
-      if ($b['region'] == - 1 || $b['region'] === FALSE) {
-        $form['unused']['widgets'][$bid] = array(
-          '#theme' => 'cp_layout_widget',
-          '#widget' => $b
-        );
-      }
-    }
-
     // set up psuedo-regions
     // this element is for the hidden input elements
     $form['widgets'] = array(
@@ -91,7 +79,7 @@ class os_boxes_columns extends os_boxes_default {
     );
 
     for ($i = 1; $i <= 5; $i++) {
-      $form['regions']['reg-'.$i] = array(
+      $form['regions']['region-'.$i] = array(
         '#type' => 'container',
         '#id' => 'region-'.$i.'-container',
         '#attributes' => array(
@@ -112,6 +100,30 @@ class os_boxes_columns extends os_boxes_default {
           'data-region_id' => $i
         ),
       );
+    }
+
+    /**
+     * Get all widgets and sort them accordingly
+     */
+    ctools_include('layout', 'os');
+    $blocks = os_layout_get_multiple(array('os_public'), true, true);
+
+    foreach ($blocks as $bid => $b) {
+      foreach ($this->options['widgets'] as $region => $widgets) {
+        if (strpos($widgets, $bid) !== FALSE) {
+          $form['regions'][$region][$bid] = array(
+            '#theme' => 'cp_layout_widget',
+            '#widget' => $b
+          );
+          continue 2;
+        }
+      }
+      if ($b['region'] == - 1 || $b['region'] === FALSE) {
+        $form['unused']['widgets'][$bid] = array(
+          '#theme' => 'cp_layout_widget',
+          '#widget' => $b
+        );
+      }
     }
 
     // add all the js and css we're gonna need
@@ -174,7 +186,7 @@ class os_boxes_columns extends os_boxes_default {
     }
     if (!empty($page)) {
       $template = drupal_get_path('theme', 'adaptivetheme').'/layouts/gpanels/'.$layout.'.php';
-      $block['content'] = theme_render_template($template, array('page' => $page));
+      $block['content'] = @theme_render_template($template, array('page' => $page));
       drupal_add_css(drupal_get_path('theme', 'adaptivetheme').'/layouts/css/default.css');
     }
 
