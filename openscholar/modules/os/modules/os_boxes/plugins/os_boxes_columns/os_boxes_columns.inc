@@ -43,7 +43,8 @@ class os_boxes_columns extends os_boxes_default {
         'two-66-33' => 'two-66-33',
         'three-3x33' => 'three-3x33',
         'three-25-25-50' => 'three-25-25-50',
-        'three-25-50-25' => 'three-50-25-25',
+        'three-25-50-25' => 'three-25-50-25',
+        'three-50-25-25' => 'three-50-25-25',
         'four-4x25' => 'four-4x25',
         'five-5x20' => 'five-5x20'
       ),
