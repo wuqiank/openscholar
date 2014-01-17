@@ -110,7 +110,8 @@
 .region {
   border: 1px solid darkslategrey;
   background-color: #dddddd;
-  height: 100%;
+  height: calc(100% - 50px);
+  padding-bottom: 50px;
   display: none;
   float: left;
 }
