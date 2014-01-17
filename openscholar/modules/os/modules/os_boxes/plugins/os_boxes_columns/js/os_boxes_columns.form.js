@@ -101,6 +101,33 @@
     });
   }
 
+  /**
+   * Allow widgets to be dragged around pages
+   */
+  function setupDraggables() {
+    $('#edit-widgets, .region').sortable({
+      appendTo: '#boxes-box-form',
+      helper: 'clone',
+      cursorAt: {top: 25, left: 38},
+      connectWith: $('#edit-widgets, .region'),
+      tolerance: 'pointer',
+      forceHelperSize: true,
+      over: function (event, ui) {
+        $(event.target).addClass('active');
+      },
+      out: function (event, ui) {
+        $(event.target).removeClass('active');
+      }
+    });
+  }
+
+  /**
+   * Save the region widgets to the hidden input elements
+   */
+  function saveForm() {
+
+  }
+
   Drupal.behaviors.osBoxesColumns = {
     attach: function (ctx) {
       textContent = typeof document.body.textContent !== 'undefined';
@@ -112,6 +139,10 @@
       });
 
       $('#edit-search').keyup(filterWidgets);
+
+      setupDraggables();
+
+      $('#boxes-box-form').submit(saveForm);
     }
   };
 
