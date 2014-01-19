@@ -70,6 +70,30 @@ function os_events_menu() {
 }
 
 /**
+ * Check the capacity if the event reach it's capacity.
+ */
+function os_events_event_registration_reach_capacity($node) {
+  // Check how much registration exists for this event.
+  $query = new EntityFieldQuery();
+  $registrations_number = $query
+    ->entityCondition('entity_type', 'registration')
+    ->propertyCondition('entity_id', $node->nid)
+    ->propertyCondition('entity_type', 'node')
+    ->count()
+    ->execute();
+
+  // Get the settings of the registration for this event.
+  $settings = registration_entity_settings('node', $node->nid);
+
+  if ($registrations_number < $settings['capacity'] && $settings['capacity']['status']) {
+    return user_access('create event_signup_simple registration');
+  }
+  else {
+    return FALSE;
+  }
+}
+
+/**
  * Title callback for the event registration menu item.
  *  The entity type.
  *
@@ -204,7 +228,9 @@ function os_events_process_node(&$variables) {
     $subscribe = str_replace('http://', 'webcal://', $subscribe);
 
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
-    if (!empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type'])) {
+
+    $registrations_type = !empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']);
+    if ($registrations_type && os_events_event_registration_reach_capacity($variables['node'])) {
       $register = os_events_generate_modal_register_link($variables['node']->nid);
     }
     else {
@@ -277,6 +303,18 @@ function os_events_events_register($js, $node) {
   ));
 
   $registration_form = drupal_get_form('registration_form', $registration);
+
+  if (!os_events_event_registration_reach_capacity($node)) {
+    drupal_set_message(t('The event has reached his maximum capacity of registrations. Sorry.'), 'error');
+    $commands = array();
+
+    // dismiss the window
+    $commands[] = ctools_modal_command_display(t('Error'), theme('status_messages'));
+
+    print ajax_render($commands);
+    drupal_exit();
+    return;
+  }
 
   $form_state = array(
     'title' => os_events_register_form_title('node', $node->nid),
