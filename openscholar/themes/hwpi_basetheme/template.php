@@ -94,10 +94,13 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     // If node is in teaser view mode, load a default image. If node is displayed
     // in "List of posts" widget or in full display mode, load a bigger default image.
     if ($vars['view_mode'] == 'teaser') {
-      $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-      $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-      // Default image.
-      $vars['content']['field_person_photo'][0] = array('#markup' => $image);
+      // Check if using a default image is disabled.
+      if (!variable_get('os_profiles_disable_default_image', FALSE)) {
+        $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+        $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+        // Default image.
+        $vars['content']['field_person_photo'][0] = array('#markup' => $image);
+      }
     }
     elseif ((!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box']) || $vars['view_mode'] == 'full') {
       $path = variable_get('os_person_default_image_big', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image-big.png');

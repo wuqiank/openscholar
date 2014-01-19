@@ -196,3 +196,17 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
   }
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter() for cp_app_settings_form.
+ *
+ * Adds a checkbox in the os profiles app settings to disable default images
+ * when viewing people's profiles.
+ */
+function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
+  $form['os_profiles_disable_default_image'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable default image for people profiles'),
+    '#default_value' => variable_get('os_profiles_disable_default_image', FALSE),
+    '#description' => t('If checked no image will be used when viewing the "/people" page.'),
+  );
+}
