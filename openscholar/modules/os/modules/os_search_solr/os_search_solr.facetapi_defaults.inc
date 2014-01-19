@@ -195,7 +195,7 @@ function os_search_solr_facetapi_default_facet_settings() {
     'show_expanded' => 0,
   );
 
-  $export[$searcher_name . ':block:sm_og_vocabulary'] = $facet;
+  $export[$searcher_name . ':block:sm_og_vocabulary'] = $facet; //mark
 
   return $export;
 }
