@@ -290,16 +290,23 @@ function os_profile_return_auto_complete($string = '') {
   $query = db_select('node', 'n');
   $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
   $query->leftJoin($last_name_field, 'last', 'last.entity_id = n.nid');
-  $results = $query
+
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $query->Join('og_membership', 'ogm', 'ogm.etid = n.nid');
+    $query->condition('ogm.gid', $vsite->id, '<>');
+  }
+
+  $query
     ->condition('n.type', 'person')
     ->condition($db_or)
+    ->condition('n.status', NODE_PUBLISHED)
     ->fields('n', array('nid', 'title'))
     ->range(0, 50)
-    ->orderBy('n.nid')
+    ->orderBy('n.nid');
+
+  $results = $query
     ->execute()
     ->fetchAllAssoc('nid');
-
-  // todo: Exclude results from the current vsite.
 
   $output = array();
   foreach ($results as $result) {
