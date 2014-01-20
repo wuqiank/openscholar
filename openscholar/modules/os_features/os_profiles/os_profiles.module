@@ -80,6 +80,9 @@ function os_profiles_process_node(&$vars) {
     return;
   }
 
+  // Adding header for determine the node ID.
+  drupal_add_http_header('node_json', url('node/' . $vars['nid'] . '.json', array('absolute' => TRUE)));
+
   // Helps poor theme developers find these changes to $variables
   $vars['classes'] .= ' modified-in-os_profiles_process_node';
   
@@ -264,6 +267,14 @@ function os_profiles_sync_profile($form, $form_state) {
     '#description' => t('Enter the URL of the profile from anotehr site.'),
   );
 
+  $form['actions'] = array(
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    ),
+  );
+
   return $form;
 }
 
@@ -271,11 +282,83 @@ function os_profiles_sync_profile($form, $form_state) {
  * Page callback; Return auto complete list of people for auto complete field.
  */
 function os_profile_return_auto_complete($string = '') {
-
   // todo: Create the list of person node.
   $people = array(
     'foo' => 'bar',
   );
 
+  $query = new EntityFieldQuery();
+  $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'person');
+
   drupal_json_output($people);
+}
+
+/**
+ * Validate handler; Verify the user enter the form a valid way.
+ */
+function os_profiles_sync_profile_validate($form, $form_state) {
+  if (empty($form_state['values']['url']) && empty($form_state['values']['autocomplete'])) {
+    form_set_error('', t('You must enter a single source.'));
+  }
+  else if (!empty($form_state['values']['url']) && !empty($form_state['values']['autocomplete'])) {
+    form_set_error('', t("You can't import a profile from two sources."));
+  }
+  else {
+    $headers = get_headers($form_state['values']['url']);
+    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+      form_set_error('url', t('The address your provided is not a Drupal site.'));
+    }
+  }
+}
+
+/**
+ * Submit handler; Importing person profile from external source.
+ */
+function os_profiles_sync_profile_submit($form, $form_state) {
+  if (!empty($form_state['values']['url'])) {
+    $headers = get_headers($form_state['values']['url']);
+
+    foreach ($headers as $header) {
+      if (strpos($header, 'node_json: ') === 0) {
+        $json_address = str_replace('node_json: ', '', $header);
+        break;
+      }
+    }
+
+    if ($json_address) {
+      $request = drupal_http_request($json_address);
+      $data = drupal_json_decode($request->data);
+      $keys = array(
+        'body',
+        'field_first_name',
+        'field_last_name',
+        'field_address',
+        'field_email',
+        'field_middle_name_or_initial',
+        'field_professional_title',
+        'field_website',
+      );
+
+      foreach ($keys as $key) {
+        $values[$key] = $data[$key];
+      }
+
+      $values['type'] = 'person';
+
+      $handler = restws_resource_controller('node');
+      $node = node_load($handler->create($values));
+
+      $params = array(
+        '@title' => $node->title,
+        '@url' => url('node/' . $node->nid),
+      );
+
+      drupal_set_message(t('The person @title has created. You can <a href="@url">visit</a> his page.', $params));
+    }
+    else {
+      form_set_error('url', t('JSON address of the node could not extracted from the URL.'));
+    }
+  }
 }
