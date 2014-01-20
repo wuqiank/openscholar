@@ -33,19 +33,47 @@ function os_profiles_os_app_info() {
 }
 
 /**
+ * Implements hook_menu().
+ */
+function os_profiles_menu() {
+  $items = array();
+
+  $items['people/syc-profiles'] = array(
+    'title' => 'Sync',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_profiles_sync_profile'),
+    'access arguments' => array('create person content'),
+  );
+
+  $items['/people/profile_autocomplete'] = array(
+    'title' => 'Sync',
+    'page callback' => 'os_profile_return_auto_complete',
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function os_profiles_admin_paths() {
+  return array(
+    'people/syc-profiles' => TRUE,
+  );
+}
+
+/**
  * Implements hook_os_entity_view_modes()
  */
 function os_profiles_os_entity_view_modes() {
   return array('node' => array(
-    'person' => array('sidebar_teaser')
+    'person' => array('sidebar_teaser'),
   ));
 }
 
-
 /**
- * Implements hook_process_hook() for node.
- *
- * Enter description here...
+ * Implements hook_process_node().
  */
 function os_profiles_process_node(&$vars) {
   if ($vars['type'] !== 'person') {
@@ -113,7 +141,7 @@ function os_profiles_process_node(&$vars) {
 /**
  * Implements hook_node_presave().
  *
- * Generates node title for Person nodes
+ * Generates node title for Person nodes.
  */
 function os_profiles_node_presave($node) {
   if ($node->type !== 'person') {
@@ -196,3 +224,58 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
   }
 }
 
+/**
+ * Implements hook_os_add_new_links_alter().
+ */
+function os_profiles_os_add_new_links_alter(&$links) {
+  $active = context_active_contexts();
+
+  if (!in_array('profiles_profiles', array_keys($active))) {
+    return;
+  }
+
+  $links['sync'] = array(
+    'title' => t('Sync'),
+    'href' => 'people/syc-profiles',
+  );
+}
+
+/**
+ * Page callback; Allow to user sync profile from external sorce.
+ */
+function os_profiles_sync_profile($form, $form_state) {
+  $form = array();
+
+  $form['autocomplete'] = array(
+    '#type' => 'textfield',
+    '#title' => '',
+    '#description' => t('Search the person by the first or last name.'),
+    '#autocomplete_path' => '/people/profile_autocomplete',
+  );
+
+  $form['or'] = array(
+    '#type' => 'markup',
+    '#markup' => t('<b>OR</b>'),
+  );
+
+  $form['url'] = array(
+    '#type' => 'textfield',
+    '#title' => '',
+    '#description' => t('Enter the URL of the profile from anotehr site.'),
+  );
+
+  return $form;
+}
+
+/**
+ * Page callback; Return auto complete list of people for auto complete field.
+ */
+function os_profile_return_auto_complete($string = '') {
+
+  // todo: Create the list of person node.
+  $people = array(
+    'foo' => 'bar',
+  );
+
+  drupal_json_output($people);
+}
