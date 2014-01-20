@@ -304,15 +304,13 @@ function os_profile_return_auto_complete($string = '') {
     }
   }
 
-  $query
+  $results = $query
     ->condition('n.type', 'person')
     ->condition($db_or)
     ->condition('n.status', NODE_PUBLISHED)
     ->fields('n', array('nid', 'title'))
     ->range(0, 50)
-    ->orderBy('n.nid');
-
-  $results = $query
+    ->orderBy('n.nid')
     ->execute()
     ->fetchAllAssoc('nid');
 
