@@ -38,7 +38,7 @@ function os_profiles_os_app_info() {
 function os_profiles_menu() {
   $items = array();
 
-  $items['people/syc-profiles'] = array(
+  $items['cp/people/syc-profiles'] = array(
     'title' => 'Sync',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_profiles_sync_profile'),
@@ -52,15 +52,6 @@ function os_profiles_menu() {
   );
 
   return $items;
-}
-
-/**
- * Implements hook_admin_paths().
- */
-function os_profiles_admin_paths() {
-  return array(
-    'people/syc-profiles' => TRUE,
-  );
 }
 
 /**
@@ -239,7 +230,7 @@ function os_profiles_os_add_new_links_alter(&$links) {
 
   $links['sync'] = array(
     'title' => t('Sync'),
-    'href' => 'people/syc-profiles',
+    'href' => 'cp/people/syc-profiles',
   );
 }
 
@@ -335,6 +326,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
         'field_first_name',
         'field_last_name',
         'field_address',
+        'field_phone',
         'field_email',
         'field_middle_name_or_initial',
         'field_professional_title',
@@ -342,6 +334,10 @@ function os_profiles_sync_profile_submit($form, $form_state) {
       );
 
       foreach ($keys as $key) {
+        if (empty($data[$key])) {
+          continue;
+        }
+
         $values[$key] = $data[$key];
       }
 
