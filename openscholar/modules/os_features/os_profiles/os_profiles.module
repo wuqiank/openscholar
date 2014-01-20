@@ -273,17 +273,43 @@ function os_profiles_sync_profile($form, $form_state) {
  * Page callback; Return auto complete list of people for auto complete field.
  */
 function os_profile_return_auto_complete($string = '') {
-  // todo: Create the list of person node.
-  $people = array(
-    'foo' => 'bar',
-  );
+  // Get the fields table name,
+  $field_info = field_info_field('field_first_name');
+  $first_name_field = _field_sql_storage_tablename($field_info);
 
-  $query = new EntityFieldQuery();
-  $query
-    ->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'person');
+  $field_info = field_info_field('field_last_name');
+  $last_name_field = _field_sql_storage_tablename($field_info);
 
-  drupal_json_output($people);
+  // Create the DB or condition we'll pass to the query.
+  $db_or = db_or()
+  ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
+  ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
+
+  // Build the SQL query. We using DB select and not EFQ due to lack of support
+  // EFQ has with NULL values.
+  $query = db_select('node', 'n');
+  $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
+  $query->leftJoin($last_name_field, 'last', 'last.entity_id = n.nid');
+  $results = $query
+    ->condition('n.type', 'person')
+    ->condition($db_or)
+    ->fields('n', array('nid', 'title'))
+    ->range(0, 50)
+    ->orderBy('n.nid')
+    ->execute()
+    ->fetchAllAssoc('nid');
+
+  $output = array();
+  foreach ($results as $result) {
+    $params = array(
+      '@title' => $result->title,
+      '@nid' => $result->nid,
+    );
+    $name = format_string('@title (@nid)', $params);
+    $output[$name] = $name;
+  }
+
+  drupal_json_output($output);
 }
 
 /**
