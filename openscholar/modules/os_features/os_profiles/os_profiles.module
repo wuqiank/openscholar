@@ -351,15 +351,6 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
  * Submit handler; Importing person profile from external source.
  */
 function os_profiles_sync_profile_submit($form, $form_state) {
-  if (!empty($form_state['values']['url'])) {
-    $json_address = $form_state['json_address'];
-    $request = drupal_http_request($json_address);
-    $data = drupal_json_decode($request->data);
-  }
-  else {
-    dpm($form_state['values']['autocomplete']);
-    return;
-  }
   $keys = array(
     'body',
     'field_first_name',
@@ -372,12 +363,27 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     'field_website',
   );
 
-  foreach ($keys as $key) {
-    if (empty($data[$key])) {
-      continue;
-    }
+  if (!empty($form_state['values']['url'])) {
+    $json_address = $form_state['json_address'];
+    $request = drupal_http_request($json_address);
+    $data = drupal_json_decode($request->data);
 
-    $values[$key] = $data[$key];
+    foreach ($keys as $key) {
+      if (empty($data[$key])) {
+        continue;
+      }
+
+      $values[$key] = $data[$key];
+    }
+  }
+  else {
+    preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
+    $wrapper = entity_metadata_wrapper('node', $matches[1]);
+    foreach ($keys as $key) {
+      if (isset($wrapper->{$key}) && $value = $wrapper->{$key}->value()) {
+        $values[$key] = $value;
+      }
+    }
   }
 
   $values['type'] = 'person';
