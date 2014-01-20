@@ -282,8 +282,8 @@ function os_profile_return_auto_complete($string = '') {
 
   // Create the DB or condition we'll pass to the query.
   $db_or = db_or()
-  ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
-  ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
+    ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
+    ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
 
   // Build the SQL query. We using DB select and not EFQ due to lack of support
   // EFQ has with NULL values.
