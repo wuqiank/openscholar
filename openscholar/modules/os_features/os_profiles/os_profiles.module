@@ -299,6 +299,8 @@ function os_profile_return_auto_complete($string = '') {
     ->execute()
     ->fetchAllAssoc('nid');
 
+  // todo: Exclude results from the current vsite.
+
   $output = array();
   foreach ($results as $result) {
     $params = array(
@@ -326,30 +328,38 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
     return;
   }
 
-  $headers = get_headers($form_state['values']['url']);
-  if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-    form_set_error('url', t('The address your provided is not a Drupal site.'));
-    return;
-  }
-
-  foreach ($headers as $header) {
-    if (strpos($header, 'node_json: ') === 0) {
-      $form_state['json_address'] = str_replace('node_json: ', '', $header);
+  if (!empty($form_state['values']['url'])) {
+    $headers = get_headers($form_state['values']['url']);
+    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+      form_set_error('url', t('The address your provided is not a Drupal site.'));
       return;
     }
-  }
 
-  // JSON address was not found in the header.
-  form_set_error('url', t('A JSON address was not found in the page headers.'));
+    foreach ($headers as $header) {
+      if (strpos($header, 'node_json: ') === 0) {
+        $form_state['json_address'] = str_replace('node_json: ', '', $header);
+        return;
+      }
+    }
+
+    // JSON address was not found in the header.
+    form_set_error('url', t('A JSON address was not found in the page headers.'));
+  }
 }
 
 /**
  * Submit handler; Importing person profile from external source.
  */
 function os_profiles_sync_profile_submit($form, $form_state) {
-  $json_address = $form_state['json_address'];
-  $request = drupal_http_request($json_address);
-  $data = drupal_json_decode($request->data);
+  if (!empty($form_state['values']['url'])) {
+    $json_address = $form_state['json_address'];
+    $request = drupal_http_request($json_address);
+    $data = drupal_json_decode($request->data);
+  }
+  else {
+    dpm($form_state['values']['autocomplete']);
+    return;
+  }
   $keys = array(
     'body',
     'field_first_name',
