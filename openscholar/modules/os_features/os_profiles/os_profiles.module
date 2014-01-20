@@ -291,9 +291,17 @@ function os_profile_return_auto_complete($string = '') {
   $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
   $query->leftJoin($last_name_field, 'last', 'last.entity_id = n.nid');
 
+  // Exclude results from the current site.
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
     $query->Join('og_membership', 'ogm', 'ogm.etid = n.nid');
     $query->condition('ogm.gid', $vsite->id, '<>');
+
+    // Exclude results of private sites.
+    if ($field = field_info_field(VSITE_ACCESS_FIELD)) {
+      $access_field_table = _field_sql_storage_tablename($field);
+      $query->leftJoin($access_field_table, 'access', 'access.entity_id = ogm.gid');
+      $query->condition('access.group_access_value', VSITE_ACCESS_PUBLIC);
+    }
   }
 
   $query
