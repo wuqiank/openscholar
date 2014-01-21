@@ -25,6 +25,7 @@ class os_sv_list extends os_boxes_default {
       'content_type' => 'all',
       'display' => 'teaser',
       'layout' => 'list',
+      'grid_columns' => 3,
       'more' => FALSE,
       'more_text' => t('More'),
       'more_link' => '',
@@ -99,6 +100,14 @@ class os_sv_list extends os_boxes_default {
           return $ret;
         }, array()),
       ),
+    );
+    
+    $form['content']['grid_columns'] = array(
+      '#type' => 'select',
+      '#title' => 'Columns',
+      '#default_value' => $this->options['grid_columns'],
+      '#options' => drupal_map_assoc(range(2,5)),
+      // #states is inadequate.  see javascript for show/hide rules 
     );
     
     $form['content']['display'] = array(
@@ -273,7 +282,13 @@ class os_sv_list extends os_boxes_default {
     //now render to html.
     $content = drupal_render($render);   
     $delta = $this->delta;   
-    $class = strtolower(implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display'], 'sv-list-layout-' . $this->options['layout'])));
+    $class = strtolower(implode(' ', array(
+      $this->plugin_key, 
+      'sv-list-'.$this->options['content_type'], 
+      'sv-list-view-'.$this->options['display'], 
+      'sv-list-layout-' . $this->options['layout'],
+      'sv-grid-' . $this->options['grid_columns'],
+    )));
     
     $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
     return $block;
@@ -502,15 +517,15 @@ class os_sv_list extends os_boxes_default {
     
       case 'image':
         foreach (element_children($render) as $id) {
-          $render[$id]['file']['file']['#style_name'] = 'os_square_100_100';
+          $render[$id]['file']['file']['#style_name'] = 'os_landscape_320_200';
           if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
             $img = array(
               '#theme' => 'image_style',
-              '#style_name' => 'os_square_100_100',
+              '#style_name' => 'os_landscape_320_200',
               '#attributes' => array(),
               '#path' => $render[$id]['#file']->uri,
-              '#width' => 100,
-              '#height' => 100,
+              '#width' => 320,
+              '#height' => 200,
             );
     
             $elem = ($this->options['display'] == 'os_files_title') ? 'img' : '#text';

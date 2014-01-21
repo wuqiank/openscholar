@@ -73,6 +73,7 @@ features[field_base][] = field_first_name
 features[field_base][] = field_last_name
 features[field_instance][] = user-user-field_first_name
 features[field_instance][] = user-user-field_last_name
+features[image][] = os_landscape_320_200
 features[image][] = os_square_100_100
 features[image][] = os_square_50_50
 features[menu_custom][] = primary-menu

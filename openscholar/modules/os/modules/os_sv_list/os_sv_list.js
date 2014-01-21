@@ -34,6 +34,14 @@
           if ($('.form-item-layout').css('display') == 'none') {
             jQuery('#edit-layout').attr('value', 'List');
           }
+          
+          //show or hide columns
+          if ($(':input:visible[name="layout"][value="Grid"]').length > 0) {
+            $('.form-item-grid-columns').show();
+          } else {
+            $('.form-item-grid-columns').hide();
+            $(':input[name="layout"]').attr('selected', false);
+          }
                   
           //only show the content appropriate display styles
           $display_style.children('option').each(function() {

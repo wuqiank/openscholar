@@ -272,20 +272,25 @@ div.content a.download-link {
     padding-right: 0.5em;
 }
 
-.os_sv_list_file.sv-list-layout-grid > div.file {
-  vertical-align: top;
-  width: 200px;
-}
-
 .os_sv_list_file.sv-list-layout-grid img {
 margin-bottom: 8px !important;
 }
 
-
-
 #content-column .sv-list-layout-grid .file {
     border-bottom: none !important;
 }
+
+
+.os_sv_list_file.sv-list-layout-grid > div.file {
+  vertical-align: top;
+}
+
+.sv-list-layout-grid.sv-grid-2 >.file {width: 48%;}
+.sv-list-layout-grid.sv-grid-3 >.file {width: 31%;}
+.sv-list-layout-grid.sv-grid-4 >.file {width: 23%;}
+.sv-list-layout-grid.sv-grid-5 >.file {width: 18%;}
+
+
 
 
 p {
