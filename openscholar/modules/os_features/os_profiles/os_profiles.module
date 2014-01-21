@@ -534,3 +534,19 @@ function _os_profiles_get_display_style_example() {
 
   return $node;
 }
+
+function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
+  if ($_GET['q'] != 'people') {
+    return;
+  }
+
+  if (!isset($context['entity']->view)) {
+    return;
+  }
+
+  if ($context['entity']->view->name != 'os_profiles') {
+    return;
+  }
+
+  $view_mode = 'sidebar_teaser';
+}
