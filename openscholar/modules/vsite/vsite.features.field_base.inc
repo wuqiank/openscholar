@@ -281,7 +281,10 @@ function vsite_field_default_field_bases() {
     'module' => 'list',
     'no_ui' => TRUE,
     'settings' => array(
-      'allowed_values' => array(),
+      'allowed_values' => array(
+        0 => t('Public - accessible to all site users'),
+        1 => t('Private - accessible only to group members'),
+      ),
       'allowed_values_function' => 'vsite_access_privacy_available_values',
     ),
     'translatable' => 0,
