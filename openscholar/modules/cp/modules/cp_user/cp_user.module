@@ -253,26 +253,19 @@ function cp_user_og_ui_admin_permissions($variables) {
   // Only CRUD permissions should be displayed in the UI. Create an array of
   // the allowed permissions so we can filter the list by it.
   $allowed_permissions = array();
-  $permissions_by_app = array();
-  $permissions_to_app = array();
-  foreach (os_get_bundles(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $type => $name) {
-    $permissions = og_list_permissions($type);
+
+  $category_titles = array();
+  $permissions_category = array();
+  foreach (os_get_bundles(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $category => $title) {
+    $permissions = og_list_permissions($category);
     $allowed_permissions = array_merge($allowed_permissions, $permissions);
-    $permissions_by_app[$type] = array(
-      'name' => $name,
-      'permissions' => $permissions,
-    );
+    $category_titles[$category] = $title;
+
     foreach (array_keys($permissions) as $permission) {
-      if (empty($permissions_to_app[$permission])) {
-        $permissions_to_app[$permission] = $type;
-      }
-      else {
-        echo "what ?";
-        exit;
-        // @todo: error - same permission is several apps
-      }
+      $permissions_category[$permission] = $category;
     }
   }
+
   $allowed_permissions = array_keys($allowed_permissions);
   // In addition to CRUD permissions, the permission 'Change theme' is the only
   // non-CRUD permission that should be displayed on the list.
@@ -323,33 +316,33 @@ function cp_user_og_ui_admin_permissions($variables) {
       $form['checkboxes'][$rid][$key]['#title_display'] = 'invisible';
       $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$key]), 'class' => array('checkbox'));
     }
-    $category = 'general';
 
-    if (!empty($permissions_to_app[$key])) {
-      $category = $permissions_to_app[$key];
+    // Add category title row
+    $category = 'general';
+    if (!empty($permissions_category[$key])) {
+      $category = $permissions_category[$key];
+    }
+    if (empty($rows_per_type[$category])) {
+      $title = t('General permissions');
+      if (!empty($category_titles[$category])) {
+        $title = t('Application: @app', array('@app' => $category_titles[$category]));
+      }
+      $rows_per_type[$category][] = array(
+        '0' => array(
+          'data' => $title,
+          // Using "checkbox" class as it centerlize the title, and already in
+          // use.
+          'class'=> array('0' => 'checkbox'),
+        ),
+      );
     }
     $rows_per_type[$category][] = $row;
-    $rows[] = $row;
-    /*
-    $rows[] = array(
-      '0' => array(
-        'data' => 'hello world',
-        'class'=> array('0' => 'checkbox'),
-      ),
-      '1' => array(
-        'data' => 'hello world',
-        'class'=> array('0' => 'checkbox'),
-      ),
-      '2' => array(
-        'data' => 'hello world',
-        'class'=> array('0' => 'checkbox'),
-      ),
-      '3' => array(
-        'data' => 'hello world',
-        'class'=> array('0' => 'checkbox'),
-      ),
-    );
-*/
+  }
+  $rows = array();
+  foreach ($rows_per_type as $category) {
+    foreach ($category as $row) {
+      $rows[] = $row;
+    }
   }
   $header[] = (t('Permission'));
   foreach (element_children($form['role_names']) as $rid) {
