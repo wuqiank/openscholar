@@ -203,12 +203,50 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
  * when viewing people's profiles.
  */
 function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
-  // Form element to disable the use of a default image.
-  $form['os_profiles_disable_default_image'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Disable default image for people profiles'),
-    '#default_value' => variable_get('os_profiles_disable_default_image', FALSE),
-    '#description' => t('If checked no image will be used when viewing the "/people" page.'),
+  if ($form['#feature'] != 'os_profiles') {
+    return;
+  }
+
+  $profile_styles = array(
+    'title' => 'Title',
+    'teaser' => 'Teaser',
+    'sidebar teaser' => 'Sidebar teaser',
+    'no image teaser' => 'No image teaser',
+  );
+
+  $profile_styles_hover = array();
+  $counter = 0;
+  foreach($profile_styles as $style => $name) {
+    $counter ++;
+    // Setup the new citation options to be wrapped for a popup.
+    $profile_example_link = '<a href="#" class="profile-pop" data-popbox="pop'.$counter.'">' . t('@link_name', array('@link_name' => $name)) . '</a>';
+    // Setup the h2.
+    $profile_example_title = '<h2>' . t($name) . '</h2>';
+    // Setup profile style example for the popup.
+//    $profile_example = 'test text';
+    $profile_example = _os_profiles_build_display_style_example($style);
+    $profile_example_text = '<p>' . t('!profile_text', array('!profile_text' => $profile_example)) . '</p>';
+    // Concat it all together.
+    $profile_example_output = $profile_example_link . '<div id="pop'.$counter.'" class="stylebox">' . $profile_example_title . $profile_example_text . '</div>';
+    $profile_styles_hover[$style] = $profile_example_output;
+  }
+
+  // Form element to choose display type.
+  $form['os_profiles_display_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Display Types'),
+    '#default_value' => 'teaser',
+    '#options' => $profile_styles_hover,
+    '#description' => t('Choose the display type of a person in the "/people" page.'),
+    '#weight' => -999,
+    '#attached' => array(
+      'css' => array(
+        drupal_get_path('module', 'os_profiles') . '/misc/os_profiles_settings.css',
+      ),
+      'js' => array(
+        drupal_get_path('module', 'os_profiles') . '/misc/os_profiles_settings_hover.js',
+      )
+    ),
   );
 
   // Get properties of the image if there's a default image.
@@ -253,7 +291,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
         )
       ),
     ),
-    '#weight' => 99,
+    '#weight' => -99,
   );
 
   if (module_exists('vsite') && $space = spaces_get_space()) {
@@ -465,4 +503,34 @@ function os_profiles_default_image_submit($form, $form_state) {
   else {
     variable_set('os_profiles_default_image_file', 0);
   }
+}
+
+function _os_profiles_build_display_style_example($style) {
+  $node = _os_profiles_get_display_style_example();
+
+  return _os_profiles_theme_display_style(array('style_name' => $style, 'node' => $node));
+}
+
+function _os_profiles_theme_display_style($variables) {
+  // @todo: return styled node for popup over display style.
+}
+
+/**
+ * Return a pre-built node for an example citation.
+ */
+function _os_profiles_get_display_style_example() {
+  // Profile for example.
+  $node = new stdClass();
+  $node->type = 'person';
+
+  $wrapper = entity_metadata_wrapper('node', $node);
+
+  $wrapper->field_first_name->set('John');
+  $wrapper->field_middle_name_or_initial->set('Fitzgerald');
+  $wrapper->field_last_name->set('Kennedy');
+  $wrapper->field_professional_title->set(array('The 35th president of the United States'));
+  $wrapper->body->set(array('value' => 'Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.'));
+  $wrapper->field_phone->set('555-1234');
+
+  return $node;
 }
