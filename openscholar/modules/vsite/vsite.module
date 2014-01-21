@@ -2283,30 +2283,47 @@ function vsite_mollom_form_info($form_id){
 }
 
 /**
- * Implements hook_preprocess_html().
+ * Implements hook_preprocess_HOOK() for html.tpl.php.
+ *
  * Set the head_title to the vsite name rather than the site_name, if in a vsite.
  */
 function vsite_preprocess_html(&$vars){
-  $spaces = spaces_get_space();
-  if (isset($spaces)) {
-    $vsite_title = isset($spaces->group->title) ? $spaces->group->title : variable_get('site_name');
-
-    // Check for the frontpage.
-    if (drupal_is_front_page()) {
-      $head_title = array(
-        $vsite_title
-      );
-    }
-    else {
-      $head_title = array(
-        strip_tags(drupal_get_title()),
-        $vsite_title
-      );
-    }
-
-    // Set the new page 'head' title.
-    $vars['head_title'] = implode(' | ', $head_title);
+  if (!$space = spaces_get_space()) {
+    return;
   }
+
+  // Adds the current page title, unless we are on the front page.
+  $title_parts = array();
+  if (!drupal_is_front_page()) {
+    $title_parts[] = strip_tags(drupal_get_title());
+  }
+
+  // Adds the vsite name to the head title, instead of sitewide site_name.
+  $vsite_title = variable_get('site_name', '');
+  if (isset($space->group->title)) {
+    $vsite_title = $space->group->title;
+  }
+  $title_parts[] = $vsite_title;
+
+  // Set the new page 'head' title.
+  $vars['head_title'] = implode(' | ', $title_parts);
+
+  // Exits if this vsite doesn't provide a custom favicon file.
+  $vsite = vsite_get_vsite();
+  $items = field_get_items('node', $vsite->group, 'field_favicon');
+  if (empty($items)) {
+    return;
+  }
+
+  // Exits if the custom image can't be found.
+  $uri = $items[0]['uri'];
+  if (!file_exists($uri)) {
+    return;
+  }
+
+  $favicon = file_create_url($uri);
+  $type = theme_get_setting('favicon_mimetype');
+  drupal_add_html_head_link(array('rel' => 'shortcut icon', 'href' => drupal_strip_dangerous_protocols($favicon), 'type' => $type));
 }
 
 /**
