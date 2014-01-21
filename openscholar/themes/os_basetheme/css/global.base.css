@@ -285,12 +285,14 @@ margin-bottom: 8px !important;
   vertical-align: top;
 }
 
-.sv-list-layout-grid.sv-grid-2 >.file {width: 48%;}
-.sv-list-layout-grid.sv-grid-3 >.file {width: 31%;}
-.sv-list-layout-grid.sv-grid-4 >.file {width: 23%;}
-.sv-list-layout-grid.sv-grid-5 >.file {width: 18%;}
+.sv-list-layout-grid.sv-grid-2 >.file, .sv-list-layout-grid.sv-grid-2 >.oembed {width: 48%;}
+.sv-list-layout-grid.sv-grid-3 >.file, .sv-list-layout-grid.sv-grid-3 >.oembed {width: 31%;}
+.sv-list-layout-grid.sv-grid-4 >.file, .sv-list-layout-grid.sv-grid-4 >.oembed {width: 23%;}
+.sv-list-layout-grid.sv-grid-5 >.file, .sv-list-layout-grid.sv-grid-5 >.oembed {width: 18%;}
 
-
+.sv-list-video.sv-list-layout-grid img {
+  width: 100%;
+}
 
 
 p {

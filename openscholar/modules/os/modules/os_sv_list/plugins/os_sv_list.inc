@@ -546,13 +546,12 @@ class os_sv_list extends os_boxes_default {
             $render[$id]['file']['file']['#style_name'] = 'os_landscape_320_200';
           }
         }
-        dpm($render);
         break;
     
       case 'video':
         foreach (element_children($render) as $id) {
           if (!isset($render[$id]['file']['video_thumb'])) {
-            array_unshift($render[$id]['file'], _os_files_video_thumb($render[$id]['#file'], 200, 200));
+            array_unshift($render[$id]['file'], _os_files_video_thumb($render[$id]['#file']));
     
             if ($this->options['display'] == 'os_files_thumbnail') {
               unset($render[$id]['file']['file-info']);
