@@ -519,7 +519,6 @@ class os_sv_list extends os_boxes_default {
     
       case 'image':
         foreach (element_children($render) as $id) {
-          $render[$id]['file']['file']['#style_name'] = 'os_landscape_320_200';
           if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
             $img = array(
               '#theme' => 'image_style',
@@ -530,11 +529,24 @@ class os_sv_list extends os_boxes_default {
               '#height' => 200,
             );
     
-            $elem = ($this->options['display'] == 'os_files_title') ? 'img' : '#text';
-            $img = ($this->options['display'] == 'os_files_thumbnail') ? render($img) : $img;
-            $render[$id]['file']['file-info'][$elem] = $img;
+            $link = array(
+              '#theme' => 'link',
+              '#text' => render($img),
+              '#path' => 'file/' . $render[$id]['#file']->fid,
+              '#options' => array('attributes' => array(), 'html' => TRUE),
+            );
+            
+
+           array_unshift($render[$id]['file'], $link);
+           if ($this->options['display'] == 'os_files_thumbnail') {
+             unset($render[$id]['file']['file-info']);
+           }
+            
+          } else {
+            $render[$id]['file']['file']['#style_name'] = 'os_landscape_320_200';
           }
         }
+        dpm($render);
         break;
     
       case 'video':
