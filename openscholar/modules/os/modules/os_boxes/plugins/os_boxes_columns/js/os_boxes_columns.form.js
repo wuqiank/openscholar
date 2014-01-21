@@ -76,9 +76,9 @@
     var hidden = $('.region:hidden .cp-layout-widget');
     if (hidden.length) {
       hidden.each(function () {
-        $(this).remove().appendTo('#unused-widgets');
+        $(this).remove().appendTo('#edit-widgets');
       })
-      $('#unused-widgets, .region:hidden').sortable('refresh');
+      $('#edit-widgets, .region:hidden').sortable('refresh');
     }
   }
 

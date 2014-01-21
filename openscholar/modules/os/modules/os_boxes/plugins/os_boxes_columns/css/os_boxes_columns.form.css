@@ -17,7 +17,8 @@
 
 #edit-num-cols input,
 #edit-layout input {
-  display: none;
+  position: absolute;
+  left: -999em;
 }
 
 #edit-num-cols label {
@@ -83,7 +84,7 @@
 
 .cp-layout-widget {
   display: block;
-  width: 163px;
+  width: 90%;
   width: calc(100% - 37px);
   height: 20px;
   padding: 5px 0 5px 35px;
@@ -105,7 +106,7 @@
   bottom: 0;
   background-color: white;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 30px 30px;
   background-image: url('../images/widget-bg.png');
 }
 
@@ -134,6 +135,7 @@
 .region .cp-layout-widget {
   border: 0;
   border-bottom: 1px solid #8996A0;
+  width: 75%;
   width: calc(100% - 35px);
   margin-bottom: 0;
 }
@@ -150,14 +152,14 @@
 
 #edit-regions.two-33-66 #region-1-container,
 #edit-regions.two-66-33 #region-2-container {
-  width: 33%;
+  width: 32%;
   width: calc(33% - 4px);
   display: block;
 }
 
 #edit-regions.two-33-66 #region-2-container,
 #edit-regions.two-66-33 #region-1-container {
-  width: 66%;
+  width: 65%;
   width: calc(67% - 4px);
   display: block;
 }
