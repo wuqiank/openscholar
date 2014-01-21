@@ -17,7 +17,7 @@
 
 #edit-num-cols label {
   width: 7em;
-  border: 1px solid black;
+  border: 1px solid #8996A0;
   color: darkslategrey;
   background-color: #a9a9a9;;
   border-top-left-radius: 5px;
@@ -33,7 +33,7 @@
 
 #edit-layout {
   width: 60%;
-  border: 1px solid black;
+  border: 1px solid #8996A0;
   padding: 2em;
   background-color: #d3d3d3;
 }
@@ -47,7 +47,9 @@
   display: inline-block;
   width: 4em;
   height: 4em;
-  background: url('') red;
+  background: url('../images/cols_inline.jpg') red;
+  background-position: 0 0;
+  background-size: 100%;
 }
 
 /**
@@ -59,7 +61,7 @@
   height: 590px;
   float: left;
   background-color: #d3d3d3;
-  border: 1px solid black;
+  border: 1px solid #8996A0;
   padding: 5px;
   margin-top: 10px;
   margin-right: 10px;
@@ -80,7 +82,7 @@
   width: calc(100% - 37px);
   height: 20px;
   padding: 5px 0 5px 35px;
-  border: 1px solid black;
+  border: 1px solid #8996A0;
   background-color: #eeeeee;
   margin-bottom: -1px;
   text-overflow: ellipsis;
@@ -112,17 +114,22 @@
   height: 600px;
   clear: right;
   margin-top: 10px;
-  border: 1px solid black;
+  border: 1px solid #8996A0;
   background-color: #d3d3d3;
 }
 
 .region {
-  border: 1px solid darkslategrey;
+  border: 1px solid #8996A0;
   background-color: #dddddd;
   height: calc(100% - 50px);
   padding-bottom: 50px;
   display: none;
   float: left;
+}
+
+.region .cp-layout-widget {
+  border: 0;
+  border-bottom-width: 1px;
 }
 
 /**
