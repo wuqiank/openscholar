@@ -264,47 +264,13 @@ class os_sv_list extends os_boxes_default {
       $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
     }
     
-    if ($this->options['layout'] == 'Grid') {
-      //fix the thumbnail for our grid.  
-      switch ($this->options['content_type']) {
-        
-        case 'image':
-          foreach (element_children($render) as $id) {
-            $render[$id]['file']['file']['#style_name'] = 'os_square_100_100'; 
-            if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
-              $img = array(
-                '#theme' => 'image_style',
-                '#style_name' => 'os_square_100_100',
-                '#attributes' => array(),
-                '#path' => $render[$id]['#file']->uri,
-                '#width' => 100,
-                '#height' => 100,
-              );
-              
-              $elem = ($this->options['display'] == 'os_files_title') ? 'img' : '#text';
-              $img = ($this->options['display'] == 'os_files_thumbnail') ? render($img) : $img;
-              $render[$id]['file']['file-info'][$elem] = $img;
-            }
-          }
-          break;
-          
-        case 'video':
-          //good: teaser, title
-          foreach (element_children($render) as $id) {
-            if (!isset($render[$id]['file']['video_thumb'])) {
-              array_unshift($render[$id]['file'], _os_files_video_thumb($render[$id]['#file'], 200, 200));
-              
-              if ($this->options['display'] == 'os_files_thumbnail') {
-                unset($render[$id]['file']['file-info']);
-              }
-            }
-          }
-          break;
-      }
+    
+    $layout_func = 'layout_' . $this->options['layout'];    
+    if ($this->options['layout'] != 'List' && method_exists($this, $layout_func)) {
+      $this->$layout_func($render);
     }
     
     //now render to html.
-    dpm($render);
     $content = drupal_render($render);   
     $delta = $this->delta;   
     $class = strtolower(implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display'], 'sv-list-layout-' . $this->options['layout'])));
@@ -478,38 +444,8 @@ class os_sv_list extends os_boxes_default {
    * Returns hash of sort options and their labels
    */
   protected function _sort_options() {
-    
-//     $type_sorts = array();
-//     $sorts = array();
-//     foreach ($this->_plugins_invoke('register_sorts') as $plugin => $sort) {
-//       $info = $this->plugins[$plugin];
-//       $sorts += $sort;
-//       $types = ($info['entity_type']) ? $info['entity_type'] : array('all');
-//       $bundles = ($info['bundle']) ? $info['bundle'] : array('all');
-      
-//       foreach ($types as $type) {          
-//         foreach ($bundles as $bundle) {
-//           $type_sorts[$type][$bundle] = (!isset($type_sorts[$type][$bundle])) ? $sort : array_merge($type_sorts[$type][$bundle], $sort); 
-//         } 
-//       }
-      
-//     }
-    $sorts = array_reduce($this->_plugins_invoke('register_sorts'), 'array_merge', array());
-    
+    $sorts = array_reduce($this->_plugins_invoke('register_sorts'), 'array_merge', array());    
     return $sorts;
-//     return array(
-//       // Content type sensitive sorts.  // in the future get these from sv render plugins
-//       'sort_event' => t('Event Date'),
-//       'sort_presentation' => t('Recently Presented'),
-//       'sort_biblio' => t('Year of Publication'),
-//       'sort_news' => t('News Date'),
-    
-//       // Standard sorts,
-//       'sort_newest' => t('Newest Post'),
-//       'sort_oldest' => t('Oldest Post'),
-//       'sort_alpha' => t('Alphabetical'),
-//       'sort_random' => t('Random'),
-//     );
   }
   
   /**
@@ -532,6 +468,11 @@ class os_sv_list extends os_boxes_default {
     $efq->addTag('random');
   }
   
+  /**
+   * @function display_title
+   *
+   * Just show each entity's title.
+   */
   function display_title($entities) {
     $info = entity_get_info($this->entity_type);
     $id = $info['entity keys']['id'];
@@ -550,4 +491,46 @@ class os_sv_list extends os_boxes_default {
       '#attributes' => array(),
     );
   }
+  
+  /**
+   * @function layout_grid
+   * 
+   * Switches to grid layout.  
+   */
+  function layout_grid(&$render) {
+    switch ($this->options['content_type']) {
+    
+      case 'image':
+        foreach (element_children($render) as $id) {
+          $render[$id]['file']['file']['#style_name'] = 'os_square_100_100';
+          if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
+            $img = array(
+              '#theme' => 'image_style',
+              '#style_name' => 'os_square_100_100',
+              '#attributes' => array(),
+              '#path' => $render[$id]['#file']->uri,
+              '#width' => 100,
+              '#height' => 100,
+            );
+    
+            $elem = ($this->options['display'] == 'os_files_title') ? 'img' : '#text';
+            $img = ($this->options['display'] == 'os_files_thumbnail') ? render($img) : $img;
+            $render[$id]['file']['file-info'][$elem] = $img;
+          }
+        }
+        break;
+    
+      case 'video':
+        foreach (element_children($render) as $id) {
+          if (!isset($render[$id]['file']['video_thumb'])) {
+            array_unshift($render[$id]['file'], _os_files_video_thumb($render[$id]['#file'], 200, 200));
+    
+            if ($this->options['display'] == 'os_files_thumbnail') {
+              unset($render[$id]['file']['file-info']);
+            }
+          }
+        }
+        break;
+    }
+  }  
 }
