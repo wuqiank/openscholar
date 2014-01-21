@@ -92,6 +92,8 @@ function iqss_projects_front_default_box() {
   );
   $export['iqss_projects_fp_features'] = $box;
 
+  $image = theme('image', array('path' => drupal_get_path('theme', 'projects_harvard') . '/images/projects-at-harvard-logo.png'));
+
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
@@ -101,7 +103,7 @@ function iqss_projects_front_default_box() {
   $box->description = 'Projects Logo';
   $box->options = array(
     'body' => array(
-      'value' => '<a href="http://projects.iq.harvard.edu/"><img src="/profiles/openscholar/themes/custom/projects_harvard/images/projects-at-harvard-logo.png"></a>',
+      'value' => l($image, 'http://projects.iq.harvard.edu/', array('html' => TRUE)),
       'format' => 'filtered_html',
     ),
     'additional_classes' => '',
