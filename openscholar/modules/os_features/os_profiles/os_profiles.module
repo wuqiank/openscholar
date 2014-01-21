@@ -16,8 +16,8 @@ function os_profiles_os_app_info() {
 
   $apps['os_profiles'] = array(
     'path' => 'people',
-  	'nodetypes' => array(
-  	  'person',
+    'nodetypes' => array(
+      'person',
     ),
     'views tabs' => array(
       'os_profiles' => array('page'),
@@ -45,7 +45,7 @@ function os_profiles_menu() {
     'access arguments' => array('create person content'),
   );
 
-  $items['/people/profile_autocomplete'] = array(
+  $items['people/profile_autocomplete'] = array(
     'title' => 'Sync',
     'page callback' => 'os_profile_return_auto_complete',
     'access arguments' => array('access content'),
@@ -55,7 +55,7 @@ function os_profiles_menu() {
 }
 
 /**
- * Implements hook_os_entity_view_modes()
+ * Implements hook_os_entity_view_modes().
  */
 function os_profiles_os_entity_view_modes() {
   return array('node' => array(
@@ -76,7 +76,7 @@ function os_profiles_process_node(&$vars) {
 
   // Helps poor theme developers find these changes to $variables
   $vars['classes'] .= ' modified-in-os_profiles_process_node';
-  
+
   // Moves the profile photo thumbnail before teaser title (full name)
   if (isset($vars['content']['field_person_photo'])) {
     $vars['title_prefix'] += $vars['content']['field_person_photo'];
@@ -222,6 +222,10 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
  * Implements hook_os_add_new_links_alter().
  */
 function os_profiles_os_add_new_links_alter(&$links) {
+  // In order to display the syc button in the profile page and profiles node
+  // pages we'll use context. The people context will be available in the node
+  // pages and people page and this will help us by not using the menu_get_item
+  // and menu_get_object functions.
   $active = context_active_contexts();
 
   if (!in_array('profiles_profiles', array_keys($active))) {
@@ -235,7 +239,7 @@ function os_profiles_os_add_new_links_alter(&$links) {
 }
 
 /**
- * Page callback; Allow to user sync profile from external sorce.
+ * Page callback; Allow user to sync profile from external source.
  */
 function os_profiles_sync_profile($form, $form_state) {
   $form = array();
@@ -244,7 +248,7 @@ function os_profiles_sync_profile($form, $form_state) {
     '#type' => 'textfield',
     '#title' => '',
     '#description' => t('Search the person by the first or last name.'),
-    '#autocomplete_path' => '/people/profile_autocomplete',
+    '#autocomplete_path' => 'people/profile_autocomplete',
   );
 
   $form['or'] = array(
@@ -285,7 +289,7 @@ function os_profile_return_auto_complete($string = '') {
     ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
     ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
 
-  // Build the SQL query. We using DB select and not EFQ due to lack of support
+  // Build the SQL query. We usק DB select and not EFQ due to lack of support
   // EFQ has with NULL values.
   $query = db_select('node', 'n');
   $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
@@ -293,7 +297,7 @@ function os_profile_return_auto_complete($string = '') {
 
   // Exclude results from the current site.
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
-    $query->Join('og_membership', 'ogm', 'ogm.etid = n.nid');
+    $query->join('og_membership', 'ogm', 'ogm.etid = n.nid');
     $query->condition('ogm.gid', $vsite->id, '<>');
 
     // Exclude results of private sites.
@@ -309,7 +313,7 @@ function os_profile_return_auto_complete($string = '') {
     ->condition($db_or)
     ->condition('n.status', NODE_PUBLISHED)
     ->fields('n', array('nid', 'title'))
-    ->range(0, 50)
+    ->range(0, 25)
     ->orderBy('n.nid')
     ->execute()
     ->fetchAllAssoc('nid');
@@ -344,7 +348,7 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
   if (!empty($form_state['values']['url'])) {
     $headers = get_headers($form_state['values']['url']);
     if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      form_set_error('url', t('The address your provided is not a Drupal site.'));
+      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
       return;
     }
 
@@ -356,7 +360,7 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
     }
 
     // JSON address was not found in the header.
-    form_set_error('url', t('A JSON address was not found in the page headers.'));
+    form_set_error('url', t('Make sure you have an updated OpenScholar installation.'));
   }
 }
 
@@ -409,5 +413,5 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     '@url' => url('node/' . $node->nid),
   );
 
-  drupal_set_message(t('The person @title has created. You can <a href="@url">visit</a> his page.', $params));
+  drupal_set_message(t('The person @title has created. You can <a href="@url">visit</a> their page.', $params));
 }
