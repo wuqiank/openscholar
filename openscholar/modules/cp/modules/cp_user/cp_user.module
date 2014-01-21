@@ -254,15 +254,16 @@ function cp_user_og_ui_admin_permissions($variables) {
   // the allowed permissions so we can filter the list by it.
   $allowed_permissions = array();
 
-  $category_titles = array();
   $permissions_category = array();
-  foreach (os_get_bundles(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $category => $title) {
-    $permissions = og_list_permissions($category);
-    $allowed_permissions = array_merge($allowed_permissions, $permissions);
-    $category_titles[$category] = $title;
 
-    foreach (array_keys($permissions) as $permission) {
-      $permissions_category[$permission] = $category;
+  foreach (os_get_content_types_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $content_types) {
+    foreach ($content_types as $content_type => $title) {
+      $permissions = og_list_permissions($content_type);
+      $allowed_permissions = array_merge($allowed_permissions, $permissions);
+
+      foreach (array_keys($permissions) as $permission) {
+        $permissions_category[$permission] = $app_name;
+      }
     }
   }
 
@@ -270,6 +271,8 @@ function cp_user_og_ui_admin_permissions($variables) {
   // In addition to CRUD permissions, the permission 'Change theme' is the only
   // non-CRUD permission that should be displayed on the list.
   $allowed_permissions[] = 'change theme';
+
+  $spaces_features = spaces_features();
 
   $rows_per_type = array();
   foreach (element_children($form['permission']) as $key) {
@@ -324,8 +327,9 @@ function cp_user_og_ui_admin_permissions($variables) {
     }
     if (empty($rows_per_type[$category])) {
       $title = t('General permissions');
-      if (!empty($category_titles[$category])) {
-        $title = t('Application: @app', array('@app' => $category_titles[$category]));
+
+      if (!empty($spaces_features[$category])) {
+        $title = t('Application: @app', array('@app' => $spaces_features[$category]->info['name']));
       }
       $rows_per_type[$category][] = array(
         '0' => array(
