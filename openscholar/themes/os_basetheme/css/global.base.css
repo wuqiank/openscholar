@@ -268,20 +268,23 @@ div.content a.download-link {
 
 	/** SV LIST GRID VIEW **/
 .os_sv_list_file.sv-list-layout-grid > div {
-  float: left;
-  padding-left: .25em;
-	display: inline-block !important;
-	clear: none !important;
+  display: inline-block !important;
+    padding-right: 0.5em;
 }
 
 .os_sv_list_file.sv-list-layout-grid > div.file {
+  vertical-align: top;
   width: 200px;
-  overflow: hidden;
-
 }
 
 .os_sv_list_file.sv-list-layout-grid img {
+margin-bottom: 8px !important;
+}
 
+
+
+#content-column .sv-list-layout-grid .file {
+    border-bottom: none !important;
 }
 
 
