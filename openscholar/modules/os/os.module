@@ -1252,8 +1252,10 @@ function os_system_info_alter(&$info, $file, $type) {
   // If the base theme for this theme is 'os_basetheme' or if the is a 'vsite'
   // theme add the default regions.
   if ((isset($info['base theme']) && $info['base theme'] == 'os_basetheme') || (isset($info['os']['theme_type']) && $info['os']['theme_type'] == 'vsite')) {
+    // If the theme does not provide a favicon in its root folder...
     if (!file_exists(dirname($file->filename) . '/favicon.ico')) {
-      $info['settings']['favicon_path'] = drupal_get_path('theme', 'os_basetheme').'/favicon.ico';
+      // Saves the default "OS" favicon as the custom icon path.
+      $info['settings']['favicon_path'] = drupal_get_path('theme', 'os_basetheme') . '/favicon.ico';
       $info['settings']['default_favicon'] = 0;
     }
 
