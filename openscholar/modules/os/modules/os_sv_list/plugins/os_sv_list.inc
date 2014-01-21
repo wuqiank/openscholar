@@ -270,7 +270,7 @@ class os_sv_list extends os_boxes_default {
         
         case 'image':
           foreach (element_children($render) as $id) {
-            $render[$id]['file']['file']['#style_name'] = 'os_square_100_100'; //teaser, thumb
+            $render[$id]['file']['file']['#style_name'] = 'os_square_100_100'; 
             if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
               $img = array(
                 '#theme' => 'image_style',
@@ -283,12 +283,22 @@ class os_sv_list extends os_boxes_default {
               
               $elem = ($this->options['display'] == 'os_files_title') ? 'img' : '#text';
               $img = ($this->options['display'] == 'os_files_thumbnail') ? render($img) : $img;
-              $render[$id]['file']['file-info'][$elem] = $img; //does thumb need rednered?
+              $render[$id]['file']['file-info'][$elem] = $img;
             }
           }
           break;
           
         case 'video':
+          //good: teaser, title
+          foreach (element_children($render) as $id) {
+            if (!isset($render[$id]['file']['video_thumb'])) {
+              array_unshift($render[$id]['file'], _os_files_video_thumb($render[$id]['#file'], 200, 200));
+              
+              if ($this->options['display'] == 'os_files_thumbnail') {
+                unset($render[$id]['file']['file-info']);
+              }
+            }
+          }
           break;
       }
     }
