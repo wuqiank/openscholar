@@ -155,7 +155,6 @@ class os_boxes_columns extends os_boxes_default {
     module_load_include('module', 'block', 'block');
 
     $block = parent::render();
-    unset($block['title']);   // having a title here would just be weird
     $page = array();
     $layout = $this->options['layout'];
     $blocks = array();
