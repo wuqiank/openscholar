@@ -2,6 +2,11 @@
 /**
  * Styles for the Layout Selection form
  */
+#boxes-box-form {
+  position: relative;
+  overflow: auto;
+}
+
 #edit-num-cols {
   padding: 0.23em 0;
 }
