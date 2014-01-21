@@ -114,8 +114,6 @@
   height: 600px;
   clear: right;
   margin-top: 10px;
-  border: 1px solid #8996A0;
-  background-color: #d3d3d3;
 }
 
 .region {
@@ -125,11 +123,14 @@
   padding-bottom: 50px;
   display: none;
   float: left;
+  margin-right: 2px;
 }
 
 .region .cp-layout-widget {
   border: 0;
-  border-bottom-width: 1px;
+  border-bottom: 1px solid #8996A0;
+  width: calc(100% - 35px);
+  margin-bottom: 0;
 }
 
 /**
@@ -138,21 +139,21 @@
 #edit-regions.two-2x50 #region-1-container,
 #edit-regions.two-2x50 #region-2-container {
   width: 49%;
-  width: calc(50% - 2px);
+  width: calc(50% - 4px);
   display: block;
 }
 
 #edit-regions.two-33-66 #region-1-container,
 #edit-regions.two-66-33 #region-2-container {
   width: 33%;
-  width: calc(33% - 2px);
+  width: calc(33% - 4px);
   display: block;
 }
 
 #edit-regions.two-33-66 #region-2-container,
 #edit-regions.two-66-33 #region-1-container {
   width: 66%;
-  width: calc(67% - 2px);
+  width: calc(67% - 4px);
   display: block;
 }
 
@@ -163,7 +164,7 @@
 #edit-regions.three-3x33 #region-2-container,
 #edit-regions.three-3x33 #region-3-container {
   width: 32%;
-  width: calc(100% / 3 - 2px);
+  width: calc(100% / 3 - 4px);
   display: block;
 }
 
@@ -174,7 +175,7 @@
 #edit-regions.three-50-25-25 #region-2-container,
 #edit-regions.three-50-25-25 #region-3-container {
   width: 24%;
-  width: calc(25% - 2px);
+  width: calc(25% - 4px);
   display: block;
 }
 
@@ -182,7 +183,7 @@
 #edit-regions.three-25-50-25 #region-2-container,
 #edit-regions.three-50-25-25 #region-1-container {
   width: 49%;
-  width: calc(50% - 2px);
+  width: calc(50% - 4px);
   display: block;
 }
 
@@ -194,7 +195,7 @@
 #edit-regions.four-4x25 #region-3-container,
 #edit-regions.four-4x25 #region-4-container {
   width: 24%;
-  width: calc(25% - 2px);
+  width: calc(25% - 4px);
   display: block;
 }
 
@@ -207,17 +208,13 @@
 #edit-regions.five-5x20 #region-4-container,
 #edit-regions.five-5x20 #region-5-container {
   width: 19%;
-  width: calc(20% - 2px);
+  width: calc(20% - 4px);
   display: block;
 }
 
 /**
  * Misc.
  */
-
-.form-item-title {
-  display: none;
-}
 
 #edit-submit {
   clear: left;
