@@ -29,6 +29,27 @@ define('OS_PRIVATE_APP', 2);
 /**
  * Returns available bundles, with option to filter by spaces_features status.
  *
+ * @see os_get_content_types_per_app
+ */
+function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
+  $bundles = array();
+  foreach (os_get_content_types_per_app($include_status) as $app_name => $content_types) {
+    $bundles = array_merge_recursive($bundles, $content_types);
+  }
+
+  // Sort the bundles in alphabetical order.
+  asort($bundles);
+
+  //Allow other modules to alter the os bundle list
+  drupal_alter('os_get_bundles', $bundles);
+
+  return $bundles;
+}
+
+/**
+ * Returns available content types per OS app, with option to filter by
+ * spaces_features status.
+ *
  * @param $include_status
  *  Can be array:
  *    - 0: disabled
@@ -37,9 +58,10 @@ define('OS_PRIVATE_APP', 2);
  *  TRUE returns all
  *
  * @return
- *  Array keyed with the bundle ID and the bundle name as value.
+ *  Array keyed with the application name, with an array of bundle IDs and
+ *  their bundle name as values.
  */
-function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
+function os_get_content_types_per_app($include_status = array(OS_PUBLIC_APP)) {
   $return_all = FALSE;
   if ($include_status === TRUE) {
     $return_all = TRUE;
@@ -48,7 +70,7 @@ function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
     $include_status = array($include_status);
   }
 
-  $bundles = array();
+  $content_types_per_app = array();
   $app_info = os_app_info();
   $spaces_features = variable_get('spaces_features', array());
 
@@ -63,22 +85,22 @@ function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
 
     $_node_types = _node_types_build();
     foreach ($info['nodetypes'] as $nodetype) {
+      if (empty($content_types_per_app[$app_name])) {
+        $content_types_per_app[$app_name] = array();
+      }
       if (isset($_node_types->names[$nodetype])) {
-        $bundles[$nodetype] = $_node_types->names[$nodetype];
+        $content_types_per_app[$app_name][$nodetype] = $_node_types->names[$nodetype];
       }
       else {
-        $bundles[$nodetype] = $module;
+        $content_types_per_app[$app_name][$nodetype] = $module;
       }
     }
   }
 
   // Sort the bundles in alphabetical order.
-  asort($bundles);
+  asort($content_types_per_app);
 
-  //Allow other modules to alter the os bundle list
-  drupal_alter('os_get_bundles', $bundles);
-
-  return $bundles;
+  return $content_types_per_app;
 }
 
 /**
