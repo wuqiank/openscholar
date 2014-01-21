@@ -46,10 +46,11 @@
           //only show the content appropriate display styles
           $display_style.children('option').each(function() {
             var this_display = $(this).attr('value');
-            var this_layout = $('#edit-layout').attr('value').toLowerCase();
-            
-            var hide = ($.inArray(this_display, Drupal.settings.entity_view_modes[this_layout][content_type]) == -1)
-            $(this).attr('hidden', hide).attr('disabled', hide);
+            if ($('#edit-layout').length>0) {
+              var this_layout =  $('#edit-layout').attr('value').toLowerCase();              
+              var hide = ($.inArray(this_display, Drupal.settings.entity_view_modes[this_layout][content_type]) == -1)
+              $(this).attr('hidden', hide).attr('disabled', hide);
+            }
           });
           
           //uncheck if selected option is no longer valid.

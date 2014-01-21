@@ -88,20 +88,22 @@ class os_sv_list extends os_boxes_default {
     );
 
     $view_modes = $this->entity_view_modes();
-    $form['content']['layout'] = array(
-      '#type' => 'select',
-      '#title' => 'Layout',
-      '#default_value' => $this->options['layout'],
-      '#options' => drupal_map_assoc(array('List', 'Grid'), 't'),
-      '#states' => array(
-        // multiple conditions SHOULD work in states, but aren't.  instead make several equivalent conditions with different meaningless junk in the keys
-        'invisible' => array_reduce(array_keys(array_filter($view_modes['grid'])), function($ret, $bundle) {
-          $ret[':input[name="content_type"],' . count($ret)] = array('!value' => $bundle);
-          return $ret;
-        }, array()),
-      ),
-    );
-    
+    if (array_filter($view_modes['grid'])) {
+      $form['content']['layout'] = array(
+        '#type' => 'select',
+        '#title' => 'Layout',
+        '#default_value' => $this->options['layout'],
+        '#options' => drupal_map_assoc(array('List', 'Grid'), 't'),
+        '#states' => array(
+          // multiple conditions SHOULD work in states, but aren't.  instead make several equivalent conditions with different meaningless junk in the keys
+          'invisible' => array_reduce(array_keys(array_filter($view_modes['grid'])), function($ret, $bundle) {
+            $ret[':input[name="content_type"],' . count($ret)] = array('!value' => $bundle);
+            return $ret;
+          }, array()),
+        ),
+      );
+    }
+        
     $form['content']['grid_columns'] = array(
       '#type' => 'select',
       '#title' => 'Columns',
