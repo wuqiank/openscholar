@@ -348,9 +348,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   // "Flat" the rows for standard table.
   $rows = array();
   foreach ($rows_per_category as $category) {
-    foreach ($category as $row) {
-      $rows[] = $row;
-    }
+    $rows = array_merge($rows, array_values($category));
   }
   
   $header[] = (t('Permission'));
