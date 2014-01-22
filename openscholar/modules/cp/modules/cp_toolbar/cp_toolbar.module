@@ -453,7 +453,7 @@ function cp_toolbar_set_tooltips(&$parent) {
 /**
  * Set default toolbar expand/collapse status based on user.
  */
-function cp_toolbar_set_default() {
-  $defaults = array('cp_toolbar' => array('collapsed' => 0));
-  drupal_add_js($defaults, 'setting');
+function cp_toolbar_set_default($collapsed = TRUE) {
+  $settings = array('cp_toolbar' => array('collapsed' => $collapsed));
+  drupal_add_js($settings, 'setting');
 }
