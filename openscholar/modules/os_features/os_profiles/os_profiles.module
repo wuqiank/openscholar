@@ -374,10 +374,10 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
 }
 
 /**
- * Submit handler; Importing person profile from external source.
+ * List of fields which holds the person information.
  */
-function os_profiles_sync_profile_submit($form, $form_state) {
-  $keys = array(
+function os_profiles_profiles_fields() {
+  return array(
     'title',
     'body',
     'field_first_name',
@@ -389,6 +389,13 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     'field_professional_title',
     'field_website',
   );
+}
+
+/**
+ * Submit handler; Importing person profile from external source.
+ */
+function os_profiles_sync_profile_submit($form, $form_state) {
+  $keys = os_profiles_profiles_fields();
 
   if (!empty($form_state['values']['url'])) {
     $json_address = $form_state['json_address'];
@@ -452,4 +459,40 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   );
 
   drupal_set_message(t('The person @title has @op. You can <a href="@url">visit</a> their page.', $params));
+}
+
+/**
+ * Posting the new node object to listeners.
+ *
+ * @param $node
+ *  The noe object.
+ * @param $url
+ *  array of urls of the listeners.
+ */
+function os_profiles_send_node_to_listeners($node, $url) {
+  $wrapper = entity_metadata_wrapper('node', $node);
+  $fields = os_profiles_profiles_fields();
+  $values = array();
+
+  foreach ($fields as $field) {
+    if (!isset($wrapper->{$field})) {
+      continue;
+    }
+
+    $values[$field] = $wrapper->{$field}->value();
+  }
+
+  $query = drupal_http_build_query($values);
+  $ch = curl_init();
+
+  // Set post information for the CURL call.
+  curl_setopt($ch,CURLOPT_URL, $url);
+  curl_setopt($ch,CURLOPT_POST, count($fields));
+  curl_setopt($ch,CURLOPT_POSTFIELDS, $query);
+
+  // Execute the CURL call.
+  curl_exec($ch);
+
+  // Close the CURL.
+  curl_close($ch);
 }
