@@ -82,11 +82,10 @@ function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
 }
 
 /**
- * Returns available content types per OS app, with option to filter by
- * spaces_features status.
+ * Returns available bundles per OS app, with option to filter by status.
  *
  * @param $include_status
- *  Can be array:
+ *  spaces_features status. Can be array:
  *    - 0: disabled
  *    - 2: private
  *    - 1: public
@@ -105,7 +104,7 @@ function os_get_bundles_per_app($include_status = array(OS_PUBLIC_APP)) {
     $include_status = array($include_status);
   }
 
-  $content_types_per_app = array();
+  $bundles_per_app = array();
   $app_info = os_app_info();
   $spaces_features = variable_get('spaces_features', array());
 
@@ -120,22 +119,22 @@ function os_get_bundles_per_app($include_status = array(OS_PUBLIC_APP)) {
 
     $_node_types = _node_types_build();
     foreach ($info['nodetypes'] as $nodetype) {
-      if (empty($content_types_per_app[$app_name])) {
-        $content_types_per_app[$app_name] = array();
+      if (empty($bundles_per_app[$app_name])) {
+        $bundles_per_app[$app_name] = array();
       }
       if (isset($_node_types->names[$nodetype])) {
-        $content_types_per_app[$app_name][$nodetype] = $_node_types->names[$nodetype];
+        $bundles_per_app[$app_name][$nodetype] = $_node_types->names[$nodetype];
       }
       else {
-        $content_types_per_app[$app_name][$nodetype] = $module;
+        $bundles_per_app[$app_name][$nodetype] = $module;
       }
     }
   }
 
   // Sort the bundles in alphabetical order.
-  asort($content_types_per_app);
+  asort($bundles_per_app);
 
-  return $content_types_per_app;
+  return $bundles_per_app;
 }
 
 /**
