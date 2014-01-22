@@ -254,8 +254,9 @@ function cp_user_og_ui_admin_permissions($variables) {
   // the allowed permissions so we can filter the list by it.
   $allowed_permissions = array();
 
+  // Get all permissions from the enabled applications, while keeping their
+  // application info.
   $permissions_category = array();
-
   foreach (os_get_content_types_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $content_types) {
     foreach ($content_types as $content_type => $title) {
       $permissions = og_list_permissions($content_type);
@@ -272,9 +273,10 @@ function cp_user_og_ui_admin_permissions($variables) {
   // non-CRUD permission that should be displayed on the list.
   $allowed_permissions[] = 'change theme';
 
+  // Get spaces features in order to get human readable application name.
   $spaces_features = spaces_features();
 
-  $rows_per_type = array();
+  $rows_per_category = array();
   foreach (element_children($form['permission']) as $key) {
     if (is_numeric($key)) {
       // Module name, not for display in the UI.
@@ -320,18 +322,18 @@ function cp_user_og_ui_admin_permissions($variables) {
       $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$key]), 'class' => array('checkbox'));
     }
 
-    // Add category title row
+    // Add category title row.
     $category = 'general';
     if (!empty($permissions_category[$key])) {
       $category = $permissions_category[$key];
     }
-    if (empty($rows_per_type[$category])) {
+    if (empty($rows_per_category[$category])) {
       $title = t('General permissions');
 
       if (!empty($spaces_features[$category])) {
         $title = t('Application: @app', array('@app' => $spaces_features[$category]->info['name']));
       }
-      $rows_per_type[$category][] = array(
+      $rows_per_category[$category][] = array(
         '0' => array(
           'data' => $title,
           // Using "checkbox" class as it centerlize the title, and already in
@@ -340,14 +342,17 @@ function cp_user_og_ui_admin_permissions($variables) {
         ),
       );
     }
-    $rows_per_type[$category][] = $row;
+    $rows_per_category[$category][] = $row;
   }
+
+  // "Flat" the rows for standard table.
   $rows = array();
-  foreach ($rows_per_type as $category) {
+  foreach ($rows_per_category as $category) {
     foreach ($category as $row) {
       $rows[] = $row;
     }
   }
+  
   $header[] = (t('Permission'));
   foreach (element_children($form['role_names']) as $rid) {
     if (empty($roles_human_names[$rid])) {
