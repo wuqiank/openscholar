@@ -195,7 +195,7 @@ function os_events_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 6,
+        'weight' => 1,
       ),
       'ical' => array(
         'label' => 'above',
