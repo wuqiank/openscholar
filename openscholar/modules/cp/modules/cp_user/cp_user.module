@@ -273,9 +273,6 @@ function cp_user_og_ui_admin_permissions($variables) {
   // non-CRUD permission that should be displayed on the list.
   $allowed_permissions[] = 'change theme';
 
-  // Get spaces features in order to get human readable application name.
-  $spaces_features = spaces_features();
-
   $rows_per_category = array();
   foreach (element_children($form['permission']) as $key) {
     if (is_numeric($key)) {
@@ -358,7 +355,7 @@ function cp_user_og_ui_admin_permissions($variables) {
 
 /**
  * Get category from permission key, and add category title if needed.
- * 
+ *
  * @param $permission
  *   Permission key.
  * @param $permissions_category
@@ -370,6 +367,9 @@ function cp_user_og_ui_admin_permissions($variables) {
  *   Category name.
  */
 function cp_user_add_category_title_to_table($permission, $permissions_category, &$rows_per_category) {
+  // Get spaces features in order to get human readable application name.
+  $spaces_features = spaces_features();
+
   $category = 'general';
   if (!empty($permissions_category[$permission])) {
     $category = $permissions_category[$permission];
