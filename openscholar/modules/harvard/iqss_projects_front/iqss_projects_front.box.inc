@@ -86,7 +86,7 @@ function iqss_projects_front_default_box() {
     </ul></div><!--CAROUSEL ENDS-->
   </div>
   </div>',
-      'format' => 'filtered_html',
+      'format' => 'full_html',
     ),
     'additional_classes' => '',
   );
