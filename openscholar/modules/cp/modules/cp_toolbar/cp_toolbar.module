@@ -21,6 +21,7 @@ function cp_page_alter(&$page) {
 }
 
 function cp_toolbar_pre_render($toolbar) {
+  cp_toolbar_set_default();
   $toolbar = array_merge($toolbar, cp_toolbar_view());
   $toolbar['toolbar_drawer'] = array_merge($toolbar['toolbar_drawer'], cp_toolbar_fill_drawer());
   $toolbar['tooltips'] = cp_toolbar_set_tooltips($toolbar);
@@ -340,29 +341,6 @@ function cp_toolbar_fill_drawer() {
     ),
   );
 
-  // people links
-  /*
-  $drawer['people-drawer'] = array(
-    '#theme' => 'cp_toolbar_drawer_section',
-    '#attributes' => array('id' => 'people-drawer'),
-    '#paths' => array(
-      'cp/users',
-    ),
-  );
-
-  $links = array();
-  $l = menu_get_item('cp/users');
-  if ($l['access']) {
-    $links['list'] = $l;
-  }
-  $drawer['people-drawer']['list'] = array(
-    '#theme' => 'links',
-    '#links' => $links,
-    '#attributes' => array(
-      'class' => 'toolbar-list',
-    ),
-  );*/
-
   $drawer['site-drawer'] = array(
     '#theme' => 'cp_toolbar_drawer_section',
     '#attributes' => array('id' => 'site-drawer'),
@@ -473,31 +451,9 @@ function cp_toolbar_set_tooltips(&$parent) {
 }
 
 /**
- * Implements hook_module_implements_alter().
+ * Set default toolbar expand/collapse status based on user.
  */
-function cp_toolbar_module_implements_alter(&$implementations, $hook) {
-  if ($hook != 'preprocess_html') {
-    return;
-  }
-
-  if (empty($implementations['toolbar'])) {
-    return;
-  }
-
-  // Ensures that toolbar_preprocess_html() occurs after cp_toolbar_preprocess_html().
-  $group = $implementations['toolbar'];
-  unset($implementations['toolbar']);
-  $implementations['toolbar'] = $group;
-}
-
-/**
- * Implements hook_preprocess_html().
- *
- */
-function cp_toolbar_preprocess_html(&$vars) {
-  if (isset($vars['page']['page_top']['toolbar']) && user_access('access toolbar')) {
-    if (!_toolbar_is_collapsed()) {
-      $_COOKIE['Drupal_toolbar_collapsed'] = 1;
-    }
-  }
+function cp_toolbar_set_default() {
+  $defaults = array('cp_toolbar' => array('collapsed' => 0));
+  drupal_add_js($defaults, 'setting');
 }

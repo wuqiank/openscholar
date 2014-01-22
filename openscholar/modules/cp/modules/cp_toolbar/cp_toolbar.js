@@ -102,4 +102,29 @@ Drupal.cp_toolbar.tooltipHide = function (event) {
   }
 };
 
+/**
+ * Retrieve last saved cookie settings and set up the initial toolbar state.
+ * Overrides toolbar.module to include consideration of default given from
+ * server (and not expanded be default as is in core module).
+ */
+Drupal.toolbar.init = function() {
+  // Retrieve the collapsed status from a stored cookie.
+  var collapsed = $.cookie('Drupal.toolbar.collapsed');
+  var defaultCollapsed = Drupal.settings.cp_toolbar.collapsed;
+
+  // Expand or collapse the toolbar based on the cookie value.
+  if (collapsed == 1) {
+    Drupal.toolbar.collapse();
+  }
+  else if (collapsed == 0) {
+    Drupal.toolbar.expand();
+  }
+  else if (defaultCollapsed == 1) {
+    Drupal.toolbar.collapse();
+  }
+  else {
+    Drupal.toolbar.expand();
+  }
+};
+
 })(jQuery);
