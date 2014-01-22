@@ -202,24 +202,24 @@ function os_wysiwyg_field_widget_info() {
  * Implements hook_field_widget_form.
  */
 function os_wysiwyg_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-
+  $info = element_info('text_format');
   $element += array(
-    'text_field' => array(
-      '#type' => 'text_format',
-      '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
-      '#rows' => 5,
-      '#attributes' => array(
-        'class' => array(
-          'text-full',
-          'os-wysiwyg-expandable'
-        ),
-        'data-maxrows' => $instance['widget']['settings']['max_rows'],
-        'data-minrows' => $instance['widget']['settings']['rows']
-      )
+    '#type' => 'text_format',
+    '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+    '#rows' => 5,
+    '#attributes' => array(
+      'class' => array(
+        'text-full',
+        'os-wysiwyg-expandable'
+      ),
+      'data-maxrows' => $instance['widget']['settings']['max_rows'],
+      'data-minrows' => $instance['widget']['settings']['rows']
     ),
     '#attached' => array(
-      'js' => array(
-        drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.widget.js',
+      'js' => array_merge(array(
+          drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.widget.js',
+        ),
+        $info['#attached']['js']
       ),
       'css' => array(
         drupal_get_path('module', 'os_wysiwyg').'/os_wysiwyg.widget.css',
