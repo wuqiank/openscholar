@@ -82,7 +82,6 @@ function hwpi_basetheme_page_alter(&$page) {
  * Preprocess variables for comment.tpl.php
  */
 function hwpi_basetheme_preprocess_node(&$vars) {
-  // Event persons, change title markup to h1
   if ($vars['type'] != 'person') {
     return;
   }
@@ -182,8 +181,8 @@ function hwpi_basetheme_node_view_alter(&$build) {
       $title_field[0] = array('#markup' => implode($glue, $titles));
     }
 
-    // We dont want the other fields on teasers
-    if ($build['#view_mode'] == 'teaser') {
+    // We don't want the other fields on teasers.
+    if ($build['#view_mode'] == 'no_image_teaser' || $build['#view_mode'] == 'teaser') {
 
       //move title, website. body
       $build['pic_bio']['body']['#weight'] = 5;
@@ -207,7 +206,7 @@ function hwpi_basetheme_node_view_alter(&$build) {
         $build['field_email'][0]['#markup'] = '<a href="mailto:' . $email_plain . '">' . $email_plain . '</a>';
       }
 
-      //newlines after website
+      // Newlines after website.
       if (isset($build['pic_bio']['field_website'])) {
         foreach (array_filter(array_keys($build['pic_bio']['field_website']), 'is_numeric') as $delta) {
           $item = $build['pic_bio']['field_website']['#items'][$delta];
