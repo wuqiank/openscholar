@@ -107,53 +107,25 @@
 }
 
 .cp-layout-widget {
-display: block;
-width: 90%;
-width: calc(100% - 10px);
-min-height: 20px;
-padding: 8px 0 3px 10px;
-background-color: #efefef;
-margin-bottom: -1px;
-text-overflow: ellipsis;
-overflow: hidden;
-position: relative;
-line-height: 14px;
-margin-bottom: 3px;
+  display: block;
+  width: 90%;
+  width: calc(100% - 10px);
+  min-height: 20px;
+  padding: 8px 0 3px 10px;
+  background-color: #efefef;
+  margin-bottom: -1px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: relative;
+  line-height: 14px;
+  margin-bottom: 3px;
 }
 
 .cp-layout-widget:hover {
 background-color: #DDD;
 
 }
-/*
-.cp-layout-widget {
-display: block;
-width: 90%;
-width: calc(100% - 37px);
-min-height: 20px;
-padding: 8px 0 6px 35px;
-background-color: #efefef;
-margin-bottom: -1px;
-text-overflow: ellipsis;
-overflow: hidden;
-position: relative;
-line-height: 14px;
-margin-bottom: 5px;
-}
 
-.cp-layout-widget:before {
-  content: '';
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  background-color: white;
-  background-repeat: no-repeat;
-  background-size: 30px 30px;
-  background-image: url('../images/widget-bg.png');
-}*/
 
 .cp-layout-widget .widget-controls {
   display: none;
@@ -189,21 +161,21 @@ margin-bottom: 5px;
 #edit-regions.two-2x50 #region-1-container,
 #edit-regions.two-2x50 #region-2-container {
   width: 49%;
-  width: calc(49% - 4px);
+  width: calc(50% - 7px);
   display: block;
 }
 
 #edit-regions.two-33-66 #region-1-container,
 #edit-regions.two-66-33 #region-2-container {
   width: 32%;
-  width: calc(32% - 4px);
+  width: calc(33% - 10px);
   display: block;
 }
 
 #edit-regions.two-33-66 #region-2-container,
 #edit-regions.two-66-33 #region-1-container {
   width: 65%;
-  width: calc(66% - 4px);
+  width: calc(67% - 4px);
   display: block;
 }
 
@@ -225,7 +197,7 @@ margin-bottom: 5px;
 #edit-regions.three-50-25-25 #region-2-container,
 #edit-regions.three-50-25-25 #region-3-container {
   width: 24%;
-  width: calc(24% - 4px);
+  width: calc(25% - 9px);
   display: block;
 }
 
@@ -233,7 +205,7 @@ margin-bottom: 5px;
 #edit-regions.three-25-50-25 #region-2-container,
 #edit-regions.three-50-25-25 #region-1-container {
   width: 49%;
-  width: calc(49% - 4px);
+  width: calc(50% - 4px);
   display: block;
 }
 
@@ -245,7 +217,7 @@ margin-bottom: 5px;
 #edit-regions.four-4x25 #region-3-container,
 #edit-regions.four-4x25 #region-4-container {
   width: 24%;
-  width: calc(24% - 4px);
+  width: calc(25% - 7px);
   display: block;
 }
 
@@ -258,7 +230,7 @@ margin-bottom: 5px;
 #edit-regions.five-5x20 #region-4-container,
 #edit-regions.five-5x20 #region-5-container {
   width: 19%;
-  width: calc(19% - 4px);
+  width: calc(20% - 7px);
   display: block;
 }
 
