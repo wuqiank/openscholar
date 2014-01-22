@@ -6,7 +6,7 @@
   display: none;
   position: absolute;
   z-index: 99999;
-  width: 400px;
+  width: 600px;
   padding: 10px;
   background: #fff;
   color: #000000;
@@ -30,4 +30,35 @@
 a.profile-pop {
   color: #333;
   cursor: default;
+}
+
+.dummy-person-photo{
+  float: left;
+  margin-right: 5px;
+}
+
+.dummy-person-photo--sidebar-teaser {
+  float: none;
+}
+
+.dummy-content {
+  display: table-cell;
+}
+
+.dummy-content h1{
+  font-weight: normal;
+  margin: 0;
+}
+
+.dummy-content-sidebar-teaser {
+  float: left;
+}
+
+.dummy-content-sidebar-teaser h1{
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+.dummy-content .dummy-professional-title {
+  font-weight: bold;
 }

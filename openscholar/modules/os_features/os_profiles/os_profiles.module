@@ -278,7 +278,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   $allowed_file_types = 'gif png jpg jpeg';
   $form['file'] = array(
     '#type' => 'managed_file',
-    '#title' => t('Default image'),
+    '#title' => t('Custom default image'),
     '#default_value' => variable_get('os_profiles_default_image_file', NULL),
     '#description' => t('Upload a photo and position the cropping tool over it if necessary.<br/>Allowed file types: <strong>' . $allowed_file_types . '</strong>'),
     '#upload_validators' => array(
@@ -301,7 +301,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
         )
       ),
     ),
-    '#weight' => -99,
+    '#weight' => -100,
   );
 
   if (module_exists('vsite') && $space = spaces_get_space()) {
@@ -525,7 +525,58 @@ function _os_profiles_build_display_style_example($style) {
 }
 
 function _os_profiles_theme_display_style($variables) {
-  // @todo: return styled node for popup over display style.
+  // @todo: return styled node for popup over display style and remove hardcoding.
+  $view_mode = $variables['style_name'];
+
+  switch ($view_mode) {
+    case 'title':
+      $result = '
+        <div class="dummy-content">
+          <h1>John Fitzgerald Kennedy</h1>
+        </div>
+      ';
+      break;
+    case 'teaser':
+      $result = '
+        <div class="dummy-person-photo">
+          <img src="http://localhost/openscholar/www/profiles/openscholar/themes/hwpi_basetheme/images/person-default-image.png">
+        </div>
+        <div class="dummy-content">
+          <h1><a href="#">John Fitzgerald Kennedy</a></h1>
+				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
+				  <div class="dummy-bio">Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
+				  <div class="dummy-phone">555-1234</div>
+				  <div class="dummy-email"><a href="mailto:">example@address.com</a></div>
+        </div>
+      ';
+      break;
+    case 'sidebar_teaser':
+      $result = '
+        <div class="dummy-person-photo-sidebar-teaser">
+          <img src="http://localhost/openscholar/www/profiles/openscholar/themes/hwpi_basetheme/images/person-default-image.png">
+        </div>
+        <div class="dummy-content-sidebar-teaser">
+          <h1><a href="#">John Fitzgerald Kennedy</a></h1>
+				  <div class="dummy-professional-title">Drupal developer at Gizra.inc, QA person at Gizra.inc</div>
+        </div>
+      ';
+      break;
+    case 'no_image_teaser':
+      $result = '
+        <div class="dummy-content">
+          <h1><a href="#">John Fitzgerald Kennedy</a></h1>
+				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
+				  <div class="dummy-bio">Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
+       	  <div class="dummy-phone">555-1234</div>
+				  <div class="dummy-email"><a href="mailto:">example@address.com</a></div>
+        </div>
+      ';
+      break;
+    default:
+      $result = '';
+  }
+
+  return $result;
 }
 
 /**
@@ -535,6 +586,14 @@ function _os_profiles_get_display_style_example() {
   // Profile for example.
   $node = new stdClass();
   $node->type = 'person';
+  $node->nid = -1;
+  $node->vid = -1;
+  $node->status = FALSE;
+  $node->promote = FALSE;
+  $node->sticky = FALSE;
+  $node->title = 'John Fitzgerald Kennedy';
+  $node->created = time();
+  $node->changed = time();
 
   $wrapper = entity_metadata_wrapper('node', $node);
 
@@ -542,8 +601,9 @@ function _os_profiles_get_display_style_example() {
   $wrapper->field_middle_name_or_initial->set('Fitzgerald');
   $wrapper->field_last_name->set('Kennedy');
   $wrapper->field_professional_title->set(array('The 35th president of the United States'));
-  $wrapper->body->set(array('value' => 'Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.'));
+  $wrapper->body->set(array('value' => 'Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.', 'format' => 'full_html'));
   $wrapper->field_phone->set('555-1234');
+  $wrapper->field_email->set('example@address.com');
 
   return $node;
 }
