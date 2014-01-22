@@ -630,11 +630,6 @@ td, td.description {
   position:relative;
   }
 
-#footer {
-  height:30px;
-  padding:5px 0;
-  }
-
 #block-views-os-websites-block h2 {
   background: url('../images/featured.png') 0 0 no-repeat transparent;
   text-indent: -999em;
@@ -820,17 +815,16 @@ body.section-websites .views-field-field-vsite-logo-fid {
  /* STATS STYLING ON THE FRONT PAGE */
 
 .block-os-stats {
-    -moz-border-radius-bottomright:3px;
--webkit-border-bottom-right-radius:3px;
-border-bottom-right-radius: 3px;
--moz-border-radius-bottomleft:3px;
--webkit-border-bottom-left-radius:3px;
-border-bottom-left-radius: 3px;
-     background-color: #000000;
-     font-size: 1.2em;
-     height: 35px;
-     margin-top: -16px;
-     width: 981px;
+  -moz-border-radius-bottomright:3px;
+  -webkit-border-bottom-right-radius:3px;
+  border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomleft:3px;
+  -webkit-border-bottom-left-radius:3px;
+  border-bottom-left-radius: 3px;
+  background-color: #000000;
+  font-size: 1.2em;
+  height: 35px;
+  width: 981px;
 }
 
 .block-os-stats h2.block-title {
