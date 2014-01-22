@@ -139,6 +139,15 @@ h2 {
 
 /* SEARCH FORM */
 
+#block-os-search-db-site-search #search-block-form {
+  float: right; /* LTR */
+}
+
+#block-os-search-db-site-search #search-block-form #edit-submit {
+  color: transparent;
+  height: 24px;
+}
+
 .block-os-search-db,
 .block-os-search-solr {margin-top:25px;}
 
