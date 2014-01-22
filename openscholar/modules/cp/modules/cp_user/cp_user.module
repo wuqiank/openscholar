@@ -323,25 +323,7 @@ function cp_user_og_ui_admin_permissions($variables) {
     }
 
     // Add category title row.
-    $category = 'general';
-    if (!empty($permissions_category[$key])) {
-      $category = $permissions_category[$key];
-    }
-    if (empty($rows_per_category[$category])) {
-      $title = t('General permissions');
-
-      if (!empty($spaces_features[$category])) {
-        $title = t('Application: @app', array('@app' => $spaces_features[$category]->info['name']));
-      }
-      $rows_per_category[$category][] = array(
-        '0' => array(
-          'data' => $title,
-          // Using "checkbox" class as it centerlize the title, and already in
-          // use.
-          'class'=> array('0' => 'checkbox'),
-        ),
-      );
-    }
+    $category = cp_user_add_category_title_to_table($key, $permissions_category, $rows_per_category);
     $rows_per_category[$category][] = $row;
   }
 
@@ -373,6 +355,43 @@ function cp_user_og_ui_admin_permissions($variables) {
   $output .= drupal_render_children($form);
   return $output;
 }
+
+/**
+ * Get category from permission key, and add category title if needed.
+ * 
+ * @param $permission
+ *   Permission key.
+ * @param $permissions_category
+ *   Array of permissions and their category.
+ * @param $rows_per_category
+ *   Referenced array of table rows by category.
+ *
+ * @return string
+ *   Category name.
+ */
+function cp_user_add_category_title_to_table($permission, $permissions_category, &$rows_per_category) {
+  $category = 'general';
+  if (!empty($permissions_category[$permission])) {
+    $category = $permissions_category[$permission];
+  }
+  if (empty($rows_per_category[$category])) {
+    $title = t('General permissions');
+
+    if (!empty($spaces_features[$category])) {
+      $title = t('Application: @app', array('@app' => $spaces_features[$category]->info['name']));
+    }
+    $rows_per_category[$category][] = array(
+      '0' => array(
+        'data' => $title,
+        // Using "checkbox" class as it centerlize the title, and already in
+        // use.
+        'class'=> array('0' => 'checkbox'),
+      ),
+    );
+  }
+  return $category;
+}
+
 /**
  * Overrides theme_og_ui_admin_new_role(); OG roles form.
  *
