@@ -29,12 +29,47 @@ define('OS_PRIVATE_APP', 2);
 /**
  * Returns available bundles, with option to filter by spaces_features status.
  *
- * @see os_get_content_types_per_app
+ * @param $include_status
+ *  Can be array:
+ *    - 0: disabled
+ *    - 2: private
+ *    - 1: public
+ *  TRUE returns all
+ *
+ * @return
+ *  Array keyed with the bundle ID and the bundle name as value.
  */
 function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
+  $return_all = FALSE;
+  if ($include_status === TRUE) {
+    $return_all = TRUE;
+  }
+  elseif (!is_array($include_status)) {
+    $include_status = array($include_status);
+  }
+
   $bundles = array();
-  foreach (os_get_content_types_per_app($include_status) as $app_name => $content_types) {
-    $bundles = array_merge_recursive($bundles, $content_types);
+  $app_info = os_app_info();
+  $spaces_features = variable_get('spaces_features', array());
+
+  foreach ($app_info as $app_name => $info) {
+    if (!isset($info['nodetypes'])) {
+      continue;
+    }
+    $module = $info['module'];
+    if (!$return_all && (!isset($spaces_features[$module]) || !in_array($spaces_features[$module], $include_status))) {
+      continue;
+    }
+
+    $_node_types = _node_types_build();
+    foreach ($info['nodetypes'] as $nodetype) {
+      if (isset($_node_types->names[$nodetype])) {
+        $bundles[$nodetype] = $_node_types->names[$nodetype];
+      }
+      else {
+        $bundles[$nodetype] = $module;
+      }
+    }
   }
 
   // Sort the bundles in alphabetical order.
