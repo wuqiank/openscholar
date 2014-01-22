@@ -360,7 +360,6 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
       form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
       return;
     }
-
     foreach ($headers as $header) {
       if (strpos($header, 'node_json: ') === 0) {
         $form_state['json_address'] = str_replace('node_json: ', '', $header);
@@ -400,26 +399,33 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   $values = array();
 
   if (!empty($form_state['values']['url'])) {
+    $update_mode = 'remote';
     $json_address = $form_state['json_address'];
-    $request = drupal_http_request($json_address);
-    $data = drupal_json_decode($request->data);
-
-    foreach ($keys as $key) {
-      if (empty($data[$key])) {
-        continue;
-      }
-
-      $values[$key] = $data[$key];
-    }
+    $values = os_profile_get_remote_values($json_address);
   }
   else {
+    $update_mode = 'local';
     // @todo: is this the right way to get the value from autocomplete field ?
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
     $source_nid = $matches[1];
     $values = os_profile_get_local_values($source_nid);
-    if ($destination_profile = os_profile_handle_local_profile($values)) {
-      // Need to update the source for future sync
-      // Should be in a multivalue field
+  }
+
+  if ($destination_profile = os_profile_handle_local_profile($values)) {
+    $params = array(
+      '@title' => $destination_profile->title,
+      '@url' => url('node/' . $destination_profile->nid),
+    );
+    drupal_set_message(t('The person @title has synced. You can <a href="@url">visit</a> their page.', $params));
+
+    // Need to update the source for future sync
+    // Should be in a multivalue field
+    os_profiles_create_identifier($destination_profile);
+    if ($update_mode == 'local') {
+      os_profiles_local_update_identifier_listener($destination_profile, $source_nid);
+    }
+    else {
+      os_profiles_remote_update_identifier_listener($destination_profile, $json_address);
     }
   }
 }
@@ -476,6 +482,22 @@ function os_profiles_get_local_profile ($title) {
     $result = reset($response['node'])->nid;
   }
   return $result;
+}
+
+function os_profile_get_remote_values ($url) {
+  $values = array();
+  $values['type'] = 'person';
+
+  $request = drupal_http_request($json_address);
+  $data = drupal_json_decode($request->data);
+  foreach ($keys as $key) {
+    if (empty($data[$key])) {
+      continue;
+    }
+    $values[$key] = $data[$key];
+  }
+
+  return $values;
 }
 
 function os_profile_get_local_values ($source_nid) {
