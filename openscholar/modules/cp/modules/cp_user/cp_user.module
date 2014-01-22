@@ -267,8 +267,8 @@ function cp_user_og_ui_admin_permissions($variables) {
     }
   }
 
-  ksort($$allowed_permissions);
-  
+  ksort($allowed_permissions);
+
   $rows_per_category = array();
   foreach (element_children($form['permission']) as $key) {
     if (is_numeric($key)) {
@@ -319,6 +319,8 @@ function cp_user_og_ui_admin_permissions($variables) {
     $category = cp_user_add_category_title_to_table($key, $allowed_permissions, $rows_per_category);
     $rows_per_category[$category][] = $row;
   }
+
+  ksort($rows_per_category);
 
   // "Flat" the rows for standard table.
   $rows = array();
