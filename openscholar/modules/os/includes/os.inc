@@ -96,7 +96,7 @@ function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
  *  Array keyed with the application name, with an array of bundle IDs and
  *  their bundle name as values.
  */
-function os_get_content_types_per_app($include_status = array(OS_PUBLIC_APP)) {
+function os_get_bundles_per_app($include_status = array(OS_PUBLIC_APP)) {
   $return_all = FALSE;
   if ($include_status === TRUE) {
     $return_all = TRUE;

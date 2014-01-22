@@ -260,10 +260,13 @@ function cp_user_og_ui_admin_permissions($variables) {
   // non-CRUD permission that should be displayed on the list.
   $allowed_permissions['change theme'] = 'general';
 
-  foreach (os_get_content_types_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $content_types) {
-    foreach ($content_types as $content_type => $title) {
-      $permissions = array_fill_keys(array_keys(og_list_permissions($content_type)), $app_name);
-      $allowed_permissions = array_merge($allowed_permissions, $permissions);
+  foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
+    foreach (array_keys($bundles) as $bundle) {
+      // Get bundle permissions with their related app name.
+      $bundle_permissions = array_fill_keys(array_keys(og_list_permissions($bundle)), $app_name);
+
+      // Merge bundle permissions to all permissions.
+      $allowed_permissions = array_merge($allowed_permissions, $bundle_permissions);
     }
   }
 
