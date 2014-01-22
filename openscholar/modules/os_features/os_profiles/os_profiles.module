@@ -397,6 +397,8 @@ function os_profiles_profiles_fields() {
 function os_profiles_sync_profile_submit($form, $form_state) {
   $keys = os_profiles_profiles_fields();
 
+  $values = array();
+
   if (!empty($form_state['values']['url'])) {
     $json_address = $form_state['json_address'];
     $request = drupal_http_request($json_address);
@@ -411,35 +413,27 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     }
   }
   else {
+    // @todo: is this the right way to get the value from autocomplete field ?
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
-    $wrapper = entity_metadata_wrapper('node', $matches[1]);
-    foreach ($keys as $key) {
-      if (isset($wrapper->{$key}) && $value = $wrapper->{$key}->value()) {
-        $values[$key] = $value;
-      }
+    $source_nid = $matches[1];
+    $values = os_profile_get_local_values($source_nid);
+    if ($destination_profile = os_profile_handle_local_profile($values)) {
+      // Need to update the source for future sync
+      // Should be in a multivalue field
     }
   }
+}
 
-  $values['type'] = 'person';
+function os_profile_handle_local_profile($values) {
+  $result = FALSE;
 
-  // When there is a node in the current vsite with the title of the source node
-  // we need to update the current node.
-  $method = 'create';
-  $arguments = array($values);
-  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
-    $query = new EntityFieldQuery();
-    $result = $query
-      ->entityCondition('entity_type', 'node')
-      ->propertyCondition('title', $values['title'])
-      ->propertyCondition('type', 'person')
-      ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id)
-      ->range(0, 1)
-      ->execute();
-
-    if (!empty($result)) {
-      $method = 'update';
-      $arguments = array(reset($result['node'])->nid, $values);
-    }
+  if ($destination_nid = os_profiles_get_local_profile($values['title'])) {
+    $method = 'update';
+    $arguments = array($destination_nid, $values);
+  }
+  else {
+    $method = 'create';
+    $arguments = array($values);
   }
 
   $handler = restws_resource_controller('node');
@@ -450,22 +444,59 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     $nid = $arguments[0];
   }
 
-  $node = node_load($nid);
+  // @todo: drupal_set_message on failure/success ?
+  return node_load($nid);
+}
 
-  $params = array(
-    '@title' => $node->title,
-    '@url' => url('node/' . $node->nid),
-    '@op' => $method == 'update' ? t('updated') : t('created'),
-  );
+/**
+ * Get existing local profile based on title.
+ *
+ * @param $title
+ *   Profile title.
+ *
+ * @return
+ *   Node id for existing profile, FALSE otherwise
+ */
+function os_profiles_get_local_profile ($title) {
+  $result = FALSE;
+  $query = new EntityFieldQuery();
+  $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('title', $title)
+    ->propertyCondition('type', 'person')
+    ->range(0, 1);
 
-  drupal_set_message(t('The person @title has @op. You can <a href="@url">visit</a> their page.', $params));
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $query->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id);
+  }
+
+  $response = $query->execute();
+
+  if (!empty($response)) {
+    $result = reset($response['node'])->nid;
+  }
+  return $result;
+}
+
+function os_profile_get_local_values ($source_nid) {
+  $values = array();
+  $values['type'] = 'person';
+
+  $source_profile = entity_metadata_wrapper('node', $source_nid);
+  foreach ($keys as $key) {
+    if (isset($source_profile->{$key}) && $value = $source_profile->{$key}->value()) {
+      $values[$key] = $value;
+    }
+  }
+
+  return $values;
 }
 
 /**
  * Posting the new node object to listeners.
  *
  * @param $node
- *  The noe object.
+ *  The node object.
  * @param $url
  *  array of urls of the listeners.
  */
@@ -481,7 +512,18 @@ function os_profiles_send_node_to_listeners($node, $url) {
 
     $values[$field] = $wrapper->{$field}->value();
   }
+/*
+ *     // Build the URL for import and verify for response code 200 from the URL.
+    $result = drupal_http_request($wrapper->field_rss_url->value());
 
+    if ($result->code != 200) {
+      // oops... error!
+      drupal_set_message(t('Unable to get feeds from: @url', array('@url' => $wrapper->field_rss_url->value())));
+      return new FeedsFetcherResult('<xml></xml>');
+    }
+
+    return new FeedsFetcherResult($result->data);
+ */
   $query = drupal_http_build_query($values);
   $ch = curl_init();
 
