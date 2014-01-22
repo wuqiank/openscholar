@@ -250,12 +250,11 @@ class os_sv_list extends os_boxes_default {
       $render = $this->_plugins_invoke('render', $entities);
       $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
     }
-
+    
     //now render to html.
     $content = drupal_render($render);   
     $delta = $this->delta;   
     $class = implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display']));
-    
     $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
     return $block;
   }

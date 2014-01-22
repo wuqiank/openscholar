@@ -217,6 +217,10 @@ function os_entity_info_alter(&$info) {
     'label' => t('Title'),
     'custom settings' => TRUE,
   );
+  $info['node']['view modes']['slide_teaser'] = array(
+    'label' => t('Slide Teaser'),
+    'custom settings' => TRUE,
+  );
 }
 
 /**
@@ -1668,7 +1672,7 @@ function os_entity_view_modes($entity_type = NULL, $bundle = NULL) {
 function os_os_entity_view_modes_alter(&$info) {
   $bundles = array_keys(os_get_bundles(TRUE));
   $bundles = array_diff($bundles, array('feed_importer'));
-  $bundle_views = array_fill_keys($bundles, array('full', 'teaser', 'title'));
+  $bundle_views = array_fill_keys($bundles, array('full', 'teaser', 'title', 'slide_teaser'));
   $info['node'] = array_merge_recursive($info['node'], $bundle_views);
 }
 
@@ -2095,10 +2099,33 @@ function os_requirements($phase) {
 }
 
 /**
- * implementation of hook_context_default_contexts_alter
+ * Implements of hook_context_default_contexts_alter
  */
 function os_context_default_contexts_alter(&$contexts){
   if (module_exists('olark') && isset($contexts['os_public'])) {
     $contexts['os_public']->reactions['olark_add'] = array('add' => 1);
+  }
+}
+
+/**
+ * Implements hook_preprocess_node
+ */
+function os_preprocess_node(&$vars) {
+  if ($vars['view_mode'] == 'slide_teaser') {
+    $vars['header_attributes_array']['class'][] = 'toggle';
+    $vars['content_attributes_array']['class'][] = 'os-slider';
+    $vars['links_attributes_array']['class'][] = 'os-slider';
+    drupal_add_js(drupal_get_path('module', 'os').'/theme/os_toggle.js');
+  }
+}
+
+/**
+ * Implements hook_field_display_node_alter 
+ *
+ * Makes the slide_teaser display mode just like teaser.  
+ */
+function os_field_display_node_alter(&$display, $context) {
+  if ($context['view_mode'] == 'slide_teaser') {
+    $display = $context['instance']['display']['teaser'];
   }
 }
