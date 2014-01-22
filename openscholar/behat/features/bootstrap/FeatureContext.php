@@ -1443,12 +1443,28 @@ class FeatureContext extends DrupalContext {
    * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
    */
   public function iSetFeatureStatus ($feature, $status, $group) {
-
     return array(
       new Step\When('I visit "' . $group . '"'),
       new Step\When('I click "Build"'),
       new Step\When('I select "' . $status . '" from "' . $feature . '"'),
       new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
+   * @Given /^I update the node "([^"]*)" field "([^"]*)" to "([^"]*)"$/
+   */
+  public function iUpdateTheNodeFieldTo($title, $field, $value) {
+    $title = str_replace("'", "\'", $title);
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+
+    $purl = $this->invoke_code('os_migrate_demo_get_node_vsite_purl', array("'$nid'"));
+    $purl = !empty($purl) ? $purl . '/' : '';
+
+    return array(
+      new Step\When('I visit "' . $purl . 'node/' . $nid . '/edit"'),
+      new Step\When('I fill in "' . $field . '" with "' . $value . '"'),
+      new Step\When('I press "Save"'),
     );
   }
 }
