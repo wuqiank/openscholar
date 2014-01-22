@@ -111,5 +111,5 @@ function os_faq_preprocess_node(&$vars) {
  * Slide teaser is redundant with the default faq teaser so remove it
  **/
 function os_faq_os_entity_view_modes_alter(&$info) {
-   $info['node']['faq'] = array_diff($info['node']['faq'], array('slide_teaser'));
+  $info['node']['faq'] = array_diff($info['node']['faq'], array('slide_teaser'));
 }
