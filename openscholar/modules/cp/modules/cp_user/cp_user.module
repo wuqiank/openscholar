@@ -319,7 +319,7 @@ function cp_user_og_ui_admin_permissions($variables) {
     }
 
     // Add category title row.
-    $category = cp_user_add_category_title_to_table($key, $allowed_permissions, $rows_per_category);
+    $category = cp_user_add_category_title_to_table($key, $allowed_permissions, $rows_per_category, count($row));
     $rows_per_category[$category][] = $row;
   }
 
@@ -367,7 +367,7 @@ function cp_user_og_ui_admin_permissions($variables) {
  * @return string
  *   Category name.
  */
-function cp_user_add_category_title_to_table($permission, $allowed_permissions, &$rows_per_category) {
+function cp_user_add_category_title_to_table($permission, $allowed_permissions, &$rows_per_category, $number_of_columns) {
   // Get spaces features in order to get human readable application name.
   $spaces_features = spaces_features();
   $category = $allowed_permissions[$permission];
@@ -383,7 +383,8 @@ function cp_user_add_category_title_to_table($permission, $allowed_permissions, 
         'data' => $title,
         // Using "checkbox" class as it centerlize the title, and already in
         // use.
-        'class'=> array('0' => 'checkbox'),
+        'class' => array('0' => 'checkbox'),
+        'colspan' => array('0' => $number_of_columns),
       ),
     );
   }
