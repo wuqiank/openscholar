@@ -189,7 +189,7 @@ function vsite_views_default_views() {
   $handler->display->display_options['fields']['field_site_logo']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_site_logo']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_site_logo']['settings'] = array(
-    'image_style' => 'iqss_scholars_front_websites_180_x_140',
+    'image_style' => 'os_thumb_180_140',
     'image_link' => '',
   );
   /* Field: Content: Title */
@@ -429,7 +429,7 @@ function vsite_views_default_views() {
   $handler->display->display_options['fields']['field_site_logo']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_site_logo']['empty'] = $default_img;
   $handler->display->display_options['fields']['field_site_logo']['settings'] = array(
-    'image_style' => 'iqss_scholars_front_websites_180_x_140',
+    'image_style' => 'os_thumb_180_140',
     'image_link' => '',
   );
   /* Field: Content: Title */
