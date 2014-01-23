@@ -362,7 +362,8 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
   if (!empty($form_state['values']['url'])) {
     $headers = get_headers($form_state['values']['url']);
     if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
+      // todo: check where the header gone to.
+//      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
       return;
     }
 
@@ -403,7 +404,9 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   $keys = os_profiles_profiles_fields();
 
   if (!empty($form_state['values']['url'])) {
-    $values = os_profiles_get_origin_node_values($form_state['values']['url'], $keys)->values;
+    $origin = os_profiles_get_origin_node_values($form_state['values']['url'], $keys);
+    $values = $origin->values;
+    $data = $origin->data;
   }
   else {
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
@@ -415,7 +418,11 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     }
   }
 
-  $values['type'] = 'person';
+  // Set up default values.
+  $values += array(
+    'type' => 'person',
+    'field_origin_uuid' => $data['field_uuid'],
+  );
 
   // When there is a node in the current vsite with the title of the source node
   // we need to update the current node.
@@ -435,6 +442,10 @@ function os_profiles_sync_profile_submit($form, $form_state) {
       $method = 'update';
       $arguments = array(reset($result['node'])->nid, $values);
     }
+  }
+
+  if ($method == 'create') {
+    // todo: Write the current site as a listener in the node's origin site.
   }
 
   $handler = restws_resource_controller('node');
@@ -481,7 +492,7 @@ function os_profiles_get_origin_node_values($address, $fields) {
 
   return (object) array(
     'values' => $values,
-    'json' => $request->data,
+    'data' => $data,
   );
 }
 
@@ -536,4 +547,20 @@ function os_profiles_update_profile() {
  */
 function os_profiles_send_node_to_listeners($url, $values) {
   drupal_http_request($url . '/?q=people/update_profile&' . drupal_http_build_query($values));
+}
+
+/**
+ * Implements hook_restws_request_alter().
+ *
+ * Setting the person node UUID when accessing the node via JSON and the UUID
+ * field is not populate.
+ */
+function os_profiles_restws_request_alter(&$request) {
+  $wrapper = entity_metadata_Wrapper('node', $request['id']);
+
+  if (!$wrapper->field_uuid->value()) {
+    // No UUID in the UUID field. Set it.
+    $wrapper->field_uuid->set(md5($request['id']));
+    $wrapper->save();
+  }
 }
