@@ -2309,14 +2309,11 @@ function vsite_preprocess_html(&$vars){
   $vars['head_title'] = implode(' | ', $title_parts);
 
   // Exits if this vsite doesn't provide a custom favicon file.
-  $vsite = vsite_get_vsite();
-  $items = field_get_items('node', $vsite->group, 'field_favicon');
-  if (empty($items)) {
+  $fid = variable_get('site_favicon_fid', '');
+  if (empty($fid)) {
     return;
   }
-
-  // Exits if the custom image can't be found.
-  $uri = $items[0]['uri'];
+  $uri = db_query('SELECT uri FROM {file_managed} WHERE fid = :fid', array(':fid' => $fid))->fetchColumn();
   if (!file_exists($uri)) {
     return;
   }
@@ -2932,35 +2929,30 @@ function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
  * form_state in hook_cp_settings().
  */
 function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
-  // Builds the "Site favicon" file field widget.
-  $vsite = vsite_get_vsite();
-  $langcode = LANGUAGE_NONE;
-  $field_name = 'field_favicon';
-  $field = field_info_field($field_name);
-  $instance = field_info_instance('node', $field_name, $vsite->group->type);
-  $items = field_get_items('node', $vsite->group, $field_name);
-  $field_favicon = field_default_form('node', $vsite->group, $field, $instance, $langcode, $items, $form, $form_state);
+  // Only continues if we have a purl (in order to save the favicon properly).
+  if (!$purl = vsite_get_purl()) {
+    return;
+  }
 
-  // Renders a fieldset and adds the markup as prefix and suffix.
-  // If we try to move the position of the file widget inside a wrapper render
-  // element, then the AJAX fails to update.
+  // Builds the "Site favicon" file field widget.
+  // Renders a fieldset with a managed file widget.
   $fieldset = array(
     'vsite_favicon' => array(
       '#type' => 'fieldset',
       '#title' => t('Site favicon'),
       '#weight' => 30,
-      'field_favicon' => array('#markup' => '%MARKUP%'),
+      'field_favicon' => array(
+        '#type' => 'managed_file',
+        '#title' => t('Favicon'),
+        '#description' => t('A 16x16 .ico file to be displayed in browser shortcut icons and tabs when for any page on your site. For help generating a favicon file, try <a href="http://www.favicon.cc/">http://www.favicon.cc/</a>.'),
+        '#default_value' => variable_get('site_favicon_fid', ''),
+        '#upload_location' => "public://{$purl}/files",
+      ),
     ),
-  );
-  $output = drupal_render($fieldset);
-  list($prefix, $suffix) = explode('%MARKUP%', $output);
-  $field_favicon['field_favicon'] += array(
-    '#prefix' => $prefix,
-    '#suffix' => $suffix,
   );
 
   // Adds the fieldset to the form.
-  $form += $field_favicon;
+  $form += $fieldset;
 
   // Adds the submit handler to update the node upon submit.
   $form['#submit'][] = 'vsite_cp_settings_form_submit';
@@ -2974,14 +2966,10 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
  * @see vsite_form_cp_settings_form_alter()
  */
 function vsite_cp_settings_form_submit($form, &$form_state) {
-  // Get the current vsite.
-  $space = spaces_get_space();
-  $field_name = 'field_favicon';
   // Get the vsite_privacy value.
-  if (isset($form_state['values'][$field_name]) && $space) {
-    $wrapper = entity_metadata_wrapper('node', $space->group);
-    $value = $form_state['values'][$field_name]['und'][0];
-    $wrapper->{$field_name}->set($value);
-    $wrapper->save();
+  $name = 'site_favicon_fid';
+  if (isset($form_state['values'][$name])) {
+    $value = $form_state['values'][$name];
+    variable_set($name, $value);
   }
 }
