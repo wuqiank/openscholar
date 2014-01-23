@@ -51,7 +51,7 @@ function os_profiles_menu() {
     'access arguments' => array('access content'),
   );
 
-  $item['people/update_profiles'] = array(
+  $items['people/update_profile'] = array(
     'page callback' => 'os_profiles_update_profile',
     'access callback' => TRUE,
   );
@@ -486,51 +486,54 @@ function os_profiles_get_origin_node_values($address, $fields) {
 }
 
 /**
- * When a profile node is update he send a ping to all his listeners and notify
- * them they need to update all the nodes which copied to original node.
- * This page callback update all the copied nodes by pulling the information
- * from the source node.
+ * When need to update a profile node with listeners or ping to update the
+ * listeners this page callback will handle it. In order to determine the action
+ * that will be take we input channel will hold an array with data for that.
  *
- * @param $uuid
- *  The uuid for authentication.
- * @param $source
- *  The source URL of te node in order to pull the i
+ * In order to notify Drupal we need to update the synced node profiles we will
+ * need to access the server with the next $_GET:
+ * @code
+ *  $_GET = array(
+ *    'q' => 'people/update_profile',
+ *    'action' => 'update_listeners',
+ *    'uuid' => 'foobar',
+ *  );
+ * @endcode
+ *
+ * When a node person is being updated he need to ping all his listeners.
+ * In order to add listeners we will need to access the server with the next
+ * $_GET:
+ * @code
+ *  array(
+ *    'q' => 'people/update_profile',
+ *    'action' => 'insert_listeners',
+ *    'UUID' => 'foobar',
+ *    'listener' => 'http://www.harvard.edu/',
+ *  );
+ * @endcode
+ *
  */
-function os_profiles_update_profile($uuid, $source) {
+function os_profiles_update_profile() {
+  if ($_GET['action'] == 'update_listeners') {
+    // Get all the profiles which holds this UUID and update and pull the node
+    // from their origin JSON and update them as well.
+  }
+  else if ($_GET['action'] == 'insert_listeners') {
+    // A new site synced a profile. Get the node with the provided UUID and add
+    // the listener listeners fields.
+  }
+
+  drupal_json_output($_GET['foo']);
 }
 
 /**
  * Posting the new node object to listeners.
  *
- * @param $node
- *  The noe object.
  * @param $url
- *  array of urls of the listeners.
+ *  The address of the server.
+ * @param $values
+ *  The values of the $_GET. No need to pass the q index.
  */
-function os_profiles_send_node_to_listeners($node, $url) {
-  $wrapper = entity_metadata_wrapper('node', $node);
-  $fields = os_profiles_profiles_fields();
-  $values = array();
-
-  foreach ($fields as $field) {
-    if (!isset($wrapper->{$field})) {
-      continue;
-    }
-
-    $values[$field] = $wrapper->{$field}->value();
-  }
-
-  $query = drupal_http_build_query($values);
-  $ch = curl_init();
-
-  // Set post information for the CURL call.
-  curl_setopt($ch,CURLOPT_URL, $url);
-  curl_setopt($ch,CURLOPT_POST, count($fields));
-  curl_setopt($ch,CURLOPT_POSTFIELDS, $query);
-
-  // Execute the CURL call.
-  curl_exec($ch);
-
-  // Close the CURL.
-  curl_close($ch);
+function os_profiles_send_node_to_listeners($url, $values) {
+  drupal_http_request($url . '/?q=people/update_profile&' . drupal_http_build_query($values));
 }
