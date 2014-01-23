@@ -401,12 +401,16 @@ function os_profiles_profiles_fields() {
  * Submit handler; Importing person profile from external source.
  */
 function os_profiles_sync_profile_submit($form, $form_state) {
+  global $base_url;
   $keys = os_profiles_profiles_fields();
 
   if (!empty($form_state['values']['url'])) {
     $origin = os_profiles_get_origin_node_values($form_state['values']['url'], $keys);
     $values = $origin->values;
     $data = $origin->data;
+
+    // Get the URL of the original node.
+    $url = str_replace('/node/' . $data['nid'] . '.json', '', $form_state['values']['url']);
   }
   else {
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
@@ -444,16 +448,21 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     }
   }
 
-  if ($method == 'create') {
-    // todo: Write the current site as a listener in the node's origin site.
-  }
-
   $handler = restws_resource_controller('node');
 
   $nid = call_user_func_array(array($handler, $method), $arguments);
 
   if ($method == 'update') {
     $nid = $arguments[0];
+  }
+  else {
+    // Write the current site as a listener in the node's origin site.
+    $arguments = array(
+      'action' => 'insert_listeners',
+      'UUID' => $data['field_uuid'],
+      'listener' => $base_url,
+    );
+    os_profiles_manage_synced_profiles($url, $arguments);
   }
 
   $node = node_load($nid);
@@ -532,9 +541,29 @@ function os_profiles_update_profile() {
   else if ($_GET['action'] == 'insert_listeners') {
     // A new site synced a profile. Get the node with the provided UUID and add
     // the listener listeners fields.
-  }
+    $query = new EntityFieldQuery();
+    $results = $query
+      ->entityCondition('entity_type', 'node')
+      ->propertyCondition('type', 'person')
+      ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
+      ->execute();
 
-  drupal_json_output($_GET['foo']);
+    if (!$results['node']) {
+      return;
+    }
+
+    $nid = reset($results['node'])->nid;
+    $wrapper = entity_metadata_wrapper('node', $nid);
+    $destinations = $wrapper->field_destination->value();
+
+    if (in_array($_GET['listener'], $destinations)) {
+      // The destination is already in the field.
+      return;
+    }
+
+    $wrapper->field_destination[] = $_GET['listener'];
+    $wrapper->save();
+  }
 }
 
 /**
@@ -544,8 +573,10 @@ function os_profiles_update_profile() {
  *  The address of the server.
  * @param $values
  *  The values of the $_GET. No need to pass the q index.
+ *
+ * @see os_profiles_update_profile().
  */
-function os_profiles_send_node_to_listeners($url, $values) {
+function os_profiles_manage_synced_profiles($url, $values) {
   drupal_http_request($url . '/?q=people/update_profile&' . drupal_http_build_query($values));
 }
 
