@@ -502,3 +502,27 @@ function os_boxes_permission() {
 
   return $perms;
 }
+
+/**
+ * Discards the default image when the user hits the "remove" button.
+ */
+function _os_image_remove_handler($form, $form_state) {
+  $parents = $form_state['triggering_element']['#array_parents'];
+  $button_key = array_pop($parents);
+  $element = drupal_array_get_nested_value($form, $parents);
+
+  // @see: file_managed_file_submit
+  if (isset($element['#file'])) {
+    $orig = _imagefield_crop_file_to_crop($element['#file']->fid);
+    file_usage_delete($orig, 'imagefield_crop', null, null, 0);
+    file_usage_delete($element['#file'], 'os_boxes', null, null, 0);
+    file_delete($orig);
+    file_delete($element['#file']);
+    $element['#value']['fid'] = null;
+    unset($element['#file']);
+
+    $values_element = $element['#extended'] ? $element['fid'] : $element;
+    form_set_value($values_element, NULL, $form_state);
+    drupal_array_set_nested_value($form_state['input'], $values_element['#parents'], NULL);
+  }
+}
