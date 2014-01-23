@@ -139,7 +139,7 @@ function os_biocv_process_node(&$vars) {
     }
   }
 
-  elseif ($vars['type'] == 'bio' && empty($vars['show_title']) && $vars['view_mode'] != 'title') {
+  elseif ($vars['type'] == 'bio' && empty($vars['show_title']) && !in_array($vars['view_mode'], array('title', 'slide_teaser'))) {
     // hides the title
     $vars['page'] = true;
   }
