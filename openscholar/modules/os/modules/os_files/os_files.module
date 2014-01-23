@@ -1350,7 +1350,12 @@ function os_files_file_view($file, $view_mode, $langcode) {
     unset ($content['file-info']['icon']);
     switch ($view_mode) {
       case 'full':
-        $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
+        $img = $file->content['file'];
+        $img['#theme'] = 'image_style';
+        $img['#style_name'] = 'os_files_large';
+        $img['#attributes']['class'] = array();
+        $img['#path'] = $img['#file']->uri;
+        $content = array_merge(array('file' => $img), $content);//include embedded image
         $content['file-info']['file']['#style_name'] = 'os_files_large'; //600x600
         break;
   
