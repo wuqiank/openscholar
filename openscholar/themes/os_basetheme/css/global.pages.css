@@ -799,6 +799,9 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
   
 }
 
+div.toggle {
+	cursor:pointer;
+}
 
 .field-name-og-vocabulary a.toggle {
 	background:url('../images/scholarbase-sprite.png') -12px -194px no-repeat;
