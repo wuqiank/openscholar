@@ -781,6 +781,7 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
 	
 /** OS LOGIN CONTAINER STYLES **/	
 /** SLIDER **/
+.sv-list-biblio.sv-list-view-slide_teaser .biblio-abstract-display.os-slider,	
 .os-slider {
   display: none;
   color: black;
@@ -798,6 +799,11 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
   padding: 0;
   background: none !important;
   
+}
+
+
+.sv-list-biblio.sv-list-view-slide_teaser .biblio-abstract-display.os-slider {
+	background: #F1F1F1 !important;
 }
 
 div.toggle {
