@@ -217,6 +217,15 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     return;
   }
 
+  // Form element for disabling the use of a default image.
+  $form['os_profiles_disable_default_image'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable default image for people profiles'),
+    '#default_value' => variable_get('os_profiles_disable_default_image', FALSE),
+    '#description' => t('If checked no image will be used when viewing the "/people" page.'),
+    '#weight' => -99,
+  );
+
   $profile_styles = array(
     'title' => 'Title',
     'teaser' => 'Teaser',
@@ -233,7 +242,6 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     // Setup the h2.
     $profile_example_title = '<h2>' . t($name) . '</h2>';
     // Setup profile style example for the popup.
-//    $profile_example = 'test text';
     $profile_example = _os_profiles_build_display_style_example($style);
     $profile_example_text = '<p>' . t('!profile_text', array('!profile_text' => $profile_example)) . '</p>';
     // Concat it all together.
@@ -519,16 +527,8 @@ function os_profiles_display_settings_submit($form, $form_state) {
 }
 
 function _os_profiles_build_display_style_example($style) {
-  $node = _os_profiles_get_display_style_example();
-
-  return _os_profiles_theme_display_style(array('style_name' => $style, 'node' => $node));
-}
-
-function _os_profiles_theme_display_style($variables) {
   // @todo: return styled node for popup over display style and remove hardcoding.
-  $view_mode = $variables['style_name'];
-
-  switch ($view_mode) {
+  switch ($style) {
     case 'title':
       $result = '
         <div class="dummy-content">
@@ -580,35 +580,6 @@ function _os_profiles_theme_display_style($variables) {
 }
 
 /**
- * Return a pre-built node for an example citation.
- */
-function _os_profiles_get_display_style_example() {
-  // Profile for example.
-  $node = new stdClass();
-  $node->type = 'person';
-  $node->nid = -1;
-  $node->vid = -1;
-  $node->status = FALSE;
-  $node->promote = FALSE;
-  $node->sticky = FALSE;
-  $node->title = 'John Fitzgerald Kennedy';
-  $node->created = time();
-  $node->changed = time();
-
-  $wrapper = entity_metadata_wrapper('node', $node);
-
-  $wrapper->field_first_name->set('John');
-  $wrapper->field_middle_name_or_initial->set('Fitzgerald');
-  $wrapper->field_last_name->set('Kennedy');
-  $wrapper->field_professional_title->set(array('The 35th president of the United States'));
-  $wrapper->body->set(array('value' => 'Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.', 'format' => 'full_html'));
-  $wrapper->field_phone->set('555-1234');
-  $wrapper->field_email->set('example@address.com');
-
-  return $node;
-}
-
-/**
  * Implements hook_entity_view_mode_alter().
  *
  * Changes the display type for profiles in the "/people" page
@@ -627,5 +598,8 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
     return;
   }
 
-  $view_mode = variable_get('os_profiles_display_type', 'teaser');
+  // Don't change the view mode if the profiles are in a box.
+  if (empty($context['entity']->sv_list)) {
+    $view_mode = variable_get('os_profiles_display_type', 'teaser');
+  }
 }

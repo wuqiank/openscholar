@@ -15,7 +15,9 @@
   margin: 0;
 }
 
-
+#content .node-person .pic-bio.people-sidebar-teaser{
+  float: left;
+}
 
 .page-node.node-type-person #content-column header h1 {
   display: none;

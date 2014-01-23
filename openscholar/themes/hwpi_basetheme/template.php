@@ -93,10 +93,28 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     // If node is in teaser view mode, load a default image. If node is displayed
     // in "List of posts" widget or in full display mode, load a bigger default image.
     if ($vars['view_mode'] == 'teaser') {
-      $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-      $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-      // Default image.
-      $vars['content']['field_person_photo'][0] = array('#markup' => $image);
+      // Check if default image is disabled.
+      if (variable_get('os_profiles_disable_default_image', FALSE)){
+        $vars['content']['field_person_photo'][0] = array('#markup' => '<div class="no-default-image"></div>');
+      }
+      else {
+        if ($custom_default_image = variable_get('os_profiles_default_image_file', 0)) {
+          // Use custom default image.
+          $image_file = file_load($custom_default_image);
+          $path = $image_file->uri;
+          $options = array(
+            'path' => $path,
+            'style_name' => 'profile_thumbnail',
+          );
+          $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
+        }
+        else {
+          // Use default image.
+          $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+          $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+        }
+        $vars['content']['field_person_photo'][0] = array('#markup' => $image);
+      }
     }
     elseif ((!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box']) || $vars['view_mode'] == 'full') {
       $path = variable_get('os_person_default_image_big', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image-big.png');
@@ -110,11 +128,27 @@ function hwpi_basetheme_preprocess_node(&$vars) {
       }
     }
     elseif ($vars['view_mode'] == 'sidebar_teaser') {
-      $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-      $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-      // Default image.
-      $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => $image);
-
+      if (variable_get('os_profiles_disable_default_image', FALSE)){
+        $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => '<div class="no-default-image"></div>');
+      }
+      else {
+        if ($custom_default_image = variable_get('os_profiles_default_image_file', 0)) {
+          // Use custom default image.
+          $image_file = file_load($custom_default_image);
+          $path = $image_file->uri;
+          $options = array(
+            'path' => $path,
+            'style_name' => 'profile_thumbnail',
+          );
+        $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
+        }
+        else {
+          // Use default image.
+          $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+          $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+        }
+        $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => $image);
+      }
       // Make sure image will be displayed.
       $vars['content']['pic_bio']['#access'] = TRUE;
     }
@@ -159,7 +193,12 @@ function hwpi_basetheme_node_view_alter(&$build) {
   // Persons, heavily modify the output to match the HC designs
   if ($build['#node']->type == 'person') {
 
-    $build['pic_bio']['#prefix'] = '<div class="pic-bio clearfix">';
+    if ($build['#view_mode'] == 'sidebar_teaser') {
+      $build['pic_bio']['#prefix'] = '<div class="pic-bio clearfix people-sidebar-teaser">';
+    }
+    else {
+      $build['pic_bio']['#prefix'] = '<div class="pic-bio clearfix">';
+    }
     $build['pic_bio']['#suffix'] = '</div>';
     $build['pic_bio']['#weight'] = -9;
 
