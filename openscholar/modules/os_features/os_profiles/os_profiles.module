@@ -322,6 +322,10 @@ function _os_profiles_default_image_process($element, $form_state, $form) {
   $element = os_files_imagefield_crop_process($element, $form_state, $form);
   $element['remove_button']['#submit'][] = '_os_image_remove_handler';
 
+  // When pressing "remove" call the original form's submit handler in order to
+  // set the default image file id to 0.
+  $element['remove_button']['#submit'][] = 'os_profiles_display_settings_submit';
+
   module_load_include('inc', 'comment_sources', 'comment_sources.admin');
   $fid = isset($element['#value']['fid']) ? $element['#value']['fid'] : 0;
 
@@ -451,6 +455,12 @@ function _os_profiles_default_image_preview_process($element, $form_state, $form
 function os_profiles_display_settings_submit($form, $form_state) {
   $file_data = $form_state['input']['file'];
 
+  // When removing an uploaded picture set the default image file id to 0.
+  if ($form_state['triggering_element']['#value'] == 'remove') {
+    variable_set('os_profiles_default_image_file', 0);
+    return;
+  }
+
   if ($file_data['fid']) {
     // An image was uploaded.
     $file = file_load($file_data['fid']);
@@ -474,12 +484,10 @@ function os_profiles_display_settings_submit($form, $form_state) {
       }
     }
 
-    // this creates two images
-    // $orig is the original, unmodified image
-    // its saved so we can refer to it later
-    // $file is original uploaded image that is then cropped to fit
-    // it is the file that is displayed in render
-    // it 'contains' the orig file, through the file usage table
+    // This creates two images. $orig is the original, unmodified image. It is
+    // saved so we can refer to it later. $file is original uploaded image that
+    // is then cropped and is displayed in the rendered output.
+    // It relates to the original file, through the file usage table.
     $orig = _imagefield_crop_file_to_crop($file->fid);
     if ($orig->fid == $file->fid) {
       $orig = imagefield_crop_create_copy($file);
