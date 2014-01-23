@@ -2288,7 +2288,7 @@ function vsite_mollom_form_info($form_id){
  * Set the head_title to the vsite name rather than the site_name, if in a vsite.
  */
 function vsite_preprocess_html(&$vars){
-  if (!$space = spaces_get_space()) {
+  if (!$vsite = vsite_get_vsite()) {
     return;
   }
 
@@ -2300,8 +2300,8 @@ function vsite_preprocess_html(&$vars){
 
   // Adds the vsite name to the head title, instead of sitewide site_name.
   $vsite_title = variable_get('site_name', '');
-  if (isset($space->group->title)) {
-    $vsite_title = $space->group->title;
+  if (isset($vsite->group->title)) {
+    $vsite_title = $vsite->group->title;
   }
   $title_parts[] = $vsite_title;
 
@@ -2941,12 +2941,16 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
       '#type' => 'fieldset',
       '#title' => t('Site favicon'),
       '#weight' => 30,
-      'field_favicon' => array(
+      'site_favicon_fid' => array(
         '#type' => 'managed_file',
         '#title' => t('Favicon'),
         '#description' => t('A 16x16 .ico file to be displayed in browser shortcut icons and tabs when for any page on your site. For help generating a favicon file, try <a href="http://www.favicon.cc/">http://www.favicon.cc/</a>.'),
         '#default_value' => variable_get('site_favicon_fid', ''),
         '#upload_location' => "public://{$purl}/files",
+        '#upload_validators' => array(
+          'file_validate_extensions' => array('ico'),
+          'file_validate_size' => array(2*1024*1024),
+        ),
       ),
     ),
   );
@@ -2970,6 +2974,7 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
   $name = 'site_favicon_fid';
   if (isset($form_state['values'][$name])) {
     $value = $form_state['values'][$name];
-    variable_set($name, $value);
+    $vsite = vsite_get_vsite();
+    $vsite->controllers->variable->set($name, $value);
   }
 }
