@@ -51,6 +51,11 @@ function os_profiles_menu() {
     'access arguments' => array('access content'),
   );
 
+  $item['people/update_profiles'] = array(
+    'page callback' => 'os_profiles_update_profile',
+    'access callback' => TRUE,
+  );
+
   return $items;
 }
 
@@ -398,17 +403,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   $keys = os_profiles_profiles_fields();
 
   if (!empty($form_state['values']['url'])) {
-    $json_address = $form_state['json_address'];
-    $request = drupal_http_request($json_address);
-    $data = drupal_json_decode($request->data);
-
-    foreach ($keys as $key) {
-      if (empty($data[$key])) {
-        continue;
-      }
-
-      $values[$key] = $data[$key];
-    }
+    $values = os_profiles_get_origin_node_values($form_state['values']['url'], $keys)->values;
   }
   else {
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
@@ -459,6 +454,49 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   );
 
   drupal_set_message(t('The person @title has @op. You can <a href="@url">visit</a> their page.', $params));
+}
+
+/**
+ * Build the node origin values from the source node JSON output.
+ *
+ * @param $address
+ *  The JSON address of the node.
+ * @param $fields
+ *  The fields which holds the values we need.
+ *
+ * @return stdClass
+ *  Return an object with the values and the full JSON of the origin node.
+ */
+function os_profiles_get_origin_node_values($address, $fields) {
+  $request = drupal_http_request($address);
+  $data = drupal_json_decode($request->data);
+
+  foreach ($fields as $key) {
+    if (empty($data[$key])) {
+      continue;
+    }
+
+    $values[$key] = $data[$key];
+  }
+
+  return (object) array(
+    'values' => $values,
+    'json' => $request->data,
+  );
+}
+
+/**
+ * When a profile node is update he send a ping to all his listeners and notify
+ * them they need to update all the nodes which copied to original node.
+ * This page callback update all the copied nodes by pulling the information
+ * from the source node.
+ *
+ * @param $uuid
+ *  The uuid for authentication.
+ * @param $source
+ *  The source URL of te node in order to pull the i
+ */
+function os_profiles_update_profile($uuid, $source) {
 }
 
 /**
