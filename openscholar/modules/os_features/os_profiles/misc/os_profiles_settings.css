@@ -37,10 +37,6 @@ a.profile-pop {
   margin-right: 5px;
 }
 
-.dummy-person-photo--sidebar-teaser {
-  float: none;
-}
-
 .dummy-content {
   display: table-cell;
 }
@@ -48,15 +44,6 @@ a.profile-pop {
 .dummy-content h1{
   font-weight: normal;
   margin: 0;
-}
-
-.dummy-content-sidebar-teaser {
-  float: left;
-}
-
-.dummy-content-sidebar-teaser h1{
-  font-weight: normal;
-  margin-bottom: 10px;
 }
 
 .dummy-content .dummy-professional-title {

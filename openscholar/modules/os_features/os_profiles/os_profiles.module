@@ -552,10 +552,10 @@ function _os_profiles_theme_display_style($variables) {
       break;
     case 'sidebar_teaser':
       $result = '
-        <div class="dummy-person-photo-sidebar-teaser">
+        <div class="dummy-person-photo">
           <img src="http://localhost/openscholar/www/profiles/openscholar/themes/hwpi_basetheme/images/person-default-image.png">
         </div>
-        <div class="dummy-content-sidebar-teaser">
+        <div class="dummy-content">
           <h1><a href="#">John Fitzgerald Kennedy</a></h1>
 				  <div class="dummy-professional-title">Drupal developer at Gizra.inc, QA person at Gizra.inc</div>
         </div>
