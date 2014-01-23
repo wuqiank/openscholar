@@ -1,0 +1,140 @@
+<?php
+
+function media_draggable_field_widget_info() {
+  return array(
+    'media_draggable_file' => array(
+      'label' => t('Drag & Drop Media Browser'),
+      'field types' => array('file'),
+      'settings' => array(
+        'progress_indicator' => 'throbber',
+        // This setting is responsive for showing Browse button or not.
+        'standard_upload' => 1,
+        'allow_replace' => 0,
+        'upload_event' => 'automatic',
+        'upload_button_text' => t('Upload'),
+        'droppable_area_text' => t('Drop files here to upload'),
+        // This settings allows to drop multiple files at once.
+        'multiupload' => 0,
+        'allowed_types' => array('image'),
+        'browser_plugins' => array(),
+        'allowed_schemes' => array('public', 'private'),
+      ),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_CUSTOM,
+        'default value' => FIELD_BEHAVIOR_NONE,
+      ),
+    )
+  );
+}
+
+function media_draggable_field_widget_settings_form($field, $instance) {
+  $form = dragndrop_upload_file_field_widget_settings_form($field, $instance);
+  $form += media_field_widget_settings_form($field, $instance);
+
+  return $form;
+}
+
+function media_draggable_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+
+  $element += array(
+    '#field' => $field,
+    '#instance' => $instance,
+    '#process' => array(
+      'media_draggable_field_widget_process',
+    ),
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'media_draggable').'/js/media_draggable.widget.js',
+      ),
+      'css' => array(
+        drupal_get_path('module', 'media_draggable').'/css/media_draggable.widget.css',
+      )
+    )
+  );
+
+  $element['template'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array(
+        ''
+      )
+    ),
+    '#file' => 'blank',
+    'fid' => array(
+      '#type' => 'hidden',
+      '#default_value' => 'blank',
+    ),
+    '#process' => array(
+      'media_draggable_field_widget_indiv_process',
+    )
+  );
+
+  foreach ($items as $delta => $item) {
+    $element[$delta] = $element['template'];
+    $element[$delta]['#file'] = $item;
+    $element[$delta]['fid']['#default_value'] = $item['fid'];
+  }
+
+  $element['template']['#attributes']['hidden'] = 'hidden';
+
+  return $element;
+}
+
+function media_draggable_field_widget_process($element, &$form_state, &$form) {// Essentially we use the `dragndrop_upload_file` type,
+  // extended with some enhancements.
+  $widget_settings = $element['#instance']['widget']['settings'];
+  $instance_settings = $element['#instance']['settings'];
+
+  $element['drop'] = array(
+    '#type' => 'dragndrop_upload',
+    '#upload_location' => file_field_widget_uri($element['#field'], $element['#instance']),
+    '#upload_validators' => file_field_widget_upload_validators(
+      $element['#field'],
+      $element['#instance']
+    ),
+    '#value_callback' => 'file_field_widget_value',
+    '#progress_indicator' => $widget_settings['progress_indicator'],
+    '#upload_event' => $widget_settings['upload_event'],
+    '#standard_upload' => $widget_settings['standard_upload'],
+    '#allow_replace' => $widget_settings['allow_replace'],
+    '#upload_button_text' => $widget_settings['upload_button_text'],
+    '#droppable_area_text' => $widget_settings['droppable_area_text'],
+    '#file_upload_max_size' => $instance_settings['max_filesize'] ? $instance_settings['max_filesize'] : file_upload_max_size(),
+    '#cardinality' => $element['#field']['cardinality'],
+    // Do not allow for 'multiupload' setting to be enabled if the module
+    // is disabled.
+    '#multiupload' => module_exists(
+        'dragndrop_upload_multi') ? $widget_settings['multiupload'] : 0,
+    // Allows this field to return an array instead of a single value.
+    '#extended' => TRUE,
+    '#weight' => -1,
+  );
+
+  return $element;
+}
+
+function media_draggable_field_widget_indiv_process($element) {
+  $file = $element['#file'];
+  $element['label'] = array(
+    '#markup' => $file['filename'],
+    '#prefix' => '<span>',
+    '#suffix' => '</span>'
+  );
+
+  $element['controls'] = array(
+    '#theme' => 'links',
+    '#links' => array(
+       'edit' => array(
+         'href' => 'file/'.$file['fid'].'/edit',
+         'title' => t('Edit'),
+       ),
+      'remove' => array(
+        'href' => '',
+        'html' => t('Remove'),
+        'external' => true,
+      )
+    ),
+  );
+
+  return $element;
+}
