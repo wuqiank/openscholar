@@ -466,6 +466,71 @@ function os_profiles_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-person-field_origin_destination'
+  $field_instances['node-person-field_origin_destination'] = array(
+    'bundle' => 'person',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 25,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'links' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'sidebar_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'title' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_origin_destination',
+    'label' => 'Origin destination',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'os_wysiwyg',
+      'settings' => array(
+        'max_rows' => 10,
+        'rows' => 1,
+      ),
+      'type' => 'os_wysiwyg_expanding_textarea',
+      'weight' => 49,
+    ),
+  );
+
   // Exported field_instance: 'node-person-field_origin_uuid'
   $field_instances['node-person-field_origin_uuid'] = array(
     'bundle' => 'person',

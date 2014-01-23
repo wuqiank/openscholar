@@ -51,8 +51,13 @@ function os_profiles_menu() {
     'access arguments' => array('access content'),
   );
 
+  $items['people/insert_listeners'] = array(
+    'page callback' => 'os_profiles_insert_listeners',
+    'access callback' => TRUE,
+  );
+
   $items['people/update_profile'] = array(
-    'page callback' => 'os_profiles_update_profile',
+    'page callback' => 'os_profiles_update_listeners',
     'access callback' => TRUE,
   );
 
@@ -403,6 +408,7 @@ function os_profiles_profiles_fields() {
 function os_profiles_sync_profile_submit($form, $form_state) {
   global $base_url;
   $keys = os_profiles_profiles_fields();
+  $values = $data = array();
 
   if (!empty($form_state['values']['url'])) {
     $origin = os_profiles_get_origin_node_values($form_state['values']['url'], $keys);
@@ -411,6 +417,9 @@ function os_profiles_sync_profile_submit($form, $form_state) {
 
     // Get the URL of the original node.
     $url = str_replace('/node/' . $data['nid'] . '.json', '', $form_state['values']['url']);
+
+    // Save the original address of the JSON.
+    $values['field_origin_destination'] = $form_state['values']['url'];
   }
   else {
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
@@ -506,6 +515,62 @@ function os_profiles_get_origin_node_values($address, $fields) {
 }
 
 /**
+ * A new site synced a profile. Get the node with the provided UUID and add the
+ * listener listeners fields.
+ */
+function os_profiles_insert_listeners() {
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('type', 'person')
+    ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
+    ->execute();
+
+  if (!$results['node']) {
+    return;
+  }
+
+  $nid = reset($results['node'])->nid;
+  $wrapper = entity_metadata_wrapper('node', $nid);
+  $destinations = $wrapper->field_destination->value();
+
+  if (in_array($_GET['listener'], $destinations)) {
+    // The destination is already in the field.
+    return;
+  }
+
+  $wrapper->field_destination[] = $_GET['listener'];
+  $wrapper->save();
+}
+
+/**
+ * Get all the profiles which holds this UUID and pull the node from their
+ * origin JSON and update them as well.
+ */
+function os_profiles_update_listeners() {
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('type', 'person')
+    ->fieldCondition('field_origin_uuid', 'value', $_GET['UUID'])
+    ->execute();
+
+  if (!$results['node']) {
+    return;
+  }
+
+  $nodes = node_load_multiple(array_keys($results['node']));
+  $fields = os_profiles_profiles_fields();
+  $handler = restws_resource_controller('node');
+
+  foreach ($nodes as $node) {
+    $wrapper = entity_metadata_wrapper('node', $node);
+    $data = os_profiles_get_origin_node_values($wrapper->field_origin_destination->value(), $fields);
+    $handler->update($wrapper->getIdentifier(), $data->values);
+  }
+}
+
+/**
  * When need to update a profile node with listeners or ping to update the
  * listeners this page callback will handle it. In order to determine the action
  * that will be take we input channel will hold an array with data for that.
@@ -514,8 +579,7 @@ function os_profiles_get_origin_node_values($address, $fields) {
  * need to access the server with the next $_GET:
  * @code
  *  $_GET = array(
- *    'q' => 'people/update_profile',
- *    'action' => 'update_listeners',
+ *    'action' => 'update',
  *    'uuid' => 'foobar',
  *  );
  * @endcode
@@ -525,58 +589,19 @@ function os_profiles_get_origin_node_values($address, $fields) {
  * $_GET:
  * @code
  *  array(
- *    'q' => 'people/update_profile',
- *    'action' => 'insert_listeners',
+ *    'action' => 'insert',
  *    'UUID' => 'foobar',
  *    'listener' => 'http://www.harvard.edu/',
  *  );
  * @endcode
  *
- */
-function os_profiles_update_profile() {
-  if ($_GET['action'] == 'update_listeners') {
-    // Get all the profiles which holds this UUID and update and pull the node
-    // from their origin JSON and update them as well.
-  }
-  else if ($_GET['action'] == 'insert_listeners') {
-    // A new site synced a profile. Get the node with the provided UUID and add
-    // the listener listeners fields.
-    $query = new EntityFieldQuery();
-    $results = $query
-      ->entityCondition('entity_type', 'node')
-      ->propertyCondition('type', 'person')
-      ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
-      ->execute();
-
-    if (!$results['node']) {
-      return;
-    }
-
-    $nid = reset($results['node'])->nid;
-    $wrapper = entity_metadata_wrapper('node', $nid);
-    $destinations = $wrapper->field_destination->value();
-
-    if (in_array($_GET['listener'], $destinations)) {
-      // The destination is already in the field.
-      return;
-    }
-
-    $wrapper->field_destination[] = $_GET['listener'];
-    $wrapper->save();
-  }
-}
-
-/**
- * Posting the new node object to listeners.
- *
  * @param $url
  *  The address of the server.
  * @param $values
  *  The values of the $_GET. No need to pass the q index.
- *
- * @see os_profiles_update_profile().
  */
 function os_profiles_manage_synced_profiles($url, $values) {
+  $values['q'] = $values['action'] == 'update' ? 'people/update_profile' : 'people/insert_profile';
   drupal_http_request($url . '/?q=people/update_profile&' . drupal_http_build_query($values));
 }
 
@@ -593,5 +618,27 @@ function os_profiles_restws_request_alter(&$request) {
     // No UUID in the UUID field. Set it.
     $wrapper->field_uuid->set(md5($request['id']));
     $wrapper->save();
+  }
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function os_profiles_node_update($node) {
+  $wrapper = entity_metadata_wrapper('node', $node);
+  if ($wrapper->getBubndle() != 'person') {
+    return;
+  }
+
+  if (!$destinations = $wrapper->field_destination->value()) {
+    return;
+  }
+
+  foreach ($destinations as $destination) {
+    $arguments = array(
+      'action' => 'update',
+      'UUID' => $wrapper->field_uuid->value(),
+    );
+    os_profiles_manage_synced_profiles($destination, $arguments);
   }
 }
