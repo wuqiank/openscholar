@@ -207,7 +207,7 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter() for cp_app_settings_form.
+ * Implements hook_form_FORM_ID_alter().
  *
  * Adds a checkbox in the os profiles app settings to disable default images
  * when viewing people's profiles.
