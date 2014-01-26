@@ -96,7 +96,7 @@ class os_taxonomy_fbt extends os_boxes_default {
       '#type' => 'textfield',
       '#title' => t('Default option for select list'),
       '#default_value' => !empty($this->options['selectlist_default']) ? $this->options['selectlist_default'] : t('Select an item'),
-      '#state' => array(
+      '#states' => array(
         'visible' => array(
           ':input[name="widget_type"]' => array('value' => 'select'),
         )
