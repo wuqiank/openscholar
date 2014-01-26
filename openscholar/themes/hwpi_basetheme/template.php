@@ -93,8 +93,15 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     // If node is in teaser view mode, load a default image. If node is displayed
     // in "List of posts" widget or in full display mode, load a bigger default image.
     if ($vars['view_mode'] == 'teaser') {
-      // Check if default image is disabled.
-      if (variable_get('os_profiles_disable_default_image', FALSE)){
+      // Check if profile is in a widget.
+      if (!empty($vars['sv_list'])) {
+        // Use default image.
+        $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+        $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+        $vars['content']['field_person_photo'][0] = array('#markup' => $image);
+      }
+      // Profile is not in a widget. Check if default image is disabled. If it is, print an empty div.
+      elseif (variable_get('os_profiles_disable_default_image', FALSE)){
         $vars['content']['field_person_photo'][0] = array('#markup' => '<div class="no-default-image"></div>');
       }
       else {
@@ -128,7 +135,15 @@ function hwpi_basetheme_preprocess_node(&$vars) {
       }
     }
     elseif ($vars['view_mode'] == 'sidebar_teaser') {
-      if (variable_get('os_profiles_disable_default_image', FALSE)){
+      // Check if profile is in a widget.
+      if (!empty($vars['sv_list'])) {
+        // Use default image.
+        $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+        $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+        $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => $image);
+      }
+      // Profile is not in a widget. Check if default image is disabled. If it is, print an empty div.
+      elseif (variable_get('os_profiles_disable_default_image', FALSE)){
         $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => '<div class="no-default-image"></div>');
       }
       else {
