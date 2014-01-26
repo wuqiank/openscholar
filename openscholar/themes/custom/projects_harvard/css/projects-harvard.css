@@ -619,6 +619,11 @@ td, td.description {
   font-size: .9em;
   }
 
+/* FRONT PAGE vSITE PROFILES */
+.views-field-field-site-logo {
+  display:none;
+}
+
 .page-websites .view-os-websites td {
   width: 25%;
   padding-bottom: 35px;

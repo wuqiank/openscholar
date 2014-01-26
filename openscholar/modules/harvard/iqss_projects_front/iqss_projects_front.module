@@ -2,7 +2,7 @@
 include_once('iqss_projects_front.features.inc');
 
 /**
- * implementation of hook_context_default_contexts_alter
+ * Implements of hook_context_default_contexts_alter().
  */
 function iqss_projects_front_context_default_contexts_alter(&$contexts){
   // add some extra blocks/boxes to the 'sitewide_front'
