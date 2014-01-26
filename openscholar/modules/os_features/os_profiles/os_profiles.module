@@ -235,16 +235,16 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
 
   $profile_styles_hover = array();
   $counter = 0;
-  foreach($profile_styles as $style => $name) {
+
+  // Create markup for style examples when hovering over each style.
+  foreach ($profile_styles as $style => $name) {
     $counter ++;
-    // Setup the new citation options to be wrapped for a popup.
+    // Prepare the popup and the style name.
     $profile_example_link = '<a href="#" class="profile-pop" data-popbox="pop'.$counter.'">' . t('@link_name', array('@link_name' => $name)) . '</a>';
-    // Setup the h2.
     $profile_example_title = '<h2>' . t($name) . '</h2>';
-    // Setup profile style example for the popup.
+    // Prepare the profile style example for the popup.
     $profile_example = _os_profiles_build_display_style_example($style);
     $profile_example_text = '<p>' . t('!profile_text', array('!profile_text' => $profile_example)) . '</p>';
-    // Concat it all together.
     $profile_example_output = $profile_example_link . '<div id="pop'.$counter.'" class="stylebox">' . $profile_example_title . $profile_example_text . '</div>';
     $profile_styles_hover[$style] = $profile_example_output;
   }
@@ -267,13 +267,9 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     ),
   );
 
-  // Get properties of the image if there's a default image.
+  // Get properties of the image if there's a custom default image.
   if (module_exists('vsite') && $vsite = spaces_get_space() && $fid = variable_get('os_profiles_default_image_file', NULL)) {
-    $file = file_load($fid);
-    $x = variable_get('os_profiles_default_image_x', 0);
-    $y = variable_get('os_profiles_default_image_y', 0);
-    $height = $file->image_dimensions['height'];
-    $width = $file->image_dimensions['width'];
+    $dimensions = variable_get('os_profiles_default_image_properties', array());
 
     $instance = field_info_instance('node', 'field_person_photo', 'person');
     if ($instance['widget']['settings']['resolution']) {
@@ -292,14 +288,12 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     '#upload_validators' => array(
       'file_validate_extensions' => array($allowed_file_types),
     ),
-    '#process' => array(
-      '_os_profiles_default_image_process',
-    ),
+    '#process' => array('_os_profiles_default_image_process'),
     '#dimensions' => array(
-      'x' => isset($x) ? $x : 0,
-      'y' => isset($y) ? $y : 0,
-      'height' => isset($height) ? $height : 140,
-      'width' => isset($width) ? $width : 180,
+      'x' => isset($dimensions['x']) ? $dimensions['x'] : 0,
+      'y' => isset($dimensions['y']) ? $dimensions['y'] : 0,
+      'height' => isset($dimensions['height']) ? $dimensions['height'] : 140,
+      'width' => isset($dimensions['width']) ? $dimensions['width'] : 180,
       'ratio' => isset($ratio) ? $ratio : 0,
     ),
     '#attached' => array(
@@ -312,6 +306,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     '#weight' => -100,
   );
 
+  // Set upload location.
   if (module_exists('vsite') && $space = spaces_get_space()) {
     $form['file']['#upload_location'] = 'public://' . $space->group->purl . '/files';
   }
@@ -325,7 +320,11 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
 function _os_profiles_default_image_process($element, $form_state, $form) {
   $element = file_managed_file_process($element, $form_state, $form);
   $element = os_files_imagefield_crop_process($element, $form_state, $form);
-  $element['remove_button']['#submit'][] = '_os_profiles_default_image_remove_handler';
+  $element['remove_button']['#submit'][] = '_os_image_remove_handler';
+
+  // When pressing "remove" call the original form's submit handler in order to
+  // set the default image file id to 0.
+  $element['remove_button']['#submit'][] = 'os_profiles_display_settings_submit';
 
   module_load_include('inc', 'comment_sources', 'comment_sources.admin');
   $fid = isset($element['#value']['fid']) ? $element['#value']['fid'] : 0;
@@ -431,12 +430,14 @@ function _os_profiles_default_image_preview_process($element, $form_state, $form
 
   $scale = null;
   if (module_exists('vsite') && $vsite = spaces_get_space()) {
-    $style = image_style_load('profile_thumbnail');
-    $effects = reset($style['effects']);
-    $scale = array(
-      'width' => $effects['data']['width'],
-      'height' =>$effects['data']['height'],
-    );
+    $instance = field_info_instance('node', 'field_person_photo', 'person');
+    if ($instance['widget']['settings']['resolution']) {
+      $scale = explode('x', $instance['widget']['settings']['resolution']);
+      $scale = array(
+        'width' => $scale[0],
+        'height' => $scale[1],
+      );
+    }
   }
 
   $element['#attached']['js'][0]['data']['imagefield_crop']['edit-file']['preview']['width'] = isset($scale) ? $scale['width'] : 0;
@@ -449,34 +450,19 @@ function _os_profiles_default_image_preview_process($element, $form_state, $form
 }
 
 /**
- * Discards the default image when the user hits the "remove" button.
- */
-function _os_profiles_default_image_remove_handler($form, $form_state) {
-  $parents = $form_state['triggering_element']['#array_parents'];
-  $element = drupal_array_get_nested_value($form, $parents);
-
-  // @see: file_managed_file_submit
-  if (isset($element['#file'])) {
-    $orig = _imagefield_crop_file_to_crop($element['#file']->fid);
-    file_usage_delete($orig, 'imagefield_crop', null, null, 0);
-    file_usage_delete($element['#file'], 'os_profiles', null, null, 0);
-    file_delete($orig);
-    file_delete($element['#file']);
-    $element['#value']['fid'] = null;
-    unset($element['#file']);
-
-    $values_element = $element['#extended'] ? $element['fid'] : $element;
-    form_set_value($values_element, NULL, $form_state);
-    drupal_array_set_nested_value($form_state['input'], $values_element['#parents'], NULL);
-  }
-}
-
-/**
- * Submit handler for uploading a default profile image.
+ * Submit handler for uploading a custom default profile image.
  */
 function os_profiles_display_settings_submit($form, $form_state) {
   $file_data = $form_state['input']['file'];
-  if ($file_data['fid'] != 0) {
+
+  // When removing an uploaded picture set the default image file id to 0.
+  if ($form_state['triggering_element']['#value'] == 'remove') {
+    variable_set('os_profiles_default_image_file', 0);
+    return;
+  }
+
+  if ($file_data['fid']) {
+    // An image was uploaded.
     $file = file_load($file_data['fid']);
 
     $item = array(
@@ -487,7 +473,7 @@ function os_profiles_display_settings_submit($form, $form_state) {
     );
 
     $scale = null;
-    if (module_exists('vsite') && $vsite = spaces_get_space()) {
+    if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
       $instance = field_info_instance('node', 'field_person_photo', 'person');
       if ($instance['widget']['settings']['resolution']) {
         $scale = explode('x', $instance['widget']['settings']['resolution']);
@@ -498,12 +484,10 @@ function os_profiles_display_settings_submit($form, $form_state) {
       }
     }
 
-    // this creates two images
-    // $orig is the original, unmodified image
-    // its saved so we can refer to it later
-    // $file is original uploaded image that is then cropped to fit
-    // it is the file that is displayed in render
-    // it 'contains' the orig file, through the file usage table
+    // This creates two images. $orig is the original, unmodified image. It is
+    // saved so we can refer to it later. $file is original uploaded image that
+    // is then cropped and is displayed in the rendered output.
+    // It relates to the original file, through the file usage table.
     $orig = _imagefield_crop_file_to_crop($file->fid);
     if ($orig->fid == $file->fid) {
       $orig = imagefield_crop_create_copy($file);
@@ -513,12 +497,19 @@ function os_profiles_display_settings_submit($form, $form_state) {
     file_save($file);
 
     if (module_exists('vsite') && $space = spaces_get_space() && $file->fid) {
+      // Save the state of the crop tool image.
       variable_set('os_profiles_default_image_file', $file_data['fid']);
-      variable_set('os_profiles_default_image_x', $file_data['x']);
-      variable_set('os_profiles_default_image_y', $file_data['y']);
+      $dimensions = array(
+        'x' => $file_data['x'],
+        'y' => $file_data['y'],
+        'width' => $file_data['width'],
+        'height' => $file_data['height'],
+      );
+      variable_set('os_profiles_default_image_properties', $dimensions);
     }
   }
   else {
+    // No file is uploaded.
     variable_set('os_profiles_default_image_file', 0);
   }
 
@@ -526,8 +517,13 @@ function os_profiles_display_settings_submit($form, $form_state) {
   variable_set('os_profiles_display_type', $form_state['input']['os_profiles_display_type']);
 }
 
+/**
+ * Provide display style examples for the os_profiles app settings.
+ */
 function _os_profiles_build_display_style_example($style) {
-  // @todo: return styled node for popup over display style and remove hardcoding.
+  $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+  $image = theme('image',  array('path' => $path));
+
   switch ($style) {
     case 'title':
       $result = '
@@ -539,24 +535,24 @@ function _os_profiles_build_display_style_example($style) {
     case 'teaser':
       $result = '
         <div class="dummy-person-photo">
-          <img src="http://localhost/openscholar/www/profiles/openscholar/themes/hwpi_basetheme/images/person-default-image.png">
+          ' . $image . '
         </div>
         <div class="dummy-content">
-          <h1><a href="#">John Fitzgerald Kennedy</a></h1>
+          <h1><a>John Fitzgerald Kennedy</a></h1>
 				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
-				  <div class="dummy-bio">Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
-				  <div class="dummy-phone">555-1234</div>
-				  <div class="dummy-email"><a href="mailto:">example@address.com</a></div>
+				  <div>Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
+				  <div>555-1234</div>
+				  <div><a>example@address.com</a></div>
         </div>
       ';
       break;
     case 'sidebar_teaser':
       $result = '
         <div class="dummy-person-photo">
-          <img src="http://localhost/openscholar/www/profiles/openscholar/themes/hwpi_basetheme/images/person-default-image.png">
+          ' . $image . '
         </div>
         <div class="dummy-content">
-          <h1><a href="#">John Fitzgerald Kennedy</a></h1>
+          <h1><a>John Fitzgerald Kennedy</a></h1>
 				  <div class="dummy-professional-title">Drupal developer at Gizra.inc, QA person at Gizra.inc</div>
         </div>
       ';
@@ -564,11 +560,11 @@ function _os_profiles_build_display_style_example($style) {
     case 'no_image_teaser':
       $result = '
         <div class="dummy-content">
-          <h1><a href="#">John Fitzgerald Kennedy</a></h1>
+          <h1><a>John Fitzgerald Kennedy</a></h1>
 				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
-				  <div class="dummy-bio">Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
-       	  <div class="dummy-phone">555-1234</div>
-				  <div class="dummy-email"><a href="mailto:">example@address.com</a></div>
+				  <div>Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
+       	  <div>555-1234</div>
+				  <div><a>example@address.com</a></div>
         </div>
       ';
       break;
@@ -582,11 +578,21 @@ function _os_profiles_build_display_style_example($style) {
 /**
  * Implements hook_entity_view_mode_alter().
  *
- * Changes the display type for profiles in the "/people" page
- * according to the settings in os_profiles app settings.
+ * Changes the display type for profiles in the "/people" page or in a person
+ * term page (i.e "people/science/air") according to the settings in os_profiles
+ * app settings.
  */
 function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
-  if ($_GET['q'] != 'people') {
+  $vocabs = os_sv_list_get_content_type_vocabs('person');
+  $args = explode('/', $_GET['q']);
+
+  // Check if we are in the path "/people".
+  if ($args[0] != 'people') {
+    return;
+  }
+
+  // Check if the vocabulary name is related to a person.
+  if (!empty($args[1]) && !in_array($args[1], $vocabs)) {
     return;
   }
 
