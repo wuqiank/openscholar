@@ -578,11 +578,21 @@ function _os_profiles_build_display_style_example($style) {
 /**
  * Implements hook_entity_view_mode_alter().
  *
- * Changes the display type for profiles in the "/people" page
- * according to the settings in os_profiles app settings.
+ * Changes the display type for profiles in the "/people" page or in a person
+ * term page (i.e "people/science/air") according to the settings in os_profiles
+ * app settings.
  */
 function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
-  if ($_GET['q'] != 'people') {
+  $vocabs = os_sv_list_get_content_type_vocabs('person');
+  $args = explode('/', $_GET['q']);
+
+  // Check if we are in the path "/people".
+  if ($args[0] != 'people') {
+    return;
+  }
+
+  // Check if the vocabulary name is related to a person.
+  if (!empty($args[1]) && !in_array($args[1], $vocabs)) {
     return;
   }
 
