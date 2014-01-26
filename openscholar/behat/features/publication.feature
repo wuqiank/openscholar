@@ -14,7 +14,7 @@ Feature:
      When I visit "john/publications"
      Then I should get a "200" HTTP response
       And I visit "john/publications"
-     Then response header "X-Drupal-Cache" should be "HIT"
+     Then response header "x-drupal-cache" should be "HIT"
 
   @api
   Scenario: Test the Authors field in Publication form
