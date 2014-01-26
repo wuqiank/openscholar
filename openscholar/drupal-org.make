@@ -18,6 +18,9 @@ projects[apachesolr_attachments][version] = 1.2
 projects[apachesolr_og][subdir] = "contrib"
 projects[apachesolr_og][revision] = 5fda19fc208bd62713be99a839aed0528d9d3db7
 
+projects[apachesolr_views][subdir] = "contrib"
+projects[apachesolr_views][version] = 1.0-beta2
+
 projects[boxes][subdir] = "contrib"
 projects[boxes][version] = 1.0-beta7
 projects[boxes][patch][] = "http://raw.github.com/openscholar/openscholar/b38919350643c8b26a3f639e935c1c6e802c6dd7/patches/boxes.load_from_spaces_and_fix_fatals.patch"
