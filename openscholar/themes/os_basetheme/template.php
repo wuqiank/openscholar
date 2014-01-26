@@ -28,6 +28,15 @@ function os_basetheme_preprocess_html(&$vars) {
 function os_basetheme_preprocess_page(&$vars) {
   $item = menu_get_item();
 
+  // Remove the node view tab.
+  if (!empty($vars['tabs']['#primary'])) {
+    foreach ($vars['tabs']['#primary'] as $k => $l) {
+      if ($l['#link']['path'] == 'node/%/view') {
+        unset($vars['tabs']['#primary'][$k]);
+      }
+    }
+  }
+
   //Adds OpenScholar header region awareness to body classes
   $header = array(
     'header-left' => $vars['page']['header_first'],
