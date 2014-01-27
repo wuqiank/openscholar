@@ -515,6 +515,9 @@ function os_profiles_display_settings_submit($form, $form_state) {
 
   // Set the display style for the profiles in the "/people" path.
   variable_set('os_profiles_display_type', $form_state['input']['os_profiles_display_type']);
+
+  // Clear the views cache so the setting will take effect.
+  cache_clear_all('*', 'cache_views_data', TRUE);
 }
 
 /**
