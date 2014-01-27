@@ -28,10 +28,12 @@ function os_basetheme_preprocess_html(&$vars) {
 function os_basetheme_preprocess_page(&$vars) {
   $item = menu_get_item();
 
-  // remove the node view tab
-  foreach ($vars['tabs']['#primary'] as $k => $l) {
-    if ($l['#link']['path'] == 'node/%/view') {
-      unset($vars['tabs']['#primary'][$k]);
+  // Remove the node view tab.
+  if (!empty($vars['tabs']['#primary'])) {
+    foreach ($vars['tabs']['#primary'] as $k => $l) {
+      if ($l['#link']['path'] == 'node/%/view') {
+        unset($vars['tabs']['#primary'][$k]);
+      }
     }
   }
 
