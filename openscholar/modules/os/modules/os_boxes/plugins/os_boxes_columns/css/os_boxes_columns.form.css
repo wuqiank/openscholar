@@ -50,17 +50,20 @@
 
 #edit-layout .form-type-radio {
   display: inline-block;
-  margin-right:4px;
+  margin-right:5px;
 }
 
 #edit-layout label {
-  text-indent: -999em;
   display: inline-block;
   width: 70px;
-  height: 70px;
+  height: 0;
+  font-size:11px;
   background: url('../images/cols_inline.gif');
   background-position: 0 0;
   background-size: 100%;
+  padding:70px 0 0 0;
+  text-align:center;
+  color:#767676;
 }
 
 #edit-layout-two-2x50 ~ label {background-position:0 -158px;}

@@ -38,15 +38,15 @@ class os_boxes_columns extends os_boxes_default {
     $form['layout_select']['layout'] = array(
       '#type' => 'radios',
       '#options' => array(
-        'two-2x50' => 'two-2x50',
-        'two-33-66' => 'two-33-66',
-        'two-66-33' => 'two-66-33',
-        'three-3x33' => 'three-3x33',
-        'three-25-25-50' => 'three-25-25-50',
-        'three-25-50-25' => 'three-25-50-25',
-        'three-50-25-25' => 'three-50-25-25',
-        'four-4x25' => 'four-4x25',
-        'five-5x20' => 'five-5x20'
+        'two-2x50' => '50x50 (%)',
+        'two-33-66' => '33x66 (%)',
+        'two-66-33' => '66x33 (%)',
+        'three-3x33' => '33x33x33 (%)',
+        'three-25-25-50' => '25x25x50 (%)',
+        'three-25-50-25' => '25x50x25 (%)',
+        'three-50-25-25' => '50x25x25 (%)',
+        'four-4x25' => '4x25 (%)',
+        'five-5x20' => '5x20 (%)'
       ),
       '#default_value' => $this->options['layout'],
     );
