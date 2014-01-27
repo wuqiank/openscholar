@@ -2288,33 +2288,42 @@ function vsite_mollom_form_info($form_id){
  * Set the head_title to the vsite name rather than the site_name, if in a vsite.
  */
 function vsite_preprocess_html(&$vars){
-  if (!$vsite = vsite_get_vsite()) {
-    return;
+  if ($vsite = vsite_get_vsite()) {
+    // Adds the current page title, unless we are on the front page.
+    $title_parts = array();
+    if (!drupal_is_front_page()) {
+      $title_parts[] = strip_tags(drupal_get_title());
+    }
+
+    // Adds the vsite name to the head title, instead of sitewide site_name.
+    $vsite_title = variable_get('site_name', '');
+    if (isset($vsite->group->title)) {
+      $vsite_title = $vsite->group->title;
+    }
+    $title_parts[] = $vsite_title;
+
+    // Set the new page 'head' title.
+    $vars['head_title'] = implode(' | ', $title_parts);
+
+    // Exits if this vsite doesn't provide a custom favicon file.
+    $uri = FALSE;
+    $fid = variable_get('site_favicon_fid', '');
+    if (!empty($fid)) {
+      $uri = db_query('SELECT uri FROM {file_managed} WHERE fid = :fid', array(':fid' => $fid))->fetchColumn();
+    }
   }
 
-  // Adds the current page title, unless we are on the front page.
-  $title_parts = array();
-  if (!drupal_is_front_page()) {
-    $title_parts[] = strip_tags(drupal_get_title());
+  // If we aren't in a vsite, or if this vsite hasn't uploaded a custom favicon.
+  if (empty($uri)) {
+    $theme = variable_get('theme_default');
+    $uri = drupal_get_path('theme', $theme) . '/favicon.ico';
+    if (!file_exists($uri)) {
+      $uri = drupal_get_path('theme', 'os_basetheme') . '/favicon.ico';
+    }
   }
 
-  // Adds the vsite name to the head title, instead of sitewide site_name.
-  $vsite_title = variable_get('site_name', '');
-  if (isset($vsite->group->title)) {
-    $vsite_title = $vsite->group->title;
-  }
-  $title_parts[] = $vsite_title;
-
-  // Set the new page 'head' title.
-  $vars['head_title'] = implode(' | ', $title_parts);
-
-  // Exits if this vsite doesn't provide a custom favicon file.
-  $fid = variable_get('site_favicon_fid', '');
-  if (empty($fid)) {
-    return;
-  }
-  $uri = db_query('SELECT uri FROM {file_managed} WHERE fid = :fid', array(':fid' => $fid))->fetchColumn();
-  if (!file_exists($uri)) {
+  // Returns if no valid favicon or no favicon found.
+  if (empty($uri) || !file_exists($uri)) {
     return;
   }
 
