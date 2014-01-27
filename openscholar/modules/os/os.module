@@ -587,6 +587,7 @@ function os_process_node(&$vars) {
   // With this information we can move the read more link so it can be displayed inline with the block
   if ($body_shortened && !$trailing_break_tag) {
     $link = $vars['content']['links']['node']['#links']['node-readmore'];
+    $link['attributes']['class'][] = 'node-readmore';
     // Get last position of the last closing marker in teaser.
     if (preg_match('!</?(?:p)[^>]*>\s*$!i', $vars['content']['body'][0]['#markup'], $match, PREG_OFFSET_CAPTURE)) {
       $insert_point = $match[0][1];
