@@ -173,9 +173,10 @@ function _hwpi_branding_footer() {
       ),
     ),
     'copyright' => array(
-      '#markup' => t('<span class="harvard-copyright">Copyright &copy; '.date('Y').' The President and Fellows of Harvard College</span> | !privacy | !access', array(
+      '#markup' => t('<span class="harvard-copyright">Copyright &copy; @year The President and Fellows of Harvard College</span> | !privacy | !access', array(
           '!privacy' => l('Privacy', 'http://www.harvard.edu/privacy-statement'),
           '!access' => l('Accessibility', 'http://accessibility.harvard.edu/'),
+          '@year' => date('Y'),
         )),
     ),
   );
