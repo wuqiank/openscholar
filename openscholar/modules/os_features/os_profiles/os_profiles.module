@@ -54,7 +54,7 @@ function os_profiles_process_node(&$vars) {
 
   // Helps poor theme developers find these changes to $variables
   $vars['classes'] .= ' modified-in-os_profiles_process_node';
-  
+
   // Moves the profile photo thumbnail before teaser title (full name)
   if (isset($vars['content']['field_person_photo'])) {
     $vars['title_prefix'] += $vars['content']['field_person_photo'];
@@ -192,27 +192,6 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
           $e->field_website[LANGUAGE_NONE][$k]['attributes']['title'] = $e->title.'\'s website';
         }
       }
-    }
-  }
-}
-
-/**
- * Implements hook_block_view_alter().
- *
- * Alter the titles of the Solr blocks.
- */
-function os_profiles_block_view_alter(&$data, $block) {
-  // Gets delta map
-  $map = facetapi_get_delta_map();
-
-  if(isset($map) && is_array($map)) {
-    $searcher_name = os_search_solr_get_searcher_name();
-
-    // OG-vocab field.
-    $string = facetapi_build_delta($searcher_name, 'block', 'os_profiles_og_vocabulary');
-    $delta = array_search($string, $map);
-    if ($block->module == 'facetapi' && $block->delta == $delta) {
-      $data['title'] = t('Filter By Taxonomy');
     }
   }
 }
