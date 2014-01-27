@@ -227,10 +227,10 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   );
 
   $profile_styles = array(
-    'title' => 'Title',
-    'teaser' => 'Teaser',
-    'sidebar_teaser' => 'Sidebar teaser',
-    'no_image_teaser' => 'No image teaser',
+    'title' => t('Title'),
+    'teaser' => t('Teaser'),
+    'sidebar_teaser' => t('Sidebar teaser'),
+    'no_image_teaser' => t('No image teaser'),
   );
 
   $profile_styles_hover = array();
@@ -240,11 +240,11 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   foreach ($profile_styles as $style => $name) {
     $counter ++;
     // Prepare the popup and the style name.
-    $profile_example_link = '<a href="#" class="profile-pop" data-popbox="pop'.$counter.'">' . t('@link_name', array('@link_name' => $name)) . '</a>';
-    $profile_example_title = '<h2>' . t($name) . '</h2>';
+    $profile_example_link = '<a href="#" class="profile-pop" data-popbox="pop'.$counter.'">' . check_plain($name) . '</a>';
+    $profile_example_title = '<h2>' . $name . '</h2>';
     // Prepare the profile style example for the popup.
     $profile_example = _os_profiles_build_display_style_example($style);
-    $profile_example_text = '<p>' . t('!profile_text', array('!profile_text' => $profile_example)) . '</p>';
+    $profile_example_text = '<p>' . $profile_example . '</p>';
     $profile_example_output = $profile_example_link . '<div id="pop'.$counter.'" class="stylebox">' . $profile_example_title . $profile_example_text . '</div>';
     $profile_styles_hover[$style] = $profile_example_output;
   }
@@ -268,7 +268,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   );
 
   // Get properties of the image if there's a custom default image.
-  if (module_exists('vsite') && $vsite = spaces_get_space() && $fid = variable_get('os_profiles_default_image_file', NULL)) {
+  if (module_exists('vsite') && $vsite = vsite_get_vsite() && $fid = variable_get('os_profiles_default_image_file', NULL)) {
     $dimensions = variable_get('os_profiles_default_image_properties', array());
 
     $instance = field_info_instance('node', 'field_person_photo', 'person');
@@ -284,7 +284,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     '#type' => 'managed_file',
     '#title' => t('Custom default image'),
     '#default_value' => variable_get('os_profiles_default_image_file', NULL),
-    '#description' => t('Upload a photo and position the cropping tool over it if necessary.<br/>Allowed file types: <strong>' . $allowed_file_types . '</strong>'),
+    '#description' => t('Upload a photo and position the cropping tool over it if necessary.<br/>Allowed file types: <strong> @allowed_file_types </strong>', array('@allowed_file_types' => $allowed_file_types)),
     '#upload_validators' => array(
       'file_validate_extensions' => array($allowed_file_types),
     ),
@@ -586,21 +586,24 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
   $vocabs = os_sv_list_get_content_type_vocabs('person');
   $args = explode('/', $_GET['q']);
 
-  // Check if we are in the path "/people".
   if ($args[0] != 'people') {
+    // The first part of the path in not "/people".
     return;
   }
 
-  // Check if the vocabulary name is related to a person.
   if (!empty($args[1]) && !in_array($args[1], $vocabs)) {
+    // The second part of the path after "/people" is not empty and
+    // not a vocabulary related to that person.
     return;
   }
 
   if (!isset($context['entity']->view)) {
+    // No view is used.
     return;
   }
 
   if ($context['entity']->view->name != 'os_profiles') {
+    // The view in use is not the os_profiles view.
     return;
   }
 
