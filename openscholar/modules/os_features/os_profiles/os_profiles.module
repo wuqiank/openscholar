@@ -51,7 +51,7 @@ function os_profiles_menu() {
     'access arguments' => array('access content'),
   );
 
-  $items['people/insert_listeners'] = array(
+  $items['people/insert_profile'] = array(
     'page callback' => 'os_profiles_insert_listeners',
     'access callback' => TRUE,
   );
@@ -467,9 +467,9 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   else {
     // Write the current site as a listener in the node's origin site.
     $arguments = array(
-      'action' => 'insert_listeners',
+      'action' => 'insert_person',
       'UUID' => $data['field_uuid'],
-      'listener' => $base_url,
+      'listener' => $base_url . '/' .$vsite->group->name,
     );
     os_profiles_manage_synced_profiles($url, $arguments);
   }
@@ -601,8 +601,10 @@ function os_profiles_update_listeners() {
  *  The values of the $_GET. No need to pass the q index.
  */
 function os_profiles_manage_synced_profiles($url, $values) {
-  $values['q'] = $values['action'] == 'update' ? 'people/update_profile' : 'people/insert_profile';
-  drupal_http_request($url . '/?q=people/update_profile&' . drupal_http_build_query($values));
+  $values['action'] == 'update' ? $path = $url . '/people/update_profile' : $path = $url . '/people/insert_profile';
+
+  $full_url = url($path, array('query' => $values));
+  drupal_http_request($full_url);
 }
 
 /**
