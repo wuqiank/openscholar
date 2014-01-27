@@ -56,7 +56,7 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
     '#type' => 'container',
     '#attributes' => array(
       'class' => array(
-        ''
+        'file-list-single',
       )
     ),
     '#file' => 'blank',
@@ -115,8 +115,11 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {/
 
 function media_draggable_field_widget_indiv_process($element) {
   $file = $element['#file'];
+  $vars = array(
+    'file' => (object)$file,
+  );
   $element['label'] = array(
-    '#markup' => $file['filename'],
+    '#markup' => theme('file_icon', $vars).' '.$file['filename'],
     '#prefix' => '<span>',
     '#suffix' => '</span>'
   );
@@ -124,13 +127,13 @@ function media_draggable_field_widget_indiv_process($element) {
   $element['controls'] = array(
     '#theme' => 'links',
     '#links' => array(
-       'edit' => array(
-         'href' => 'file/'.$file['fid'].'/edit',
-         'title' => t('Edit'),
-       ),
+      'edit' => array(
+       'href' => 'file/'.$file['fid'].'/edit',
+       'title' => t('Edit'),
+      ),
       'remove' => array(
         'href' => '',
-        'html' => t('Remove'),
+        'title' => t('Remove'),
         'external' => true,
       )
     ),
