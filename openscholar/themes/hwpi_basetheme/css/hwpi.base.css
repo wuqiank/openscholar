@@ -140,6 +140,11 @@ a.biblio-abstract-link.toggle {
     margin-bottom: 0;
 }
 
+.block .node:only-child {
+    margin-bottom: 20px;
+}
+
+
 /* Search Results */
 .page-search input.form-text {
   width: auto;
