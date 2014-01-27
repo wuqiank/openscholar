@@ -56,6 +56,7 @@ function os_search_solr_context_default_contexts() {
       'values' => array(
         'search' => 'search',
         'search/*' => 'search/*',
+        'browse/*' => 'browse/*',
       ),
     ),
   );
