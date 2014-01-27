@@ -609,8 +609,6 @@ function os_taxonomy_forms($form_id, $args) {
  *    Array contain the term list from the vocabulary.
  *  @param $path
  *    The path of the feature.
- *  @param $default_option
- *    The text for the default '--none--' option.
  *
  *  @return $form
  *    The variable of the form.
