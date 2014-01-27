@@ -614,7 +614,10 @@ function os_profiles_manage_synced_profiles($url, $values) {
  * field is not populate.
  */
 function os_profiles_restws_request_alter(&$request) {
-  $wrapper = entity_metadata_Wrapper('node', $request['id']);
+  $node = node_laod($request['id']);
+  $node->json_alter = TRUE;
+
+  $wrapper = entity_metadata_Wrapper('node', $node);
 
   if (!$wrapper->field_uuid->value()) {
     // No UUID in the UUID field. Set it.
@@ -627,7 +630,13 @@ function os_profiles_restws_request_alter(&$request) {
  * Implements hook_node_update().
  */
 function os_profiles_node_update($node) {
+  if (!emtpy($node->json_alter)) {
+    // returning because We altered the node when JSON request for him was done.
+    return;
+  }
+
   $wrapper = entity_metadata_wrapper('node', $node);
+
   if ($wrapper->getBubndle() != 'person') {
     return;
   }
