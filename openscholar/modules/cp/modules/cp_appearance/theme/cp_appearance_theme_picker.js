@@ -3,7 +3,7 @@
  */
 (function ($) {
   Drupal.behaviors.cp_appearance_theme_picker = {
-    attach: function (context) {
+    attach: function (context, settings) {
 
       /**
        * Updates the checked status when a screenshot is clicked.
@@ -21,13 +21,18 @@
       /**
        * Updates the checked status when a flavor is selected from a dropdown.
        */
-      $('li.item-theme-picker').find('select').change(function(){
+      $('li.item-theme-picker').find('select').change(function() {
         // Removes the active class from every li first.
         $(".item-theme-picker").removeClass('checked');
         // Then adds the class to this one.
         $(this).closest('li.item-theme-picker').addClass('checked');
 
         $("#edit-theme-default-" + $(this).closest('li.item-theme-picker').attr('id').substr(6)).attr("checked", "checked").change();
+
+
+        if (jQuery.inArray($(this).val(), settings.subthemes) != -1) {
+          // todo: Append the button for pulling the sub theme.
+        }
       });
 
       /**
