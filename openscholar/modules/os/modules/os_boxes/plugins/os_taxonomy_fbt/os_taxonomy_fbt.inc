@@ -27,7 +27,6 @@ class os_taxonomy_fbt extends os_boxes_default {
     $options['offset'] = 0;
     $options['show_empty_terms'] = FALSE;
     $options['show_term_descriptions'] = FALSE;
-    $options['selectlist_default'] = t('Select an item');
     $options['show_count'] = TRUE;
     $options['show_childs'] = TRUE;
     $options['add_childs'] = FALSE;
@@ -90,17 +89,6 @@ class os_taxonomy_fbt extends os_boxes_default {
         'select' => t('Select list'),
       ),
       '#default_value' => $this->options['widget_type'] ? $this->options['widget_type'] : 'list',
-    );
-
-    $form['selectlist_default'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Default option for select list'),
-      '#default_value' => !empty($this->options['selectlist_default']) ? $this->options['selectlist_default'] : t('Select an item'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="widget_type"]' => array('value' => 'select'),
-        )
-      )
     );
 
     $form['behavior'] = array(

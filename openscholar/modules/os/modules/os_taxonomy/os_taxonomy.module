@@ -307,7 +307,6 @@ function theme_os_taxonomy_vocabulary_item_list($variables) {
     'show_empty_terms' => TRUE,
     'show_term_descriptions' => TRUE,
     'link_to_empty_terms' => TRUE,
-    'selectlist_default' => t('Select an item'),
   );
 
   // Due to changes in the code, there are sites that their depth widget
@@ -416,7 +415,7 @@ function theme_os_taxonomy_vocabulary_item_list($variables) {
   if (!empty($options['widget_type']) && $options['widget_type'] == 'select') {
     // Calling to a generic form ID.
     $options['path_prefix'] = empty($options['path_prefix']) ? '' : $options['path_prefix'];
-    $form = drupal_get_form('os_taxonomy_select_list_' . $variables['vid'], $data, $options['path_prefix'], $options['selectlist_default']);
+    $form = drupal_get_form('os_taxonomy_select_list_' . $variables['vid'], $data, $options['path_prefix']);
     return render($form);
   }
   else {
@@ -616,7 +615,7 @@ function os_taxonomy_forms($form_id, $args) {
  *  @return $form
  *    The variable of the form.
  */
-function os_taxonomy_select_list($form, $form_state, $terms_list, $path, $default_option) {
+function os_taxonomy_select_list($form, $form_state, $terms_list, $path) {
   $menu = menu_get_item();
   $form_state['path'] = $path;
 
@@ -636,7 +635,7 @@ function os_taxonomy_select_list($form, $form_state, $terms_list, $path, $defaul
   // there is a problem in the submission of the form.
   $form['terms_' . $form['#vocabulary']->vid] = array(
     '#type' => 'select',
-    '#options' => array('--none--' => t($default_option)) + $terms_list,
+    '#options' => array('--none--' => t('Select an item')) + $terms_list,
     '#default_value' => $default_value,
     '#attributes' => array(
       'class' => array('terms-list'),
