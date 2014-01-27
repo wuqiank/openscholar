@@ -60,7 +60,7 @@ function os_profiles_context_default_contexts() {
     if(isset($map) && is_array($map)) {
 
       // Filter by OG vocab.
-      $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
+      $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'os_profiles_og_vocabulary');
       $delta_og_vocab = array_search($string_og_vocab, $map);
 
     }
@@ -72,11 +72,6 @@ function os_profiles_context_default_contexts() {
     $context->description = 'Profiles Pages';
     $context->tag = 'OpenScholar';
     $context->conditions = array(
-      'context' => array(
-        'values' => array(
-          '~os_cp' => '~os_cp',
-        ),
-      ),
       'path' => array(
         'values' => array(
           'browse/people' => 'browse/people',
