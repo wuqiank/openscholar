@@ -51,5 +51,67 @@ function os_profiles_context_default_contexts() {
   t('OS features');
   $export['profiles_profiles'] = $context;
 
+  // First get the delta's for facetapi blocks.
+  if (module_exists('facetapi')) {
+
+    $searcher_name = os_search_solr_get_searcher_name();
+    // Gets delta map
+    $map = facetapi_get_delta_map();
+    if(isset($map) && is_array($map)) {
+
+      // Filter by OG vocab.
+      $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
+      $delta_og_vocab = array_search($string_og_vocab, $map);
+
+    }
+    $context = new stdClass();
+
+    $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+    $context->api_version = 3;
+    $context->name = 'os_profiles';
+    $context->description = 'Profiles Pages';
+    $context->tag = 'OpenScholar';
+    $context->conditions = array(
+      'context' => array(
+        'values' => array(
+          '~os_cp' => '~os_cp',
+        ),
+      ),
+      'path' => array(
+        'values' => array(
+          'people/browse' => 'people/browse',
+          'people' => 'people',
+        ),
+      ),
+    );
+    $context->reactions = array(
+      'block' => array(
+        'blocks' => array(
+          'current_search-standard' => array(
+            'module' => 'current_search',
+            'delta' => 'standard',
+            'region' => 'sidebar_second',
+            'weight' => '-10',
+          ),
+          'apachesolr_search-sort' => array(
+            'module' => 'apachesolr_search',
+            'delta' => 'sort',
+            'region' => 'sidebar_second',
+            'weight' => '-9',
+          ),
+          'facetapi-' . $delta_og_vocab => array(
+            'module' => 'facetapi',
+            'delta' => $delta_og_vocab,
+            'region' => 'sidebar_second',
+            'weight' => '-4',
+          ),
+        ),
+      ),
+    );
+    $context->condition_mode = 1;
+
+    $export['os_profiles'] = $context;
+  }
+
   return $export;
 }

@@ -82,17 +82,6 @@ function os_profiles_views_default_views() {
   $handler->display->display_options['filters']['current']['table'] = 'spaces';
   $handler->display->display_options['filters']['current']['field'] = 'current';
 
-  /* Display: Page */
-  $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['path'] = 'people';
-  $handler->display->display_options['menu']['type'] = 'normal';
-  $handler->display->display_options['menu']['title'] = 'People';
-  $handler->display->display_options['menu']['description'] = 'List of people';
-  $handler->display->display_options['menu']['weight'] = '0';
-  $handler->display->display_options['menu']['name'] = 'primary-menu';
-  $handler->display->display_options['menu']['context'] = 0;
-
   /* Display: Feed */
   $handler = $view->new_display('feed', 'Feed', 'feed');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
