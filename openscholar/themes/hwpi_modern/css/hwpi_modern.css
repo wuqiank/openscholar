@@ -13,7 +13,7 @@ body {
 
 /* Elements */
 
-#columns .links li a {
+#columns a.node-readmore {
     border-bottom: none;
     font-size:12px;
     font-weight:bold;

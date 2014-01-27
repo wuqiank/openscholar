@@ -770,6 +770,10 @@ h2.comment-title.comment-form {
   text-decoration: underline;
 }
 
+a.node-readmore {
+  text-decoration: underline;
+}
+
 
 /* Files tables, for attached files to nodes such as PDF's */
 table.os-files-other-list {
