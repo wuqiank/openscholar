@@ -92,7 +92,7 @@ function os_profiles_views_default_views() {
   $handler->display->display_options['menu']['weight'] = '0';
   $handler->display->display_options['menu']['name'] = 'primary-menu';
   $handler->display->display_options['menu']['context'] = 0;
-  
+
   /* Display: Feed */
   $handler = $view->new_display('feed', 'Feed', 'feed');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;

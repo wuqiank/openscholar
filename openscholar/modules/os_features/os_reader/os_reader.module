@@ -130,7 +130,7 @@ function os_reader_import_news() {
 /**
  * hook_views_query_alter().
  */
-function os_reader_views_query_alter(&$view, &$query) {
+function os_reader_views_query_alter(&$view, views_plugin_query_default &$query) {
   if ($view->name != 'os_reader_feeds') {
     return;
   }
