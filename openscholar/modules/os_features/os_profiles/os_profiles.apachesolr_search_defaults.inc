@@ -13,10 +13,10 @@ function os_profiles_apachesolr_search_default_searchers() {
   $searcher = new stdClass();
   $searcher->disabled = FALSE; /* Edit this to true to make a default searcher disabled initially */
   $searcher->api_version = 3;
-  $searcher->page_id = 'core_search_0';
+  $searcher->page_id = 'people_search';
   $searcher->label = 'Person';
   $searcher->description = 'Person Search';
-  $searcher->search_path = 'browse/people';
+  $searcher->search_path = 'people/browse';
   $searcher->page_title = 'Browse person';
   $searcher->env_id = 'solr';
   $searcher->settings = array(
@@ -31,7 +31,7 @@ function os_profiles_apachesolr_search_default_searchers() {
     'apachesolr_search_spellcheck' => 0,
     'apachesolr_search_allow_user_input' => 0,
   );
-  $export['core_search_0'] = $searcher;
+  $export['people_search'] = $searcher;
 
   return $export;
 }
