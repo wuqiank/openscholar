@@ -53,7 +53,7 @@ function os_profiles_context_default_contexts() {
 
   // First get the delta's for facetapi blocks.
   $delta_og_vocab = '';
-  if (module_exists('facetapi')) {
+  if (module_exists('os_search_solr')) {
 
     $searcher_name = os_search_solr_get_searcher_name();
     // Gets delta map

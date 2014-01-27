@@ -200,7 +200,7 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
  * Implements hook_block_view_alter().
  *
  * Alter the titles of the Solr blocks.
-
+ */
 function os_profiles_block_view_alter(&$data, $block) {
   // Gets delta map
   $map = facetapi_get_delta_map();
@@ -216,4 +216,3 @@ function os_profiles_block_view_alter(&$data, $block) {
     }
   }
 }
- */
