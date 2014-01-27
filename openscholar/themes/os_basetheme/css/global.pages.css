@@ -137,6 +137,9 @@ div.messages {
 }
 
 
+/* FOR DISPLAYING EMBEDDABLE BLOCK OF CONTENT THROUGH <embed> */
+body#widget {display: inline-block;}
+
   /* Footer panels */
 
  .footer .region-footer {
