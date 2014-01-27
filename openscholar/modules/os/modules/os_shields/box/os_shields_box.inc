@@ -30,9 +30,13 @@ class os_shields_box extends os_boxes_default {
       $path_prefix = 'public://os_shields/';
       foreach ($a_shields as $fname => $shield)  {
         if (!$shield['hidden']) {
-          $shield = file_load($shield['fid']);
-          if (file_exists($shield->uri)) {
-            $shield_options[$shield->filename] = theme('os_shields_theme_shieldpicker', array('file' => $shield));
+          $shield_file = file_load($shield['fid']);
+          if (file_exists($shield_file->uri)) {
+            $shield_options[$shield_file->filename] = theme('os_shields_theme_shieldpicker', array('file' => $shield_file));
+
+            if ($shield['default']) {
+              $default_shield = $fname;
+            }
           }
         }
       }
@@ -42,7 +46,7 @@ class os_shields_box extends os_boxes_default {
         '#title' => t('Shield'),
         '#type' => 'radios',
         '#options' => $shield_options,
-        '#default_value' => $this->options['shield'],
+        '#default_value' => $default_shield,
         // use the spaces original value, which should always be set as long as a shield has been uploaded
         '#suffix' => '</div>',
         '#attached' => array(
