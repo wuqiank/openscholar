@@ -15,9 +15,9 @@ function os_profiles_apachesolr_search_default_searchers() {
   $searcher->api_version = 3;
   $searcher->page_id = 'people_search';
   $searcher->label = 'Person';
-  $searcher->description = 'Person Search';
-  $searcher->search_path = 'people/browse';
-  $searcher->page_title = 'Browse person';
+  $searcher->description = 'People search';
+  $searcher->search_path = 'browse/people';
+  $searcher->page_title = 'Browse people';
   $searcher->env_id = 'solr';
   $searcher->settings = array(
     'fq' => array(

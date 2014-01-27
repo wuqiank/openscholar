@@ -79,8 +79,7 @@ function os_profiles_context_default_contexts() {
       ),
       'path' => array(
         'values' => array(
-          'people/browse' => 'people/browse',
-          'people' => 'people',
+          'browse/people' => 'browse/people',
         ),
       ),
     );
