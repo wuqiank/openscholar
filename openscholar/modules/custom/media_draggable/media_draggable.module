@@ -71,7 +71,7 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
 
   foreach ($items as $delta => $item) {
     $element[$delta] = $element['template'];
-    $element[$delta]['#file'] = $item;
+    $element[$delta]['#file'] = file_load($item['fid']);
     $element[$delta]['fid']['#default_value'] = $item['fid'];
   }
 
@@ -115,11 +115,20 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {/
 
 function media_draggable_field_widget_indiv_process($element) {
   $file = $element['#file'];
+
+  if ($file == 'blank') {
+    $file = (object)array(
+      'fid' => -1,
+      'filename' => 'blank',
+      'filemime' => 'blank',
+    );
+  }
+
   $vars = array(
-    'file' => (object)$file,
+    'file' => $file,
   );
   $element['label'] = array(
-    '#markup' => theme('file_icon', $vars).' '.$file['filename'],
+    '#markup' => theme('file_icon', $vars).' '.$file->filename,
     '#prefix' => '<span>',
     '#suffix' => '</span>'
   );
@@ -128,7 +137,7 @@ function media_draggable_field_widget_indiv_process($element) {
     '#theme' => 'links',
     '#links' => array(
       'edit' => array(
-       'href' => 'file/'.$file['fid'].'/edit',
+       'href' => 'file/'.$file->fid.'/edit',
        'title' => t('Edit'),
       ),
       'remove' => array(
