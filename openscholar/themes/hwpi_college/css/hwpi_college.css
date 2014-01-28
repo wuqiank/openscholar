@@ -61,7 +61,7 @@ blockquote {
      border-right:1px solid #CCC;
 }
 
-#columns .links li a {
+#columns a.node-readmore {
     border-bottom: none;
     font-size:12px;
     font-weight:bold;
