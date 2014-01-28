@@ -251,6 +251,18 @@ function os_profiles_os_add_new_links_alter(&$links) {
     return;
   }
 
+  // Verify the user can create person node.
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $access = og_user_access('node', $vsite->id, "create person content");
+  }
+  else {
+    $access = user_access("create person content");
+  }
+
+  if (!$access) {
+    return;
+  }
+
   $links['sync'] = array(
     'title' => t('Sync'),
     'href' => 'cp/people/syc-profiles',
