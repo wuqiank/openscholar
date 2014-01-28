@@ -725,6 +725,8 @@ function os_events_form_registration_registrations_broadcast_form_alter(&$form, 
  * Implements hook_form_FORM_ID_alter().
  */
 function os_events_form_registration_form_alter(&$form, &$form_state) {
+  $wrapper_event = entity_metadata_wrapper('node', $form['#entity']->entity_id);
+
   // Remove the entity from the form - we don't need it and it disable the
   // header.
   // @TODO: figure out why the $form['#entity'] disable the header.
@@ -738,10 +740,21 @@ function os_events_form_registration_form_alter(&$form, &$form_state) {
   $form['actions']['cancel']['#access'] = FALSE;
   $form['actions']['submit']['#value'] = t('Signup');
 
+  $options = array();
+  $dates = $wrapper_event->field_date->value();
+  foreach ($dates as $date) {
+    $options[] = $date['value'];
+  }
+  $field_event_date = array(
+    '#type' => 'select',
+    '#title' => 'Select date',
+    '#options' => $options,
+  );
+
   $form['event_register'] = array(
     '#type' => 'container',
     '#title' => t('Sign up for this event'),
-
+    'field_event_date' => $field_event_date,
     'field_full_name' => $form['field_full_name'],
     'field_department' => $form['field_department'],
     'anon_mail' => $form['anon_mail'],
@@ -751,7 +764,7 @@ function os_events_form_registration_form_alter(&$form, &$form_state) {
   // Make sure the form it rebuilt, so if there's a validation error, we can
   // keep the event registration fieldset open.
   $form_state['rebuild'] = TRUE;
-  unset($form['actions'], $form['field_full_name'], $form['field_department'], $form['anon_mail'], $form['user']);
+  unset($form['actions'], $form['field_event_date'], $form['field_full_name'], $form['field_department'], $form['anon_mail'], $form['user']);
 
   $form['#submit'][] = 'os_events_modal_submit';
 }
