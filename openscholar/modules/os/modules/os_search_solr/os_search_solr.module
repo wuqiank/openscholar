@@ -613,6 +613,10 @@ function os_search_solr_apachesolr_search_default_searchers() {
   $export = array();
   $export['core_search'] = os_search_solr_apachesolr_core_search_default();
 
+  $browsers = array('person' => 'Person', 'blog' => 'Blog');
+  foreach ($browsers as $name => $label) {
+    $export['browse_' . $name] = os_profiles_apachesolr_search_browse_searcher($name, $label);
+  }
   return $export;
 }
 
@@ -634,6 +638,33 @@ function os_search_solr_apachesolr_core_search_default() {
     'apachesolr_search_per_page' => '10',
     'apachesolr_search_browse' => 'results',
     'apachesolr_search_spellcheck' => 1,
+    'apachesolr_search_allow_user_input' => 0,
+  );
+
+  return $searcher;
+}
+
+
+function os_profiles_apachesolr_search_browse_searcher($browse, $label) {
+  $searcher = new stdClass();
+  $searcher->disabled = FALSE; /* Edit this to true to make a default searcher disabled initially */
+  $searcher->api_version = 3;
+  $searcher->page_id = 'browse_' . $browse;
+  $searcher->label = $label;
+  $searcher->description = 'Browse ' . $browse;
+  $searcher->search_path = 'browse/' . $browse;
+  $searcher->page_title = 'Browse ' . $browse;
+  $searcher->env_id = 'solr';
+  $searcher->settings = array(
+    'fq' => array(
+      0 => 'bundle:' . $browse,
+    ),
+    'apachesolr_search_custom_enable' => 1,
+    'apachesolr_search_search_type' => 'custom',
+    'apachesolr_search_search_box' => 0,
+    'apachesolr_search_per_page' => '10',
+    'apachesolr_search_browse' => 'results',
+    'apachesolr_search_spellcheck' => 0,
     'apachesolr_search_allow_user_input' => 0,
   );
 
