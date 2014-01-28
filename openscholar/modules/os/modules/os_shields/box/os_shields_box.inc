@@ -24,7 +24,6 @@ class os_shields_box extends os_boxes_default {
     $default_shield = FALSE;
     if ($all_shields = variable_get('os_shields_shield_info', array())) {
       $shield_options = array();
-      $path_prefix = 'public://os_shields/';
       foreach ($all_shields as $file_name => $shield)  {
         if ($shield['hidden']) {
           // Shield should be hidden.
