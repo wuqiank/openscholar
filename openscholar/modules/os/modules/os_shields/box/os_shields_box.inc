@@ -45,7 +45,7 @@ class os_shields_box extends os_boxes_default {
         '#title' => t('Shield'),
         '#type' => 'radios',
         '#options' => $shield_options,
-        '#default_value' => $selected_shield,
+        '#default_value' => $this->get_shield(),
         '#suffix' => '</div>',
         '#attached' => array(
           'css' => array(
@@ -81,8 +81,7 @@ class os_shields_box extends os_boxes_default {
     $block = parent::render();
     $block['title'] = $block['content'] = '';
 
-    $default_shield = variable_get('os_shields_shield', '');
-    $filename = !empty($this->options['shield']) ? $this->options['shield'] : FALSE;
+    $filename = $this->get_shield();
 
     if ($filename && file_exists('public://os_shields/' . $filename)) {
       $params = array(
@@ -99,4 +98,33 @@ class os_shields_box extends os_boxes_default {
     return $block;
   }
 
+  /**
+   * Retruns the selected shield or a default one if exists.
+   */
+  protected function get_shield() {
+    if (!empty($this->options['shield']) && file_exists('public://os_shields/' . $this->options['shield'])) {
+      // Return the selected shield.
+      return $this->options['shield'];
+    }
+
+    if (($file_name = variable_get('os_shields_shield', '')) && file_exists('public://os_shields/' . $file_name)) {
+      // Return the default shield.
+      return $file_name;
+    }
+
+    // No selected shield, so select the one marked as "default".
+    foreach (variable_get('os_shields_shield_info', array()) as $file_name => $shield)  {
+      if ($shield['hidden']) {
+        // Shield should be hidden.
+        continue;
+      }
+
+      $shield_file = file_load($shield['fid']);
+      $shield_options[$shield_file->filename] = theme('os_shields_theme_shieldpicker', array('file' => $shield_file));
+
+      if (!empty($shield['default'])) {
+        return $file_name;
+      }
+    }
+  }
 }
