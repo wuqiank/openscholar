@@ -1703,6 +1703,7 @@ function os_app_info($app_name = NULL) {
             'index author' => FALSE,
             'importers' => array(),
             'require_parent_node' => FALSE,
+            'browse pages' => FALSE,
           );
 
           // Adds the module information.

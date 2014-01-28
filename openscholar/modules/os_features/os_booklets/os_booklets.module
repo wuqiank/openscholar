@@ -23,6 +23,9 @@ function os_booklets_os_app_info() {
     'views tabs' => array(
       'os_booklets' => array('page'),
     ),
+    'browse pages' => array(
+      'book' => TRUE,
+    ),
   );
 
   return $apps;

@@ -499,16 +499,48 @@ function os_search_solr_context_default_contexts() {
     return;
   }
   $export = array();
-  $export['os_search'] = os_search_solr_core_search_context();
+  $export['os_search'] = os_search_solr_setup_core_search_context();
 
-  $browsers = array('person' => 'Person', 'blog' => 'Blog');
-  foreach ($browsers as $name => $label) {
-    $export['browse_' . $name] = os_profiles_apachesolr_search_browse_context($name);
+  foreach (os_search_solr_get_browse_pages_info() as $bundle_name => $bundle_label) {
+    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_context($bundle_name, $bundle_label);
   }
+
   return $export;
 }
 
-function os_profiles_apachesolr_search_browse_context($browse) {
+/**
+ * Utility function; Get bundles for browse pages.
+ *
+ * @return array
+ *   Array of bundle names and their labels needed for browse pages.
+ */
+function os_search_solr_get_browse_pages_info() {
+  $browse_pages_info = array();
+
+  foreach (os_app_info() as $app) {
+    if (!$app['browse pages']) {
+      continue;
+    }
+    foreach ($app['browse pages'] as $bundle_name => $value) {
+      if (!$value) {
+        continue;
+      }
+      if ($bundle_info = node_type_load($bundle_name)) {
+        $browse_pages_info[$bundle_name] = $bundle_info->name;
+      }
+    }
+  }
+  return $browse_pages_info;
+}
+
+/**
+ * Setup blocks for browse context.
+ *
+ * @return stdClass
+ *   Browse context.
+ */
+function os_search_solr_setup_bundle_context($bundle_name, $bundle_label) {
+
   $searcher_name = os_search_solr_get_searcher_name();
   // Gets delta map
   if (!$map = facetapi_get_delta_map()) {
@@ -523,18 +555,13 @@ function os_profiles_apachesolr_search_browse_context($browse) {
 
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'browse_' . $browse;
-  $context->description = 'Browse ' . $browse;
+  $context->name = 'browse_' . $bundle_name;
+  $context->description = t('Browse @name', array('@name' => $bundle_label));
   $context->tag = 'OpenScholar';
   $context->conditions = array(
-    'context' => array(
-      'values' => array(
-        '~os_cp' => '~os_cp',
-      ),
-    ),
     'path' => array(
       'values' => array(
-        'browse/' . $browse => 'browse/' . $browse,
+        'browse/' . $bundle_name => 'browse/' . $bundle_name,
       ),
     ),
   );
@@ -555,7 +582,13 @@ function os_profiles_apachesolr_search_browse_context($browse) {
   return $context;
 }
 
-function os_search_solr_core_search_context() {
+/**
+ * Setup blocks for core search context.
+ *
+ * @return stdClass
+ *   Core search context.
+ */
+function os_search_solr_setup_core_search_context() {
   $delta_created = '';
   $delta_bundle = '';
   $delta_og = '';
@@ -666,16 +699,21 @@ function os_search_solr_core_search_context() {
  */
 function os_search_solr_apachesolr_search_default_searchers() {
   $export = array();
-  $export['core_search'] = os_search_solr_apachesolr_core_search_default();
+  $export['core_search'] = os_search_solr_setup_core_searcher();
 
-  $browsers = array('person' => 'Person', 'blog' => 'Blog');
-  foreach ($browsers as $name => $label) {
-    $export['browse_' . $name] = os_profiles_apachesolr_search_browse_searcher($name, $label);
+  foreach (os_search_solr_get_browse_pages_info() as $bundle_name => $bundle_label) {
+    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_searcher($bundle_name, $bundle_label);
   }
   return $export;
 }
 
-function os_search_solr_apachesolr_core_search_default() {
+/**
+ * Setup core searcher.
+ *
+ * @return stdClass
+ *   Solr searcher info for core search.
+ */
+function os_search_solr_setup_core_searcher() {
   $searcher = new stdClass();
   $searcher->disabled = FALSE; /* Edit this to true to make a default searcher disabled initially */
   $searcher->api_version = 3;
@@ -699,19 +737,26 @@ function os_search_solr_apachesolr_core_search_default() {
   return $searcher;
 }
 
-function os_profiles_apachesolr_search_browse_searcher($browse, $label) {
+/**
+ * Setup bundle searecher info.
+ *
+ * @param $bundle_name
+ * @param $label
+ * @return stdClass
+ */
+function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_label) {
   $searcher = new stdClass();
   $searcher->disabled = FALSE; /* Edit this to true to make a default searcher disabled initially */
   $searcher->api_version = 3;
-  $searcher->page_id = 'browse_' . $browse;
-  $searcher->label = $label;
-  $searcher->description = 'Browse ' . $browse;
-  $searcher->search_path = 'browse/' . $browse;
-  $searcher->page_title = 'Browse ' . $browse;
+  $searcher->page_id = 'browse_' . $bundle_name;
+  $searcher->label = $bundle_label;
+  $searcher->description = t('Browse @name', array('@name' => $bundle_label));
+  $searcher->search_path = 'browse/' . $bundle_name;
+  $searcher->page_title = t('Browse @name', array('@name' => $bundle_label));
   $searcher->env_id = 'solr';
   $searcher->settings = array(
     'fq' => array(
-      0 => 'bundle:' . $browse,
+      0 => 'bundle:' . $bundle_name,
     ),
     'apachesolr_search_custom_enable' => 1,
     'apachesolr_search_search_type' => 'custom',
