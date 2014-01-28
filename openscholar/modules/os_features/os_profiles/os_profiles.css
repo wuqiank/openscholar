@@ -1,4 +1,5 @@
 #content .node-person .field-name-field-person-photo,
+.block-boxes-os_boxes_manual_list .node-person .field-name-field-person-photo,
 #content .node-person .field-name-field-phone,
 #content .node-person .field-name-field-email {
   float: left;

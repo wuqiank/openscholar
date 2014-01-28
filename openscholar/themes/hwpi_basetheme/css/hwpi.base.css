@@ -140,6 +140,11 @@ a.biblio-abstract-link.toggle {
     margin-bottom: 0;
 }
 
+.block .node:only-child {
+    margin-bottom: 20px;
+}
+
+
 /* Search Results */
 .page-search input.form-text {
   width: auto;
@@ -629,6 +634,9 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   padding: 15px 0 30px;
 }
 
+.block-boxes-os_boxes_manual_list .node-teaser.node-person {
+  padding: 0 0 30px;
+}
 
 .person-teaser-wrapper {
 	display:table-cell;
@@ -638,6 +646,13 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 .node-link.node-teaser {
 	padding: 10px 0 5px;
 	}
+
+
+.block-boxes-os_boxes_manual_list .node-person.node-teaser .field-name-field-person-photo,
+.block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper {
+	display:inline;
+}
+
 
 
 /**
@@ -762,6 +777,10 @@ h2.comment-title.comment-form {
 }
 
 .links li a {
+  text-decoration: underline;
+}
+
+a.node-readmore {
   text-decoration: underline;
 }
 
