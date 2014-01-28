@@ -196,14 +196,13 @@ function os_profiles_field_default_field_instances() {
     'label' => 'Destination',
     'required' => 0,
     'settings' => array(
-      'text_processing' => 1,
+      'text_processing' => 0,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
       'active' => 1,
       'module' => 'text',
       'settings' => array(
-        'max_rows' => 3,
         'rows' => 1,
       ),
       'type' => 'text_textarea',
@@ -521,12 +520,12 @@ function os_profiles_field_default_field_instances() {
     ),
     'widget' => array(
       'active' => 1,
-      'module' => 'os_wysiwyg',
+      'module' => 'text',
       'settings' => array(
         'max_rows' => 10,
         'rows' => 1,
       ),
-      'type' => 'os_wysiwyg_expanding_textarea',
+      'type' => 'text_textarea',
       'weight' => 49,
     ),
   );
@@ -1096,12 +1095,10 @@ function os_profiles_field_default_field_instances() {
   t('Email');
   t('First Name');
   t('Holds an access token.');
-  t('Holds the UUID of the origin node. ');
   t('Holds the listeners sites.');
   t('If a value is entered here then links to this page will redirect to the entered URL.  This post will still appear in lists.  Leave this field blank to allow users to see this page.');
   t('Last Name');
   t('Middle Name or Initial');
-  t('Origin UUID');
   t('Origin destination');
   t('Phone');
   t('Photo');
