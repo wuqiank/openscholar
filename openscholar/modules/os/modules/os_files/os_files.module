@@ -9,6 +9,17 @@ define('OS_FILE_FILEPATH_MULTITENANT', '[vsite:site-purl]/files');
 define('OS_FILE_FILEPATH_SINGLETENANT', 'share');
 
 /**
+ * Implements hook_init.
+ * Ensures oembed plugin types are available
+ */
+function os_files_init() {
+  $plugins = ctools_plugin_get_plugin_type_info();
+  if (!isset($plugins['oembed']['providers'])) {
+    ctools_plugin_get_plugin_type_info(true);
+  }
+}
+
+/**
  * Implements hook_ctools_plugin_api().
  *
  * Leave this one.
