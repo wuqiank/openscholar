@@ -517,15 +517,30 @@ function os_profiles_display_settings_submit($form, $form_state) {
   variable_set('os_profiles_display_type', $form_state['input']['os_profiles_display_type']);
 
   // Clear the os_profiles view cache so the setting will take effect.
-  cache_clear_all('views:os_profiles', 'cache_views_data', TRUE);
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    cache_clear_all('og:node:' . $vsite->id . ':', 'cache_views_data', TRUE);
+  }
 }
 
 /**
  * Provide display style examples for the os_profiles app settings.
  */
 function _os_profiles_build_display_style_example($style) {
-  $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-  $image = theme('image',  array('path' => $path));
+  // Use custom default image if available.
+  if ($custom_default_image = variable_get('os_profiles_default_image_file', 0)) {
+    $image_file = file_load($custom_default_image);
+    $path = $image_file->uri;
+    $options = array(
+      'path' => $path,
+      'style_name' => 'profile_thumbnail',
+    );
+    $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
+  }
+  else {
+    // Use default image.
+    $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+    $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+  }
 
   switch ($style) {
     case 'title':

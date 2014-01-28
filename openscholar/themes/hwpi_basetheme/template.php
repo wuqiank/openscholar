@@ -155,7 +155,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
             'path' => $path,
             'style_name' => 'profile_thumbnail',
           );
-        $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
+          $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
         }
         else {
           // Use default image.
