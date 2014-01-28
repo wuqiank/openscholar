@@ -21,33 +21,32 @@ class os_shields_box extends os_boxes_default {
    * Implementation of boxes_content::options_form().
    */
   public function options_form(&$form_state){
-
-    //The shield List
-    $a_shields = variable_get('os_shields_shield_info', array());
-
-    if (count($a_shields)) {
+    $default_shield = FALSE;
+    if ($all_shields = variable_get('os_shields_shield_info', array())) {
       $shield_options = array();
       $path_prefix = 'public://os_shields/';
-      foreach ($a_shields as $fname => $shield)  {
-        if (!$shield['hidden']) {
-          $shield_file = file_load($shield['fid']);
-          if (file_exists($shield_file->uri)) {
-            $shield_options[$shield_file->filename] = theme('os_shields_theme_shieldpicker', array('file' => $shield_file));
+      foreach ($all_shields as $file_name => $shield)  {
+        if ($shield['hidden']) {
+          // Shield should be hidden.
+          continue;
+        }
 
-            if ($shield['default']) {
-              $default_shield = $fname;
-            }
-          }
+        $shield_file = file_load($shield['fid']);
+        $shield_options[$shield_file->filename] = theme('os_shields_theme_shieldpicker', array('file' => $shield_file));
+
+        if (!empty($shield['default'])) {
+          $default_shield = $file_name;
         }
       }
+
+      $selected_shield = !empty($this->options['shield']) ? $this->options['shield'] : $default_shield;
 
       $form['shield'] = array(
         '#prefix' => '<div class="shield_wrapper clear-block">',
         '#title' => t('Shield'),
         '#type' => 'radios',
         '#options' => $shield_options,
-        '#default_value' => $default_shield,
-        // use the spaces original value, which should always be set as long as a shield has been uploaded
+        '#default_value' => $selected_shield,
         '#suffix' => '</div>',
         '#attached' => array(
           'css' => array(
@@ -67,34 +66,37 @@ class os_shields_box extends os_boxes_default {
         '#suffix' => '</div>',
       );
     }
-  //END Shield List
 
     $form += parent::options_form($form_state);
     return $form;
   }
 
   /**
-   * Implementation of boxes_content::render().
+   * Implements boxes_content::render().
    */
   public function render() {
     if (module_exists('vsite') && !vsite_get_vsite()) {
       return;
     }
-    
-    //@todo
-    $block = parent::render();
-    $block['subject'] = $block['title'] = '';
 
-    $filename = isset($this->options['shield'])?$this->options['shield']:variable_get('os_shields_shield', '');
-    if ($filename && file_exists('public://os_shields/'.$filename)) {
-      $block['content'] = '<div id="scholar-shield"><img src="'.file_create_url('public://os_shields/'.$filename).'" alt="Shield" title="Shield" /> </div>';
+    $block = parent::render();
+    $block['title'] = $block['content'] = '';
+
+    $default_shield = variable_get('os_shields_shield', '');
+    $filename = !empty($this->options['shield']) ? $this->options['shield'] : FALSE;
+
+    if ($filename) {
+      $params = array(
+        'path' => 'public://os_shields/' . $filename,
+        'alt' => t('Shield'),
+      );
+      $image = theme('image', $params);
+      $block['content'] = '<div id="scholar-shield">' . $image . '</div>';
     }
-    else if (spaces_access_admin() && count(variable_get('os_shields_shield_info', array())) == 0) {
+    elseif (spaces_access_admin() && !variable_get('os_shields_shield_info', array())) {
       $block['content'] = t('No shields have been added to your install. Contact your site administrator or remove this widget to hide this message.');
     }
-    else {
-      $block ['content'] = ' ';
-    }
+
     return $block;
   }
 
