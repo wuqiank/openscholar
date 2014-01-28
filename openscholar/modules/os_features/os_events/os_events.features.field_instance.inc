@@ -22,7 +22,7 @@ function os_events_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 0,
+        'weight' => 2,
       ),
       'ical' => array(
         'label' => 'hidden',
@@ -97,7 +97,7 @@ function os_events_field_default_field_instances() {
           'show_repeat_rule' => 'show',
         ),
         'type' => 'date_default',
-        'weight' => 1,
+        'weight' => 0,
       ),
       'ical' => array(
         'label' => 'above',
@@ -334,7 +334,7 @@ function os_events_field_default_field_instances() {
         'module' => 'os_files',
         'settings' => array(),
         'type' => 'os_files_image_list',
-        'weight' => 2,
+        'weight' => 3,
       ),
       'ical' => array(
         'label' => 'hidden',
