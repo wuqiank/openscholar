@@ -85,6 +85,8 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {/
   $widget_settings = $element['#instance']['widget']['settings'];
   $instance_settings = $element['#instance']['settings'];
 
+  $info = element_info('dragndrop_upload');
+
   $element['drop'] = array(
     '#type' => 'dragndrop_upload',
     '#upload_location' => file_field_widget_uri($element['#field'], $element['#instance']),
@@ -92,6 +94,7 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {/
       $element['#field'],
       $element['#instance']
     ),
+    '#pre_render' => array_merge(array('media_draggable_dnd_pre_render'), $info['#pre_render']),
     '#value_callback' => 'file_field_widget_value',
     '#progress_indicator' => $widget_settings['progress_indicator'],
     '#upload_event' => $widget_settings['upload_event'],
@@ -147,6 +150,28 @@ function media_draggable_field_widget_indiv_process($element) {
       )
     ),
   );
+
+  return $element;
+}
+
+function media_draggable_dnd_pre_render($element) {
+  if (!empty($element['#value']['fid'])) {
+    $file = $element['#file'];
+
+    module_load_include('inc', 'media', 'includes/media.browser');
+    media_browser_build_media_item($file);
+
+    drupal_add_js(array(
+      'mediaDraggable' => array(
+        'newFile' => $file,
+      )
+    ), 'setting');
+
+    $element['#value']['fid'] = 0;
+    $element['#file'] = false;
+    $element['fid']['#value'] = 0;
+    unset($element['filename']);
+  }
 
   return $element;
 }
