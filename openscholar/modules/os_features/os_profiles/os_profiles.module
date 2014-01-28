@@ -415,7 +415,6 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
 
   if (!empty($form_state['values']['url'])) {
     $headers = get_headers($form_state['values']['url']);
-    dpm($headers);
     if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
       // todo: check where the header gone to.
 //      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
