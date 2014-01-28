@@ -191,8 +191,8 @@ function os_profiles_field_display_node_alter(&$display, $context) {
  * Implements hook_field_access().
  */
 function os_profiles_field_access($op, $field, $entity_type, $entity, $account) {
-  if (in_array($field['field_name'], array('field_uuid', 'field_origin_uuid', 'field_origin_destination', 'field_destination')) && $op == 'edit') {
-    return FALSE;
+  if (in_array($field['field_name'], array('field_uuid', 'field_origin_destination', 'field_destination')) && $op == 'edit') {
+//    return FALSE;
   }
 
   if (!empty($entity) && $field['field_name'] == 'field_url' && $entity_type == 'node' && $entity->type == 'person' && $op == 'edit') {
@@ -449,7 +449,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   // Set up default values.
   $values += array(
     'type' => 'person',
-    'field_origin_uuid' => $data['field_uuid'],
+    'field_uuid' => $data['field_uuid'],
   );
 
   // When there is a node in the current vsite with the title of the source node
@@ -547,6 +547,7 @@ function os_profiles_insert_listeners() {
 
   $node = node_load(reset($results['node'])->nid);
   $node->skip_updating = TRUE;
+  $node->changed = time();
 
   $wrapper = entity_metadata_wrapper('node', $node);
   $destinations = $wrapper->field_destination->value();
@@ -564,12 +565,13 @@ function os_profiles_insert_listeners() {
  * Get all the profiles which holds this UUID and pull the node from their
  * origin JSON and update them as well.
  */
-function os_profiles_update_listeners() {
+function os_profiles_update_listeners($uuid = NULL) {
+  $uuid = $uuid ? $uuid : $_GET['UUID'];
   $query = new EntityFieldQuery();
   $results = $query
     ->entityCondition('entity_type', 'node')
-    ->propertyCondition('type', 'person')
-    ->fieldCondition('field_origin_uuid', 'value', $_GET['UUID'])
+    ->entityCondition('bundle', 'person')
+    ->fieldCondition('field_uuid', 'value', $uuid)
     ->execute();
 
   if (!$results['node']) {
@@ -645,26 +647,34 @@ function os_profiles_restws_request_alter(&$request) {
  * Implements hook_node_update().
  */
 function os_profiles_node_update($node) {
+  global $base_url;
+
   if (!empty($node->skip_updating)) {
     // returning because We altered the node when JSON request for him was done.
     return;
   }
 
-  $wrapper = entity_metadata_wrapper('node', $node);
-
-  if ($wrapper->getBundle() != 'person') {
+  if ($node->type != 'person') {
     return;
   }
 
+  $wrapper = entity_metadata_wrapper('node', $node);
   if (!$destinations = $wrapper->field_destination->value()) {
     return;
   }
 
   foreach ($destinations as $destination) {
-    $arguments = array(
-      'action' => 'update',
-      'UUID' => $wrapper->field_uuid->value(),
-    );
-    os_profiles_manage_synced_profiles($destination['value'], $arguments);
+    if ($destination['value'] == $base_url) {
+      // The destination is in the same installation. No need to access him via
+      // HTTP request.
+      os_profiles_update_listeners($wrapper->field_uuid->value());
+    }
+    else {
+      $arguments = array(
+        'action' => 'update',
+        'UUID' => $wrapper->field_uuid->value(),
+      );
+      os_profiles_manage_synced_profiles($destination['value'], $arguments);
+    }
   }
 }
