@@ -27,7 +27,7 @@ function os_links_os_app_info() {
         'csv' => 'os_links',
       ),
     ),
-    'browse pages' => array(
+    'browse_pages' => array(
       'link' => TRUE,
     ),
   );

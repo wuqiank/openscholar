@@ -31,7 +31,7 @@ function os_biocv_os_app_info() {
         'csv' => 'os_bio',
       ),
     ),
-    'browse pages' => array(
+    'browse_pages' => array(
       'bio' => TRUE,
       'cv' => TRUE,
     ),

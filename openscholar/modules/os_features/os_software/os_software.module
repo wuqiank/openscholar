@@ -31,7 +31,7 @@ function os_software_os_app_info() {
     'require_parent_node' => array(
       'software_release'=> TRUE,
     ),
-    'browse pages' => array(
+    'browse_pages' => array(
       'software_project' => TRUE,
       'software_release' => TRUE,
     ),

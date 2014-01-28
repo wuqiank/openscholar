@@ -31,7 +31,7 @@ function os_blog_os_app_info() {
         'rss' => 'blog_import',
       ),
     ),
-    'browse pages' => array(
+    'browse_pages' => array(
       'blog' => TRUE,
     ),
   );

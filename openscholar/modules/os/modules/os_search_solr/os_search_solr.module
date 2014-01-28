@@ -509,19 +509,19 @@ function os_search_solr_context_default_contexts() {
 }
 
 /**
- * Utility function; Get bundles for browse pages.
+ * Utility function; Get bundles for browse_pages.
  *
  * @return array
- *   Array of bundle names and their labels needed for browse pages.
+ *   Array of bundle names and their labels needed for browse_pages.
  */
 function os_search_solr_get_browse_pages_info() {
   $browse_pages_info = array();
 
   foreach (os_app_info() as $app) {
-    if (!$app['browse pages']) {
+    if (!$app['browse_pages']) {
       continue;
     }
-    foreach ($app['browse pages'] as $bundle_name => $value) {
+    foreach ($app['browse_pages'] as $bundle_name => $value) {
       if (!$value) {
         continue;
       }

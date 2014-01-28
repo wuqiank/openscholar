@@ -27,7 +27,7 @@ function os_faq_os_app_info() {
         'csv' => 'os_faq',
       ),
     ),
-    'browse pages' => array(
+    'browse_pages' => array(
       'faq' => TRUE,
     ),
   );

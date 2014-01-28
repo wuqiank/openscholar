@@ -31,7 +31,7 @@ function os_classes_os_app_info() {
     'require_parent_node' => array(
       'class_material'=> TRUE,
     ),
-    'browse pages' => array(
+    'browse_pages' => array(
       'class' => TRUE,
     ),
   );
