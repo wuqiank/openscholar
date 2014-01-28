@@ -154,6 +154,7 @@ function os_events_vsite_og_node_type_info() {
  */
 function os_events_default_registration_type() {
   $items = array();
+
   $items['event_signup_simple'] = entity_import('registration_type', '{
     "name" : "event_signup_simple",
     "label" : "Event signup",
@@ -162,6 +163,16 @@ function os_events_default_registration_type() {
     "data" : null,
     "rdf_mapping" : []
   }');
+
+  $items['event_signup_specific'] = entity_import('registration_type', '{
+    "name" : "event_signup_specific",
+    "label" : "Event signup with specific date",
+    "locked" : "0",
+    "weight" : "0",
+    "data" : null,
+    "rdf_mapping" : []
+  }');
+
   return $items;
 }
 
@@ -662,19 +673,35 @@ You request to send a reminder for the event <a href='[node:url]'>[node:title]</
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function os_events_field_widget_registration_select_form_alter(&$element, &$form_state, $context) {
-  $element['registration_type']['#type'] = 'checkbox';
+  $element['registration_type']['#title'] = t('Signup type');
+  $element['registration_type']['#description'] = t('Select which type of registration matches your type of event.<br />' .
+    'If "entire event" is chosen, users that signup for this event will register for all the repetitions of the event.<br />' .
+    'If "specific date" is chosen, users will choose to which of the event\'s repetitions they sign up.');
 
-  // Set the "return value" to our default signup.
-  $element['registration_type']['#return_value'] = 'event_signup_simple';
+  // Change type from select to radios.
+  $element['registration_type']['#type'] = 'radios';
 
-  $items = $context['items'];
-  $element['registration_type']['#default_value'] = !empty($items[0]['registration_type']);
+  // When creating new event, the default option is the simple signup.
+  $default_value = !empty($context['items'][0]['registration_type']) ? $context['items'][0]['registration_type'] : 'event_signup_simple';
+  $element['registration_type']['#default_value'] = $default_value;
 
-  // Remove the options, so they won't fail our validation.
-  unset($element['registration_type']['#options']);
+  // The event creator has to choose whether other users will be able to
+  // register for the entire event or for each repeat separately.
+  $options = array(
+    'event_signup_simple' => 'Signup for entire event.',
+    'event_signup_specific' => 'Signup for specific date.',
+  );
+  $element['registration_type']['#options'] = $options;
 
-  $element['registration_type']['#title'] = t('Signup');
-  $element['registration_type']['#description'] = t('If checked, users will be able to signup for this event.');
+  // Selecting registration type will only be available if both "Repeat" and
+  // "Signup" checkboxes are checked. When "Repeat" is not checked, the
+  // registration type is the default one.
+  $element['registration_type']['#states'] = array(
+    'visible' => array(
+      ':input[name="signup"]' => array('checked' => TRUE),
+      ':input[name*="show_repeat_settings"]' => array('checked' => TRUE),
+    )
+  );
 }
 
 /**
@@ -897,4 +924,12 @@ function os_events_mail($key, &$message, $params) {
  */
 function os_events_form_event_node_form_alter(&$form, &$form_state) {
   $form['#attached']['js'][] = drupal_get_path('module', 'os_events') . '/js/os_events.js';
+
+  $form['signup'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Signup'),
+    '#description' => t('If checked, users will be able to signup for this event.'),
+    '#default_value' => '1',
+    '#weight' => 33,
+  );
 }
