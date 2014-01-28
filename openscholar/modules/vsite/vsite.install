@@ -569,24 +569,14 @@ function vsite_update_7017() {
  */
 function vsite_update_7018() {
   $name = 'theme_settings';
-  $value = array(
-    'toggle_logo' => 1,
-    'toggle_name' => 1,
-    'toggle_slogan' => 1,
-    'toggle_node_user_picture' => 1,
-    'toggle_comment_user_picture' => 1,
-    'toggle_comment_user_verification' => 1,
+  $original = variable_get($name, array());
+  $modified = array(
     'toggle_favicon' => 0,
-    'toggle_main_menu' => 1,
-    'toggle_secondary_menu' => 1,
-    'default_logo' => 1,
-    'logo_path' => NULL,
-    'logo_upload' => NULL,
     'default_favicon' => 0,
     'favicon_path' => NULL,
     'favicon_upload' => NULL,
-    'nice_menus_custom_css' => NULL,
   );
+  $value = array_merge($original, $modified);
 
   variable_set($name, $value);
 }
