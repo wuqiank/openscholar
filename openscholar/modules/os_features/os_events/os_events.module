@@ -743,7 +743,7 @@ function os_events_form_registration_form_alter(&$form, &$form_state) {
   $options = array();
   $dates = $wrapper_event->field_date->value();
   foreach ($dates as $date) {
-    $options[] = $date['value'];
+    $options[$date['value']] = $date['value'];
   }
   $field_event_date = array(
     '#type' => 'select',
