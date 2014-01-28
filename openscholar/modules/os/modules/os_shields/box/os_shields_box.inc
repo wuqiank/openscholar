@@ -84,7 +84,7 @@ class os_shields_box extends os_boxes_default {
     $default_shield = variable_get('os_shields_shield', '');
     $filename = !empty($this->options['shield']) ? $this->options['shield'] : FALSE;
 
-    if ($filename) {
+    if ($filename && file_exists('public://os_shields/' . $filename)) {
       $params = array(
         'path' => 'public://os_shields/' . $filename,
         'alt' => t('Shield'),
