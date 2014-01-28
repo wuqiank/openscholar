@@ -495,14 +495,70 @@ function os_search_solr_reindex_site() {
  * Implements hook_context_default_contexts().
  */
 function os_search_solr_context_default_contexts() {
-  // First get the delta's for facetapi blocks.
   if (!module_exists('facetapi')) {
     return;
   }
+  $export = array();
+  $export['os_search'] = os_search_solr_core_search_context();
+
+  $browsers = array('person' => 'Person', 'blog' => 'Blog');
+  foreach ($browsers as $name => $label) {
+    $export['browse_' . $name] = os_profiles_apachesolr_search_browse_context($name);
+  }
+  return $export;
+}
+
+function os_profiles_apachesolr_search_browse_context($browse) {
+  $searcher_name = os_search_solr_get_searcher_name();
+  // Gets delta map
+  if (!$map = facetapi_get_delta_map()) {
+    return;
+  }
+
+  // Filter by OG vocab.
+  $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
+  $delta_og_vocab = array_search($string_og_vocab, $map);
+
+  $context = new stdClass();
+
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'browse_' . $browse;
+  $context->description = 'Browse ' . $browse;
+  $context->tag = 'OpenScholar';
+  $context->conditions = array(
+    'context' => array(
+      'values' => array(
+        '~os_cp' => '~os_cp',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'browse/' . $browse => 'browse/' . $browse,
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'facetapi-browse-' . $delta_og_vocab => array(
+          'module' => 'facetapi',
+          'delta' => $delta_og_vocab,
+          'region' => 'sidebar_second',
+          'weight' => '-4',
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 1;
+
+  return $context;
+}
+
+function os_search_solr_core_search_context() {
   $delta_created = '';
   $delta_bundle = '';
   $delta_og = '';
-  $export = array();
 
   $searcher_name = os_search_solr_get_searcher_name();
   // Gets delta map
@@ -601,9 +657,8 @@ function os_search_solr_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('OpenScholar');
   t('Search Pages');
-  $export['os_search'] = $context;
 
-  return $export;
+  return $context;
 }
 
 /**
@@ -643,7 +698,6 @@ function os_search_solr_apachesolr_core_search_default() {
 
   return $searcher;
 }
-
 
 function os_profiles_apachesolr_search_browse_searcher($browse, $label) {
   $searcher = new stdClass();
