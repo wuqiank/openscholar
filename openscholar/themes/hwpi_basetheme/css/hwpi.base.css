@@ -454,11 +454,29 @@ ol.search-results li.search-result:last-child {
   margin-left: 70px;
 }
 
-.node-event .field-name-field-date {
+.node-event .field-name-field-date,
+.node-event .field-name-field-event-location.view-mode-full {
   color: #6D6D6D;
+}
+
+.node-event .field-name-field-date.view-mode-full.field-label-above .field-label,
+.node-event .field-name-field-event-location.view-mode-full .field-label {
+    float: left;
+}
+
+.node-event .field-name-field-date {
   margin-bottom: 7px;
 }
 
+.node-event .field-name-field-date.view-mode-full.field-label-above {
+    margin-bottom: 0px;
+}
+.node-event .field-name-field-event-location.view-mode-full .field-label {
+    margin-bottom: 7px;
+}
+.node-event .field-name-body.view-mode-full {
+    clear: both;
+}
 .node-event .field-name-field-date .field-label {
   float: left;
 }
