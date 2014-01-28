@@ -654,7 +654,7 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 	}
 
 
-.block-boxes-os_boxes_manual_list .node-person.node-teaser .field-name-field-person-photo,
+.sidebar .node-person .person-teaser-wrapper,
 .block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper {
 	display:inline;
 }
