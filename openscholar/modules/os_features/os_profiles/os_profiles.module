@@ -481,7 +481,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     $arguments = array(
       'action' => 'insert_person',
       'UUID' => $data['field_uuid'],
-      'listener' => $base_url . '/' .$vsite->group->name,
+      'listener' => $base_url,
     );
     os_profiles_manage_synced_profiles($url, $arguments);
   }
@@ -542,8 +542,10 @@ function os_profiles_insert_listeners() {
     return;
   }
 
-  $nid = reset($results['node'])->nid;
-  $wrapper = entity_metadata_wrapper('node', $nid);
+  $node = node_load(reset($results['node'])->nid);
+  $node->skip_updating = TRUE;
+
+  $wrapper = entity_metadata_wrapper('node', $node);
   $destinations = $wrapper->field_destination->value();
 
   if (in_array($_GET['listener'], $destinations)) {
@@ -551,7 +553,7 @@ function os_profiles_insert_listeners() {
     return;
   }
 
-  $wrapper->field_destination[] = $_GET['listener'];
+  $wrapper->field_destination[] = array('value' => $_GET['listener'], 'format' => 'full_html');
   $wrapper->save();
 }
 
@@ -613,10 +615,8 @@ function os_profiles_update_listeners() {
  *  The values of the $_GET. No need to pass the q index.
  */
 function os_profiles_manage_synced_profiles($url, $values) {
-  $values['action'] == 'update' ? $path = $url . '/people/update_profile' : $path = $url . '/people/insert_profile';
-
-  $full_url = url($path, array('query' => $values));
-  drupal_http_request($full_url);
+  $path = $values['action'] == 'update' ? $url . '/people/update_profile' : $url . '/people/insert_profile';
+  drupal_http_request(url($path, array('query' => $values)));
 }
 
 /**
@@ -626,8 +626,8 @@ function os_profiles_manage_synced_profiles($url, $values) {
  * field is not populate.
  */
 function os_profiles_restws_request_alter(&$request) {
-  $node = node_laod($request['id']);
-  $node->json_alter = TRUE;
+  $node = node_load($request['id']);
+  $node->skip_updating = TRUE;
 
   $wrapper = entity_metadata_Wrapper('node', $node);
 
@@ -642,14 +642,14 @@ function os_profiles_restws_request_alter(&$request) {
  * Implements hook_node_update().
  */
 function os_profiles_node_update($node) {
-  if (!emtpy($node->json_alter)) {
+  if (!empty($node->skip_updating)) {
     // returning because We altered the node when JSON request for him was done.
     return;
   }
 
   $wrapper = entity_metadata_wrapper('node', $node);
 
-  if ($wrapper->getBubndle() != 'person') {
+  if ($wrapper->getBundle() != 'person') {
     return;
   }
 
@@ -662,6 +662,6 @@ function os_profiles_node_update($node) {
       'action' => 'update',
       'UUID' => $wrapper->field_uuid->value(),
     );
-    os_profiles_manage_synced_profiles($destination, $arguments);
+    os_profiles_manage_synced_profiles($destination['value'], $arguments);
   }
 }
