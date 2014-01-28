@@ -25,9 +25,11 @@ function os_search_db_block_view($delta = ''){
   $block = array();
   switch ($delta) {
   	case 'site-search' :
-  	  $block['subject'] = NULL;
-  	  $block['content'] = drupal_get_form('search_block_form');
-  	  return $block;
+      if (!module_exists('os_search_solr')) {
+        $block['subject'] = NULL;
+        $block['content'] = drupal_get_form('search_block_form');
+      }
+      return $block;
 
   	default:
   	  break;
