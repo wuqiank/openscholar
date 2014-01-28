@@ -25,6 +25,7 @@ class os_boxes_columns extends os_boxes_default {
 
     $form['layout_select']['num_cols'] = array(
       '#type' => 'radios',
+      '#title' => t('Layout Selection'),
       '#options' => array(
         '0' => t('All'),
         '2' => t('Two'),
@@ -49,20 +50,6 @@ class os_boxes_columns extends os_boxes_default {
         'five-5x20' => '5x20 (%)'
       ),
       '#default_value' => $this->options['layout'],
-    );
-
-    // set up unused widget container
-    $form['unused'] = array(
-      '#type' => 'container',
-      '#id' => 'unused-widgets',
-      'search' => array(
-        '#type' => 'textfield',
-        '#title' => t('Filter by Name'),
-      ),
-      'widgets' => array(
-        '#type' => 'container',
-
-      )
     );
 
     // set up psuedo-regions
@@ -101,6 +88,23 @@ class os_boxes_columns extends os_boxes_default {
         ),
       );
     }
+
+    // set up unused widget container
+    $form['unused'] = array(
+      '#type' => 'container',
+      '#id' => 'unused-widgets',
+      'title' => array(
+        '#markup' => t('Unused Widgets'),
+      ),
+      'search' => array(
+        '#type' => 'textfield',
+        '#title' => t('Filter by Name'),
+      ),
+      'widgets' => array(
+        '#type' => 'container',
+
+      )
+    );
 
     /**
      * Get all widgets and sort them accordingly
