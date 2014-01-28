@@ -890,6 +890,15 @@ function os_events_mail($key, &$message, $params) {
 }
 
 /**
+ * Implements hook_mail_alter().
+ */
+function os_events_mail_alter(&$message) {
+  if ($message['id'] != 'registration_broadcast') {
+    return;
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Include JS to update the End Date field according to the Start Date field on
