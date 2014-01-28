@@ -632,7 +632,6 @@ function os_search_solr_setup_core_search_context() {
       'values' => array(
         'search' => 'search',
         'search/*' => 'search/*',
-        'browse/*' => 'browse/*',
       ),
     ),
   );
