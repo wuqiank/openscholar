@@ -2817,6 +2817,15 @@ function vsite_og_default_roles_alter(&$roles) {
   );
 }
 
+function vsite_og_permission() {
+  $perms['edit boxes'] = array(
+    'title' => t('Edit boxes'),
+    'description' => t('Edit boxes.'),
+    'default role' => array(OG_ADMINISTRATOR_ROLE, OG_AUTHENTICATED_ROLE),
+    'roles' => array(OG_ADMINISTRATOR_ROLE, OG_AUTHENTICATED_ROLE),
+  );
+  return $perms;
+}
 /**
  * Implements hook_og_permission_alter().
  */
