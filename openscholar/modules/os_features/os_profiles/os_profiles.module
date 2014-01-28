@@ -547,17 +547,16 @@ function os_profiles_insert_listeners() {
 
   $node = node_load(reset($results['node'])->nid);
   $node->skip_updating = TRUE;
-  $node->changed = time();
 
   $wrapper = entity_metadata_wrapper('node', $node);
-  $destinations = $wrapper->field_destination->value();
+  $destinations = isset($wrapper->field_destination) ? $wrapper->field_destination->value() : array();
 
   if (in_array($_GET['listener'], $destinations)) {
     // The destination is already in the field.
     return;
   }
 
-  $wrapper->field_destination[] = array('value' => $_GET['listener'], 'format' => 'full_html');
+  $wrapper->field_destination[] = $_GET['listener'];
   $wrapper->save();
 }
 
@@ -583,9 +582,11 @@ function os_profiles_update_listeners($uuid = NULL) {
   $handler = restws_resource_controller('node');
 
   foreach ($nodes as $node) {
-    $wrapper = entity_metadata_wrapper('node', $node);
-    $data = os_profiles_get_origin_node_values($wrapper->field_origin_destination->value(), $fields);
-    $handler->update($wrapper->getIdentifier(), $data->values);
+    if (empty($node->field_origin_destination)) {
+      continue;
+    }
+    $data = os_profiles_get_origin_node_values($node->field_origin_destination[LANGUAGE_NONE][0]['value'], $fields);
+    $handler->update($node->nid, $data->values);
   }
 }
 
@@ -664,7 +665,7 @@ function os_profiles_node_update($node) {
   }
 
   foreach ($destinations as $destination) {
-    if ($destination['value'] == $base_url) {
+    if (1 == 2) {
       // The destination is in the same installation. No need to access him via
       // HTTP request.
       os_profiles_update_listeners($wrapper->field_uuid->value());
@@ -674,7 +675,7 @@ function os_profiles_node_update($node) {
         'action' => 'update',
         'UUID' => $wrapper->field_uuid->value(),
       );
-      os_profiles_manage_synced_profiles($destination['value'], $arguments);
+      os_profiles_manage_synced_profiles($destination, $arguments);
     }
   }
 }
