@@ -33,6 +33,40 @@ function os_profiles_os_app_info() {
 }
 
 /**
+ * Implements hook_init().
+ */
+function os_profiles_init() {
+  if (!($nids = variable_get('os_profiles_pull_nodes')) || !($time = variable_get('os_profiles_pull_nodes_time')) || isset($_GET['REST_CALL'])) {
+    // When there is a REST call we don't want to make a http request all over
+    // again for preventing a weird loop.
+    return;
+  }
+  // When the origin node and the destination node are on the same installation
+  // and the origin has been updated the updating of the destination node will
+  // be accomplish instantly. We need to wait approxamtly 10 seconds so a normal
+  // end user won't think the update of the node is slow.
+  if ($time + 10 >= time()) {
+    return;
+  }
+
+  $nodes = node_load_multiple($nids);
+  $fields = os_profiles_profiles_fields();
+  $handler = restws_resource_controller('node');
+
+  foreach ($nodes as $node) {
+    if (empty($node->field_origin_destination)) {
+      continue;
+    }
+
+    $data = os_profiles_get_origin_node_values($node->field_origin_destination[LANGUAGE_NONE][0]['value'], $fields);
+    $handler->update($node->nid, $data->values);
+  }
+
+  variable_del('os_profiles_pull_nodes');
+  variable_del('os_profiles_pull_nodes_time');
+}
+
+/**
  * Implements hook_menu().
  */
 function os_profiles_menu() {
@@ -192,7 +226,7 @@ function os_profiles_field_display_node_alter(&$display, $context) {
  */
 function os_profiles_field_access($op, $field, $entity_type, $entity, $account) {
   if (in_array($field['field_name'], array('field_uuid', 'field_origin_destination', 'field_destination')) && $op == 'edit') {
-//    return FALSE;
+    return FALSE;
   }
 
   if (!empty($entity) && $field['field_name'] == 'field_url' && $entity_type == 'node' && $entity->type == 'person' && $op == 'edit') {
@@ -383,7 +417,7 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
     $headers = get_headers($form_state['values']['url']);
     if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
       // todo: check where the header gone to.
-//      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
+      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
       return;
     }
 
@@ -512,7 +546,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  *  Return an object with the values and the full JSON of the origin node.
  */
 function os_profiles_get_origin_node_values($address, $fields) {
-  $request = drupal_http_request($address);
+  $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1))));
   $data = drupal_json_decode($request->data);
 
   foreach ($fields as $key) {
@@ -546,7 +580,6 @@ function os_profiles_insert_listeners() {
   }
 
   $node = node_load(reset($results['node'])->nid);
-  $node->skip_updating = TRUE;
 
   $wrapper = entity_metadata_wrapper('node', $node);
   $destinations = isset($wrapper->field_destination) ? $wrapper->field_destination->value() : array();
@@ -577,17 +610,8 @@ function os_profiles_update_listeners($uuid = NULL) {
     return;
   }
 
-  $nodes = node_load_multiple(array_keys($results['node']));
-  $fields = os_profiles_profiles_fields();
-  $handler = restws_resource_controller('node');
-
-  foreach ($nodes as $node) {
-    if (empty($node->field_origin_destination)) {
-      continue;
-    }
-    $data = os_profiles_get_origin_node_values($node->field_origin_destination[LANGUAGE_NONE][0]['value'], $fields);
-    $handler->update($node->nid, $data->values);
-  }
+  variable_set('os_profiles_pull_nodes', array_keys($results['node']));
+  variable_set('os_profiles_pull_nodes_time', time());
 }
 
 /**
@@ -622,6 +646,7 @@ function os_profiles_update_listeners($uuid = NULL) {
  */
 function os_profiles_manage_synced_profiles($url, $values) {
   $path = $values['action'] == 'update' ? $url . '/people/update_profile' : $url . '/people/insert_profile';
+  $values['REST_CALL'] = TRUE;
   drupal_http_request(url($path, array('query' => $values)));
 }
 
@@ -633,7 +658,6 @@ function os_profiles_manage_synced_profiles($url, $values) {
  */
 function os_profiles_restws_request_alter(&$request) {
   $node = node_load($request['id']);
-  $node->skip_updating = TRUE;
 
   $wrapper = entity_metadata_Wrapper('node', $node);
 
@@ -650,11 +674,6 @@ function os_profiles_restws_request_alter(&$request) {
 function os_profiles_node_update($node) {
   global $base_url;
 
-  if (!empty($node->skip_updating)) {
-    // returning because We altered the node when JSON request for him was done.
-    return;
-  }
-
   if ($node->type != 'person') {
     return;
   }
@@ -665,17 +684,11 @@ function os_profiles_node_update($node) {
   }
 
   foreach ($destinations as $destination) {
-    if (1 == 2) {
-      // The destination is in the same installation. No need to access him via
-      // HTTP request.
-      os_profiles_update_listeners($wrapper->field_uuid->value());
-    }
-    else {
-      $arguments = array(
-        'action' => 'update',
-        'UUID' => $wrapper->field_uuid->value(),
-      );
-      os_profiles_manage_synced_profiles($destination, $arguments);
-    }
+    $arguments = array(
+      'action' => 'update',
+      'UUID' => $wrapper->field_uuid->value(),
+    );
+
+    os_profiles_manage_synced_profiles($destination, $arguments);
   }
 }
