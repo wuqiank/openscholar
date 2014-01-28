@@ -294,7 +294,7 @@ function os_block_view($delta = '') {
 function os_block_view_alter(&$block, &$data) {
   ctools_include('menu', 'os');
 
-  if (array_key_exists($data->delta, os_get_menus()) && count($block['content'])) {
+  if (!empty($data->delta) && array_key_exists($data->delta, os_get_menus()) && count($block['content'])) {
   	// Remove nice menus from the sidebar and footer regions.
   	$theme = (in_array($data->region, array('footer', 'footer_first', 'footer_third', 'sidebar_first', 'sidebar_second'))) ? '' : 'os_nice_menus';
     $block['content'] += array(
@@ -1704,6 +1704,7 @@ function os_app_info($app_name = NULL) {
             'index author' => FALSE,
             'importers' => array(),
             'require_parent_node' => FALSE,
+            'browse_pages' => FALSE,
           );
 
           // Adds the module information.
