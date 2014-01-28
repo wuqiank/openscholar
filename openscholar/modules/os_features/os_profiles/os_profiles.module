@@ -209,8 +209,7 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * Adds a checkbox in the os profiles app settings to disable default images
- * when viewing people's profiles.
+ * Adds additional display settings for the os_profiles app.
  */
 function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   if ($form['#feature'] != 'os_profiles') {
@@ -227,9 +226,9 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   );
 
   $profile_styles = array(
-    'title' => t('Title'),
+    'title' => t('Name only'),
     'teaser' => t('Teaser'),
-    'sidebar_teaser' => t('Sidebar teaser'),
+    'sidebar_teaser' => t('Name, image, and professional title'),
     'no_image_teaser' => t('No image teaser'),
   );
 
@@ -278,13 +277,19 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     }
   }
 
+  // Show the default image used before a custom default image has been uploaded.
+  $path = drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png';
+  $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+
   // Form element for uploading a default image.
   $allowed_file_types = 'gif png jpg jpeg';
   $form['file'] = array(
     '#type' => 'managed_file',
-    '#title' => t('Custom default image'),
+    '#title' => t('Default image'),
+    '#field_prefix' => '<div class="">',
+    '#field_suffix' => '</div>' . $image,
     '#default_value' => variable_get('os_profiles_default_image_file', NULL),
-    '#description' => t('Upload a photo and position the cropping tool over it if necessary.<br/>Allowed file types: <strong> @allowed_file_types </strong>', array('@allowed_file_types' => $allowed_file_types)),
+    '#description' => t('The default image will be used if a profile photo is not available. Instead, you can upload your own default image.<br/>Position the cropping tool over it if necessary. Allowed file types: <strong> @allowed_file_types </strong>', array('@allowed_file_types' => $allowed_file_types)),
     '#upload_validators' => array(
       'file_validate_extensions' => array($allowed_file_types),
     ),
@@ -329,7 +334,12 @@ function _os_profiles_default_image_process($element, $form_state, $form) {
   module_load_include('inc', 'comment_sources', 'comment_sources.admin');
   $fid = isset($element['#value']['fid']) ? $element['#value']['fid'] : 0;
 
+  // A custom default image has been uploaded.
   if ($fid && $element['#file']) {
+    // Remove the preview of the default image.
+    unset($element['#field_prefix']);
+    unset($element['#field_suffix']);
+
     unset($element['filename']);
     // file_to_crop() take the cropped image and gets the original back
     $file_to_crop = _imagefield_crop_file_to_crop($element['#file']->fid);
