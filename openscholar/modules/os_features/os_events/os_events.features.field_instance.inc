@@ -530,6 +530,40 @@ function os_events_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'registration-event_signup_specific-field_event_date'
+  $field_instances['registration-event_signup_specific-field_event_date'] = array(
+    'bundle' => 'event_signup_specific',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 2,
+      ),
+    ),
+    'entity_type' => 'registration',
+    'field_name' => 'field_event_date',
+    'label' => 'Event date',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 31,
+    ),
+  );
+
   // Exported field_instance: 'registration-event_signup_specific-field_full_name'
   $field_instances['registration-event_signup_specific-field_full_name'] = array(
     'bundle' => 'event_signup_specific',
@@ -570,6 +604,7 @@ function os_events_field_default_field_instances() {
   t('Body');
   t('Date');
   t('Department');
+  t('Event date');
   t('Full name');
   t('Location');
   t('Registration');
