@@ -369,6 +369,9 @@ function os_publications_biblio_fields_info_alter(&$fields) {
  */
 function os_publications_field_extra_fields_alter(&$info) {
   $info = entity_get_info('biblio');
+  if (empty($info['bundles'])) {
+    return;
+  }
   foreach (array_keys($info['bundles']) as $bundle) {
     $info['biblio'][$bundle]['display'] = array(
       'biblio_get_text' => array(
