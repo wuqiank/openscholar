@@ -237,85 +237,10 @@ function os_basetheme_preprocess_menu_tree(&$variables) {
 }
 
 /**
- * Implements template_preprocess_HOOK() for theme_pager_link().
- *
- * @see hwpi_basetheme_pager_link()
+ * Implements template_process_HOOK() for theme_pager_link().
  */
-function os_basetheme_pager_link($variables) {
-  $text = $variables['text'];
-  $page_new = $variables['page_new'];
-  $element = $variables['element'];
-  $parameters = $variables['parameters'];
-  $attributes = $variables['attributes'];
-
-  $page = isset($_GET['page']) ? $_GET['page'] : '';
-  if ($new_page = implode(',', pager_load_array($page_new[$element], $element, explode(',', $page)))) {
-    $parameters['page'] = $new_page;
-  }
-
-  $query = array();
-  if (count($parameters)) {
-    $query = drupal_get_query_parameters($parameters, array());
-  }
-  if ($query_pager = pager_get_query_parameters()) {
-    $query = array_merge($query, $query_pager);
-  }
-
-  // Set each pager link title
-  if (!isset($attributes['title'])) {
-    static $titles = NULL;
-    if (!isset($titles)) {
-      $titles = array(
-        t('« first') => t('Go to first page'),
-        t('‹ previous') => t('Go to previous page'),
-        t('next ›') => t('Go to next page'),
-        t('last »') => t('Go to last page'),
-      );
-    }
-    if (isset($titles[$text])) {
-      $attributes['title'] = $titles[$text];
-    }
-    elseif (is_numeric($text)) {
-      $attributes['title'] = t('Go to page @number', array('@number' => $text));
-    }
-  }
-
-  // Begin customizations not in drupal core pager.inc
-  // Pagination with rel=“next” and rel=“prev”. Does not support well multiple
-  // pagers on the same page - it will create relnext and relprev links
-  // in header for that case only for the first pager that is rendered.
-  // @see www/includes/pager.inc
-  static $rel_prev = FALSE, $rel_next = FALSE;
-  if (!$rel_prev && $text == t('‹ previous')) {
-    $rel_prev = TRUE;
-    drupal_add_html_head_link(array('rel' => 'prev', 'href' => url($_GET['q'], array('query' => array_filter($query, '_os_basetheme_not_empty')))));
-  }
-  if (!$rel_next && $text == t('next ›')) {
-    $rel_next = TRUE;
-    drupal_add_html_head_link(array('rel' => 'next', 'href' => url($_GET['q'], array('query' => array_filter($query, '_os_basetheme_not_empty')))));
-  }
-  // End customizations not in drupal core pager.inc
-
-  // @todo l() cannot be used here, since it adds an 'active' class based on the
-  //   path only (which is always the current path for pager links). Apparently,
-  //   none of the pager links is active at any time - but it should still be
-  //   possible to use l() here.
-  // @see http://drupal.org/node/1410574
-  $attributes['href'] = url($_GET['q'], array('query' => $query));
-  return '<a' . drupal_attributes($attributes) . '>' . check_plain($text) . '</a>';
-}
-
-/**
- * Helper function to ensure that rel=next|prev links are canonical.
- *
- * Note: this removes occasional empty query arguments like this:
- *
- * @code
- * array(
- *   'title' => '',
- * )
- * @endcode
- */
-function _os_basetheme_not_empty($value) {
-  return (strlen($value) > 0);
+function os_basetheme_process_pager_link($variables) {
+  // Adds an HTML head link for rel='prev' or rel='next' for pager links.
+  module_load_include('inc', 'os', 'includes/pager');
+  _os_pager_add_html_head_link($variables);
 }
