@@ -593,3 +593,12 @@ function hwpi_basetheme_date_formatter_pre_view_alter(&$entity, $vars) {
     $entity->active_date = $vars['items'][0];
   }
 }
+
+/**
+ * Implements template_process_HOOK() for theme_pager_link().
+ */
+function hwpi_basetheme_process_pager_link($variables) {
+  // Adds an HTML head link for rel='prev' or rel='next' for pager links.
+  module_load_include('inc', 'os', 'includes/pager');
+  _os_pager_add_html_head_link($variables);
+}
