@@ -357,7 +357,7 @@ function os_profile_return_auto_complete($string = '') {
     ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
     ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
 
-  // Build the SQL query. We usק DB select and not EFQ due to lack of support
+  // Build the SQL query. We use DB select and not EFQ due to lack of support
   // EFQ has with NULL values.
   $query = db_select('node', 'n');
   $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
@@ -426,9 +426,9 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
       return;
     }
 
-    // When addressing the URL of the profile that is imported an http header
+    // When addressing the URL of the profile that is imported, an http header
     // named "node_json" is added to the response. This is done in order for the
-    // importing side to get the JSON address of the node and will be saved in
+    // importing side to get the JSON address of the node. It will be saved in
     // the field "field_origin_destination".
     foreach ($headers as $header) {
       if (strpos($header, 'node_json: ') === 0) {
@@ -468,6 +468,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   $keys = os_profiles_profiles_fields();
   $values = $data = array();
 
+  // Import a person node using URL field.
   if (!empty($form_state['values']['url'])) {
     $origin = os_profiles_get_origin_node_values($form_state['json_address'], $keys);
     $values = $origin->values;
@@ -483,6 +484,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     $values['field_origin_destination'] = $form_state['json_address'];
   }
   else {
+    // Import a person node using the auto-complete field.
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
     $nid = $matches[1];
     $wrapper = entity_metadata_wrapper('node', $nid);
