@@ -81,10 +81,14 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
         'file-list-single',
       )
     ),
-    '#file' => 'blank',
+    '#file' => false,
     'fid' => array(
       '#type' => 'hidden',
-      '#default_value' => 'blank',
+      '#default_value' => 0,
+    ),
+    'display' => array(
+      '#type' => 'value',
+      '#value' => true,
     ),
     '#process' => array(
       'media_draggable_field_widget_indiv_process',
@@ -135,15 +139,44 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {/
     '#weight' => -1,
   );
 
+  if (!empty($form_state['input'])) {
+    $copy = &$form_state['input']['field_upload'][LANGUAGE_NONE];
+    unset($copy['drop'], $copy['template']);
+
+    $current = array();
+    $new = array();
+    foreach (element_children($element) as $c) {
+      if (is_numeric($c)) {
+        $current[$c] = $element[$c]['fid']['#default_value'];
+      }
+    }
+    foreach ($copy as $k => $f) {
+      $new[$k] = $f['fid'];
+    }
+    $removed = array_diff($current, $new);
+    $added = array_diff($new, $current);
+
+    foreach ($removed as $k => $fid) {
+      unset($element[$k]);
+    }
+
+    foreach ($added as $k => $fid) {
+      $temp = $element['template'];
+      $temp['fid']['#default_value'] = $fid;
+      $temp['#file'] = file_load($fid);
+      $element[$k] = $temp;
+    }
+  }
+
   return $element;
 }
 
 function media_draggable_field_widget_indiv_process($element) {
   $file = $element['#file'];
 
-  if ($file == 'blank') {
+  if (!$file) {
     $file = (object)array(
-      'fid' => -1,
+      'fid' => 0,
       'filename' => 'blank',
       'filemime' => 'blank',
     );

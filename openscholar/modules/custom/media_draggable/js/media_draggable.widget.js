@@ -32,6 +32,9 @@
 
   function removeFile(e) {
     $(e.currentTarget).parents('.file-list-single').remove();
+
+    e.preventDefault();
+    return false;
   }
 
   function addRow(file) {
@@ -40,8 +43,8 @@
       count = $('.file-list-single').length - 1;
 
     str = str.replace('template', count);
-    str = str.replace('-1', file.fid);
-    str = str.replace('value="blank"', 'value="'+file.fid+'"');
+    str = str.replace('0', file.fid);
+    str = str.replace('value="0"', 'value="'+file.fid+'"');
     str = str.replace(' blank', ' '+file.filename);
     id = id.replace('template', count);
 
