@@ -85,6 +85,7 @@ class FeatureContext extends DrupalContext {
       // We are using a cli, log in with meta step.
 
       return array(
+        new Step\When('I am not logged in'),
         new Step\When('I visit "/user"'),
         new Step\When('I fill in "Username" with "' . $username . '"'),
         new Step\When('I fill in "Password" with "' . $password . '"'),
@@ -1443,12 +1444,22 @@ class FeatureContext extends DrupalContext {
    * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
    */
   public function iSetFeatureStatus ($feature, $status, $group) {
-
     return array(
       new Step\When('I visit "' . $group . '"'),
       new Step\When('I click "Build"'),
       new Step\When('I select "' . $status . '" from "' . $feature . '"'),
       new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
+   * @Given /^I make "([^"]*)" a member in vsite "([^"]*)"$/
+   */
+  public function iMakeAMemberInVsite($username, $group) {
+    return array(
+      new Step\When('I visit "' . $group . '/cp/users/add"'),
+      new Step\When('I fill in "User" with "' . $username . '"'),
+      new Step\When('I press "Add users"'),
     );
   }
 }
