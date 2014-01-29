@@ -690,11 +690,57 @@ function os_events_menu_alter(&$items) {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
- * Hide the tokens list for sending messages to registrants
  */
 function os_events_form_registration_registrations_broadcast_form_alter(&$form, $form_state) {
+  // Hide the tokens list for sending messages to registrants.
   unset($form['token_tree']);
+
+  // Get event NID.
+  $event_nid = arg(1);
+
+  // Get event author.
+  $event = node_load($event_nid);
+  $author = user_load($event->uid);
+
+  // Get the event's default email address, if set.
+  $wrapper_event = entity_metadata_wrapper('node', $event);
+  $default_email = $wrapper_event->field_default_email->value();
+
+  // Default value for 'from' field should be the event's default email if set,
+  // otherwise it should be the event author's email address.
+  $from_default_value = !empty($default_email) ? $default_email : $author->mail;
+
+  // Add 'from' field.
+  $form['from'] = array(
+    '#type' =>'textfield',
+    '#title' => t('From'),
+    '#required' => TRUE,
+    '#description' => t('Email address to be displayed as the message\'s sender.'),
+    '#weight' => 5,
+    '#default_value' => $from_default_value,
+  );
+
+  // Set weight of the other fields.
+  $form['subject']['#weight'] = 6;
+  $form['message']['#weight'] = 7;
+  $form['actions']['#weight'] = 8;
+
+  // Set our submit handler first so we can handle the sender before the email
+  // is sent.
+  array_unshift($form['#submit'], 'os_events_form_registration_registrations_broadcast_form_submit');
+}
+
+/**
+ * Submit handler; Set default email in event.
+ */
+function os_events_form_registration_registrations_broadcast_form_submit($form, &$form_state) {
+  // Get event NID.
+  $event_nid = arg(1);
+
+  // Set the default email in the event.
+  $wrapper = entity_metadata_wrapper('node', $event_nid);
+  $wrapper->field_default_email->set($form_state['values']['from']);
+  $wrapper->save();
 }
 
 /**
@@ -899,6 +945,13 @@ function os_events_mail_alter(&$message) {
   if ($message['id'] != 'registration_broadcast') {
     return;
   }
+
+  // Get event default email address.
+  $wrapper_event = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
+  $default_email = $wrapper_event->field_default_email->value();
+
+  // Set default email as the message's sender.
+  $message['from'] = $default_email;
 }
 
 /**
