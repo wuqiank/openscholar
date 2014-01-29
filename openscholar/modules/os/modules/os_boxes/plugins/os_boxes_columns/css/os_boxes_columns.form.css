@@ -84,7 +84,11 @@
 
 #edit-layout-five-5x20 ~ label {background-position:0 -630px;}
 
-
+/**
+ * Layout tumbnail container
+ */
+#os-boxes-columns-layout-select{margin-left:222px;}
+.form-item.form-type-radios.form-item-num-cols {padding:0;margin:0;}
 
 /**
  * Styling for Unused Widgets container
@@ -96,8 +100,15 @@
   float: left;
   border: 1px solid #ccc;
   padding: 5px;
-  margin-top: 10px;
+  margin-top: -275px;
   margin-right: 10px;
+}
+
+#unused-widgets .form-wrapper {
+ 
+  height: 510px;
+  overflow:auto;
+  
 }
 
 #unused-widgets #edit-search {
