@@ -35,6 +35,8 @@ function media_draggable_field_widget_settings_form($field, $instance) {
 }
 
 function media_draggable_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $field_settings = $instance['settings'];
+  $widget_settings = $instance['widget']['settings'];
 
   $element += array(
     '#field' => $field,
@@ -45,6 +47,26 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
     '#attached' => array(
       'js' => array(
         drupal_get_path('module', 'media_draggable').'/js/media_draggable.widget.js',
+        array(
+          'type' => 'setting',
+          'data' => array(
+            'mediaDraggable' => array(
+              'elements' => array(
+                drupal_html_class('edit-'.$element['#field_name']) => array(
+                  'global' => array(
+                    'types' => array_filter($widget_settings['allowed_types']),
+                    'enabledPlugins' => array_filter($instance['widget']['settings']['browser_plugins']),
+                    'schemes' => $widget_settings['allowed_schemes'],
+                    'file_directory' => isset($field_settings['file_directory']) ? $field_settings['file_directory'] : '',
+                    'file_extensions' => isset($field_settings['file_extensions']) ? $field_settings['file_extensions'] : media_variable_get('file_extensions'),
+                    'max_filesize' => isset($field_settings['max_filesize']) ? $field_settings['max_filesize'] : 0,
+                    'uri_scheme' => !empty($field['settings']['uri_scheme']) ? $field['settings']['uri_scheme'] : file_default_scheme(),
+                  ),
+                )
+              )
+            )
+          )
+        )
       ),
       'css' => array(
         drupal_get_path('module', 'media_draggable').'/css/media_draggable.widget.css',
@@ -140,8 +162,11 @@ function media_draggable_field_widget_indiv_process($element) {
     '#theme' => 'links',
     '#links' => array(
       'edit' => array(
-       'href' => 'file/'.$file->fid.'/edit',
-       'title' => t('Edit'),
+        'href' => 'media/'.$file->fid.'/edit/nojs',
+        'title' => t('Edit'),
+        'attributes' => array(
+          'class' => 'use-ajax',
+        )
       ),
       'remove' => array(
         'href' => '',

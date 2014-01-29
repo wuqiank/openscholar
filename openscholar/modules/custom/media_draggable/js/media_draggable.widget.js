@@ -12,16 +12,26 @@
 (function ($) {
   var template;
 
-  function openBrowser() {
-
+  function openBrowser(settings) {
+    Drupal.media.popups.mediaBrowser(function (files) {
+      $.each(files, function (k, v) {
+        addRow(v);
+      })
+    }, settings.global);
   }
 
-  function openEdit(e) {
+  function browserClickHandler(e) {
+    var id = $(e.currentTarget).parents('.field-widget-media-draggable-file').attr('id'),
+      settings = Drupal.settings.mediaDraggable.elements[id];
 
+    openBrowser(settings);
+
+    e.stopImmediatePropagation();
+    return false;
   }
 
   function removeFile(e) {
-
+    $(e.currentTarget).parents('.file-list-single').remove();
   }
 
   function addRow(file) {
@@ -44,7 +54,7 @@
   }
 
   function setupRowHandlers() {
-    $('.edit a', this).click(openEdit);
+    //$('.edit a', this).click(openEdit);
     $('.remove a', this).click(removeFile);
   }
 
@@ -54,12 +64,12 @@
         template = $('.file-list-single[hidden]');
       }
       $('.field-widget-media-draggable-file .form-type-dragndrop-upload').once('media-draggable', function () {
-        $('.droppable-browse-button', this).unbind().click(openBrowser);
+        $('.droppable-browse-button', this).unbind().click(browserClickHandler);
       });
 
       $('.field-widget-media-draggable-file .file-list-single').once('media-draggable', setupRowHandlers);
 
-      if (typeof settings.mediaDraggable != 'undefined' && ctx.prop('tagName') == 'FORM') {
+      if (typeof settings.mediaDraggable != 'undefined' && $(ctx).prop('tagName') == 'FORM') {
         addRow(settings.mediaDraggable.newFile);
         settings.mediaDraggable.newFile = false;
       }
