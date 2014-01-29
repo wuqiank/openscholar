@@ -415,7 +415,7 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
 
   if (!empty($form_state['values']['url'])) {
     // If the URL doesn't include the word "people" don't make the request.
-    if (strpos('people', $form_state['values']['url']) == FALSE) {
+    if (strpos($form_state['values']['url'],'people') == FALSE) {
       form_set_error('url', t('Make sure the URL is correct and that it includes the term "/people/"'));
       return;
     }
