@@ -427,11 +427,11 @@ class vsite extends space_og {
       $perms += $one_role;
     }
 
-    foreach (array_keys(vsite_get_os_permissions()) as $perm) {
-      if (isset($perms[$perm])) {
+    foreach (array_keys(vsite_get_os_permissions()) as $permission) {
+      if (isset($perms[$permission])) {
         // Get the value from OG
-        if (!og_user_access('node', $this->id, $perm, $user)) {
-          unset($perms[$perm]);
+        if (!og_user_access('node', $this->id, $permission, $user)) {
+          unset($perms[$permission]);
         }
       }
     }
