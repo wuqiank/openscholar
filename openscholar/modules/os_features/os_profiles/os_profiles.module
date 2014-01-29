@@ -43,8 +43,8 @@ function os_profiles_init() {
   }
   // When the origin node and the destination node are on the same installation
   // and the origin has been updated the updating of the destination node will
-  // be accomplish instantly. We need to wait approxamtly 10 seconds so a normal
-  // end user won't think the update of the node is slow.
+  // be accomplished instantly. We need to wait approximately 10 seconds so a
+  // normal end user won't think the update of the node is slow.
   if ($time + 5 >= time()) {
     return;
   }
@@ -124,7 +124,7 @@ function os_profiles_process_node(&$vars) {
     return;
   }
 
-  // Adding header for determine the node ID.
+  // Adding a header for determining the node ID.
   drupal_add_http_header('node_json', url('node/' . $vars['nid'] . '.json', array('absolute' => TRUE)));
 
   // Helps poor theme developers find these changes to $variables
@@ -327,7 +327,7 @@ function os_profiles_sync_profile($form, $form_state) {
   $form['url'] = array(
     '#type' => 'textfield',
     '#title' => '',
-    '#description' => t('Enter the URL of the profile from anotehr site.'),
+    '#description' => t('Enter the URL of the profile from another site. For example: http://www.example.com/people/john-doe'),
   );
 
   $form['actions'] = array(
@@ -414,13 +414,22 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
   }
 
   if (!empty($form_state['values']['url'])) {
-    $headers = get_headers($form_state['values']['url']);
-    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      // todo: check where the header gone to.
-//      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
+    // If the URL doesn't include the word "people" don't make the request.
+    if (strpos('people', $form_state['values']['url']) == FALSE) {
+      form_set_error('url', t('Make sure the URL is correct and that it includes the term "/people/"'));
       return;
     }
 
+    $headers = get_headers($form_state['values']['url']);
+    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+      form_set_error('url', t('The address you have provided is not a Drupal 7 site.'));
+      return;
+    }
+
+    // When addressing the URL of the profile that is imported an http header
+    // named "node_json" is added to the response. This is done in order for the
+    // importing side to get the JSON address of the node and will be saved in
+    // the field "field_origin_destination".
     foreach ($headers as $header) {
       if (strpos($header, 'node_json: ') === 0) {
         $form_state['json_address'] = str_replace('node_json: ', '', $header);
@@ -428,7 +437,7 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
       }
     }
 
-    // JSON address was not found in the header.
+    // A JSON address was not found in the header.
     form_set_error('url', t('Make sure you have an updated OpenScholar installation.'));
   }
 }
@@ -460,15 +469,15 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   $values = $data = array();
 
   if (!empty($form_state['values']['url'])) {
-    $origin = os_profiles_get_origin_node_values($form_state['values']['url'], $keys);
+    $origin = os_profiles_get_origin_node_values($form_state['json_address'], $keys);
     $values = $origin->values;
     $data = $origin->data;
 
     // Get the URL of the original node.
-    $url = str_replace('/node/' . $data['nid'] . '.json', '', $form_state['values']['url']);
+    $url = str_replace('/node/' . $data['nid'] . '.json', '', $form_state['json_address']);
 
     // Save the original address of the JSON.
-    $values['field_origin_destination'] = $form_state['values']['url'];
+    $values['field_origin_destination'] = $form_state['json_address'];
   }
   else {
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
@@ -486,7 +495,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     'field_uuid' => $data['field_uuid'],
   );
 
-  // When there is a node in the current vsite with the title of the source node
+  // When there is a node in the current VSite with the title of the source node
   // we need to update the current node.
   $method = 'create';
   $arguments = array($values);
