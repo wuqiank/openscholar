@@ -27,6 +27,9 @@ function os_links_os_app_info() {
         'csv' => 'os_links',
       ),
     ),
+    'browse_pages' => array(
+      'link' => TRUE,
+    ),
   );
 
   return $apps;

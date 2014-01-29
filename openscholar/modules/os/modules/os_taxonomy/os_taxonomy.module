@@ -643,7 +643,7 @@ function os_taxonomy_select_list($form, $form_state, $terms_list, $path) {
   // there is a problem in the submission of the form.
   $form['terms_' . $form['#vocabulary']->vid] = array(
     '#type' => 'select',
-    '#options' => array('--none--' => t('Select a term')) + $terms_list,
+    '#options' => array('--none--' => t('Select an item')) + $terms_list,
     '#default_value' => $default_value,
     '#attributes' => array(
       'class' => array('terms-list'),
@@ -789,7 +789,7 @@ function os_taxonomy_build_child_item($items, $parent, $options) {
 
       $content[] = array(
         'data' => theme('os_taxonomy_term_item', array(
-          'number' => $number,
+          'number' => ($options['show_count']) ? $number : NULL,
           'name' => $item->name,
           'link_options' => empty($options['tid_active_class']) ? array() : array('attributes' => array('class' => $options['tid_active_class'] == $item->tid ? 'active' : '',)),
           'url_path' => $term_path,

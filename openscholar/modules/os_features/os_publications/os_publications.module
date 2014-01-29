@@ -50,6 +50,9 @@ function os_publications_os_app_info() {
     'views tabs' => array(
       'os_publications_issued' => array('page'),
     ),
+    'browse_pages' => array(
+      'biblio' => TRUE,
+    ),
   );
 
   return $apps;

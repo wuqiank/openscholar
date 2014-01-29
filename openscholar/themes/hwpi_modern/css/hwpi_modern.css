@@ -13,7 +13,7 @@ body {
 
 /* Elements */
 
-#columns .links li a {
+#columns a.node-readmore {
     border-bottom: none;
     font-size:12px;
     font-weight:bold;
@@ -418,6 +418,24 @@ background-color: #f3f3f1 !important;
 .section-nav .leaf.menu-depth-6 > a:hover {
 background-color: #e3e3e1 !important;
 }
+
+
+.block-boxes-os_taxonomy_fbt.navigation a {
+	font-weight: bold;
+}
+
+
+.block-boxes-os_taxonomy_fbt.navigation ul {
+    border-bottom: 1px solid #959595;
+    border-left: 1px solid #959595;
+    border-right: 1px solid #959595;
+  }
+
+
+.block-boxes-os_taxonomy_fbt.navigation ul li {
+	border-top: 1px solid #959595;
+}
+
 
 
 /* Footer */
