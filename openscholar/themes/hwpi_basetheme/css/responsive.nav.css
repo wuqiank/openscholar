@@ -20,12 +20,22 @@
 }
 
 /*Primary menu*/
+
+.responive-menu-container {
+	position:absolute;
+	top:0;
+	right:0;
+	}
+
 #menu-bar #block-os-primary-menu{
 		display:none;
 }
 #menu-bar #block-os-primary-menu.opened{
-	display:block;
+	display: block;
     padding: 0;
+	position: absolute;
+	top: 38px;
+
 }
 #menu-bar #block-os-primary-menu ul:after {
     clear: both;
@@ -118,10 +128,10 @@ background: none !important;
 .region-header-third #block-os-secondary-menu.opened,
 .region-header-third .os-custom-menu.opened {
     background-color: #2A527A;
-    display: block;
-    position: static;
-    width:95% !important;
-    margin: 0 15px;
+   display: block;
+    padding: 0;
+	position: absolute;
+	top: 38px;
 }
 
 .region-header-third .os-custom-menu,
@@ -182,11 +192,6 @@ background: none !important;
 }
 ul.mobile-buttons {
     display: block !important;
-  	margin-bottom: 0;
-  	margin-left: 15px;
-  	position: absolute;
-	bottom: -7px;
-	width: 95%;
 }
 
 .mobile-buttons li {
@@ -197,20 +202,19 @@ ul.mobile-buttons {
 }
 .link-count-mobi-main {
     text-align: left !important;
-    width: 60%;
 }
 .link-count-mobi-main a {
     background: url("../images/icon_menu.png") no-repeat scroll 15px center transparent;
 }
 .mobile-buttons a {
     color: #FFFFFF!important;
-    display: block;
-    font: bold 16px arial,sans-serif;
-    height: 20px !important;
-    letter-spacing: 1px;
-    padding: 12px 15px !important;
-    text-decoration: none;
-    text-transform: uppercase;
+display: block;
+font: bold 13px arial,sans-serif;
+height: 22px !important;
+letter-spacing: 1px;
+padding: 8px 12px !important;
+text-decoration: none;
+text-transform: uppercase;
 }
 .mobile-buttons a span {
     font-weight: normal;
@@ -268,16 +272,13 @@ ul.primary li a {
 }
 .link-count-mobi-search a {
       min-height: 20px;
+      background:#ff0000 !important;
 }	
 	
 .link-count-mobi-util a {
     min-height: 20px;
 }
-.region-header-third #block-os-secondary-menu.opened,
-.region-header-third .os-custom-menu.opened {
-    top: 65px!important;
-    z-index: 3;
-}	
+	
 .region-header-third #block-os-search-solr-site-search.opened {
     top: 65px!important;
 }
