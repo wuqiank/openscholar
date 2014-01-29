@@ -51,9 +51,9 @@ class vsite extends space_og {
    */
   function activate() {
 
-    //Check if the current user has access to activate this space.
-    if(!$this->access_space()){
-      module_invoke_all('vsite_access_denied',$this);
+    // Check if the current user has access to activate this space.
+    if (!$this->access_space()) {
+      module_invoke_all('vsite_access_denied', $this);
       drupal_access_denied();
       drupal_exit();
     }
@@ -71,10 +71,8 @@ class vsite extends space_og {
         // If the current menu item may rely on the space so we reset the cached access information
         unset($router_items[$_GET['q']]);
       }
-
       return TRUE;
     }
-
     return FALSE;
   }
 
@@ -389,12 +387,12 @@ class vsite extends space_og {
   /**
    * Modify permissions on the fly, based on the VSite.
    *
-   * Maintain a corrolation between the VSite level roles, and the site-wide
+   * Maintain a correlation between the VSite level roles, and the site-wide
    * roles.
    *
    * The site-wide "vsite user", "vsite admin", and "content editor" roles are
    * granted on the fly, when the user is on their VSite context. By modifying
-   * the "user_access" static varaible we are able to trick Drupal to think that
+   * the "user_access" static variable we are able to trick Drupal to think that
    * user has a certain permission on a certain condition.
    */
   protected function activate_user_roles() {
@@ -428,6 +426,13 @@ class vsite extends space_og {
     foreach ($role_permissions as $one_role) {
       $perms += $one_role;
     }
+
+    foreach (array_keys(vsite_get_os_permissions()) as $perm) {
+      if (isset($perms[$perm])) {
+        // Get the value from OG
+      }
+    }
+
     $perm[$user->uid] = $perms;
   }
 

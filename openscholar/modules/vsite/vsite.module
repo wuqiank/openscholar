@@ -2817,14 +2817,41 @@ function vsite_og_default_roles_alter(&$roles) {
   );
 }
 
+/**
+ * Get the OG permissions that should be "OS synced"
+ *
+ * @return array
+ *   Array of permissions to be synced
+ */
+function vsite_get_os_permissions() {
+  $os_sync_perms = array();
+  foreach (og_get_permissions() as $name => $params) {
+    if (empty($params['os_sync']) || (!$params['os_sync'])) {
+      continue;
+    }
+    if ($params['os_sync']) {
+      $os_sync_perms[$name] = $params;
+    }
+  }
+  return $os_sync_perms;
+}
+
+/**
+ * Implements hook_og_permission.
+ */
 function vsite_og_permission() {
-  $perms['edit boxes'] = array(
-    'title' => t('Edit boxes'),
-    'description' => t('Edit boxes.'),
-    'default role' => array(OG_ADMINISTRATOR_ROLE, OG_AUTHENTICATED_ROLE),
-    'roles' => array(OG_ADMINISTRATOR_ROLE, OG_AUTHENTICATED_ROLE),
+  return array(
+    'edit boxes' => array(
+      'title' => t('Edit boxes'),
+      'description' => t('Edit existing boxes.'),
+      'os_sync' => TRUE,
+    ),
+    'access contextual links' => array(
+      'title' => t('Use contextual links'),
+      'description' => t('Use contextual links to perform actions related to elements on a page.'),
+      'os_sync' => TRUE,
+    ),
   );
-  return $perms;
 }
 /**
  * Implements hook_og_permission_alter().

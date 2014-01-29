@@ -260,6 +260,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   // non-CRUD permission that should be displayed on the list.
   $allowed_permissions['change theme'] = 'general';
   $allowed_permissions['edit boxes'] = 'general';
+  $allowed_permissions['access contextual links'] = 'general';
 
   foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
     foreach (array_keys($bundles) as $bundle) {
