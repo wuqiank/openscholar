@@ -459,17 +459,23 @@ ol.search-results li.search-result:last-child {
   margin-left: 70px;
 }
 
-.node-event .field-name-field-date {
+/* Gray color for both Date and Location fields */
+.node-event .field-name-field-date,
+.node-event .field-name-field-event-location {
   color: #6D6D6D;
+}
+
+/* Adds bottom margin to event date fields everywhere */
+.node-event .field-name-field-date {
   margin-bottom: 7px;
 }
 
-.node-event .field-name-field-date .field-label {
-  float: left;
+/* Overrides bottom margin for event fields on full node view only. */
+.node-event .field-name-field-date.view-mode-full.field-label-inline {
+    margin-bottom: 0px;
 }
-
-.node-event .field-name-field-date.field-label-above .field-label {
-	float: none;
+.node-event .field-name-field-event-location.view-mode-full .field-label {
+    margin-bottom: 7px;
 }
 
 .node-event .field-name-field-date .field-item div {
@@ -648,7 +654,7 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 	}
 
 
-.block-boxes-os_boxes_manual_list .node-person.node-teaser .field-name-field-person-photo,
+.sidebar .node-person .person-teaser-wrapper,
 .block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper {
 	display:inline;
 }

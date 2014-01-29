@@ -183,9 +183,10 @@ function theme_os_front_boxcontent_sample($variables) {
 
 
 /**
- * Implements hook_default_box_alter().
+ * Implements hook_default_box().
  */
-function os_front_default_box_alter(&$items) {
+function os_front_default_box() {
+  $export = array();
   $path = drupal_get_path('theme', 'os_default');
   $build = array(
     'banner' => array(
@@ -227,7 +228,7 @@ function os_front_default_box_alter(&$items) {
     ),
     'additional_classes' => '',
   );
-  $items['os_front_header'] = $box;
+  $export['os_front_header'] = $box;
 
   $value = '';
   if (!user_is_anonymous()) {
@@ -273,7 +274,7 @@ function os_front_default_box_alter(&$items) {
     ),
     'additional_classes' => '',
   );
-  $items['os_front_main_support'] = $box;
+  $export['os_front_main_support'] = $box;
 
   $variables = array(
     'header' => t('Sample Websites'),
@@ -309,5 +310,7 @@ function os_front_default_box_alter(&$items) {
     ),
     'additional_classes' => '',
   );
-  $items['os_front_sample'] = $box;
+  $export['os_front_sample'] = $box;
+  
+  return $export;
 }
