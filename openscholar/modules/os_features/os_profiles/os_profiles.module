@@ -476,23 +476,36 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     // Get the URL of the original node.
     $url = str_replace('/node/' . $data['nid'] . '.json', '', $form_state['json_address']);
 
+    // Get to origin node's UUID.
+    $values['field_uuid'] = $data['field_uuid'];
+
     // Save the original address of the JSON.
     $values['field_origin_destination'] = $form_state['json_address'];
   }
   else {
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
-    $wrapper = entity_metadata_wrapper('node', $matches[1]);
+    $nid = $matches[1];
+    $wrapper = entity_metadata_wrapper('node', $nid);
     foreach ($keys as $key) {
       if (isset($wrapper->{$key}) && $value = $wrapper->{$key}->value()) {
         $values[$key] = $value;
       }
     }
+
+    // Get the URL of the original node.
+    $vsite = vsite_get_vsite($wrapper->og_group_ref->get(0)->value()->nid);
+    $url = $vsite->get_absolute_url();
+
+    // Get to origin node's UUID if it exist. Else, generate it.
+    $values['field_uuid'] = isset($wrapper->field_uuid) && $wrapper->field_uuid->value() ? $wrapper->field_uuid->value() : md5($matches[1]);
+
+    // Save the original address of the JSON.
+    $values['field_origin_destination'] = $url . '/node/' . $nid . '.json';
   }
 
   // Set up default values.
   $values += array(
     'type' => 'person',
-    'field_uuid' => $data['field_uuid'],
   );
 
   // When there is a node in the current VSite with the title of the source node
@@ -526,7 +539,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     // Write the current site as a listener in the node's origin site.
     $arguments = array(
       'action' => 'insert_person',
-      'UUID' => $data['field_uuid'],
+      'UUID' => $values['field_uuid'],
       'listener' => $base_url,
     );
     os_profiles_manage_synced_profiles($url, $arguments);
