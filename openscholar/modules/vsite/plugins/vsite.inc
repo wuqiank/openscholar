@@ -427,7 +427,9 @@ class vsite extends space_og {
       $perms += $one_role;
     }
 
-    foreach (array_keys(vsite_get_os_permissions()) as $permission) {
+    // OS permissions are permissions that must get access not only in the site
+    // wide scope, but also in the vsite scope via cp/users/permissions
+    foreach (array_keys($this->get_os_permissions()) as $permission) {
       if (isset($perms[$permission])) {
         // Get the value from OG
         if (!og_user_access('node', $this->id, $permission, $user)) {
@@ -437,6 +439,25 @@ class vsite extends space_og {
     }
 
     $perm[$user->uid] = $perms;
+  }
+
+  /**
+   * Get the OG permissions that should be "OS synced"
+   *
+   * @return array
+   *   Array of permissions to be synced
+   */
+  function get_os_permissions() {
+    $os_sync_perms = array();
+    foreach (og_get_permissions() as $name => $params) {
+      if (empty($params['os_sync']) || (!$params['os_sync'])) {
+        continue;
+      }
+      if ($params['os_sync']) {
+        $os_sync_perms[$name] = $params;
+      }
+    }
+    return $os_sync_perms;
   }
 
   /**
