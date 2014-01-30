@@ -1239,6 +1239,15 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I go to the "([^"]*)" app settings in the vsite "([^"]*)"$/
+   */
+  public function iGoToTheAppSettingsInVsite($app_name, $vsite) {
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/build/features/' . $app_name . '"'),
+    );
+  }
+
+  /**
    * @Then /^I should see the feed item "([^"]*)" was imported$/
    */
   public function iShouldSeeTheFeedItemWasImported($feed_item) {
