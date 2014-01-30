@@ -26,6 +26,9 @@ function os_image_gallery_os_app_info() {
         'csv' => 'os_gallery',
       ),
     ),
+    'browse_pages' => array(
+      'media_gallery' => TRUE,
+    ),
   );
 
   return $apps;

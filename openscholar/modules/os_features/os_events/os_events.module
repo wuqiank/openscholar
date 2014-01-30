@@ -30,6 +30,9 @@ function os_events_os_app_info() {
         'csv' => 'os_events_csv',
       ),
     ),
+    'browse_pages' => array(
+      'event' => TRUE,
+    ),
   );
 
   return $apps;
