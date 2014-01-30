@@ -2845,6 +2845,28 @@ function vsite_og_default_roles_alter(&$roles) {
 }
 
 /**
+ * Implements hook_og_permission().
+ */
+function vsite_og_permission() {
+  return array(
+    'administer boxes' => array(
+      'title' => t('Administer boxes'),
+      'os_sync' => TRUE,
+    ),
+    'edit boxes' => array(
+      'title' => t('Edit boxes'),
+      'description' => t('Edit existing boxes.'),
+      'os_sync' => TRUE,
+    ),
+    'access contextual links' => array(
+      'title' => t('Use contextual links'),
+      'description' => t('Use contextual links to perform actions related to elements on a page.'),
+      'os_sync' => TRUE,
+    ),
+  );
+}
+
+/**
  * Implements hook_og_permission_alter().
  */
 function vsite_og_permission_alter(&$perms) {
