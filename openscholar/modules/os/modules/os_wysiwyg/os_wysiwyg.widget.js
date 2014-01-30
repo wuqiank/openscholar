@@ -2,8 +2,7 @@
  * Adds behavior to self-hiding wysiwyg widget
  */
 (function ($) {
-  var scrollDiff = 0;
-
+  
   function wysiwyg_focus(e) {
     var base_id = e.currentTarget.name.replace('_ifr', ''),
       editor = $('#'+base_id+' + .mceEditor table.mceLayout'),
