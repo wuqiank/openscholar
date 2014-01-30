@@ -1547,8 +1547,12 @@ function os_access_region($module, $delta) {
  */
 function os_access_admin() {
   $boxes_access = boxes_access_admin();
-  $vsite = vsite_get_vsite();
-  $administer_widgets = og_user_access('node', $vsite->id, 'administer widgets');
+  if (!$vsite = vsite_get_vsite()) {
+    $administer_widgets = FALSE;
+  }
+  else {
+    $administer_widgets = og_user_access('node', $vsite->id, 'administer widgets');
+  }
 
   return ($boxes_access || $administer_widgets);
 }
