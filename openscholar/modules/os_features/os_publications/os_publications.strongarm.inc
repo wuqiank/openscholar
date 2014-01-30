@@ -161,5 +161,20 @@ function os_publications_strongarm() {
   $strongarm->value = 'publications/[node:title]';
   $export['pathauto_node_biblio_pattern'] = $strongarm;
 
+//  $strongarm = new stdClass();
+//  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+//  $strongarm->api_version = 1;
+//  $strongarm->name = 'title_biblio';
+//  $strongarm->value = array(
+//    'auto_attach' => array(
+//      'title' => 'title',
+//    ),
+//    'hide_label' => array(
+//      'page' => 0,
+//      'entity' => 0,
+//    ),
+//  );
+//  $export['title_biblio'] = $strongarm;
+
   return $export;
 }
