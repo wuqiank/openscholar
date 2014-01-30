@@ -821,4 +821,3 @@ function cp_module_implements_alter(&$implementations, $hook) {
   unset($implementations['cp']);
   $implementations['cp'] = $group;
 }
-

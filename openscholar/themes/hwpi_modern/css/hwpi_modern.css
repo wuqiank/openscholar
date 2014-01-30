@@ -13,7 +13,7 @@ body {
 
 /* Elements */
 
-#columns .links li a {
+#columns a.node-readmore {
     border-bottom: none;
     font-size:12px;
     font-weight:bold;
@@ -203,7 +203,8 @@ h2.block-title {
   border-top: 6px solid #e1e1e1;
 }
 
-.block-boxes block-boxes-os_sv_list_box,
+.block-boxes.block-boxes-os_sv_list_box .block-inner,
+.block-boxes.block-boxes-os_sv_list_box,
 .block-boxes-os_boxes_manual_list,
 .sidebar .block.section-nav,
 #content-column .block.section-nav,

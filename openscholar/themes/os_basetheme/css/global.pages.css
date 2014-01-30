@@ -1052,12 +1052,18 @@ LIST OF POSTS - PERSON TEASER IN SIDEBAR
     margin-bottom: 0;
 }
 
+
+.block-boxes-os_sv_list_box .sv-list-person.sv-list-view-full h1.node-title {
+    font-size: 1.5em;
+}
+
+
 .block-boxes-os_sv_list_box .node.node-news.node-promoted .field-type-image.view-mode-sidebar_teaser,
 .block-boxes-os_sv_list_box .node.node-person.article.with-person-photo .pic-bio,
 .block-boxes-os_sv_list_box .node.node-person.article.modified-in-os_profiles_process_node .pic-bio,
-.block-boxes-os_sv_list_box .node.node-person .field-name-field-person-photo {
+.node.node-person .field-name-field-person-photo {
  	float:left;
-     margin-right: 10px;
+     margin-right: 1em;
 }
 
 
