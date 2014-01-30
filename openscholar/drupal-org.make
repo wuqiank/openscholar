@@ -166,7 +166,9 @@ projects[hierarchical_taxonomy][download][revision] = 5bbe344
 projects[hierarchical_taxonomy][patch][] = "http://drupal.org/files/2034713-hs-comaprse-name-2.patch"
 
 projects[html_title][subdir] = "contrib"
-projects[html_title][version] = 1.x-dev
+projects[html_title][download][type] = git
+projects[html_title][download][branch] = 7.x-1.x
+projects[html_title][download][revision] = 0f2c6e9
 
 projects[imagefield_crop][subdir] = "contrib"
 ;projects[imagefield_crop][version] = 2.0
