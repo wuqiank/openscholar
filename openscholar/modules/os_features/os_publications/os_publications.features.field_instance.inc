@@ -303,8 +303,9 @@ function os_publications_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
+        'module' => 'text',
         'settings' => array(),
-        'type' => 'hidden',
+        'type' => 'text_default',
         'weight' => 8,
       ),
       'links' => array(
@@ -337,6 +338,8 @@ function os_publications_field_default_field_instances() {
     'label' => 'Title',
     'required' => TRUE,
     'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
       'hide_label' => array(
         'entity' => FALSE,
         'page' => FALSE,
@@ -347,9 +350,9 @@ function os_publications_field_default_field_instances() {
     'widget' => array(
       'module' => 'text',
       'settings' => array(
-        'size' => 60,
+        'rows' => 1,
       ),
-      'type' => 'text_textfield',
+      'type' => 'text_textarea',
       'weight' => -5,
     ),
   );

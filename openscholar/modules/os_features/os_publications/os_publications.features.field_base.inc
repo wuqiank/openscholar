@@ -58,7 +58,6 @@ function os_publications_field_default_field_bases() {
     'type' => 'image',
   );
 
-
   // Exported field_base: 'title_field'
   $field_bases['title_field'] = array(
     'active' => 1,
@@ -81,11 +80,9 @@ function os_publications_field_default_field_bases() {
     ),
     'locked' => 0,
     'module' => 'text',
-    'settings' => array(
-      'max_length' => 255,
-    ),
+    'settings' => array(),
     'translatable' => 1,
-    'type' => 'text',
+    'type' => 'text_long',
   );
 
   return $field_bases;
