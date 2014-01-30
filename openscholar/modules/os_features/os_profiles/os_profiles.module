@@ -27,6 +27,9 @@ function os_profiles_os_app_info() {
         'csv' => 'os_people',
       ),
     ),
+    'browse_pages' => array(
+      'person' => TRUE,
+    ),
   );
 
   return $apps;
