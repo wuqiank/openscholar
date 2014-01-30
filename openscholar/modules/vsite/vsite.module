@@ -2850,7 +2850,7 @@ function vsite_og_permission() {
     'access contextual links' => array(
       'title' => t('Use contextual links'),
       'description' => t('Use contextual links to perform actions related to elements on a page.'),
-      'os_sync' => 'Momo',
+      'os_sync' => 'General permissions',
     ),
   );
 }
