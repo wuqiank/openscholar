@@ -364,12 +364,36 @@ function cp_user_og_ui_admin_permissions($variables) {
  *   Array of OS sync permissions.
  */
 function cp_user_get_os_sync_permissions() {
-  $perms = array();
-  foreach (vsite_get_os_permissions() as $perm => $params) {
-    // os_sync is the name of the permissions category.
-    $perms[$perm] = $params['os_sync'];
+  // First get all of the sitewide permissions
+  $sitewide_role_names = array(
+    'authenticated user',
+    'content editor',
+    'vsite admin',
+    'vsite user',
+  );
+
+  $sitewide_roles = array();
+  foreach ($sitewide_role_names as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    $sitewide_roles[$role->rid] = $role->name;
   }
-  return $perms;
+
+  $role_permissions = user_role_permissions($sitewide_roles);
+  $perms = array();
+  foreach ($role_permissions as $one_role) {
+    $perms += $one_role;
+  }
+
+  $os_perms = array();
+  foreach (vsite_get_os_permissions() as $perm => $params) {
+    // Add os_sync permission only if allowed for at least one relevant
+    // sitewide role.
+    if (isset($perms[$perm])) {
+      // os_sync value is the name of the permissions category.
+      $os_perms[$perm] = $params['os_sync'];
+    }
+  }
+  return $os_perms;
 }
 
 /**
