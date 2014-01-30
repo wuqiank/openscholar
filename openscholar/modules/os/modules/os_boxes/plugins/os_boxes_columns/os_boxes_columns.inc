@@ -52,6 +52,27 @@ class os_boxes_columns extends os_boxes_default {
       '#default_value' => $this->options['layout'],
     );
 
+    // set up unused widget container
+    $form['unused'] = array(
+      '#type' => 'container',
+      '#id' => 'unused-widgets',
+      'title' => array(
+        '#markup' => t('Unused Widgets'),
+      ),
+      'search' => array(
+        '#type' => 'textfield',
+        '#title' => t('Filter by Name'),
+      ),
+      'widgets' => array(
+        '#type' => 'container',
+      )
+    );
+
+    $form['help_text'] = array(
+      '#markup' => t('Put whatever you want here. Make sure it\'s wrapped in single-quotes, and any single-quotes
+      in the text are preceeded by a \\.')
+    );
+
     // set up psuedo-regions
     // this element is for the hidden input elements
     $form['widgets'] = array(
@@ -88,23 +109,6 @@ class os_boxes_columns extends os_boxes_default {
         ),
       );
     }
-
-    // set up unused widget container
-    $form['unused'] = array(
-      '#type' => 'container',
-      '#id' => 'unused-widgets',
-      'title' => array(
-        '#markup' => t('Unused Widgets'),
-      ),
-      'search' => array(
-        '#type' => 'textfield',
-        '#title' => t('Filter by Name'),
-      ),
-      'widgets' => array(
-        '#type' => 'container',
-
-      )
-    );
 
     /**
      * Get all widgets and sort them accordingly
