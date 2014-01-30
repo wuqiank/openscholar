@@ -38,3 +38,22 @@ Feature:
         And I set feature "edit-spaces-features-os-booklets" to "Public" on "john"
        When I visit "john/cp/users/permissions"
        Then I should see "Create book page content"
+
+    @api
+    Scenario: Check content editor can edit widgets by default
+      Given I am logging in as "john"
+       When I give the user "klark" the role "content editor" in the group "john"
+        And I click "Log out"
+        And I am logging in as "klark"
+        And I visit "john/os/widget/boxes/os_addthis/edit"
+       Then I should get a "200" HTTP response
+
+    @api
+    Scenario: Check content editor can edit widgets by default
+      Given I am logging in as "john"
+       When I give the user "klark" the role "content editor" in the group "john"
+        And I remove the role "content editor" in the group "john" the permission "Edit boxes"
+        And I click "Log out"
+        And I am logging in as "klark"
+        And I visit "john/os/widget/boxes/os_addthis/edit"
+       Then I should get a "200" HTTP response
