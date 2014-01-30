@@ -258,7 +258,9 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   // In addition to CRUD permissions, the permission 'Change theme' is the only
   // non-CRUD permission that should be displayed on the list.
-  $allowed_permissions['change theme'] = 'general';
+  foreach (vsite_get_os_sync_permissions() as $permission) {
+    $allowed_permissions[$permission] = 'general';
+  }
 
   foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
     foreach (array_keys($bundles) as $bundle) {
@@ -330,7 +332,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   foreach ($rows_per_category as $category) {
     $rows = array_merge($rows, array_values($category));
   }
-  
+
   $header[] = (t('Permission'));
   foreach (element_children($form['role_names']) as $rid) {
     if (empty($roles_human_names[$rid])) {
