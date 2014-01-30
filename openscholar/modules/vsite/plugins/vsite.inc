@@ -429,8 +429,7 @@ class vsite extends space_og {
       $perms += $one_role;
     }
 
-    // OS permissions are permissions that must get access not only in the site
-    // wide scope, but also in the vsite scope via cp/users/permissions
+    // Iterate over "synced" permissions.
     foreach (vsite_get_os_sync_permissions() as $permission) {
       if (empty($perms[$permission])) {
         // Permissions isn't set on the site wide.
