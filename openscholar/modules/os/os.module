@@ -82,7 +82,7 @@ function os_menu() {
     'title' => 'Remove Widget',
     'page callback' => 'os_boxes_remove_widget',
     'page arguments' => array(2, 3),
-    'access callback' => 'boxes_access_admin',
+    'access callback' => 'os_access_admin',
     'type' => MENU_LOCAL_TASK,
     'file' => 'os_boxes.admin.inc',
     'file path' => drupal_get_path('module', 'os_boxes'),
@@ -1531,11 +1531,9 @@ function os_access_region($module, $delta) {
 
   $locked = variable_get('os_locked_regions', array());
   $spaces = spaces_access_admin();
+  $access_contextual_links = user_access('access contextual links');
 
-  $vsite = vsite_get_vsite();
-  $access_any_region = og_user_access('node', $vsite->id, 'access any region');
-
-  $access = ($spaces || $access_any_region);
+  $access = ($spaces || $access_contextual_links);
 
   // the region is locked
   if (isset($locked[$region]) && $locked[$region]) {
@@ -1546,6 +1544,18 @@ function os_access_region($module, $delta) {
     // the region is not locked, so just return whatever spaces says
     return $access;
   }
+}
+
+/**
+ * Access callback; give access either as a boxes admin or as a OS permission.
+ * @return bool
+ */
+function os_access_admin() {
+  $boxes_access = boxes_access_admin();
+  $vsite = vsite_get_vsite();
+  $administer_widgets = og_user_access('node', $vsite->id, 'administer widgets');
+
+  return ($boxes_access || $administer_widgets);
 }
 
 /**
@@ -2115,8 +2125,8 @@ function os_context_default_contexts_alter(&$contexts){
  */
 function os_og_permission() {
   return array(
-    'access any region' => array(
-      'title' => t('Access any region'),
+    'administer widgets' => array(
+      'title' => t('Administer widgets'),
     ),
   );
 }
