@@ -2876,11 +2876,6 @@ function vsite_og_permission() {
       'description' => t('Edit existing boxes.'),
       'os_sync' => TRUE,
     ),
-    'access contextual links' => array(
-      'title' => t('Use contextual links'),
-      'description' => t('Use contextual links to perform actions related to elements on a page.'),
-      'os_sync' => TRUE,
-    ),
   );
 }
 
