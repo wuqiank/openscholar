@@ -230,11 +230,7 @@ function os_taxonomy_term_page($taxonomy_term) {
  * @param object $vocabulary
  */
 function _os_taxonomy_active_elements($active = array()) {
-  static $current;
-
-  if(!isset($current)) {
-    $current = array();
-  }
+  $current = &drupal_static(__FUNCTION__, array());
 
   //Set the active vocab/term?
   if(count($active)) {
