@@ -662,7 +662,12 @@ div.ctools-modal-content .modal-content {
   overflow: auto;
   width: 575px;
   height: 400px;
-  }
+  overflow-x: hidden;
+}
+
+div.ctools-modal-content .modal-content .messages {
+  width: 680px;
+}
 
 #modalContent .spaces-customize-form .buttons input.form-submit {
   margin-right: 140px;
@@ -1051,6 +1056,12 @@ LIST OF POSTS - PERSON TEASER IN SIDEBAR
 .block-boxes-os_sv_list_box h1.node-title {
     margin-bottom: 0;
 }
+
+
+.block-boxes-os_sv_list_box .sv-list-person.sv-list-view-full h1.node-title {
+    font-size: 1.5em;
+}
+
 
 .block-boxes-os_sv_list_box .node.node-news.node-promoted .field-type-image.view-mode-sidebar_teaser,
 .block-boxes-os_sv_list_box .node.node-person.article.with-person-photo .pic-bio,

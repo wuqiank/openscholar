@@ -235,3 +235,12 @@ function os_basetheme_preprocess_menu_tree(&$variables) {
   }
   $variables['tree'] = $variables['tree']['#children'];
 }
+
+/**
+ * Implements template_process_HOOK() for theme_pager_link().
+ */
+function os_basetheme_process_pager_link($variables) {
+  // Adds an HTML head link for rel='prev' or rel='next' for pager links.
+  module_load_include('inc', 'os', 'includes/pager');
+  _os_pager_add_html_head_link($variables);
+}
