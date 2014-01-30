@@ -134,6 +134,7 @@ dependencies[] = shorten
 dependencies[] = respondjs
 dependencies[] = views_infinite_scroll
 dependencies[] = web_widgets
+dependencies[] = metatag
 
 files[] = openscholar.profile
 
