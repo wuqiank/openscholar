@@ -40,6 +40,7 @@ dependencies[] = date
 dependencies[] = date_ical
 dependencies[] = entity
 dependencies[] = feeds
+dependencies[] = html_title
 dependencies[] = title
 dependencies[] = token
 dependencies[] = pathauto
