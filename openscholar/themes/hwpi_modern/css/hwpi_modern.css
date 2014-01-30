@@ -90,6 +90,12 @@ ul.nice-menu ul {
  padding-right:8px;
 }
 
+#menu-bar ul.nice-menu ul .menuparent.over > a,
+#menu-bar ul.nice-menu ul .menuparent a:hover,
+#menu-bar ul.nice-menu ul .menuparent a.active {
+     color:#BAC5C6;
+}
+
 
 #menu-bar ul.nice-menu ul {
     background:#7B272B;
@@ -106,7 +112,10 @@ ul.nice-menu ul {
     font-weight: bold;  
 }
 
+ul.nice-menu-down li ul li ul {
+left: 12em;
 
+}
 /* Titles & Type */
 #page-title,
 .node-title,
