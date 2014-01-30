@@ -676,11 +676,10 @@ function os_profiles_delete_listeners() {
       $wrapper->save();
     }
   }
-  else {
-    // The deleted node was not an origin node. That means it was a "listener"
-    // in some site that is, a node that was imported from the current site. In
-    // that case remove that destination from the list of destinations.
-    if (isset($wrapper->field_destination)) {
+  elseif (isset($wrapper->field_destination)) {
+      // The deleted node was not an origin node. That means it was a "listener"
+      // in some site that is, a node that was imported from the current site.
+      // In that case remove that destination from the list of destinations.
       $destinations = $wrapper->field_destination->value();
       if (($destination = array_search($_GET['remove_destination'], $destinations)) !== FALSE) {
         unset($destinations[$destination]);
@@ -688,7 +687,6 @@ function os_profiles_delete_listeners() {
         $wrapper->save();
       }
     }
-  }
 }
 
 /**
