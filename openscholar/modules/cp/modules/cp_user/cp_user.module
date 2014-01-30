@@ -262,6 +262,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   // In addition to CRUD permissions, the permission 'Change theme' is the only
   // non-CRUD permission that should be displayed on the list.
   $allowed_permissions['change theme'] = 'General permissions';
+  $allowed_permissions['administer widgets'] = 'General permissions';
 
   foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
     foreach (array_keys($bundles) as $bundle) {
