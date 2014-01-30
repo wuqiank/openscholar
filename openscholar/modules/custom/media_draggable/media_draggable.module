@@ -74,6 +74,39 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
     )
   );
 
+  // Essentially we use the `dragndrop_upload_file` type,
+  // extended with some enhancements.
+  $widget_settings = $element['#instance']['widget']['settings'];
+  $instance_settings = $element['#instance']['settings'];
+
+  $info = element_info('dragndrop_upload');
+
+  $element['drop'] = array(
+    '#type' => 'dragndrop_upload',
+    '#upload_location' => file_field_widget_uri($element['#field'], $element['#instance']),
+    '#upload_validators' => file_field_widget_upload_validators(
+      $element['#field'],
+      $element['#instance']
+    ),
+    '#pre_render' => array_merge(array('media_draggable_dnd_pre_render'), $info['#pre_render']),
+    '#value_callback' => 'file_field_widget_value',
+    '#progress_indicator' => $widget_settings['progress_indicator'],
+    '#upload_event' => $widget_settings['upload_event'],
+    '#standard_upload' => $widget_settings['standard_upload'],
+    '#allow_replace' => $widget_settings['allow_replace'],
+    '#upload_button_text' => $widget_settings['upload_button_text'],
+    '#droppable_area_text' => $widget_settings['droppable_area_text'],
+    '#file_upload_max_size' => $instance_settings['max_filesize'] ? $instance_settings['max_filesize'] : file_upload_max_size(),
+    '#cardinality' => $element['#field']['cardinality'],
+    // Do not allow for 'multiupload' setting to be enabled if the module
+    // is disabled.
+    '#multiupload' => module_exists(
+        'dragndrop_upload_multi') ? $widget_settings['multiupload'] : 0,
+    // Allows this field to return an array instead of a single value.
+    '#extended' => TRUE,
+    '#weight' => -1,
+  );
+
   $element['template'] = array(
     '#type' => 'container',
     '#attributes' => array(
@@ -106,38 +139,7 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
   return $element;
 }
 
-function media_draggable_field_widget_process($element, &$form_state, &$form) {// Essentially we use the `dragndrop_upload_file` type,
-  // extended with some enhancements.
-  $widget_settings = $element['#instance']['widget']['settings'];
-  $instance_settings = $element['#instance']['settings'];
-
-  $info = element_info('dragndrop_upload');
-
-  $element['drop'] = array(
-    '#type' => 'dragndrop_upload',
-    '#upload_location' => file_field_widget_uri($element['#field'], $element['#instance']),
-    '#upload_validators' => file_field_widget_upload_validators(
-      $element['#field'],
-      $element['#instance']
-    ),
-    '#pre_render' => array_merge(array('media_draggable_dnd_pre_render'), $info['#pre_render']),
-    '#value_callback' => 'file_field_widget_value',
-    '#progress_indicator' => $widget_settings['progress_indicator'],
-    '#upload_event' => $widget_settings['upload_event'],
-    '#standard_upload' => $widget_settings['standard_upload'],
-    '#allow_replace' => $widget_settings['allow_replace'],
-    '#upload_button_text' => $widget_settings['upload_button_text'],
-    '#droppable_area_text' => $widget_settings['droppable_area_text'],
-    '#file_upload_max_size' => $instance_settings['max_filesize'] ? $instance_settings['max_filesize'] : file_upload_max_size(),
-    '#cardinality' => $element['#field']['cardinality'],
-    // Do not allow for 'multiupload' setting to be enabled if the module
-    // is disabled.
-    '#multiupload' => module_exists(
-        'dragndrop_upload_multi') ? $widget_settings['multiupload'] : 0,
-    // Allows this field to return an array instead of a single value.
-    '#extended' => TRUE,
-    '#weight' => -1,
-  );
+function media_draggable_field_widget_process($element, &$form_state, &$form) {
 
   if (!empty($form_state['input'])) {
     $copy = &$form_state['input']['field_upload'][LANGUAGE_NONE];
