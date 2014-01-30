@@ -2829,6 +2829,7 @@ function vsite_get_os_permissions() {
     if (empty($params['os_sync']) || (!$params['os_sync'])) {
       continue;
     }
+    // os_sync is the name of the permissions category.
     if ($params['os_sync']) {
       $os_sync_perms[$name] = $params;
     }
@@ -2844,12 +2845,12 @@ function vsite_og_permission() {
     'edit boxes' => array(
       'title' => t('Edit boxes'),
       'description' => t('Edit existing boxes.'),
-      'os_sync' => TRUE,
+      'os_sync' => 'General permissions',
     ),
     'access contextual links' => array(
       'title' => t('Use contextual links'),
       'description' => t('Use contextual links to perform actions related to elements on a page.'),
-      'os_sync' => TRUE,
+      'os_sync' => 'Momo',
     ),
   );
 }
