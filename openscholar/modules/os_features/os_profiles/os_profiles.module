@@ -613,6 +613,7 @@ function os_profiles_insert_listeners() {
     return;
   }
 
+  // Add the site to the list of destinations.
   $wrapper->field_destination[] = $_GET['listener'];
   $wrapper->save();
 }
