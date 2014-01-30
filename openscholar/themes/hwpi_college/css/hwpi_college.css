@@ -375,7 +375,8 @@ h1#page-title {
 .sidebar #block-views-os-events-block-1.block,
 #content-column #block-views-os-events-block-1.block,
 #content-column .block.block-boxes-os_slideshow_box,
-.block-boxes block-boxes-os_sv_list_box,
+.block-boxes.block-boxes-os_sv_list_box,
+.block-boxes.block-boxes-os_sv_list_box .node-person .block-inner,
 .block-boxes-os_boxes_manual_list, 
 .sidebar .block.section-nav,
 #content-column .block.section-nav  {
