@@ -2838,10 +2838,14 @@ function vsite_get_os_permissions() {
 }
 
 /**
- * Implements hook_og_permission.
+ * Implements hook_og_permission().
  */
 function vsite_og_permission() {
   return array(
+    'administer boxes' => array(
+      'title' => t('Administer boxes'),
+      'os_sync' => 'General permissions',
+    ),
     'edit boxes' => array(
       'title' => t('Edit boxes'),
       'description' => t('Edit existing boxes.'),
