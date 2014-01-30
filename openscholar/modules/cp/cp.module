@@ -83,18 +83,6 @@ function cp_menu() {
     'description' => t('Manage and customize apps on your site')
   );
 
-  $items["cp/build/taxonomy"] = array(
-    'title' => 'Taxonomy',
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 10,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_overview_vocabularies'),
-    'access arguments' => array('administer taxonomy'),
-    'file' => 'taxonomy.admin.inc',
-    'file path' => drupal_get_path('module', 'taxonomy'),
-    'description' => t('Manage your site\'s vocabularies')
-  );
-
   $items["cp/build/taxonomy/add"] = array(
     'title' => 'Add vocabulary',
     'page callback' => 'drupal_get_form',
@@ -601,7 +589,7 @@ function cp_form_redirect_edit_form_alter(&$form, &$form_state, $form_id) {
     'module' => 'purl',
     'name' => 'purl.admin',
   );
-  
+
   // Determines this vsite's purl modifier value.
   if (empty($form['purl']['modifier']['#default_value'])) {
     $default_value = "{$vsite->purl_provider}:{$vsite->id}";
