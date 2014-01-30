@@ -673,6 +673,7 @@ function os_profiles_delete_listeners() {
     // from that node.
     if (isset($wrapper->field_origin_destination)){
       $wrapper->field_origin_destination->set('');
+      $wrapper->save();
     }
   }
   else {
@@ -683,6 +684,8 @@ function os_profiles_delete_listeners() {
       $destinations = $wrapper->field_destination->value();
       if (($destination = array_search($_GET['remove_destination'], $destinations)) !== FALSE) {
         unset($destinations[$destination]);
+        $wrapper->field_destination->set($destinations);
+        $wrapper->save();
       }
     }
   }
@@ -741,10 +744,8 @@ function os_profiles_delete_listeners() {
  *  The values of the $_GET. No need to pass the q index.
  */
 function os_profiles_manage_synced_profiles($url, $values) {
-  $path = '';
-
   switch ($values['action']) {
-    case 'insert':
+    case 'insert_person':
       $path = $url . '/people/insert_profile';
       break;
     case 'update':
@@ -754,11 +755,15 @@ function os_profiles_manage_synced_profiles($url, $values) {
       $path = $url . '/people/delete_profile';
       break;
     default:
+      $path = NULL;
       break;
   }
 
   $values['REST_CALL'] = TRUE;
-  drupal_http_request(url($path, array('query' => $values)));
+
+  if ($path) {
+    drupal_http_request(url($path, array('query' => $values)));
+  }
 }
 
 /**
@@ -815,6 +820,8 @@ function os_profiles_node_update($node) {
  *    will need to remove the current site as the origin node's destination.
  */
 function os_profiles_node_delete($node) {
+  global $base_url;
+
   if ($node->type != 'person') {
     return;
   }
@@ -829,9 +836,16 @@ function os_profiles_node_delete($node) {
   // If it was, "inform" the origin node that the current site
   // is no longer a destination of the origin node. This will
   // prevent from the origin site to signal about a node's update.
-  if (!$destination = $wrapper->field_origin_destination->value()) {
+  if ($destination = $wrapper->field_origin_destination->value()) {
     $arguments['origin_deleted'] = FALSE;
-    $arguments['remove_destination'] = $destination;
+
+    // The destination to be removed.
+    $arguments['remove_destination'] = $base_url;
+
+    // $destination is the JSON address that is,
+    // http://www.example.com/vsite/node/1.json and we need just the
+    // http://www.example.com/vsite part of that address.
+    $destination = preg_replace("/\/node\/\d{1,}\.json/", "", $destination);
     os_profiles_manage_synced_profiles($destination, $arguments);
   }
 
