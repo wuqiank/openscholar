@@ -428,6 +428,22 @@ class vsite extends space_og {
     foreach ($role_permissions as $one_role) {
       $perms += $one_role;
     }
+
+    // OS permissions are permissions that must get access not only in the site
+    // wide scope, but also in the vsite scope via cp/users/permissions
+    foreach (array_keys(vsite_get_os_permissions()) as $permission) {
+      if (empty($perms[$permission])) {
+        // Permissions isn't set on the site wide.
+        continue;
+      }
+
+      if (!og_user_access('node', $this->id, $permission)) {
+        // User doesn't have access on the VSite level, so remove the
+        // permission.
+        unset($perms[$permission]);
+      }
+    }
+
     $perm[$user->uid] = $perms;
   }
 
