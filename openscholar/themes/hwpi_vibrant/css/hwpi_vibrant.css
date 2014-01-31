@@ -737,9 +737,13 @@ table td.mini .mini-day-on a {
   border-top: 1px solid #5090C8;
 }
 
+.ui-tabs ul.ui-tabs-nav li.ui-tabs-active {
+  background: linear-gradient(to bottom, #5090C8 0%, #2A68AC 100%) repeat scroll 0 0 transparent;
+
+}
+
 .ui-tabs ul.ui-tabs-nav li.ui-tabs-active a {
   background: #5090C8;
-  background: linear-gradient(to bottom, #5090C8 0%, #2A68AC 100%) repeat scroll 0 0 transparent;
   color: #fff;
   outline: 0 none;
   position: relative;
