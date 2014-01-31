@@ -565,7 +565,9 @@ function os_files_form_media_internet_add_alter(&$form, &$form_state) {
         'path' => 'http://embed.ly/embed/features/providers',
         'text' => t('these providers'),
         'options' => array(
-          'attributes' => array(),
+          'attributes' => array(
+            'target' => '_blank'
+          ),
           'html' => FALSE
         )
       )),
