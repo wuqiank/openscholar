@@ -312,6 +312,7 @@ projects[purl][patch][] = "http://drupal.org/files/issues/purl-integrate_redirec
 
 projects[registration][subdir] = "contrib"
 projects[registration][version] = 1.1
+projects[registration][patch][] = "https://drupal.org/files/issues/2183509-registration-broadcast-context-1.patch"
 
 projects[respondjs][subdir] = "contrib"
 projects[respondjs][version] = 1.1
