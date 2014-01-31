@@ -57,7 +57,7 @@ class os_boxes_columns extends os_boxes_default {
       '#type' => 'container',
       '#id' => 'unused-widgets',
       'title' => array(
-        '#markup' => t('Unused Widgets'),
+        '#markup' => t('<span class="formlabel">Unused Widgets</span>'),
       ),
       'search' => array(
         '#type' => 'textfield',
@@ -69,8 +69,7 @@ class os_boxes_columns extends os_boxes_default {
     );
 
     $form['help_text'] = array(
-      '#markup' => t('Put whatever you want here. Make sure it\'s wrapped in single-quotes, and any single-quotes
-      in the text are preceeded by a \\.')
+      '#markup' => t('<span class="helper columns">Choose a column configuration above, drag unused widgets into the <span class="downarrow">columns</span>, and save. Once saved, you\'ll be able to drag this widget into the main layout page (black toolbar: Build > Layout).</span>')
     );
 
     // set up psuedo-regions

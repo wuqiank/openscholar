@@ -42,11 +42,16 @@
 }
 
 #edit-layout {
-  width: 73%;
+ width: 708px;
   border: 1px solid #ccc;
   padding: 1em;
 
 }
+
+#edit-layout.form-radios {
+ margin-top:-10px;
+}
+
 
 #edit-layout .form-type-radio {
   display: inline-block;
@@ -96,19 +101,23 @@
 
 #unused-widgets {
   width: 200px;
-  height: 590px;
+  max-height: 520px;
   float: left;
   border: 1px solid #ccc;
   padding: 5px;
-  margin-top: -275px;
+  margin-top: -170px;
   margin-right: 10px;
+}
+
+#unused-widgets span {
+ font-weight;normal;
 }
 
 #unused-widgets .form-wrapper {
  
   height: 510px;
   overflow:auto;
-  
+  max-height: 440px;
 }
 
 #unused-widgets #edit-search {
@@ -147,8 +156,8 @@ background-color: #DDD;
 
 #edit-regions {
   float: left;
-  width: 65%;
-  height: 400px;
+  width: 736px;
+  height: 300px;
   clear: right;
   margin-top: 10px;
 }
