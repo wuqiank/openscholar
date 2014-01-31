@@ -583,6 +583,13 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   display: table-cell;
 }
 
+/* An empty div styling in case of no default image */
+.node-person .no-default-image {
+  float: left;
+  width: 82px;
+  height: 75px;
+}
+
 .node-type-person #content .node-person .field-name-body {
   margin: 0;
 }

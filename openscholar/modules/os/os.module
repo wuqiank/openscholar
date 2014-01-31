@@ -217,6 +217,10 @@ function os_entity_info_alter(&$info) {
     'label' => t('Title'),
     'custom settings' => TRUE,
   );
+  $info['node']['view modes']['no_image_teaser'] = array(
+    'label' => t('No image Teaser'),
+    'custom settings' => TRUE,
+  );
 }
 
 /**
