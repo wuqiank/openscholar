@@ -25,7 +25,7 @@ class os_boxes_columns extends os_boxes_default {
 
     $form['layout_select']['num_cols'] = array(
       '#type' => 'radios',
-      '#title' => t('Column Selection'),
+      '#title' => t('Layout Selection'),
       '#options' => array(
         '0' => t('All'),
         '2' => t('Two'),
@@ -57,7 +57,7 @@ class os_boxes_columns extends os_boxes_default {
       '#type' => 'container',
       '#id' => 'unused-widgets',
       'title' => array(
-        '#markup' => t('<span class="formlabel">Unused Widgets</span>'),
+        '#markup' => t('<span class="formlabel">List of Widgets</span>'),
       ),
       'search' => array(
         '#type' => 'textfield',
@@ -69,7 +69,7 @@ class os_boxes_columns extends os_boxes_default {
     );
 
     $form['help_text'] = array(
-      '#markup' => t('<span class="helper columns">Choose a column configuration above, drag unused widgets into the <span class="downarrow">columns</span>, and save. Once saved, you\'ll be able to drag this widget into the main layout page (black toolbar: Build > Layout).</span>')
+      '#markup' => t('<span class="helper columns">Choose a column configuration above, drag unused widgets into the <span class="downarrow">columns</span>, and save. Once saved, you\'ll be able to drag this widget into the main layout page.</span>')
     );
 
     // set up psuedo-regions
