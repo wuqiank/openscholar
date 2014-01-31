@@ -25,7 +25,7 @@ class os_boxes_columns extends os_boxes_default {
 
     $form['layout_select']['num_cols'] = array(
       '#type' => 'radios',
-      '#title' => t('Layout Selection'),
+      '#title' => t('Column Selection'),
       '#options' => array(
         '0' => t('All'),
         '2' => t('Two'),
