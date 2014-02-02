@@ -3022,3 +3022,38 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
     $vsite->controllers->variable->set($name, $value);
   }
 }
+
+/**
+ * Retrieve an array of roles matching specified name.
+ *
+ * @param $name
+ *   The role name (e.g. 'content editor').
+ * @param $group_type
+ *   (optional) The group type (e.g. 'node').
+ * @param bool $bundle
+ *   (optinaol) The bundle name (e.g. 'page').
+ *
+ * @return
+ *   An associative array with the role id as the key and the role name as
+ *   value.
+ */
+function vsite_og_get_all_roles($name, $group_type = FALSE, $bundle = FALSE) {
+  $query = db_select('og_role', 'ogr')
+    ->condition('name', $name, '=')
+    ->fields('ogr', array('rid', 'name'))
+    ->orderBy('rid', 'ASC');
+
+  if ($group_type) {
+    $query->condition('group_type', $group_type, '=');
+  }
+  if ($bundle) {
+    $query->condition('group_bundle', $bundle, '=');
+  }
+
+  $rids = $query
+    ->execute()
+    ->fetchAllkeyed();
+
+  return $rids;
+}
+

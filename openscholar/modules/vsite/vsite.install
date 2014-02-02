@@ -580,3 +580,13 @@ function vsite_update_7018() {
 
   variable_set($name, $value);
 }
+
+/**
+ * Add vsite 'edit boxes' permission for all 'content editor' roles
+ */
+function vsite_update_7019() {
+  $permissions = array('edit boxes');
+  foreach(array_keys(vsite_og_get_all_roles('content editor', 'node')) as $rid) {
+    og_role_grant_permissions($rid, $permissions);
+  }
+}
