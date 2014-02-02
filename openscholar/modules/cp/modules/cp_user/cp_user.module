@@ -640,8 +640,8 @@ function cp_user_form_user_register_form_alter(&$form, &$form_state, $form_id) {
     $form['actions']['submit']['#value'] = t('Create and add member');
   }
 
-  // Remove vsite user, vsite admin and content editor from list
-  // of site-wide roles.
+  // Remove vsite user, vsite admin and content editor roles from list of
+  // site-wide roles.
   $roles = array(
     'vsite user',
     'vsite admin',
