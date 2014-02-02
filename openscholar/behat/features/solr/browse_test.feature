@@ -5,7 +5,7 @@ Feature:
   Scenario: Test basic people browse with apache solr
     Given I visit "john/browse/people"
      Then I should see "filter by taxonomy"
-      And I should see "browse person"
+      And I should see "browse people"
       And I should see "Norma"
      Then I click "Air"
       And I should not see "Norma"
@@ -21,6 +21,6 @@ Feature:
   Scenario: Test direct browsing of category
     Given I visit "john/browse/gallery/?f[0]=sm_og_vocabulary%3Ataxonomy_term%3A3"
      Then I should see "filter by taxonomy"
-      And I should see "browse media gallery"
+      And I should see "browse gallery"
       And I should not see "John doe biography"
       And I should see "Kittens gallery"

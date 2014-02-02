@@ -764,7 +764,7 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
   $searcher->label = $bundle_title;
   $searcher->description = $bundle_title;
   $searcher->search_path = $bundle_url;
-  $searcher->page_title = $bundle_title
+  $searcher->page_title = $bundle_title;
   $searcher->env_id = 'solr';
   $searcher->settings = array(
     'fq' => array(
