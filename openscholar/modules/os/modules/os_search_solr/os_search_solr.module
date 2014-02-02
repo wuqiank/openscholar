@@ -715,7 +715,7 @@ function os_search_solr_apachesolr_search_default_searchers() {
   $export['core_search'] = os_search_solr_setup_core_searcher();
 
   foreach (os_search_solr_get_browse_pages_info() as $bundle_name => $bundle_info) {
-    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_searcher($bundle_name, $bundle_info['label'], $bundle_info['url'];
+    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_searcher($bundle_name, $bundle_info['label'], $bundle_info['url']);
   }
   return $export;
 }
