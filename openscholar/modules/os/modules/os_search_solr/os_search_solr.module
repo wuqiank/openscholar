@@ -508,7 +508,7 @@ function os_search_solr_context_default_contexts() {
   $export['os_search'] = os_search_solr_setup_core_search_context();
 
   foreach (os_search_solr_get_browse_pages_info() as $bundle_name => $bundle_info) {
-    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_context($bundle_name, $bundle_info['label']);
+    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_context($bundle_name, $bundle_info['label'], $bundle_info['url']);
   }
 
   return $export;
@@ -554,7 +554,7 @@ function os_search_solr_get_browse_pages_info() {
  * @return stdClass
  *   Bundle context information.
  */
-function os_search_solr_setup_bundle_context($bundle_name, $bundle_label) {
+function os_search_solr_setup_bundle_context($bundle_name, $bundle_label, $bundle_url) {
   $searcher_name = os_search_solr_get_searcher_name();
   // Gets delta map
   if (!$map = facetapi_get_delta_map()) {
@@ -575,7 +575,7 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_label) {
   $context->conditions = array(
     'path' => array(
       'values' => array(
-        'browse/' . $bundle_name => 'browse/' . $bundle_name,
+        'browse/' . $bundle_url => 'browse/' . $bundle_url,
       ),
     ),
   );
