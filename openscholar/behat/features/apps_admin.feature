@@ -45,15 +45,32 @@ Feature:
        When I give the user "klark" the role "content editor" in the group "john"
         And I click "Log out"
         And I am logging in as "klark"
-        And I visit "john/os/widget/boxes/os_addthis/edit"
+        And I go to "john/os/widget/boxes/os_addthis/edit"
        Then I should get a "200" HTTP response
 
     @api
-    Scenario: Check content editor can edit widgets by default
+    Scenario: Check content editor without edit boxes permission can't edit
       Given I am logging in as "john"
        When I give the user "klark" the role "content editor" in the group "john"
+        And I go to "john/cp/users/permissions"
+       When I click "Edit roles and permissions"
+        And I press "Confirm"
+        And I go to "john/cp/users/permissions"
+       Then I should see the button "Save permissions"
         And I remove the role "content editor" in the group "john" the permission "Edit boxes"
         And I click "Log out"
         And I am logging in as "klark"
-        And I visit "john/os/widget/boxes/os_addthis/edit"
+        And I go to "john/os/widget/boxes/os_addthis/edit"
+       Then I should get a "403" HTTP response
+
+    @api
+    Scenario: Check rolling abck permissions re-enable widget permissions
+      Given I am logging in as "john"
+       When I give the user "klark" the role "content editor" in the group "john"
+        And I go to "john/cp/users/permissions"
+       When I click "Restore default roles and permissions"
+        And I press "Confirm"
+        And I click "Log out"
+        And I am logging in as "klark"
+        And I go to "john/os/widget/boxes/os_addthis/edit"
        Then I should get a "200" HTTP response
