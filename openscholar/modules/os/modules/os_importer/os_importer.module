@@ -171,10 +171,8 @@ function os_importer_menu() {
   }
 
   $items['cp/os-importer/%/template'] = array(
-    'page callback' => 'feeds_importer_template',
+    'page callback' => 'os_importer_download_template',
     'page arguments' => array(2),
-    'file' => 'feeds.pages.inc',
-    'file path' => drupal_get_path('module', 'feeds'),
     'access callback' => 'os_importer_import_access',
     'access arguments' => array(2),
   );
@@ -193,6 +191,17 @@ function os_importer_menu_alter(&$items) {
   $items['cp/os-importer/biblio']['page arguments'] = array('biblio_import_form');
   $items['cp/os-importer/biblio']['file'] = 'biblio.import.export.inc';
   $items['cp/os-importer/biblio']['file path'] = drupal_get_path('module', 'biblio') . '/includes';
+}
+
+/**
+ * Page callback; Download a template of CSV with dummy content.
+ */
+function os_importer_download_template($type) {
+  drupal_add_http_header('Cache-Control', 'max-age=60, must-revalidate');
+  drupal_add_http_header('Content-Disposition', 'attachment; filename="' . $type . '.csv"');
+  drupal_add_http_header('Content-type', 'text/csv; charset=utf-8');
+  print file_get_contents(drupal_get_path('module', 'os_importer') . '/templates/os_' . $type . '.csv');
+  return;
 }
 
 /**
@@ -370,7 +379,7 @@ function os_importer_import($form, &$form_state, $type) {
         ),
       ),
       'template' => array(
-        '#markup' => l(t('Download a template'), 'cp/os-importer/' . $bundle['csv'] . '/template'),
+        '#markup' => l(t('Download a template'), 'cp/os-importer/' . $type . '/template'),
       ),
     );
   }
