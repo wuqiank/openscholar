@@ -30,6 +30,9 @@ function os_events_os_app_info() {
         'csv' => 'os_events_csv',
       ),
     ),
+    'browse_pages' => array(
+      'event' => TRUE,
+    ),
   );
 
   return $apps;
@@ -67,6 +70,30 @@ function os_events_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Check the capacity if the event reach it's capacity.
+ */
+function os_events_event_registration_reach_capacity($node) {
+  // Check how much registration exists for this event.
+  $query = new EntityFieldQuery();
+  $registrations_number = $query
+    ->entityCondition('entity_type', 'registration')
+    ->propertyCondition('entity_id', $node->nid)
+    ->propertyCondition('entity_type', 'node')
+    ->count()
+    ->execute();
+
+  // Get the settings of the registration for this event.
+  $settings = registration_entity_settings('node', $node->nid);
+
+  if ($registrations_number < $settings['capacity'] && $settings['capacity']['status']) {
+    return user_access('create event_signup_simple registration');
+  }
+  else {
+    return FALSE;
+  }
 }
 
 /**
@@ -204,7 +231,9 @@ function os_events_process_node(&$variables) {
     $subscribe = str_replace('http://', 'webcal://', $subscribe);
 
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
-    if (!empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type'])) {
+
+    $registrations_type = !empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']);
+    if ($registrations_type && os_events_event_registration_reach_capacity($variables['node'])) {
       $register = os_events_generate_modal_register_link($variables['node']->nid);
     }
     else {
@@ -277,6 +306,18 @@ function os_events_events_register($js, $node) {
   ));
 
   $registration_form = drupal_get_form('registration_form', $registration);
+
+  if (!os_events_event_registration_reach_capacity($node)) {
+    drupal_set_message(t('The event has reached his maximum capacity of registrations. Sorry.'), 'error');
+    $commands = array();
+
+    // dismiss the window
+    $commands[] = ctools_modal_command_display(t('Error'), theme('status_messages'));
+
+    print ajax_render($commands);
+    drupal_exit();
+    return;
+  }
 
   $form_state = array(
     'title' => os_events_register_form_title('node', $node->nid),
@@ -687,11 +728,57 @@ function os_events_menu_alter(&$items) {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
- * Hide the tokens list for sending messages to registrants
  */
 function os_events_form_registration_registrations_broadcast_form_alter(&$form, $form_state) {
+  // Hide the tokens list for sending messages to registrants.
   unset($form['token_tree']);
+
+  // Get event NID.
+  $event_nid = arg(1);
+
+  // Get event author.
+  $event = node_load($event_nid);
+  $author = user_load($event->uid);
+
+  // Get the event's default email address, if set.
+  $wrapper_event = entity_metadata_wrapper('node', $event);
+  $default_email = $wrapper_event->field_default_email->value();
+
+  // Default value for 'from' field should be the event's default email if set,
+  // otherwise it should be the event author's email address.
+  $from_default_value = !empty($default_email) ? $default_email : $author->mail;
+
+  // Add 'from' field.
+  $form['from'] = array(
+    '#type' =>'textfield',
+    '#title' => t('From'),
+    '#required' => TRUE,
+    '#description' => t('Email address to be displayed as the message\'s sender.'),
+    '#weight' => 5,
+    '#default_value' => $from_default_value,
+  );
+
+  // Set weight of the other fields.
+  $form['subject']['#weight'] = 6;
+  $form['message']['#weight'] = 7;
+  $form['actions']['#weight'] = 8;
+
+  // Set our submit handler first so we can handle the sender before the email
+  // is sent.
+  array_unshift($form['#submit'], 'os_events_form_registration_registrations_broadcast_form_submit');
+}
+
+/**
+ * Submit handler; Set default email in event.
+ */
+function os_events_form_registration_registrations_broadcast_form_submit($form, &$form_state) {
+  // Get event NID.
+  $event_nid = arg(1);
+
+  // Set the default email in the event.
+  $wrapper = entity_metadata_wrapper('node', $event_nid);
+  $wrapper->field_default_email->set($form_state['values']['from']);
+  $wrapper->save();
 }
 
 /**
@@ -887,6 +974,22 @@ function os_events_mail($key, &$message, $params) {
   $message['body'] = array();
   $message['body'][] = t("Hello @user-name", $params);
   $message['body'][] = t("You have successfully registered for @title (@url).", $params);
+}
+
+/**
+ * Implements hook_mail_alter().
+ */
+function os_events_mail_alter(&$message) {
+  if ($message['id'] != 'registration_broadcast') {
+    return;
+  }
+
+  // Get event default email address.
+  $wrapper_event = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
+  $default_email = $wrapper_event->field_default_email->value();
+
+  // Set default email as the message's sender.
+  $message['from'] = $default_email;
 }
 
 /**

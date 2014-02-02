@@ -85,6 +85,7 @@ class FeatureContext extends DrupalContext {
       // We are using a cli, log in with meta step.
 
       return array(
+        new Step\When('I am not logged in'),
         new Step\When('I visit "/user"'),
         new Step\When('I fill in "Username" with "' . $username . '"'),
         new Step\When('I fill in "Password" with "' . $password . '"'),
@@ -1238,6 +1239,15 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I go to the "([^"]*)" app settings in the vsite "([^"]*)"$/
+   */
+  public function iGoToTheAppSettingsInVsite($app_name, $vsite) {
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/build/features/' . $app_name . '"'),
+    );
+  }
+
+  /**
    * @Then /^I should see the feed item "([^"]*)" was imported$/
    */
   public function iShouldSeeTheFeedItemWasImported($feed_item) {
@@ -1443,12 +1453,44 @@ class FeatureContext extends DrupalContext {
    * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
    */
   public function iSetFeatureStatus ($feature, $status, $group) {
-
     return array(
       new Step\When('I visit "' . $group . '"'),
       new Step\When('I click "Build"'),
       new Step\When('I select "' . $status . '" from "' . $feature . '"'),
       new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
+   * @Given /^I make "([^"]*)" a member in vsite "([^"]*)"$/
+   */
+  public function iMakeAMemberInVsite($username, $group) {
+    return array(
+      new Step\When('I visit "' . $group . '/cp/users/add"'),
+      new Step\When('I fill in "User" with "' . $username . '"'),
+      new Step\When('I press "Add users"'),
+    );
+  }
+
+  /**
+   * @Given /^I make registration to event without javascript available$/
+   */
+  public function iMakeRegistrationToEventWithoutJavascriptAvailable() {
+    return array(
+      new Step\When('I visit "admin/structure/types/manage/event/display"'),
+      new Step\When('I select "Registration Form" from "Formatter for Registration"'),
+      new Step\When('I press "Save"'),
+    );
+  }
+
+  /**
+   * @Given /^I make registration to event without javascript unavailable$/
+   */
+  public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
+    return array(
+      new Step\When('I visit "admin/structure/types/manage/event/display"'),
+      new Step\When('I select "<Hidden>" from "Formatter for Registration"'),
+      new Step\When('I press "Save"'),
     );
   }
 }
