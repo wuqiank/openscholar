@@ -1476,24 +1476,13 @@ class FeatureContext extends DrupalContext {
    * @Given /^I make registration to event without javascript available$/
    */
   public function iMakeRegistrationToEventWithoutJavascriptAvailable() {
-    return array(
-      new Step\When('I visit "admin/structure/types/manage/event/display"'),
-      new Step\When('I select "Registration Form" from "Formatter for Registration"'),
-      new Step\When('I press "Save"'),
-    );
+    $this->invoke_code('os_migrate_demo_event_registration_form');
   }
 
   /**
    * @Given /^I make registration to event without javascript unavailable$/
    */
   public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
-    return array(
-      new Step\When('I visit "admin/structure/types/manage/event/display"'),
-      new Step\When('I select "Registration Link" from "Formatter for Registration"'),
-      new Step\When('I press "Save"'),
-      new Step\When('I press "field_event_registration_formatter_settings_edit"'),
-      new Step\When('I fill in "Label" with "Sign up for this event"'),
-      new Step\When('I press "Update"'),
-    );
+    $this->invoke_code('os_migrate_demo_event_registration_link');
   }
 }
