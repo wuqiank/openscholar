@@ -677,16 +677,16 @@ function os_profiles_delete_listeners() {
     }
   }
   elseif (isset($wrapper->field_destination)) {
-      // The deleted node was not an origin node. That means it was a "listener"
-      // in some site that is, a node that was imported from the current site.
-      // In that case remove that destination from the list of destinations.
-      $destinations = $wrapper->field_destination->value();
-      if (($destination = array_search($_GET['remove_destination'], $destinations)) !== FALSE) {
-        unset($destinations[$destination]);
-        $wrapper->field_destination->set($destinations);
-        $wrapper->save();
-      }
+    // The deleted node was not an origin node. That means it was a "listener"
+    // in some site that is, a node that was imported from the current site.
+    // In that case remove that destination from the list of destinations.
+    $destinations = $wrapper->field_destination->value();
+    if (($destination = array_search($_GET['remove_destination'], $destinations)) !== FALSE) {
+      unset($destinations[$destination]);
+      $wrapper->field_destination->set($destinations);
+      $wrapper->save();
     }
+  }
 }
 
 /**
@@ -792,6 +792,13 @@ function os_profiles_node_update($node) {
     return;
   }
 
+  if (!os_profiles_profile_changed($node)) {
+    // Fields in the profile are not changed: if no data fields (returned in
+    // os_profiles_profiles_fields()) were changed during the update don't
+    // send a request to the listeners.
+    return;
+  }
+
   $wrapper = entity_metadata_wrapper('node', $node);
   if (!$destinations = $wrapper->field_destination->value()) {
     return;
@@ -805,6 +812,27 @@ function os_profiles_node_update($node) {
 
     os_profiles_manage_synced_profiles($destination, $arguments);
   }
+}
+
+/**
+ * Helper function; Return TRUE if the a data field changed in a profile.
+ *
+ * @param $node
+ *  The node to check.
+ * @return bool
+ *  TRUE - A field was changed.
+ *  FALSE - No fields were changed.
+ */
+function os_profiles_profile_changed($node) {
+  $wrapper = entity_metadata_wrapper('node', $node);
+  $wrapper_original = entity_metadata_wrapper('node', $node->orginal);
+  foreach (os_profiles_profiles_fields() as $field) {
+    if ($wrapper->$field->value() !== $wrapper_original->$field->value()) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 /**
