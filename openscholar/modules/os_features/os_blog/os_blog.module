@@ -32,7 +32,7 @@ function os_blog_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'blog' => TRUE,
+      'blog' => 'blogs',
     ),
   );
 

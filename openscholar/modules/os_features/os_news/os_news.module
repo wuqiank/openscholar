@@ -29,7 +29,7 @@ function os_news_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'news' => TRUE,
+      'news' => 'news',
     ),
   );
 

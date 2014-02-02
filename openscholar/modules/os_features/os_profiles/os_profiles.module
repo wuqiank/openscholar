@@ -28,7 +28,7 @@ function os_profiles_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'person' => TRUE,
+      'person' => 'people',
     ),
   );
 

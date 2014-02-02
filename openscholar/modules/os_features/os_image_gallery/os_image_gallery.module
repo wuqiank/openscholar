@@ -27,7 +27,7 @@ function os_image_gallery_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'media_gallery' => TRUE,
+      'media_gallery' => 'gallery',
     ),
   );
 

@@ -21,7 +21,7 @@ function harvard_courses_os_app_info() {
       'harvard_course',
     ),
     'browse_pages' => array(
-      'harvard_course' => TRUE,
+      'harvard_course' => 'courses',
     ),
   );
 
