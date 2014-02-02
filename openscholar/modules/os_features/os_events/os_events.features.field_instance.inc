@@ -318,7 +318,7 @@ function os_events_field_default_field_instances() {
         'label' => 'hidden',
         'module' => 'registration',
         'settings' => array(
-          'label' => ' ',
+          'label' => 'Sign up for this event',
         ),
         'type' => 'registration_link',
         'weight' => 10,
