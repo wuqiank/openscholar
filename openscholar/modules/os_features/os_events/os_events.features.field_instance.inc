@@ -316,8 +316,11 @@ function os_events_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'settings' => array(),
-        'type' => 'hidden',
+        'module' => 'registration',
+        'settings' => array(
+          'label' => ' ',
+        ),
+        'type' => 'registration_link',
         'weight' => 10,
       ),
       'links' => array(

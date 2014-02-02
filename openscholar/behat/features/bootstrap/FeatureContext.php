@@ -1489,8 +1489,11 @@ class FeatureContext extends DrupalContext {
   public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
     return array(
       new Step\When('I visit "admin/structure/types/manage/event/display"'),
-      new Step\When('I select "<Hidden>" from "Formatter for Registration"'),
+      new Step\When('I select "Registration Link" from "Formatter for Registration"'),
       new Step\When('I press "Save"'),
+      new Step\When('I press "field_event_registration_formatter_settings_edit"'),
+      new Step\When('I fill in "Label" with "Sign up for this event"'),
+      new Step\When('I press "Update"'),
     );
   }
 }
