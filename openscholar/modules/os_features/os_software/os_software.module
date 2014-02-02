@@ -32,8 +32,14 @@ function os_software_os_app_info() {
       'software_release'=> TRUE,
     ),
     'browse_pages' => array(
-      'software_project' => 'projects',
-      'software_release' => 'releases',
+      'software_project' => array(
+        'url' => 'browse/projects',
+        'title' => t('Browse projects'),
+      ),
+      'software_release' => array(
+        'url' => 'browse/releases',
+        'title' => t('Browse releases'),
+      ),
     ),
   );
 

@@ -28,7 +28,10 @@ function os_profiles_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'person' => 'people',
+      'person' => array(
+        'url' => 'browse/people',
+        'title' => t('Browse people'),
+      ),
     ),
   );
 
