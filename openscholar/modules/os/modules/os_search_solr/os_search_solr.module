@@ -673,7 +673,7 @@ function os_search_solr_setup_core_search_context() {
           'region' => 'sidebar_second',
           'weight' => '-8',
         ),
-        'facetapi'.$delta_bundle => array(
+        'facetapi-'.$delta_bundle => array(
           'module' => 'facetapi',
           'delta' => $delta_bundle,
           'region' => 'sidebar_second',
