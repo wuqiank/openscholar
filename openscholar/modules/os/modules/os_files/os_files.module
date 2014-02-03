@@ -13,9 +13,12 @@ define('OS_FILE_FILEPATH_SINGLETENANT', 'share');
  * Ensures oembed plugin types are available
  */
 function os_files_init() {
-  $plugins = ctools_plugin_get_plugin_type_info();
-  if (!isset($plugins['oembed']['providers'])) {
-    ctools_plugin_get_plugin_type_info(true);
+  $plugins = ctools_get_plugins('oembed', 'providers');
+  if (!isset($plugins['embedly'])) {
+    $info = ctools_plugin_get_plugin_type_info();
+    cache_clear_all('plugins:oembed:providers', $info['oembed']['providers']['cache table']);
+    ctools_get_plugins_reset();
+    watchdog('oembed', 'Embedly oEmbed plugins not found');
   }
 }
 
