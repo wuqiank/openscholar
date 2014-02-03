@@ -1571,7 +1571,7 @@ function os_taxonomy_taxonomy_vocabulary_insert($vocabulary) {
   $langcode = entity_language('taxonomy_vocabulary', $vocabulary);
 
   // Skip processing if the user has disabled pathauto for the term.
-  if (!isset($term->path['pathauto']) || !empty($term->path['pathauto'])) {
+  if (!isset($vocabulary->path['pathauto']) || !empty($vocabulary->path['pathauto'])) {
     // Skip processing if the term has no pattern.
     if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $term->vocabulary_machine_name)) {
       module_load_include('inc', 'pathauto');
@@ -1609,11 +1609,17 @@ function os_taxonomy_taxonomy_vocabulary_update($vocabulary) {
   $langcode = entity_language('taxonomy_vocabulary', $vocabulary);
 
   // Skip processing if the user has disabled pathauto for the term.
-  if (!isset($term->path['pathauto']) || !empty($term->path['pathauto'])) {
+  if (!isset($vocabulary->path['pathauto']) || !empty($vocabulary->path['pathauto'])) {
 	  // Skip processing if the term has no pattern.
 	  if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $term->vocabulary_machine_name)) {
 	    module_load_include('inc', 'pathauto');
 	    $uri = entity_uri('taxonomy_vocabulary', $vocabulary);
+
+	    // Delete old alias if user is using pathauto
+	    if (!empty($path['pid'])) {
+	      path_delete($path['pid']);
+	    }
+
 	    $langcode = !empty($langcode) ? $langcode : LANGUAGE_NONE;
 	    pathauto_create_alias('taxonomy_vocabulary', 'update', $uri['path'], array('vocabulary' => $vocabulary), $vocabulary->vocabulary_machine_name, $langcode);
 	    return;
