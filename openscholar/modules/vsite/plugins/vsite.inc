@@ -434,6 +434,8 @@ class vsite extends space_og {
       // Set the permission of the site-wide level, based on the value on the
       // VSite level.
       if (!og_user_access('node', $this->id, $permission)) {
+        // Setting to FALSE isn't enough, we need to unset the permission from
+        // the allowed permissions.
         unset($perms[$permission]);
       }
     }
