@@ -648,7 +648,7 @@ function cp_user_form_user_register_form_alter(&$form, &$form_state, $form_id) {
     'content editor',
   );
   foreach ($roles as $role) {
-    if (($key = array_search($role, $form['account']['roles']['#options'])) !== false)  {
+    if (($key = array_search($role, $form['account']['roles']['#options'])) !== FALSE)  {
       unset($form['account']['roles']['#options'][$key]);
     }
   }
