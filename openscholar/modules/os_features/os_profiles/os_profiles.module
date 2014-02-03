@@ -270,7 +270,18 @@ function os_profiles_field_display_node_alter(&$display, $context) {
  * Implements hook_field_access().
  */
 function os_profiles_field_access($op, $field, $entity_type, $entity, $account) {
-  if (in_array($field['field_name'], array('field_uuid', 'field_original_destination_url', 'field_destination_url')) && $op == 'edit') {
+  $fields = array(
+    'field_uuid',
+    'field_original_destination_url',
+    'field_destination_url'
+  );
+
+  // If the node is imported from another site don't allow editing fields that are synced.
+  if (!empty($entity) && $entity_type == 'node' && $entity->type == 'person' && $op == 'edit' && !empty($entity->field_original_destination_url)) {
+    $fields += os_profiles_profiles_fields();
+  }
+
+  if (in_array($field['field_name'], $fields) && $op == 'edit') {
     return FALSE;
   }
 
@@ -1246,28 +1257,6 @@ function os_profiles_node_delete($node) {
       $arguments['origin_deleted'] = TRUE;
       os_profiles_manage_synced_profiles($destination, $arguments);
     }
-  }
-}
-
-/**
- * Implements hook_node_access().
- *
- * Users should not be allowed to edit profiles that were imported
- * (with the "sync" option) from another site.
- */
-function os_profiles_node_access($node, $op, $account) {
-  if ($op != 'update') {
-    return;
-  }
-
-  if ($node->type != 'person') {
-    return;
-  }
-
-  if (!empty($node->field_original_destination_url)) {
-    // This node was imported from another site if this field is not empty.
-    // Editing of this profile is not allowed.
-    return NODE_ACCESS_DENY;
   }
 }
 
