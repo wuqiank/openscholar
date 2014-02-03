@@ -38,6 +38,7 @@ function os_publications_os_app_info() {
 function os_publications_menu_alter(&$items) {
   $items['publications'] = array(
     'title' => 'Publications',
+    'description' => 'Publications',
     'page callback' => 'os_publications_overview',
     'access callback' => 'spaces_access_feature',
     'access arguments' => array('view', 'os_publications'),
