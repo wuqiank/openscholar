@@ -355,12 +355,22 @@ function theme_cp_appearance_theme_picker_form($variables) {
         'theme_name' => $flavor,
       );
 
+      $subtheme = new SubTheme();
+      $subtheme->path = $info['path'];
+      $parsed_info = $subtheme->parseInfo();
+      $theme_default = variable_get('theme_default');
+
+      $selected_subtheme = '';
+      if ($theme_default == $parsed_info['module'] && variable_get('os_appearance_' . $theme_default . '_flavor') == $flavor) {
+        $selected_subtheme = 'current';
+      }
+
       $items[] = array(
-        'class' => array('item-theme-picker'),
+        'class' => array('item-theme-picker', $selected_subtheme),
         'id' => 'theme-' . str_replace('_', '-', $flavor),
         'data' => theme('cp-appearance-subtheme-item', array(
           'info' => $theme_info ,
-          'actions' => "<div class='git-pull-button'>" . l(t('Pull'), 'cp/appearance/update-subtheme/' . $flavor) . "</div>",
+          'actions' => "<div class='git-pull-button'>" . l(t('Update'), 'cp/appearance/update-subtheme/' . $flavor) . "</div>",
         )),
       );
     }
