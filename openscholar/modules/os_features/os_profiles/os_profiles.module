@@ -95,6 +95,11 @@ function os_profiles_menu() {
     'access callback' => TRUE,
   );
 
+  $items['people/delete_profile'] = array(
+    'page callback' => 'os_profiles_delete_listeners',
+    'access callback' => TRUE,
+  );
+
   return $items;
 }
 
@@ -599,7 +604,7 @@ function os_profiles_insert_listeners() {
     ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
     ->execute();
 
-  if (!$results['node']) {
+  if (empty($results['node'])) {
     return;
   }
 
@@ -613,6 +618,7 @@ function os_profiles_insert_listeners() {
     return;
   }
 
+  // Add the site to the list of destinations.
   $wrapper->field_destination[] = $_GET['listener'];
   $wrapper->save();
 }
@@ -630,7 +636,7 @@ function os_profiles_update_listeners($uuid = NULL) {
     ->fieldCondition('field_uuid', 'value', $uuid)
     ->execute();
 
-  if (!$results['node']) {
+  if (empty($results['node'])) {
     return;
   }
 
@@ -639,11 +645,55 @@ function os_profiles_update_listeners($uuid = NULL) {
 }
 
 /**
- * When need to update a profile node with listeners or ping to update the
- * listeners this page callback will handle it. In order to determine the action
- * that will be take we input channel will hold an array with data for that.
+ * A site deleted a profile. Get the node with the provided UUID and
+ * according to the query string do the following:
  *
- * In order to notify Drupal we need to update the synced node profiles we will
+ * 1. If $_GET['origin_deleted'] is TRUE, delete the original destination
+ *    field entry as this node no longer exist in the origin site.
+ * 2. If $_GET['origin_deleted'] is FALSE, delete the destination of
+ *    the deleted node from the list of destinations in the destination field.
+ */
+function os_profiles_delete_listeners() {
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('type', 'person')
+    ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
+    ->execute();
+
+  if (!$results['node']) {
+    return;
+  }
+
+  $node = node_load(reset($results['node'])->nid);
+  $wrapper = entity_metadata_wrapper('node', $node);
+
+  if ($_GET['origin_deleted']) {
+    // Origin profile node was deleted. Stop "listening" for changes
+    // from that node.
+    if (isset($wrapper->field_origin_destination)){
+      $wrapper->field_origin_destination->set('');
+      $wrapper->save();
+    }
+  }
+  elseif (isset($wrapper->field_destination)) {
+    // The deleted node was not an origin node. That means it was a "listener"
+    // in some site that is, a node that was imported from the current site.
+    // In that case remove that destination from the list of destinations.
+    $destinations = $wrapper->field_destination->value();
+    if (($destination = array_search($_GET['remove_destination'], $destinations)) !== FALSE) {
+      unset($destinations[$destination]);
+      $wrapper->field_destination->set($destinations);
+      $wrapper->save();
+    }
+  }
+}
+
+/**
+ * When need to update a profile node with listeners or ping to update the
+ * listeners. This page callback will handle it.
+ *
+ * In order to notify Drupal to update the synced profile nodes we will
  * need to access the server with the next $_GET:
  * @code
  *  $_GET = array(
@@ -663,15 +713,55 @@ function os_profiles_update_listeners($uuid = NULL) {
  *  );
  * @endcode
  *
+ * In order to notify Drupal to delete the synced profile node we will
+ * need to access the server with the next $_GET when the origin node is
+ * deleted:
+ * @code
+ *  $_GET = array(
+ *    'action' => 'delete',
+ *    'uuid' => 'foobar',
+ *    'origin_deleted' => TRUE,
+ *  );
+ * @endcode
+ *
+ * When a listener profile (that is, a profile that was imported) is deleted
+ * we will need to access the server with the next $_GET:
+ * @code
+ *  $_GET = array(
+ *    'action' => 'delete',
+ *    'uuid' => 'foobar',
+ *    'origin_deleted' => FALSE,
+ *    'remove_destination' => http://www.example.com,
+ *  );
+ * @endcode
+ *
+ *
  * @param $url
  *  The address of the server.
  * @param $values
  *  The values of the $_GET. No need to pass the q index.
  */
 function os_profiles_manage_synced_profiles($url, $values) {
-  $path = $values['action'] == 'update' ? $url . '/people/update_profile' : $url . '/people/insert_profile';
+  switch ($values['action']) {
+    case 'insert_person':
+      $path = $url . '/people/insert_profile';
+      break;
+    case 'update':
+      $path = $url . '/people/update_profile';
+      break;
+    case 'delete':
+      $path = $url . '/people/delete_profile';
+      break;
+    default:
+      $path = NULL;
+      break;
+  }
+
   $values['REST_CALL'] = TRUE;
-  drupal_http_request(url($path, array('query' => $values)));
+
+  if ($path) {
+    drupal_http_request(url($path, array('query' => $values)));
+  }
 }
 
 /**
@@ -702,6 +792,13 @@ function os_profiles_node_update($node) {
     return;
   }
 
+  if (!os_profiles_profile_changed($node)) {
+    // Fields in the profile are not changed: if no data fields (returned in
+    // os_profiles_profiles_fields()) were changed during the update don't
+    // send a request to the listeners.
+    return;
+  }
+
   $wrapper = entity_metadata_wrapper('node', $node);
   if (!$destinations = $wrapper->field_destination->value()) {
     return;
@@ -718,7 +815,82 @@ function os_profiles_node_update($node) {
 }
 
 /**
- * Implements hook_node_access().
+ * Helper function; Return TRUE if the a data field changed in a profile.
+ *
+ * @param $node
+ *  The node to check.
+ * @return bool
+ *  TRUE - A field was changed.
+ *  FALSE - No fields were changed.
+ */
+function os_profiles_profile_changed($node) {
+  $wrapper = entity_metadata_wrapper('node', $node);
+  $wrapper_original = entity_metadata_wrapper('node', $node->original);
+  foreach (os_profiles_profiles_fields() as $field) {
+    if ($wrapper->$field->value() !== $wrapper_original->$field->value()) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Implements hook_node_delete().
+ *
+ * When a profile that was copied is deleted we have two cases:
+ *
+ * 1. The deleted node was copied from another site. In that case the origin site
+ *    will need to remove the current site from the node's destinations list.
+ * 2. The deleted node was copied to another site. In that case the listeners
+ *    will need to remove the current site as the origin node's destination.
+ */
+function os_profiles_node_delete($node) {
+  global $base_url;
+
+  if ($node->type != 'person') {
+    return;
+  }
+
+  $wrapper = entity_metadata_wrapper('node', $node);
+  $arguments = array(
+    'action' => 'delete',
+    'UUID' => $wrapper->field_uuid->value(),
+  );
+
+  // Check if the node was imported from another site.
+  // If it was, "inform" the origin node that the current site
+  // is no longer a destination of the origin node. This will
+  // prevent from the origin site to signal about a node's update.
+  if ($destination = $wrapper->field_origin_destination->value()) {
+    $arguments['origin_deleted'] = FALSE;
+
+    // The destination to be removed.
+    $arguments['remove_destination'] = $base_url;
+
+    // $destination is the JSON address that is,
+    // http://www.example.com/vsite/node/1.json and we need just the
+    // http://www.example.com/vsite part of that address.
+    $destination = preg_replace("/\/node\/\d{1,}\.json/", "", $destination);
+    os_profiles_manage_synced_profiles($destination, $arguments);
+  }
+
+  // Check if the node was imported to another site.
+  // If it was, "inform" the destination sites which copied the node
+  // (that is, the listeners) to clear the origin destination field
+  // to avoid making requests for update of a deleted node.
+  if (!$destinations = $wrapper->field_destination->value()) {
+    return;
+  }
+  else {
+    foreach ($destinations as $destination) {
+      $arguments['origin_deleted'] = TRUE;
+      os_profiles_manage_synced_profiles($destination, $arguments);
+    }
+  }
+}
+
+/** Implements hook_node_access().
  *
  * Users should not be allowed to edit profiles that were imported
  * (with the "sync" option) from another site.
