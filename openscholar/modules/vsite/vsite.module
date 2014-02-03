@@ -2928,8 +2928,8 @@ function vsite_og_permission_alter(&$perms) {
     $perms[$permission]['default role'][] = 'vsite user';
   }
 
-  // Edit box should be given to the "content editor".
-  $perms['edit box']['default role'][] = 'content editor';
+  // Edit boxes should be given to the "content editor".
+  $perms['edit boxes']['default role'][] = 'content editor';
 }
 
 /**
