@@ -1462,6 +1462,23 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I update the node "([^"]*)" field "([^"]*)" to "([^"]*)"$/
+   */
+  public function iUpdateTheNodeFieldTo($title, $field, $value) {
+    $title = str_replace("'", "\'", $title);
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+
+    $purl = $this->invoke_code('os_migrate_demo_get_node_vsite_purl', array("'$nid'"));
+    $purl = !empty($purl) ? $purl . '/' : '';
+
+    return array(
+      new Step\When('I visit "' . $purl . 'node/' . $nid . '/edit"'),
+      new Step\When('I fill in "' . $field . '" with "' . $value . '"'),
+      new Step\When('I press "Save"'),
+    );
+  }
+
+  /**
    * @Given /^I make "([^"]*)" a member in vsite "([^"]*)"$/
    */
   public function iMakeAMemberInVsite($username, $group) {
@@ -1490,23 +1507,6 @@ class FeatureContext extends DrupalContext {
     return array(
       new Step\When('I visit "admin/structure/types/manage/event/display"'),
       new Step\When('I select "<Hidden>" from "Formatter for Registration"'),
-      new Step\When('I press "Save"'),
-    );
-  }
-
-  /**
-   * @Given /^I update the node "([^"]*)" field "([^"]*)" to "([^"]*)"$/
-   */
-  public function iUpdateTheNodeFieldTo($title, $field, $value) {
-    $title = str_replace("'", "\'", $title);
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
-
-    $purl = $this->invoke_code('os_migrate_demo_get_node_vsite_purl', array("'$nid'"));
-    $purl = !empty($purl) ? $purl . '/' : '';
-
-    return array(
-      new Step\When('I visit "' . $purl . 'node/' . $nid . '/edit"'),
-      new Step\When('I fill in "' . $field . '" with "' . $value . '"'),
       new Step\When('I press "Save"'),
     );
   }
