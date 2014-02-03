@@ -889,3 +889,24 @@ function os_profiles_node_delete($node) {
     }
   }
 }
+
+/** Implements hook_node_access().
+ *
+ * Users should not be allowed to edit profiles that were imported
+ * (with the "sync" option) from another site.
+ */
+function os_profiles_node_access($node, $op, $account) {
+  if ($op != 'update') {
+    return;
+  }
+
+  if ($node->type != 'person') {
+    return;
+  }
+
+  if (!empty($node->field_origin_destination)) {
+    // This node was imported from another site if this field is not empty.
+    // Editing of this profile is not allowed.
+    return NODE_ACCESS_DENY;
+  }
+}
