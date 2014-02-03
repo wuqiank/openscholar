@@ -297,9 +297,11 @@ function _cp_appearance_get_flavor_options($theme_flavors, $info, &$default_flav
 function theme_cp_appearance_theme_picker_form($variables) {
   $form = $variables['form'];
 
+  $flavors = variable_get('flavors');
+
   // Adding the sub themes to the JS so we could know if the user selected a sub
   // theme.
-  drupal_add_js(array('subthemes' => array_keys(variable_get('flavors'))), 'setting');
+  drupal_add_js(array('subthemes' => array_keys($flavors)), 'setting');
 
   // Builds each item containing a screenshot-option or section separators.
   $items = array();
@@ -327,7 +329,39 @@ function theme_cp_appearance_theme_picker_form($variables) {
 
   // Removes this theme wrapper and renders the the form.
   unset($form['#theme']);
-  $output = drupal_render($form);
+
+  $output = '';
+
+  if ($flavors) {
+    $output .= t('<h1>Custom themes</h1>');
+    $themes = os_theme_get_flavors();
+
+    $items = array();
+    foreach (array_keys($flavors) as $flavor) {
+      $info = $themes[$flavor];
+      $theme_info = array('screenshot' => $info['path'] . '/' . $info['screenshot'],
+        'name' => $info['name'],
+        'theme_name' => $flavor,
+      );
+
+      $items[] = array(
+        'class' => array('item-theme-picker'),
+        'id' => 'theme-' . str_replace('_', '-', $flavor),
+        'data' => theme('cp-appearance-theme-item', array(
+          'info' => $theme_info ,
+        )),
+      );
+    }
+
+    $output .= theme('item_list', array(
+      'items' => $items,
+      'attributes' => array('class' => 'theme-picker'),
+    ));
+
+    $output .= t('<h1>Featured themes</h1>');
+  }
+
+  $output .= drupal_render($form);
 
   return $output;
 }
