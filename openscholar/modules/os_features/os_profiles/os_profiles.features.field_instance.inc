@@ -163,7 +163,7 @@ function os_profiles_field_default_field_instances() {
   );
 
   // Exported field_instance: 'node-person-field_destination'
-  $field_instances['node-person-field_destination'] = array(
+  $field_instances['node-person-field_destination_url'] = array(
     'bundle' => 'person',
     'default_value' => NULL,
     'deleted' => 0,
@@ -208,8 +208,8 @@ function os_profiles_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_destination',
-    'label' => 'Destination',
+    'field_name' => 'field_destination_url',
+    'label' => 'Destination URL',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -507,7 +507,7 @@ function os_profiles_field_default_field_instances() {
   );
 
   // Exported field_instance: 'node-person-field_origin_destination'
-  $field_instances['node-person-field_origin_destination'] = array(
+  $field_instances['node-person-field_original_destination_url'] = array(
     'bundle' => 'person',
     'default_value' => NULL,
     'deleted' => 0,
@@ -552,8 +552,8 @@ function os_profiles_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_origin_destination',
-    'label' => 'Origin destination',
+    'field_name' => 'field_original_destination_url',
+    'label' => 'Original destination URL',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1171,7 +1171,7 @@ function os_profiles_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Address');
   t('Attach Files');
-  t('Destination');
+  t('Destination URL');
   t('Email');
   t('First Name');
   t('Holds an access token.');
@@ -1179,7 +1179,7 @@ function os_profiles_field_default_field_instances() {
   t('If a value is entered here then links to this page will redirect to the entered URL.  This post will still appear in lists.  Leave this field blank to allow users to see this page.');
   t('Last Name');
   t('Middle Name or Initial');
-  t('Origin destination');
+  t('Origin destination URL');
   t('Phone');
   t('Photo');
   t('Professional Titles/Affiliations');

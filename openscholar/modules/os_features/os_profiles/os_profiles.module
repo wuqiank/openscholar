@@ -39,34 +39,61 @@ function os_profiles_os_app_info() {
  * Implements hook_init().
  */
 function os_profiles_init() {
-  if (!($nids = variable_get('os_profiles_pull_nodes')) || !($time = variable_get('os_profiles_pull_nodes_time')) || isset($_GET['REST_CALL'])) {
-    // When there is a REST call we don't want to make a http request all over
-    // again for preventing a weird loop.
+  if (!($uuid = variable_get('os_profiles_nodes_uuid'))) {
+    // Return if no UUID is set that is, no profile nodes need to be updated.
     return;
   }
-  // When the origin node and the destination node are on the same installation
-  // and the origin has been updated the updating of the destination node will
-  // be accomplished instantly. We need to wait approximately 10 seconds so a
-  // normal end user won't think the update of the node is slow.
+
+  if (!($time = variable_get('os_profiles_nodes_uuid_time'))) {
+    // Return if no time for the update of the profiles has been set.
+    return;
+  }
+
+  if (isset($_GET['REST_CALL'])) {
+    // If profiles that need to be updated are on the same installation return
+    // in order to avoid a loop of recurring calls to itself.
+    return;
+  }
+
+  // When the original node and the destination node are on the same installation
+  // and the original has been updated the updating of the destination node will
+  // be accomplished instantly. We need to wait approximately 5 seconds so a
+  // normal end user that updates a profile that was copied won't think the
+  // update of the node is slow.
   if ($time + 5 >= time()) {
     return;
   }
 
+  // Load the nodes that need to be updated.
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'person')
+    ->fieldCondition('field_uuid', 'value', $uuid)
+    ->execute();
+
+  if (empty($results['node'])) {
+    return;
+  }
+
+  $nids = array_keys($results['node']);
   $nodes = node_load_multiple($nids);
   $fields = os_profiles_profiles_fields();
   $handler = restws_resource_controller('node');
 
   foreach ($nodes as $node) {
-    if (empty($node->field_origin_destination)) {
+    if (empty($node->field_original_destination_url)) {
       continue;
     }
 
-    $data = os_profiles_get_origin_node_values($node->field_origin_destination[LANGUAGE_NONE][0]['value'], $fields);
+    $data = os_profiles_get_origin_node_values($node->field_original_destination_url[LANGUAGE_NONE][0]['value'], $fields);
     $handler->update($node->nid, $data->values);
   }
 
-  variable_del('os_profiles_pull_nodes');
-  variable_del('os_profiles_pull_nodes_time');
+  // Delete the UUID that needs to be updated and the time in which the UUID
+  // was set.
+  variable_del('os_profiles_nodes_uuid');
+  variable_del('os_profiles_nodes_uuid_time');
 }
 
 /**
@@ -98,8 +125,8 @@ function os_profiles_menu() {
     'access callback' => TRUE,
   );
 
-  $items['people/delete_profile'] = array(
-    'page callback' => 'os_profiles_delete_listeners',
+  $items['people/unlink_profile'] = array(
+    'page callback' => 'os_profiles_unlink_listeners',
     'access callback' => TRUE,
   );
 
@@ -243,7 +270,7 @@ function os_profiles_field_display_node_alter(&$display, $context) {
  * Implements hook_field_access().
  */
 function os_profiles_field_access($op, $field, $entity_type, $entity, $account) {
-  if (in_array($field['field_name'], array('field_uuid', 'field_origin_destination', 'field_destination')) && $op == 'edit') {
+  if (in_array($field['field_name'], array('field_uuid', 'field_original_destination_url', 'field_destination_url')) && $op == 'edit') {
     return FALSE;
   }
 
@@ -447,7 +474,7 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
     // When addressing the URL of the profile that is imported, an http header
     // named "node_json" is added to the response. This is done in order for the
     // importing side to get the JSON address of the node. It will be saved in
-    // the field "field_origin_destination".
+    // the field "field_original_destination_url".
     foreach ($headers as $header) {
       if (strpos($header, 'node_json: ') === 0) {
         $form_state['json_address'] = str_replace('node_json: ', '', $header);
@@ -495,11 +522,11 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     // Get the URL of the original node.
     $url = str_replace('/node/' . $data['nid'] . '.json', '', $form_state['json_address']);
 
-    // Get to origin node's UUID.
+    // Get the original node's UUID.
     $values['field_uuid'] = $data['field_uuid'];
 
     // Save the original address of the JSON.
-    $values['field_origin_destination'] = $form_state['json_address'];
+    $values['field_original_destination_url'] = $form_state['json_address'];
   }
   else {
     // Import a person node using the auto-complete field.
@@ -516,11 +543,11 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     $vsite = vsite_get_vsite($wrapper->og_group_ref->get(0)->value()->nid);
     $url = $vsite->get_absolute_url();
 
-    // Get to origin node's UUID if it exist. Else, generate it.
+    // Get the original node's UUID if it exist. Else, generate it.
     $values['field_uuid'] = isset($wrapper->field_uuid) && $wrapper->field_uuid->value() ? $wrapper->field_uuid->value() : md5($matches[1]);
 
     // Save the original address of the JSON.
-    $values['field_origin_destination'] = $url . '/node/' . $nid . '.json';
+    $values['field_original_destination_url'] = $url . '/node/' . $nid . '.json';
   }
 
   // Set up default values.
@@ -577,7 +604,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
 }
 
 /**
- * Build the node origin values from the source node JSON output.
+ * Build the original node values from the source node JSON output.
  *
  * @param $address
  *  The JSON address of the node.
@@ -585,7 +612,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  *  The fields which holds the values we need.
  *
  * @return stdClass
- *  Return an object with the values and the full JSON of the origin node.
+ *  Return an object with the values and the full JSON of the original node.
  */
 function os_profiles_get_origin_node_values($address, $fields) {
   $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1))));
@@ -621,10 +648,10 @@ function os_profiles_insert_listeners() {
     return;
   }
 
-  $node = node_load(reset($results['node'])->nid);
+  $nid = reset($results['node'])->nid;
 
-  $wrapper = entity_metadata_wrapper('node', $node);
-  $destinations = isset($wrapper->field_destination) ? $wrapper->field_destination->value() : array();
+  $wrapper = entity_metadata_wrapper('node', $nid);
+  $destinations = isset($wrapper->field_destination_url) ? $wrapper->field_destination_url->value() : array();
 
   if (in_array($_GET['listener'], $destinations)) {
     // The destination is already in the field.
@@ -632,29 +659,24 @@ function os_profiles_insert_listeners() {
   }
 
   // Add the site to the list of destinations.
-  $wrapper->field_destination[] = $_GET['listener'];
+  $wrapper->field_destination_url[] = $_GET['listener'];
   $wrapper->save();
 }
 
 /**
- * Get all the profiles which holds this UUID and pull the node from their
- * origin JSON and update them as well.
+ * Set the received UUID that matches the nodes that need to be updated.
  */
 function os_profiles_update_listeners($uuid = NULL) {
   $uuid = $uuid ? $uuid : $_GET['UUID'];
-  $query = new EntityFieldQuery();
-  $results = $query
-    ->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'person')
-    ->fieldCondition('field_uuid', 'value', $uuid)
-    ->execute();
 
-  if (empty($results['node'])) {
-    return;
-  }
+  // Set the received UUID in a variable. This way we can pull the nodes
+  // that need to be updated later.
+  variable_set('os_profiles_nodes_uuid', $uuid);
 
-  variable_set('os_profiles_pull_nodes', array_keys($results['node']));
-  variable_set('os_profiles_pull_nodes_time', time());
+  // Set the time for receiving the UUID. This is used in os_profiles_init() in
+  // order to allow the saving of the node before "signaling" the listening sites
+  // about a node update.
+  variable_set('os_profiles_nodes_uuid_time', time());
 }
 
 /**
@@ -666,7 +688,7 @@ function os_profiles_update_listeners($uuid = NULL) {
  * 2. If $_GET['origin_deleted'] is FALSE, delete the destination of
  *    the deleted node from the list of destinations in the destination field.
  */
-function os_profiles_delete_listeners() {
+function os_profiles_unlink_listeners() {
   $query = new EntityFieldQuery();
   $results = $query
     ->entityCondition('entity_type', 'node')
@@ -678,25 +700,25 @@ function os_profiles_delete_listeners() {
     return;
   }
 
-  $node = node_load(reset($results['node'])->nid);
-  $wrapper = entity_metadata_wrapper('node', $node);
+  $nid = reset($results['node'])->nid;
+  $wrapper = entity_metadata_wrapper('node', $nid);
 
   if ($_GET['origin_deleted']) {
     // Origin profile node was deleted. Stop "listening" for changes
     // from that node.
-    if (isset($wrapper->field_origin_destination)){
-      $wrapper->field_origin_destination->set('');
+    if (isset($wrapper->field_original_destination_url)){
+      $wrapper->field_original_destination_url->set('');
       $wrapper->save();
     }
   }
-  elseif (isset($wrapper->field_destination)) {
+  elseif (isset($wrapper->field_destination_url)) {
     // The deleted node was not an origin node. That means it was a "listener"
     // in some site that is, a node that was imported from the current site.
     // In that case remove that destination from the list of destinations.
-    $destinations = $wrapper->field_destination->value();
+    $destinations = $wrapper->field_destination_url->value();
     if (($destination = array_search($_GET['remove_destination'], $destinations)) !== FALSE) {
       unset($destinations[$destination]);
-      $wrapper->field_destination->set($destinations);
+      $wrapper->field_destination_url->set($destinations);
       $wrapper->save();
     }
   }
@@ -726,12 +748,12 @@ function os_profiles_delete_listeners() {
  *  );
  * @endcode
  *
- * In order to notify Drupal to delete the synced profile node we will
- * need to access the server with the next $_GET when the origin node is
+ * In order to notify Drupal to unlink the synced profile node we will
+ * need to access the server with the next $_GET when the original node is
  * deleted:
  * @code
  *  $_GET = array(
- *    'action' => 'delete',
+ *    'action' => 'unlink',
  *    'uuid' => 'foobar',
  *    'origin_deleted' => TRUE,
  *  );
@@ -741,7 +763,7 @@ function os_profiles_delete_listeners() {
  * we will need to access the server with the next $_GET:
  * @code
  *  $_GET = array(
- *    'action' => 'delete',
+ *    'action' => 'unlink',
  *    'uuid' => 'foobar',
  *    'origin_deleted' => FALSE,
  *    'remove_destination' => http://www.example.com,
@@ -762,8 +784,8 @@ function os_profiles_manage_synced_profiles($url, $values) {
     case 'update':
       $path = $url . '/people/update_profile';
       break;
-    case 'delete':
-      $path = $url . '/people/delete_profile';
+    case 'unlink':
+      $path = $url . '/people/unlink_profile';
       break;
     default:
       $path = NULL;
@@ -1125,8 +1147,6 @@ function os_profiles_display_settings_submit($form, $form_state) {
  * Implements hook_node_update().
  */
 function os_profiles_node_update($node) {
-  global $base_url;
-
   if ($node->type != 'person') {
     return;
   }
@@ -1139,7 +1159,7 @@ function os_profiles_node_update($node) {
   }
 
   $wrapper = entity_metadata_wrapper('node', $node);
-  if (!$destinations = $wrapper->field_destination->value()) {
+  if (!$destinations = $wrapper->field_destination_url->value()) {
     return;
   }
 
@@ -1182,7 +1202,7 @@ function os_profiles_profile_changed($node) {
  * 1. The deleted node was copied from another site. In that case the origin site
  *    will need to remove the current site from the node's destinations list.
  * 2. The deleted node was copied to another site. In that case the listeners
- *    will need to remove the current site as the origin node's destination.
+ *    will need to remove the current site as an original node's destination.
  */
 function os_profiles_node_delete($node) {
   global $base_url;
@@ -1193,15 +1213,15 @@ function os_profiles_node_delete($node) {
 
   $wrapper = entity_metadata_wrapper('node', $node);
   $arguments = array(
-    'action' => 'delete',
+    'action' => 'unlink',
     'UUID' => $wrapper->field_uuid->value(),
   );
 
   // Check if the node was imported from another site.
-  // If it was, "inform" the origin node that the current site
-  // is no longer a destination of the origin node. This will
-  // prevent from the origin site to signal about a node's update.
-  if ($destination = $wrapper->field_origin_destination->value()) {
+  // If it was, "inform" the original node that the current site
+  // is no longer on of its destinations. This will prevent from
+  // the origin site to signal about a node's update.
+  if ($destination = $wrapper->field_original_destination_url->value()) {
     $arguments['origin_deleted'] = FALSE;
 
     // The destination to be removed.
@@ -1216,9 +1236,9 @@ function os_profiles_node_delete($node) {
 
   // Check if the node was imported to another site.
   // If it was, "inform" the destination sites which copied the node
-  // (that is, the listeners) to clear the origin destination field
-  // to avoid making requests for update of a deleted node.
-  if (!$destinations = $wrapper->field_destination->value()) {
+  // (that is, the listeners) to clear the original destination field
+  // to avoid making requests for update of a deleted node later on.
+  if (!$destinations = $wrapper->field_destination_url->value()) {
     return;
   }
   else {
@@ -1244,7 +1264,7 @@ function os_profiles_node_access($node, $op, $account) {
     return;
   }
 
-  if (!empty($node->field_origin_destination)) {
+  if (!empty($node->field_original_destination_url)) {
     // This node was imported from another site if this field is not empty.
     // Editing of this profile is not allowed.
     return NODE_ACCESS_DENY;

@@ -38,12 +38,12 @@ function os_profiles_field_default_field_bases() {
   );
 
   // Exported field_base: 'field_destination'
-  $field_bases['field_destination'] = array(
+  $field_bases['field_destination_url'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_destination',
+    'field_name' => 'field_destination_url',
     'foreign keys' => array(
       'format' => array(
         'columns' => array(
@@ -181,12 +181,12 @@ function os_profiles_field_default_field_bases() {
   );
 
   // Exported field_base: 'field_origin_destination'
-  $field_bases['field_origin_destination'] = array(
+  $field_bases['field_original_destination_url'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_origin_destination',
+    'field_name' => 'field_original_destination_url',
     'foreign keys' => array(
       'format' => array(
         'columns' => array(
