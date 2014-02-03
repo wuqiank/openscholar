@@ -916,11 +916,11 @@ function cp_appearance_pull_subtheme($form, &$form_state, $type) {
 
   if (strpos($info['path'], 'zip') !== FALSE) {
     _cp_appearance_pull_subtheme_zip($form, $info);
-    $form_state['method'] = 'zip';
+    $form_state['subtheme_method'] = 'zip';
   }
   else {
     _cp_appearance_pull_subtheme_git($form, $info);
-    $form_state['method'] = 'git';
+    $form_state['subtheme_method'] = 'git';
   }
 
   return $form;
@@ -1018,9 +1018,10 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
  * Submit handler; Checkout and/or pull from the repository.
  */
 function cp_appearance_pull_subtheme_submit($form, $form_state) {
-  if ($form_state['method'] == 'zip') {
+  if ($form_state['subtheme_method'] == 'zip') {
     $subtheme = new SubTheme($form_state['values']['file']);
 
+    // Set the extract path in order to override the previous extracted theme.
     $subtheme->extractPath = $form_state['path'];
     $subtheme->extract();
   }
