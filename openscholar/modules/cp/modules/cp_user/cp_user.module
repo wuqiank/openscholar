@@ -261,6 +261,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   foreach (vsite_get_os_sync_permissions() as $permission) {
     $allowed_permissions[$permission] = 'general';
   }
+  $allowed_permissions['change theme'] = 'general';
 
   foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
     foreach (array_keys($bundles) as $bundle) {
