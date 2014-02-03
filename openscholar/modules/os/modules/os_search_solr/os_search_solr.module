@@ -44,13 +44,21 @@ function os_search_solr_block_view($delta = '') {
  * into account.
  */
 function os_search_solr_apachesolr_search_page_alter(&$build, $search_page) {
-  if (empty($build['search_results']['#results']) || !module_exists('vsite')) {
-    // No return values, or no VSite enabled.
+  if (!module_exists('vsite')) {
+    // No VSite enabled.
+    return;
+  }
+  if (!vsite_get_vsite()) {
+    // Not inside a VSite context.
     return;
   }
 
-  if (!vsite_get_vsite()) {
-    // Not inside a VSite context.
+  // If only markup exist, it means there are no results, we want an empty page.
+  if (empty($build['search_results']['#results']) && !empty($build['search_results']['#markup'])) {
+    $build['search_results']['#markup'] = '';
+  }
+  if (empty($build['search_results']['#results'])) {
+    // No return values, or no VSite enabled.
     return;
   }
 
