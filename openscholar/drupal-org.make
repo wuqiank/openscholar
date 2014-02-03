@@ -225,6 +225,9 @@ projects[media_gallery][patch][] = "http://drupal.org/files/media_gallery-lightb
 projects[message][subdir] = "contrib"
 projects[message][version] = 1.8
 
+projects[metatag][subdir] = "contrib"
+projects[metatag][version] = 1.0-beta9
+
 projects[module_filter][subdir] = "contrib"
 projects[module_filter][version] = 1.7
 
@@ -309,6 +312,7 @@ projects[purl][patch][] = "http://drupal.org/files/issues/purl-integrate_redirec
 
 projects[registration][subdir] = "contrib"
 projects[registration][version] = 1.1
+projects[registration][patch][] = "https://drupal.org/files/issues/2183509-registration-broadcast-context-1.patch"
 
 projects[respondjs][subdir] = "contrib"
 projects[respondjs][version] = 1.1
@@ -368,6 +372,7 @@ projects[views][download][type] = git
 projects[views][download][branch] = 7.x-3.x
 projects[views][download][revision] = 7173513
 projects[views][patch][] = "https://drupal.org/files/issues/views-jquery_dialog-2125261-1.patch"
+projects[views][patch][] = "https://drupal.org/files/views-1885668-2.patch"
 
 projects[views_bulk_operations][subdir] = "contrib"
 projects[views_bulk_operations][version] = 3.0

@@ -252,15 +252,27 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   // Only CRUD permissions should be displayed in the UI. Create an array of
   // the allowed permissions so we can filter the list by it.
+  // Get all permissions from the enabled applications, while keeping their
+  // application info.
   $allowed_permissions = array();
-  foreach (os_get_bundles(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $type => $name) {
-    $allowed_permissions = array_merge($allowed_permissions, og_list_permissions($type));
-  }
-  $allowed_permissions = array_keys($allowed_permissions);
+
   // In addition to CRUD permissions, the permission 'Change theme' is the only
   // non-CRUD permission that should be displayed on the list.
-  $allowed_permissions[] = 'change theme';
+  $allowed_permissions['change theme'] = 'general';
 
+  foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
+    foreach (array_keys($bundles) as $bundle) {
+      // Get bundle permissions with their related app name.
+      $bundle_permissions = array_fill_keys(array_keys(og_list_permissions($bundle)), $app_name);
+
+      // Merge bundle permissions to all permissions.
+      $allowed_permissions = array_merge($allowed_permissions, $bundle_permissions);
+    }
+  }
+
+  ksort($allowed_permissions);
+
+  $rows_per_category = array();
   foreach (element_children($form['permission']) as $key) {
     if (is_numeric($key)) {
       // Module name, not for display in the UI.
@@ -271,7 +283,7 @@ function cp_user_og_ui_admin_permissions($variables) {
       continue;
     }
 
-    if (!in_array($key, $allowed_permissions)) {
+    if (!in_array($key, array_keys($allowed_permissions))) {
       // Do not show this permission in the UI.
       // Not including it in the table is not enough, because later we call the
       // function drupal_render_children() which will render it anyway unless
@@ -283,7 +295,6 @@ function cp_user_og_ui_admin_permissions($variables) {
       foreach (element_children($form['checkboxes']) as $rid) {
         unset($form['checkboxes'][$rid][$key]);
       }
-
       continue;
     }
 
@@ -306,8 +317,20 @@ function cp_user_og_ui_admin_permissions($variables) {
       $form['checkboxes'][$rid][$key]['#title_display'] = 'invisible';
       $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$key]), 'class' => array('checkbox'));
     }
-    $rows[] = $row;
+
+    // Add category title row.
+    $category = cp_user_add_category_title_to_table($key, $allowed_permissions, $rows_per_category, count($row));
+    $rows_per_category[$category][] = $row;
   }
+
+  ksort($rows_per_category);
+
+  // "Flat" the rows for standard table.
+  $rows = array();
+  foreach ($rows_per_category as $category) {
+    $rows = array_merge($rows, array_values($category));
+  }
+  
   $header[] = (t('Permission'));
   foreach (element_children($form['role_names']) as $rid) {
     if (empty($roles_human_names[$rid])) {
@@ -329,6 +352,45 @@ function cp_user_og_ui_admin_permissions($variables) {
   $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'permissions')));
   $output .= drupal_render_children($form);
   return $output;
+}
+
+/**
+ * Get category from permission key, and add category title if needed.
+ *
+ * @param $permission
+ *   Permission key.
+ * @param $allowed_permissions
+ *   Array of permissions and their category.
+ * @param $rows_per_category
+ *   Referenced array of table rows by category.
+ * @param $number_of_columns
+ *   Number of columns, to set the right category colspan.
+ *
+ * @return string
+ *   Category name.
+ */
+function cp_user_add_category_title_to_table($permission, $allowed_permissions, &$rows_per_category, $number_of_columns) {
+  // Get spaces features in order to get human readable application name.
+  $spaces_features = spaces_features();
+  $category = $allowed_permissions[$permission];
+
+  if (empty($rows_per_category[$category])) {
+    $title = t('General permissions');
+
+    if (!empty($spaces_features[$category])) {
+      $title = t('Application: @app', array('@app' => $spaces_features[$category]->info['name']));
+    }
+    $rows_per_category[$category][] = array(
+      '0' => array(
+        'data' => $title,
+        // Using "checkbox" class as it centerlize the title, and already in
+        // use.
+        'class' => array('0' => 'checkbox'),
+        'colspan' => array('0' => $number_of_columns),
+      ),
+    );
+  }
+  return $category;
 }
 
 /**
