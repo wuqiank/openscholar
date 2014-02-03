@@ -22,15 +22,17 @@ if (file_exists($info['screenshot'])) {
 }
 
 ?>
+
 <?php echo $screenshot; ?>
 <div class="theme-info">
   <h3><?php echo $info['name']; ?></h3>
-  <?php if ($sub_theme): ?>
+  <?php if ($actions): ?>
     <div class="cp-appearance-flavor-list">
-      Flavors <?php echo $sub_theme; ?>
+      <?php echo $actions; ?>
     </div>
   <?php endif; ?>
 </div>
+
 
 
 

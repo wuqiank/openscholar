@@ -62,8 +62,8 @@ function cp_appearance_menu(){
 
   $items['cp/appearance/pull-subtheme/%'] = array(
     'title' => 'Pull subtheme',
-    'page callback' => 'cp_appearance_pull_subtheme',
-    'page arguments' => array(3),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cp_appearance_pull_subtheme', 3),
     'access callback' => 'cp_appearance_sub_theme_access',
   );
 
@@ -100,7 +100,16 @@ function cp_appearance_theme() {
       'sub_theme' => ''
     ),
     'template' => 'cp-appearance-theme-item',
-    'path' => drupal_get_path('module', 'cp_appearance') . '/theme'
+    'path' => drupal_get_path('module', 'cp_appearance') . '/theme',
+  );
+
+  $theme['cp-appearance-subtheme-item'] = array(
+    'variables' => array(
+      'info' => array(),
+      'sub_theme' => ''
+    ),
+    'template' => 'cp-appearance-subtheme-item',
+    'path' => drupal_get_path('module', 'cp_appearance') . '/theme',
   );
 
   $theme['cp_appearance_theme_picker_form'] = array(
@@ -347,8 +356,9 @@ function theme_cp_appearance_theme_picker_form($variables) {
       $items[] = array(
         'class' => array('item-theme-picker'),
         'id' => 'theme-' . str_replace('_', '-', $flavor),
-        'data' => theme('cp-appearance-theme-item', array(
+        'data' => theme('cp-appearance-subtheme-item', array(
           'info' => $theme_info ,
+          'actions' => l(t('Pull'), 'cp/appearance/pull-subtheme/' . $flavor),
         )),
       );
     }
@@ -501,6 +511,7 @@ function cp_appearance_admin_paths() {
   return array(
     'cp/appearance/add-subtheme' => TRUE,
     'cp/appearance/add-subtheme/*' => TRUE,
+    'cp/appearance/pull-subtheme/*' => TRUE,
   );
 }
 
@@ -891,6 +902,47 @@ function cp_appearance_get_flavors() {
   }
 
   return $flavors;
+}
+
+/**
+ * Pull subtheme.
+ */
+function cp_appearance_pull_subtheme($form, $form_state, $type) {
+  $flavors = variable_get('flavors');
+  $info = $flavors[$type];
+
+  $form['title'] = array(
+    '#type' => 'item',
+    '#markup' => t('<h1>Update @theme</h1>', array('@theme' => $info['name'])),
+  );
+
+  $form['info'] = array(
+    '#type' => 'item',
+    '#title' => t('Git repository address'),
+    '#markup' => 'fo',
+  );
+
+  $form['from'] = array(
+    '#type' => 'select',
+    '#title' => t('Branch'),
+    '#options' => array(
+      'foo',
+      'bar'
+    ),
+    '#description' => t('Change the new branch or select the old one and update.'),
+  );
+
+  $form['actions'] = array(
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Update'),
+    ),
+  );
+
+  $form['#attached']['css'][] = drupal_get_path('module', 'cp_appearance') . '/theme/cp_appearance.css';
+
+  return $form;
 }
 
 /**
