@@ -32,6 +32,7 @@ function os_news_os_app_info() {
       'news' => array(
         'url' => 'browse/news',
         'title' => t('Browse news'),
+        'menu_item' => 'news',
       ),
     ),
   );

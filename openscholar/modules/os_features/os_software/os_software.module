@@ -35,10 +35,12 @@ function os_software_os_app_info() {
       'software_project' => array(
         'url' => 'browse/projects',
         'title' => t('Browse projects'),
+        'menu_item' => 'software',
       ),
       'software_release' => array(
         'url' => 'browse/releases',
         'title' => t('Browse releases'),
+        'menu_item' => 'software',
       ),
     ),
   );

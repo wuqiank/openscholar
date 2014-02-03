@@ -34,6 +34,7 @@ function os_events_os_app_info() {
       'event' => array(
         'url' => 'browse/events',
         'title' => t('Browse events'),
+        'menu_item' => 'events',
       ),
     ),
   );
