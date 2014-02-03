@@ -21,12 +21,15 @@ function _os_pager_add_html_head_link($variables) {
   // Skips other pager link types like first, last, and numbered links.
   $text = $variables['text'];
   static $rel_prev = FALSE, $rel_next = FALSE;
+  // Looks for both full pager link text and mini pager link text.
+  $prev_values = array(t('‹ previous'), t('‹‹'));
+  $next_values = array(t('next ›'), t('››'));
   $attributes = array();
-  if (!$rel_prev && $text == t('‹ previous')) {
+  if (!$rel_prev && in_array($text, $prev_values)) {
     $rel_prev = TRUE;
     $attributes['rel'] = 'prev';
   }
-  if (!$rel_next && $text == t('next ›')) {
+  if (!$rel_next && $text == in_array($text, $next_values)) {
     $rel_next = TRUE;
     $attributes['rel'] = 'next';
   }
