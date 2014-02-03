@@ -219,6 +219,19 @@ a img {
 
 }
 
+.sv-list-image.sv-list-view-teaser.sv-list-layout-grid .content {
+	display:block;
+	}
+
+.sv-list-image.sv-list-view-teaser.sv-list-layout-grid .file {
+	background:#f1f1f1;
+	}
+
+.sv-list-image.sv-list-view-teaser.sv-list-layout-grid .field-name-os-file-description,
+.sv-list-image.sv-list-view-teaser.sv-list-layout-grid .file-info {
+	padding:0 8px;
+	}
+
 
 .block-boxes-os_sv_list_file .file img {margin-right:15px;display:block;}
 .block-boxes-os_sv_list_file .file img.file-icon {margin-right:8px;}
@@ -238,8 +251,6 @@ a img {
 
 
 /* VIDEO RULES */
-
-
 
 .sv-list-video.sv-list-view-teaser.sv-list-layout-list .video-indicator {
 bottom: 20px;
@@ -283,7 +294,7 @@ div.content a.download-link {
 	/** SV LIST GRID VIEW **/
 .os_sv_list_file.sv-list-layout-grid > div {
   display: inline-block !important;
-    padding-right: 0.5em;
+    margin-right: 0.5em;
 }
 
 .os_sv_list_file.sv-list-layout-grid img {
