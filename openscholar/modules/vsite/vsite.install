@@ -29,9 +29,6 @@ function vsite_install() {
     $rid = array_search('vsite admin', $og_roles);
     variable_set('og_group_manager_default_rids_node_' . $bundle, $rid);
   }
-
-  // Set sitewide permissions inside vsites.
-  vsite_update_sitewide_permissions();
 }
 
 /**
