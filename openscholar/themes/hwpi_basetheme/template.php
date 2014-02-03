@@ -63,7 +63,7 @@ function hwpi_basetheme_page_alter(&$page) {
       )
     )
   );
-  
+
   if (context_isset('context', 'os_public') && variable_get('enable_responsive', false)) {
     $path = drupal_get_path('theme', 'hwpi_basetheme').'/css/';
     drupal_add_css($path.'responsive.base.css');
@@ -189,12 +189,12 @@ function hwpi_basetheme_process_node(&$vars) {
 function hwpi_basetheme_field_display_node_alter(&$display, $context) {
   if ($context['entity']->type == 'event' && $context['instance']['field_name'] == 'field_date') {
     if (($context['view_mode'] != 'full') || (isset($context['entity']->os_sv_list_box) && $context['entity']->os_sv_list_box)) {
-      
-      if (isset($context['entity']->field_date[LANGUAGE_NONE][0]['value2']) && 
+
+      if (isset($context['entity']->field_date[LANGUAGE_NONE][0]['value2']) &&
           (strtotime($context['entity']->field_date[LANGUAGE_NONE][0]['value2']) - strtotime($context['entity']->field_date[LANGUAGE_NONE][0]['value']) > 24*60*60)) {
         return; //event is more than one day long - keep both dates visible
       }
-      
+
       //hide the date - it's already visible in the shield
       $display['settings']['format_type'] = 'os_time';
     }
@@ -342,7 +342,7 @@ function hwpi_basetheme_node_view_alter(&$build) {
         $build['website_details']['field_website'] = $build['field_website'];
         unset($build['field_website']);
       }
-      
+
       //Don't show an empty contact details section.
       if (!element_children($build['contact_details'])) {
         unset($build['contact_details']);
@@ -621,8 +621,12 @@ function hwpi_basetheme_date_formatter_pre_view_alter(&$entity, $vars) {
     return;
   }
 
-  // only display the start time for this particular instance of a repeat event
-  $entity->view = views_get_current_view();
+  // Only display the start time for this particular instance of a repeat event.
+  if (!$entity->view = views_get_current_view()) {
+    return;
+  }
+
+
 
   // Don't remove the field date when exporting the calendar. This the unique
   // identifier of Google calendar.
