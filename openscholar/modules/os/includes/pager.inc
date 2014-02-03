@@ -61,22 +61,7 @@ function _os_pager_build_href_attribute($variables) {
   if ($query_pager = pager_get_query_parameters()) {
     $query = array_merge($query, $query_pager);
   }
-  $href = url($_GET['q'], array('query' => array_filter($query, '_os_pager_params_not_empty')));
+  $href = url($_GET['q'], array('query' => $query));
 
   return $href;
-}
-
-/**
- * Helper function to ensure that rel=next|prev links are canonical.
- *
- * Note: this removes occasional empty query arguments like this:
- *
- * @code
- * array(
- *   'title' => '',
- * )
- * @endcode
- */
-function _os_pager_params_not_empty($value) {
-  return (strlen($value) > 0);
 }
