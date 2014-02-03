@@ -60,7 +60,7 @@ function cp_appearance_menu(){
     );
   }
 
-  $items['cp/appearance/pull-subtheme/%'] = array(
+  $items['cp/appearance/update-subtheme/%'] = array(
     'title' => 'Pull subtheme',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('cp_appearance_pull_subtheme', 3),
@@ -348,7 +348,9 @@ function theme_cp_appearance_theme_picker_form($variables) {
     $items = array();
     foreach (array_keys($flavors) as $flavor) {
       $info = $themes[$flavor];
-      $theme_info = array('screenshot' => $info['path'] . '/' . $info['screenshot'],
+      $path = isset($info['screenshot']) ? $info['path'] . '/' . $info['screenshot'] : '';
+      $theme_info = array(
+        'screenshot' => $path,
         'name' => $info['name'],
         'theme_name' => $flavor,
       );
@@ -358,15 +360,16 @@ function theme_cp_appearance_theme_picker_form($variables) {
         'id' => 'theme-' . str_replace('_', '-', $flavor),
         'data' => theme('cp-appearance-subtheme-item', array(
           'info' => $theme_info ,
-          'actions' => l(t('Pull'), 'cp/appearance/pull-subtheme/' . $flavor),
+          'actions' => "<div class='git-pull-button'>" . l(t('Pull'), 'cp/appearance/update-subtheme/' . $flavor) . "</div>",
         )),
       );
     }
 
-    $output .= theme('item_list', array(
+    $variables = array(
       'items' => $items,
       'attributes' => array('class' => 'theme-picker'),
-    ));
+    );
+    $output .= theme('item_list', $variables);
 
     $output .= t('<h1>Featured themes</h1>');
   }
@@ -511,7 +514,7 @@ function cp_appearance_admin_paths() {
   return array(
     'cp/appearance/add-subtheme' => TRUE,
     'cp/appearance/add-subtheme/*' => TRUE,
-    'cp/appearance/pull-subtheme/*' => TRUE,
+    'cp/appearance/update-subtheme/*' => TRUE,
   );
 }
 
