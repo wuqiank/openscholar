@@ -926,7 +926,7 @@ function cp_appearance_pull_subtheme($form, &$form_state, $type) {
   $form['info'] = array(
     '#type' => 'item',
     '#title' => t('Git repository address'),
-    '#markup' => $git->remote()->config('remote.origin.url')->getOutput(),
+    '#markup' => str_replace("origin", ' ', $git->remote()->config('remote.origin.url')->getOutput()),
   );
 
   // Get the current branch.
@@ -958,7 +958,12 @@ function cp_appearance_pull_subtheme($form, &$form_state, $type) {
       '#type' => 'submit',
       '#value' => t('Update'),
     ),
+    'description' => array(
+      '#type' => 'item',
+      '#markup' => t('This action will pull the latest version of the theme code n GitHub into OpenScholar.'),
+    ),
   );
+
 
   $form['#attached']['css'][] = drupal_get_path('module', 'cp_appearance') . '/theme/cp_appearance.css';
 
