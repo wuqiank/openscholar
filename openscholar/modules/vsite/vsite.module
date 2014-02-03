@@ -2918,10 +2918,18 @@ function vsite_og_permission_alter(&$perms) {
   }
 
   // Add editional permissions to vsite user and content editor.
-  $perms['view users outside groups']['default role'][] = 'vsite user';
-  $perms['unsubscribe']['default role'][] = 'vsite user';
-  $perms['view users outside groups']['default role'][] = 'content editor';
-  $perms['unsubscribe']['default role'][] = 'content editor';
+  $permissions = array(
+    'view users outside groups',
+    'unsubscribe',
+  );
+
+  foreach ($permissions as $permission) {
+    $perms[$permission]['default role'][] = 'content editor';
+    $perms[$permission]['default role'][] = 'vsite user';
+  }
+
+  // Edit box should be given to the "content editor".
+  $perms['edit box']['default role'][] = 'content editor';
 }
 
 /**
