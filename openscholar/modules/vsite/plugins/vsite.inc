@@ -431,7 +431,7 @@ class vsite extends space_og {
 
     // Iterate over "synced" permissions.
     foreach (vsite_get_os_sync_permissions() as $permission) {
-      // Set the permission of the site-wide level, based on the value in the
+      // Set the permission of the site-wide level, based on the value on the
       // VSite level.
       $perms[$permission] = og_user_access('node', $this->id, $permission);
     }
