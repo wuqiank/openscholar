@@ -884,9 +884,9 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
     return;
   }
 
-  if (!empty($args[1]) && !in_array($args[1], $vocabs)) {
+  if (!in_array($args[1], $vocabs) && !os_profiles_is_term_page($args[1])) {
     // The second part of the path after "/people" is not empty and
-    // not a vocabulary related to that person.
+    // not a vocabulary or a term related to a person.
     return;
   }
 
@@ -904,4 +904,16 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
   if (empty($context['entity']->sv_list)) {
     $view_mode = variable_get('os_profiles_display_type', 'teaser');
   }
+}
+
+
+function os_profiles_is_term_page($arg) {
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $source = drupal_lookup_path('source', $vsite->group->purl . '/' . $arg);
+    if (strpos($source, 'taxonomy/term') == 0) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
