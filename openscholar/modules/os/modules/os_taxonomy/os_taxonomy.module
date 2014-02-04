@@ -1505,6 +1505,24 @@ function _os_taxonomy_bundle_entities($bundles = array()) {
   return $ret;
 }
 
+
+/**
+ * Implements hook_form_FORM_ID_alter() for taxonomy_form_vocabulary().
+ */
+function os_taxonomy_form_taxonomy_overview_vocabularies_alter(&$form, $form_state) {
+
+  //Loop through the vocabularies in the admin form.
+  foreach (element_children($form) as $vid){
+    if(isset($form[$vid]['#vocabulary'])){
+      $vocab = $form[$vid]['#vocabulary'];
+      //Link to the vocabulary in the admin list
+      $form[$vid]['name'] = array('#type' => 'link', '#title' => check_plain($vocab->name), '#href' => "vocab/$vocab->machine_name");
+    }
+  }
+
+}
+
+
 /**
  * Implements hook_form_FORM_ID_alter() for taxonomy_form_vocabulary().
  */
@@ -1569,6 +1587,8 @@ function os_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {
  */
 function os_taxonomy_taxonomy_vocabulary_insert($vocabulary) {
   $langcode = entity_language('taxonomy_vocabulary', $vocabulary);
+  //Create the default context
+  _os_taxonomy_create_default_context($vocabulary);
 
   // Skip processing if the user has disabled pathauto for the term.
   if (!isset($vocabulary->path['pathauto']) || !empty($vocabulary->path['pathauto'])) {
@@ -1662,4 +1682,58 @@ function os_taxonomy_vocabulary_uri($vocabulary) {
   return array(
     'path' => 'vocab/' . $vocabulary->machine_name,
   );
+}
+
+/**
+ * Create the default context
+ */
+function _os_taxonomy_create_default_context($vocabulary) {
+  //This only applies to multi-tenant
+  if(!module_exists('vsite')){
+    return;
+  }
+
+  $vsite = vsite_get_vsite();
+  if(!$vsite) {
+    return;
+  }
+
+  //Create taxonomy block
+  $box = boxes_factory('os_taxonomy_fbt', array(
+    'delta' => time(),
+    'description' => "Filter by {$vocabulary->name} terms",
+    'title' => "Filter By",
+    'vocabulary' => $vocabulary->vid,
+    'bundles' => array(),
+    'widget_type' => 'list',
+    'range' => 15,
+    'offset' => '',
+    'show_empty_terms' => 0,
+    'show_term_descriptions' => 0,
+    'show_count' => 1,
+    'show_childs' => 1,
+    'add_childs' => 0,
+    'depth' => -1,
+    'behavior' => 'contextual',
+    'as_nav' => 0,
+  ));
+  $vsite->controllers->boxes->set($box->delta, $box);
+
+  $context_name = 'os_taxonomy-vocab-'.$vocabulary->vid;
+  $ctx = context_load($context_name);
+
+  //Get blocks from default context.
+  $blocks = $ctx->reactions['block'];
+  //Add the new box to the second sidebar.
+  $blocks['boxes-'.$box->delta] = array(
+    'module' => 'boxes',
+    'delta' => $box->delta,
+    'title' => $box->title,
+    'info' => $box->description,
+    'region' => 'sidebar_second',
+    'status' => 0,
+    'weight' => 0,
+  );
+
+  vsite_layout_context_set($context_name, $blocks);
 }
