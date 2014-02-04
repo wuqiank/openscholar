@@ -50,7 +50,6 @@ features[field_instance][] = node-event-field_default_email
 features[field_instance][] = node-event-field_event_location
 features[field_instance][] = node-event-field_event_registration
 features[field_instance][] = node-event-field_upload
-features[menu_links][] = primary-menu:calendar
 features[field_instance][] = registration-event_signup_simple-field_department
 features[field_instance][] = registration-event_signup_simple-field_full_name
 features[node][] = event
