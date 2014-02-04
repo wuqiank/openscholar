@@ -509,7 +509,7 @@ function os_profiles_profiles_fields() {
  * Submit handler; Importing person profile from external source.
  */
 function os_profiles_sync_profile_submit($form, $form_state) {
-  global $base_url;
+  global $base_url, $user;
   $keys = os_profiles_profiles_fields();
   $values = $data = array();
 
@@ -553,6 +553,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   // Set up default values.
   $values += array(
     'type' => 'person',
+    'author' => $user->uid,
   );
 
   // When there is a node in the current VSite with the title of the source node
