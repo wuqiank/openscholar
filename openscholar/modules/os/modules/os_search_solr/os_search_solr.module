@@ -557,7 +557,7 @@ function os_search_solr_get_browse_pages_info() {
  * @return stdClass
  *   Bundle context information.
  */
-function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundle_url) {
+function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundle_url, $menu_item) {
   $searcher_name = os_search_solr_get_searcher_name();
   // Gets delta map
   if (!$map = facetapi_get_delta_map()) {
