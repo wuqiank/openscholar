@@ -94,7 +94,9 @@ abstract class os_boxes_default extends boxes_box {
   private function isAnonVisible() {
     $user = user_load(0);
     if ($space = spaces_get_space()) {
-     return (!module_exists('og_access') || $space->group->{OG_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'] != 1);
+     return (!module_exists('og_access')
+       || $space->group->{OG_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'] == VSITE_ACCESS_PUBLIC
+       || $space->group->{OG_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'] == VSITE_ACCESS_UNINDEXED);
     }
 
     return true;
