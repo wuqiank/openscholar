@@ -165,7 +165,7 @@ function os_publications_strongarm() {
     ),
     'revision_information' => array(
       'region' => 'right',
-      'weight' => '4',
+      'weight' => '6',
       'has_required' => FALSE,
       'title' => 'Revision information',
       'collapsed' => 1,
@@ -173,7 +173,7 @@ function os_publications_strongarm() {
     ),
     'author' => array(
       'region' => 'right',
-      'weight' => '1',
+      'weight' => '4',
       'has_required' => FALSE,
       'title' => 'Authoring information',
       'collapsed' => 1,
@@ -181,7 +181,7 @@ function os_publications_strongarm() {
     ),
     'options' => array(
       'region' => 'right',
-      'weight' => '6',
+      'weight' => '1',
       'has_required' => FALSE,
       'title' => 'Publishing options',
       'collapsed' => 1,
@@ -224,7 +224,7 @@ function os_publications_strongarm() {
     ),
     'comment_settings' => array(
       'region' => 'right',
-      'weight' => '2',
+      'weight' => '5',
       'has_required' => FALSE,
       'title' => 'Comment settings',
       'collapsed' => 1,
@@ -232,7 +232,7 @@ function os_publications_strongarm() {
     ),
     'path' => array(
       'region' => 'right',
-      'weight' => '3',
+      'weight' => '2',
       'has_required' => FALSE,
       'title' => 'URL path settings',
       'collapsed' => 1,
@@ -240,7 +240,7 @@ function os_publications_strongarm() {
     ),
     'os_menu' => array(
       'region' => 'right',
-      'weight' => '5',
+      'weight' => '3',
       'has_required' => FALSE,
       'title' => 'Menu settings',
       'collapsed' => 1,
