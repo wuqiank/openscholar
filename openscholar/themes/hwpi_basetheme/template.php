@@ -564,10 +564,10 @@ function hwpi_basetheme_status_messages($vars) {
     elseif (strpos($messages[0], 'Biblio') === 0) {
       // Allow some tags in messages about a Biblio.
       $output .= strip_tags(html_entity_decode($messages[0]), '<em><sub><sup>');
-      }
-      else {
-        $output .= $messages[0];
-      }
+    }
+    else {
+      $output .= $messages[0];
+    }
     $output .= "</div></div></div>";
   }
   return $output;
