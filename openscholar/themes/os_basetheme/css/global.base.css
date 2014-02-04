@@ -221,12 +221,16 @@ a img {
 
 .sv-list-image.sv-list-view-teaser.sv-list-layout-grid .content {
 	display:block;
+	
 	}
 
+.sv-list-video.sv-list-view-teaser.sv-list-layout-grid .file,
 .sv-list-image.sv-list-view-teaser.sv-list-layout-grid .file {
 	background:#f1f1f1;
 	}
 
+.sv-list-video.sv-list-view-teaser.sv-list-layout-grid .field-name-os-file-description,
+.sv-list-video.sv-list-view-teaser.sv-list-layout-grid .file-info,
 .sv-list-image.sv-list-view-teaser.sv-list-layout-grid .field-name-os-file-description,
 .sv-list-image.sv-list-view-teaser.sv-list-layout-grid .file-info {
 	padding:0 8px;
@@ -319,6 +323,25 @@ margin-bottom: 8px !important;
   width: 100%;
 }
 
+
+.sv-list-image.sv-list-view-teaser.sv-list-layout-grid .file,
+.sv-list-video.sv-list-view-teaser.sv-list-layout-grid .file {
+	padding-bottom: 5px !important;
+}
+
+.sv-list-video.sv-list-view-teaser.sv-list-layout-grid .content,
+.sv-list-image.sv-list-view-teaser.sv-list-layout-grid .content {
+	position:relative;
+}
+
+.sv-list-video.sv-list-view-teaser.sv-list-layout-grid .field-name-os-file-description,
+.sv-list-image.sv-list-view-teaser.sv-list-layout-grid .field-name-os-file-description {
+	display:none;
+	position:absolute;
+	z-index:2000;
+	background: #F1F1F1;
+	padding-bottom:8px;
+}
 
 p {
      margin: 0px 0px 1.5em;
