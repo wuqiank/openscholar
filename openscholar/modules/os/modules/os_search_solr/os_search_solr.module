@@ -211,6 +211,9 @@ function os_search_solr_apachesolr_index_node_solr_document(ApacheSolrDocument $
 
   // Check in the app, if we need to index the author.
   foreach (os_app_info() as $app) {
+    if (empty($app['nodetypes'])) {
+      continue;
+    }
     if (in_array($node->type, $app['nodetypes'])) {
       $index_author = $app['index author'];
       break;
