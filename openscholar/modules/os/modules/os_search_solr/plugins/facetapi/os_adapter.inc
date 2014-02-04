@@ -10,8 +10,9 @@ class OsApacheSolrFacetapiAdapter extends ApacheSolrFacetapiAdapter {
   /**
    * Overrides ApacheSolrFacetapiAdapter::getFacetSettingsGlobal().
    */
-  public function __getFacetSettingsGlobal(array $facet) {
+  public function getFacetSettingsGlobal(array $facet) {
     $result = parent::getFacetSettingsGlobal($facet);
     return $result;
   }
+
 }

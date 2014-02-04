@@ -806,3 +806,31 @@ function os_search_solr_facetapi_adapters() {
   );
 }
 
+/**
+ * Implements hook_facetapi_facet_info().
+ *
+ * apachesolr_facetapi_facet_info() hardcodes the adapter name, so we need to
+ * duplicate the function, and change the adapter to "os_apachesolr".
+ *
+ * @see apachesolr_facetapi_facet_info()
+ */
+function os_search_solr_facetapi_facet_info($searcher_info) {
+  $facets = array();
+  if ('os_apachesolr' == $searcher_info['adapter']) {
+    $environment = apachesolr_environment_load($searcher_info['instance']);
+
+    if (!empty($environment['conf']['facet callbacks'])) {
+      foreach ($environment['conf']['facet callbacks'] as $callback) {
+        if (is_callable($callback)) {
+          $facets = array_merge($facets, call_user_func($callback, $searcher_info));
+        }
+      }
+    }
+    elseif (isset($searcher_info['types']['node'])) {
+      $facets = apachesolr_default_node_facet_info();
+    }
+  }
+
+  return $facets;
+}
+
