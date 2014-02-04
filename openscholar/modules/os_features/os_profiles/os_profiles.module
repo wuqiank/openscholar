@@ -551,6 +551,13 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     $values['field_original_destination_url'] = $url . '/node/' . $nid . '.json';
   }
 
+  // Retrieve the file from the original node.
+  if ($values['field_person_photo']) {
+    $file_info = os_profiles_get_origin_node_values($values['field_person_photo']['file']['uri'] . '.json', array('url'));
+    $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
+    unset($values['field_person_photo']);
+  }
+
   // Set up default values.
   $values += array(
     'type' => 'person',
@@ -596,6 +603,10 @@ function os_profiles_sync_profile_submit($form, $form_state) {
 
   $node = node_load($nid);
 
+  if ($file) {
+    os_profiles_insert_image($node, $file);
+  }
+
   $params = array(
     '@title' => $node->title,
     '@url' => url('node/' . $node->nid),
@@ -603,6 +614,28 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   );
 
   drupal_set_message(t('The person @title has @op. You can <a href="@url">visit</a> their page.', $params));
+}
+
+/**
+ * Copy the image from the source node to any node.
+ *
+ * @param $node
+ *  The node object.
+ * @param $file
+ *  The file object.
+ */
+function os_profiles_insert_image($node, $file) {
+  $node->field_person_photo[$node->language][] = array(
+    'fid' => $file->fid,
+    'display' => 1,
+    'description' => '',
+    'cropbox_x' => 0,
+    'cropbox_y' => 0,
+    'cropbox_height' => 0,
+    'cropbox_width' => 0,
+  );
+
+  node_save($node);
 }
 
 /**
