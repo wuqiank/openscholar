@@ -54,6 +54,7 @@ features[variable][] = menu_parent_presentation
 features[variable][] = node_options_presentation
 features[variable][] = node_preview_presentation
 features[variable][] = node_submitted_presentation
+features[variable][] = nodeformscols_field_placements_presentation_default
 features[variable][] = pathauto_node_presentation_pattern
 features[views_view][] = os_presentations
 spaces[types][] = og

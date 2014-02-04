@@ -252,6 +252,9 @@ projects[nice_menus][patch][] = "https://raw.github.com/openscholar/openscholar/
 projects[nice_menus][subdir] = "contrib"
 projects[nice_menus][version] = 2.1
 
+projects[nodeformcols][subdir] = "contrib"
+projects[nodeformcols][version] = 1.0
+
 projects[nodeorder][subdir] = "contrib"
 projects[nodeorder][version] = 1.1
 
