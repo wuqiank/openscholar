@@ -87,6 +87,16 @@ function os_profiles_init() {
     }
 
     $data = os_profiles_get_origin_node_values($node->field_original_destination_url[LANGUAGE_NONE][0]['value'], $fields);
+
+    // The field person is an array. Remove him for the update method but keep
+    // it for later.
+    if ($data->values['field_person_photo']) {
+      $file_info = os_profiles_get_origin_node_values($data->values['field_person_photo']['file']['uri'] . '.json', array('url'));
+      $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
+      os_profiles_insert_image($node, $file);
+      unset($data->values['field_person_photo']);
+    }
+
     $handler->update($node->nid, $data->values);
   }
 
@@ -625,7 +635,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  *  The file object.
  */
 function os_profiles_insert_image($node, $file) {
-  $node->field_person_photo[$node->language][] = array(
+  $node->field_person_photo[$node->language][0] = array(
     'fid' => $file->fid,
     'display' => 1,
     'description' => '',
