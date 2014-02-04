@@ -502,6 +502,7 @@ function os_profiles_profiles_fields() {
     'field_middle_name_or_initial',
     'field_professional_title',
     'field_website',
+    'field_person_photo',
   );
 }
 
@@ -1379,4 +1380,13 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
   if (empty($context['entity']->sv_list)) {
     $view_mode = variable_get('os_profiles_display_type', 'teaser');
   }
+}
+
+/**
+ * Implements hook_field_info_alter().
+ *
+ * Adding entity metadata wrapper support for the image field crop module.
+ */
+function os_profiles_field_info_alter(&$info) {
+  $info['imagefield_crop']['property_callbacks'] = array('entity_metadata_field_image_callback', 'entity_metadata_field_file_callback');
 }
