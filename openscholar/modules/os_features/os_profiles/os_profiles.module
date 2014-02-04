@@ -16,8 +16,8 @@ function os_profiles_os_app_info() {
 
   $apps['os_profiles'] = array(
     'path' => 'people',
-  	'nodetypes' => array(
-  	  'person',
+    'nodetypes' => array(
+      'person',
     ),
     'views tabs' => array(
       'os_profiles' => array('page'),
@@ -39,24 +39,55 @@ function os_profiles_os_app_info() {
 }
 
 /**
- * Implements hook_os_entity_view_modes()
+ * Implements hook_menu().
+ */
+function os_profiles_menu() {
+  $items = array();
+
+  $items['cp/people/syc-profiles'] = array(
+    'title' => 'Sync',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_profiles_sync_profile'),
+    'access arguments' => array('create person content'),
+  );
+
+  $items['people/profile_autocomplete'] = array(
+    'title' => 'Sync',
+    'page callback' => 'os_profile_return_auto_complete',
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function os_profiles_admin_paths() {
+  return array(
+    'cp/people/syc-profiles' => TRUE,
+  );
+}
+
+/**
+ * Implements hook_os_entity_view_modes().
  */
 function os_profiles_os_entity_view_modes() {
   return array('node' => array(
-    'person' => array('sidebar_teaser')
+    'person' => array('sidebar_teaser'),
   ));
 }
 
-
 /**
- * Implements hook_process_hook() for node.
- *
- * Enter description here...
+ * Implements hook_process_node().
  */
 function os_profiles_process_node(&$vars) {
   if ($vars['type'] !== 'person') {
     return;
   }
+
+  // Adding header for determine the node ID.
+  drupal_add_http_header('node_json', url('node/' . $vars['nid'] . '.json', array('absolute' => TRUE)));
 
   // Helps poor theme developers find these changes to $variables
   $vars['classes'] .= ' modified-in-os_profiles_process_node';
@@ -129,7 +160,7 @@ function os_profiles_process_node(&$vars) {
 /**
  * Implements hook_node_presave().
  *
- * Generates node title for Person nodes
+ * Generates node title for Person nodes.
  */
 function os_profiles_node_presave($node) {
   if ($node->type !== 'person') {
@@ -210,6 +241,233 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_os_add_new_links_alter().
+ */
+function os_profiles_os_add_new_links_alter(&$links) {
+  // In order to display the syc button in the profile page and profiles node
+  // pages we'll use context. The people context will be available in the node
+  // pages and people page and this will help us by not using the menu_get_item
+  // and menu_get_object functions.
+  $active = context_active_contexts();
+
+  if (!in_array('profiles_profiles', array_keys($active))) {
+    return;
+  }
+
+  $links['sync'] = array(
+    'title' => t('Sync'),
+    'href' => 'cp/people/syc-profiles',
+  );
+}
+
+/**
+ * Page callback; Allow user to sync profile from external source.
+ */
+function os_profiles_sync_profile($form, $form_state) {
+  $form = array();
+
+  $form['autocomplete'] = array(
+    '#type' => 'textfield',
+    '#title' => '',
+    '#description' => t('Search the person by the first or last name.'),
+    '#autocomplete_path' => 'people/profile_autocomplete',
+  );
+
+  $form['or'] = array(
+    '#type' => 'markup',
+    '#markup' => t('<b>OR</b>'),
+  );
+
+  $form['url'] = array(
+    '#type' => 'textfield',
+    '#title' => '',
+    '#description' => t('Enter the URL of the profile from anotehr site.'),
+  );
+
+  $form['actions'] = array(
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    ),
+  );
+
+  return $form;
+}
+
+/**
+ * Page callback; Return auto complete list of people for auto complete field.
+ */
+function os_profile_return_auto_complete($string = '') {
+  // Get the fields table name,
+  $field_info = field_info_field('field_first_name');
+  $first_name_field = _field_sql_storage_tablename($field_info);
+
+  $field_info = field_info_field('field_last_name');
+  $last_name_field = _field_sql_storage_tablename($field_info);
+
+  // Create the DB or condition we'll pass to the query.
+  $db_or = db_or()
+    ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
+    ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
+
+  // Build the SQL query. We usק DB select and not EFQ due to lack of support
+  // EFQ has with NULL values.
+  $query = db_select('node', 'n');
+  $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
+  $query->leftJoin($last_name_field, 'last', 'last.entity_id = n.nid');
+
+  // Exclude results from the current site.
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $query->join('og_membership', 'ogm', 'ogm.etid = n.nid');
+    $query->condition('ogm.gid', $vsite->id, '<>');
+
+    // Exclude results of private sites.
+    if ($field = field_info_field(VSITE_ACCESS_FIELD)) {
+      $access_field_table = _field_sql_storage_tablename($field);
+      $query->leftJoin($access_field_table, 'access', 'access.entity_id = ogm.gid');
+      $query->condition('access.group_access_value', VSITE_ACCESS_PUBLIC);
+    }
+  }
+
+  $results = $query
+    ->condition('n.type', 'person')
+    ->condition($db_or)
+    ->condition('n.status', NODE_PUBLISHED)
+    ->fields('n', array('nid', 'title'))
+    ->range(0, 25)
+    ->orderBy('n.nid')
+    ->execute()
+    ->fetchAllAssoc('nid');
+
+  $output = array();
+  foreach ($results as $result) {
+    $params = array(
+      '@title' => $result->title,
+      '@nid' => $result->nid,
+    );
+    $name = format_string('@title (@nid)', $params);
+    $output[$name] = $name;
+  }
+
+  drupal_json_output($output);
+}
+
+/**
+ * Validate handler; Verify the user enter the form a valid way.
+ */
+function os_profiles_sync_profile_validate($form, &$form_state) {
+  if (empty($form_state['values']['url']) && empty($form_state['values']['autocomplete'])) {
+    form_set_error('', t('You must enter a single source.'));
+    return;
+  }
+
+  if (!empty($form_state['values']['url']) && !empty($form_state['values']['autocomplete'])) {
+    form_set_error('', t("You can't import a profile from two sources."));
+    return;
+  }
+
+  if (!empty($form_state['values']['url'])) {
+    $headers = get_headers($form_state['values']['url']);
+    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
+      return;
+    }
+
+    foreach ($headers as $header) {
+      if (strpos($header, 'node_json: ') === 0) {
+        $form_state['json_address'] = str_replace('node_json: ', '', $header);
+        return;
+      }
+    }
+
+    // JSON address was not found in the header.
+    form_set_error('url', t('Make sure you have an updated OpenScholar installation.'));
+  }
+}
+
+/**
+ * Submit handler; Importing person profile from external source.
+ */
+function os_profiles_sync_profile_submit($form, $form_state) {
+  $keys = array(
+    'title',
+    'body',
+    'field_first_name',
+    'field_last_name',
+    'field_address',
+    'field_phone',
+    'field_email',
+    'field_middle_name_or_initial',
+    'field_professional_title',
+    'field_website',
+  );
+
+  if (!empty($form_state['values']['url'])) {
+    $json_address = $form_state['json_address'];
+    $request = drupal_http_request($json_address);
+    $data = drupal_json_decode($request->data);
+
+    foreach ($keys as $key) {
+      if (empty($data[$key])) {
+        continue;
+      }
+
+      $values[$key] = $data[$key];
+    }
+  }
+  else {
+    preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
+    $wrapper = entity_metadata_wrapper('node', $matches[1]);
+    foreach ($keys as $key) {
+      if (isset($wrapper->{$key}) && $value = $wrapper->{$key}->value()) {
+        $values[$key] = $value;
+      }
+    }
+  }
+
+  $values['type'] = 'person';
+
+  // When there is a node in the current vsite with the title of the source node
+  // we need to update the current node.
+  $method = 'create';
+  $arguments = array($values);
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $query = new EntityFieldQuery();
+    $result = $query
+      ->entityCondition('entity_type', 'node')
+      ->propertyCondition('title', $values['title'])
+      ->propertyCondition('type', 'person')
+      ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id)
+      ->range(0, 1)
+      ->execute();
+
+    if (!empty($result)) {
+      $method = 'update';
+      $arguments = array(reset($result['node'])->nid, $values);
+    }
+  }
+
+  $handler = restws_resource_controller('node');
+
+  $nid = call_user_func_array(array($handler, $method), $arguments);
+
+  if ($method == 'update') {
+    $nid = $arguments[0];
+  }
+
+  $node = node_load($nid);
+
+  $params = array(
+    '@title' => $node->title,
+    '@url' => url('node/' . $node->nid),
+    '@op' => $method == 'update' ? t('updated') : t('created'),
+  );
+
+  drupal_set_message(t('The person @title has @op. You can <a href="@url">visit</a> their page.', $params));
 }
 
 /**

@@ -639,6 +639,19 @@ function cp_user_form_user_register_form_alter(&$form, &$form_state, $form_id) {
     // be adding to their site as well as creating the user, in one step.
     $form['actions']['submit']['#value'] = t('Create and add member');
   }
+
+  // Remove vsite user, vsite admin and content editor roles from list of
+  // site-wide roles.
+  $roles = array(
+    'vsite user',
+    'vsite admin',
+    'content editor',
+  );
+  foreach ($roles as $role) {
+    if (($key = array_search($role, $form['account']['roles']['#options'])) !== FALSE)  {
+      unset($form['account']['roles']['#options'][$key]);
+    }
+  }
 }
 
 /**

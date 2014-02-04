@@ -159,8 +159,15 @@ function os_reader_update_7003(&$sandbox) {
   // Increase the progress.
   $sandbox['progress'] += $batch;
 
-  // Save the last node, increase the node and check if the import finished.
-  $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
+  if ($sandbox['progress'] > $sandbox['total']) {
+    // The total results amount is smaller then the amount we processed in a
+    // single batch. After a single batch we can set the finished to true.
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    // Save the last node, increase the node and check if the import finished.
+    $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
+  }
 }
 
 /**
