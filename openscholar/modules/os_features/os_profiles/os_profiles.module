@@ -863,6 +863,10 @@ function os_profiles_manage_synced_profiles($url, $values) {
  * field is not populate.
  */
 function os_profiles_restws_request_alter(&$request) {
+  if ($request['resource']->resource() != 'node') {
+    return;
+  }
+
   $node = node_load($request['id']);
 
   $wrapper = entity_metadata_Wrapper('node', $node);
