@@ -467,7 +467,7 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
 
     $headers = get_headers($form_state['values']['url']);
     if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      form_set_error('url', t('The address you have provided is not a Drupal 7 site.'));
+      form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
       return;
     }
 
