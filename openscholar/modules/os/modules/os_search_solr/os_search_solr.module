@@ -739,7 +739,7 @@ function os_search_solr_setup_core_searcher() {
   $searcher->description = 'Openscholar Search Page';
   $searcher->search_path = 'search/site';
   $searcher->page_title = 'Site';
-  $searcher->env_id = 'solr';
+  $searcher->env_id = apachesolr_default_environment();
   $searcher->settings = array(
     'fq' => array(),
     'apachesolr_search_custom_enable' => 0,
@@ -774,7 +774,7 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
   $searcher->description = $bundle_title;
   $searcher->search_path = $bundle_url;
   $searcher->page_title = $bundle_title;
-  $searcher->env_id = 'solr';
+  $searcher->env_id = apachesolr_default_environment();
   $searcher->settings = array(
     'fq' => array(
       0 => 'bundle:' . $bundle_name,
