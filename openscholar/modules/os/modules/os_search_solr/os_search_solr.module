@@ -83,26 +83,22 @@ function os_search_solr_os_widget() {
 }
 
 /**
- * Alter the query after it's prepared and cached.
- *
- * @param object $query
- *   An object implementing DrupalSolrQueryInterface. No need for &.
+ * Implements hook_apachesolr_query_alter().
  */
-function os_search_solr_apachesolr_query_alter($query) {
-
-  if (!variable_get('os_search_solr_query_multisites',FALSE)) {
-    // Limit searches to just this OpenScholar install in shared indexes
-    $query->addFilter('hash', apachesolr_site_hash());
-  }
-
-  if(module_exists('vsite') && ($vsite = spaces_get_space())) {
+function os_search_solr_apachesolr_query_alter(DrupalSolrQueryInterface $query) {
+  if (module_exists('vsite') && ($vsite = spaces_get_space())) {
     // I only want to see items in this site
     $query->addFilter("sm_og_group_ref", $vsite->group_type.":".$vsite->id);
-
-  } elseif (variable_get('file_default_scheme', 'public') == 'private') {
+  }
+  elseif (variable_get('file_default_scheme', 'public') == 'private') {
     //We are not in a vsite, and we are in  a private install.
     drupal_access_denied();
     drupal_exit();
+  }
+
+  if (!variable_get('os_search_solr_query_multisites', FALSE)) {
+    // Limit searches to just this OpenScholar install in shared indexes.
+    $query->addFilter('hash', apachesolr_site_hash());
   }
 }
 
@@ -784,3 +780,29 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
 
   return $searcher;
 }
+
+/**
+ * Implements hook_facetapi_searcher_info_alter()
+ */
+function os_search_solr_facetapi_searcher_info_alter(array &$searcher_info) {
+  foreach ($searcher_info as &$row) {
+    if ($row['adapter'] == 'apachesolr') {
+      $row['adapter'] = 'os_apachesolr';
+      $row['module'] = 'os_search_solr';
+    }
+  }
+}
+
+/**
+ * Implements hook_facetapi_adapters().
+ */
+function os_search_solr_facetapi_adapters() {
+  return array(
+    'os_apachesolr' => array(
+      'handler' => array(
+        'class' => 'OsApacheSolrFacetapiAdapter',
+      ),
+    ),
+  );
+}
+
