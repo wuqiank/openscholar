@@ -1253,6 +1253,15 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I go to the "([^"]*)" app settings in the vsite "([^"]*)"$/
+   */
+  public function iGoToTheAppSettingsInVsite($app_name, $vsite) {
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/build/features/' . $app_name . '"'),
+    );
+  }
+
+  /**
    * @Then /^I should see the feed item "([^"]*)" was imported$/
    */
   public function iShouldSeeTheFeedItemWasImported($feed_item) {
@@ -1474,6 +1483,37 @@ class FeatureContext extends DrupalContext {
       new Step\When('I visit "' . $group . '/cp/users/add"'),
       new Step\When('I fill in "User" with "' . $username . '"'),
       new Step\When('I press "Add users"'),
+    );
+  }
+
+  /**
+   * @Given /^I make registration to event without javascript available$/
+   */
+  public function iMakeRegistrationToEventWithoutJavascriptAvailable() {
+    $this->invoke_code('os_migrate_demo_event_registration_form');
+  }
+
+  /**
+   * @Given /^I make registration to event without javascript unavailable$/
+   */
+  public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
+    $this->invoke_code('os_migrate_demo_event_registration_link');
+  }
+
+  /**
+   * @Given /^I update the node "([^"]*)" field "([^"]*)" to "([^"]*)"$/
+   */
+  public function iUpdateTheNodeFieldTo($title, $field, $value) {
+    $title = str_replace("'", "\'", $title);
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+
+    $purl = $this->invoke_code('os_migrate_demo_get_node_vsite_purl', array("'$nid'"));
+    $purl = !empty($purl) ? $purl . '/' : '';
+
+    return array(
+      new Step\When('I visit "' . $purl . 'node/' . $nid . '/edit"'),
+      new Step\When('I fill in "' . $field . '" with "' . $value . '"'),
+      new Step\When('I press "Save"'),
     );
   }
 }

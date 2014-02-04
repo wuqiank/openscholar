@@ -2234,6 +2234,10 @@ function vsite_mail($key, &$message, $params){
       $message['body'][] = t("If you don't want to receive such e-mails, you can change your settings at !url.", array(
         '!url' => $vsite->get_absolute_url("cp/settings")
       ));
+
+      // This is done so that when the recipient auto-reply is on, the response
+      // won't be sent to the site email (held in the site_mail variable).
+      $message['headers']['Sender'] = $message['headers']['Return-Path'] = $message['headers']['From'];
       break;
   }
 }

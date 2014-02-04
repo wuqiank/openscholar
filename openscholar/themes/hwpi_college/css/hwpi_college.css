@@ -139,6 +139,10 @@ blockquote {
 
 }
 
+ul.nice-menu-down li ul li ul {
+  left: 12em;
+}
+
 #menu-bar ul.nice-menu .menuparent.over > a,
 #menu-bar ul.nice-menu .menuparent a:hover {
     background: url('../../hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat #86111E;
@@ -147,6 +151,12 @@ blockquote {
 #menu-bar ul.nice-menu .menuparent a.active,
 #menu-bar ul.nice-menu .menuparent a.active:hover {
     background: url('../../hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat #6a1319;
+}
+
+#menu-bar ul.nice-menu ul .menuparent.over > a,
+#menu-bar ul.nice-menu ul .menuparent a:hover,
+#menu-bar ul.nice-menu ul .menuparent a.active {
+     color:#FFF;
 }
 
 
@@ -375,7 +385,6 @@ h1#page-title {
 .sidebar #block-views-os-events-block-1.block,
 #content-column #block-views-os-events-block-1.block,
 #content-column .block.block-boxes-os_slideshow_box,
-.block-boxes.block-boxes-os_sv_list_box,
 .block-boxes.block-boxes-os_sv_list_box .node-person .block-inner,
 .block-boxes-os_boxes_manual_list, 
 .sidebar .block.section-nav,

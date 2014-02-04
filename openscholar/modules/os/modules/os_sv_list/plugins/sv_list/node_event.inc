@@ -30,7 +30,7 @@ class sv_list_node_event extends sv_list_plugin  {
    */
   public function sort_event($options, $efq) {
     $efq->fieldOrderBy('field_date', 'value');
-    $efq->fieldCondition('field_date', 'value', date('Y-m-d'), '>=');
+    $efq->fieldCondition('field_date', 'value2', date('Y-m-d'), '>=');
   }
   
   /**

@@ -40,6 +40,8 @@ Feature:
   Scenario: Test registering to event.
     Given I am logging in as "john"
       And I make "bill" a member in vsite "john"
+      And I am logging in as "admin"
+      And I make registration to event without javascript available
      When I am logging in as "bill"
       And I visit "john/event/my-new-event"
       And I fill in "Email" with "bill@example.com"
@@ -50,5 +52,7 @@ Feature:
       And I visit "john/event/my-new-event"
       And I click "Manage Registrations"
       And I should see "bill@example.com"
+      And I am logging in as "admin"
+      And I make registration to event without javascript unavailable
 
 

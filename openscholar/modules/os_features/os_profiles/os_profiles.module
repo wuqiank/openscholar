@@ -16,8 +16,8 @@ function os_profiles_os_app_info() {
 
   $apps['os_profiles'] = array(
     'path' => 'people',
-  	'nodetypes' => array(
-  	  'person',
+    'nodetypes' => array(
+      'person',
     ),
     'views tabs' => array(
       'os_profiles' => array('page'),
@@ -36,24 +36,55 @@ function os_profiles_os_app_info() {
 }
 
 /**
- * Implements hook_os_entity_view_modes()
+ * Implements hook_menu().
+ */
+function os_profiles_menu() {
+  $items = array();
+
+  $items['cp/people/syc-profiles'] = array(
+    'title' => 'Sync',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_profiles_sync_profile'),
+    'access arguments' => array('create person content'),
+  );
+
+  $items['people/profile_autocomplete'] = array(
+    'title' => 'Sync',
+    'page callback' => 'os_profile_return_auto_complete',
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function os_profiles_admin_paths() {
+  return array(
+    'cp/people/syc-profiles' => TRUE,
+  );
+}
+
+/**
+ * Implements hook_os_entity_view_modes().
  */
 function os_profiles_os_entity_view_modes() {
   return array('node' => array(
-    'person' => array('sidebar_teaser')
+    'person' => array('sidebar_teaser'),
   ));
 }
 
-
 /**
- * Implements hook_process_hook() for node.
- *
- * Enter description here...
+ * Implements hook_process_node().
  */
 function os_profiles_process_node(&$vars) {
   if ($vars['type'] !== 'person') {
     return;
   }
+
+  // Adding header for determine the node ID.
+  drupal_add_http_header('node_json', url('node/' . $vars['nid'] . '.json', array('absolute' => TRUE)));
 
   // Helps poor theme developers find these changes to $variables
   $vars['classes'] .= ' modified-in-os_profiles_process_node';
@@ -76,6 +107,16 @@ function os_profiles_process_node(&$vars) {
     //move the title inside
     $vars['content']['node_title'] = array(
       '#weight' => -50,
+      '#markup' => '<h1 ' . $vars['title_attributes'] . '><a href="' . $vars['node_url'] . '">' . $vars['title'] . '</a></h1>'
+    );
+    $vars['title'] = NULL;
+  }
+
+  // No image teaser.
+  if ($vars['view_mode'] == 'no_image_teaser') {
+    // Move the title inside.
+    $vars['content']['node_title'] = array(
+      '#weight' => -99,
       '#markup' => '<h1 ' . $vars['title_attributes'] . '><a href="' . $vars['node_url'] . '">' . $vars['title'] . '</a></h1>'
     );
     $vars['title'] = NULL;
@@ -116,7 +157,7 @@ function os_profiles_process_node(&$vars) {
 /**
  * Implements hook_node_presave().
  *
- * Generates node title for Person nodes
+ * Generates node title for Person nodes.
  */
 function os_profiles_node_presave($node) {
   if ($node->type !== 'person') {
@@ -196,5 +237,667 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
         }
       }
     }
+  }
+}
+
+/**
+ * Implements hook_os_add_new_links_alter().
+ */
+function os_profiles_os_add_new_links_alter(&$links) {
+  // In order to display the syc button in the profile page and profiles node
+  // pages we'll use context. The people context will be available in the node
+  // pages and people page and this will help us by not using the menu_get_item
+  // and menu_get_object functions.
+  $active = context_active_contexts();
+
+  if (!in_array('profiles_profiles', array_keys($active))) {
+    return;
+  }
+
+  $links['sync'] = array(
+    'title' => t('Sync'),
+    'href' => 'cp/people/syc-profiles',
+  );
+}
+
+/**
+ * Page callback; Allow user to sync profile from external source.
+ */
+function os_profiles_sync_profile($form, $form_state) {
+  $form = array();
+
+  $form['autocomplete'] = array(
+    '#type' => 'textfield',
+    '#title' => '',
+    '#description' => t('Search the person by the first or last name.'),
+    '#autocomplete_path' => 'people/profile_autocomplete',
+  );
+
+  $form['or'] = array(
+    '#type' => 'markup',
+    '#markup' => t('<b>OR</b>'),
+  );
+
+  $form['url'] = array(
+    '#type' => 'textfield',
+    '#title' => '',
+    '#description' => t('Enter the URL of the profile from anotehr site.'),
+  );
+
+  $form['actions'] = array(
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    ),
+  );
+
+  return $form;
+}
+
+/**
+ * Page callback; Return auto complete list of people for auto complete field.
+ */
+function os_profile_return_auto_complete($string = '') {
+  // Get the fields table name,
+  $field_info = field_info_field('field_first_name');
+  $first_name_field = _field_sql_storage_tablename($field_info);
+
+  $field_info = field_info_field('field_last_name');
+  $last_name_field = _field_sql_storage_tablename($field_info);
+
+  // Create the DB or condition we'll pass to the query.
+  $db_or = db_or()
+    ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
+    ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
+
+  // Build the SQL query. We usק DB select and not EFQ due to lack of support
+  // EFQ has with NULL values.
+  $query = db_select('node', 'n');
+  $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
+  $query->leftJoin($last_name_field, 'last', 'last.entity_id = n.nid');
+
+  // Exclude results from the current site.
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $query->join('og_membership', 'ogm', 'ogm.etid = n.nid');
+    $query->condition('ogm.gid', $vsite->id, '<>');
+
+    // Exclude results of private sites.
+    if ($field = field_info_field(VSITE_ACCESS_FIELD)) {
+      $access_field_table = _field_sql_storage_tablename($field);
+      $query->leftJoin($access_field_table, 'access', 'access.entity_id = ogm.gid');
+      $query->condition('access.group_access_value', VSITE_ACCESS_PUBLIC);
+    }
+  }
+
+  $results = $query
+    ->condition('n.type', 'person')
+    ->condition($db_or)
+    ->condition('n.status', NODE_PUBLISHED)
+    ->fields('n', array('nid', 'title'))
+    ->range(0, 25)
+    ->orderBy('n.nid')
+    ->execute()
+    ->fetchAllAssoc('nid');
+
+  $output = array();
+  foreach ($results as $result) {
+    $params = array(
+      '@title' => $result->title,
+      '@nid' => $result->nid,
+    );
+    $name = format_string('@title (@nid)', $params);
+    $output[$name] = $name;
+  }
+
+  drupal_json_output($output);
+}
+
+/**
+ * Validate handler; Verify the user enter the form a valid way.
+ */
+function os_profiles_sync_profile_validate($form, &$form_state) {
+  if (empty($form_state['values']['url']) && empty($form_state['values']['autocomplete'])) {
+    form_set_error('', t('You must enter a single source.'));
+    return;
+  }
+
+  if (!empty($form_state['values']['url']) && !empty($form_state['values']['autocomplete'])) {
+    form_set_error('', t("You can't import a profile from two sources."));
+    return;
+  }
+
+  if (!empty($form_state['values']['url'])) {
+    $headers = get_headers($form_state['values']['url']);
+    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
+      return;
+    }
+
+    foreach ($headers as $header) {
+      if (strpos($header, 'node_json: ') === 0) {
+        $form_state['json_address'] = str_replace('node_json: ', '', $header);
+        return;
+      }
+    }
+
+    // JSON address was not found in the header.
+    form_set_error('url', t('Make sure you have an updated OpenScholar installation.'));
+  }
+}
+
+/**
+ * Submit handler; Importing person profile from external source.
+ */
+function os_profiles_sync_profile_submit($form, $form_state) {
+  $keys = array(
+    'title',
+    'body',
+    'field_first_name',
+    'field_last_name',
+    'field_address',
+    'field_phone',
+    'field_email',
+    'field_middle_name_or_initial',
+    'field_professional_title',
+    'field_website',
+  );
+
+  if (!empty($form_state['values']['url'])) {
+    $json_address = $form_state['json_address'];
+    $request = drupal_http_request($json_address);
+    $data = drupal_json_decode($request->data);
+
+    foreach ($keys as $key) {
+      if (empty($data[$key])) {
+        continue;
+      }
+
+      $values[$key] = $data[$key];
+    }
+  }
+  else {
+    preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
+    $wrapper = entity_metadata_wrapper('node', $matches[1]);
+    foreach ($keys as $key) {
+      if (isset($wrapper->{$key}) && $value = $wrapper->{$key}->value()) {
+        $values[$key] = $value;
+      }
+    }
+  }
+
+  $values['type'] = 'person';
+
+  // When there is a node in the current vsite with the title of the source node
+  // we need to update the current node.
+  $method = 'create';
+  $arguments = array($values);
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $query = new EntityFieldQuery();
+    $result = $query
+      ->entityCondition('entity_type', 'node')
+      ->propertyCondition('title', $values['title'])
+      ->propertyCondition('type', 'person')
+      ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id)
+      ->range(0, 1)
+      ->execute();
+
+    if (!empty($result)) {
+      $method = 'update';
+      $arguments = array(reset($result['node'])->nid, $values);
+    }
+  }
+
+  $handler = restws_resource_controller('node');
+
+  $nid = call_user_func_array(array($handler, $method), $arguments);
+
+  if ($method == 'update') {
+    $nid = $arguments[0];
+  }
+
+  $node = node_load($nid);
+
+  $params = array(
+    '@title' => $node->title,
+    '@url' => url('node/' . $node->nid),
+    '@op' => $method == 'update' ? t('updated') : t('created'),
+  );
+
+  drupal_set_message(t('The person @title has @op. You can <a href="@url">visit</a> their page.', $params));
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds additional display settings for the os_profiles app.
+ */
+function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
+  if ($form['#feature'] != 'os_profiles') {
+    return;
+  }
+
+  // Form element for disabling the use of a default image.
+  $form['os_profiles_disable_default_image'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable default image for people profiles'),
+    '#default_value' => variable_get('os_profiles_disable_default_image', FALSE),
+    '#description' => t('If checked no image will be used when viewing the "/people" page.'),
+    '#weight' => -99,
+  );
+
+  $profile_styles = array(
+    'title' => t('Name only'),
+    'teaser' => t('Teaser'),
+    'sidebar_teaser' => t('Name, image, and professional title'),
+    'no_image_teaser' => t('No image teaser'),
+  );
+
+  $profile_styles_hover = array();
+  $counter = 0;
+
+  // Create markup for style examples when hovering over each style.
+  foreach ($profile_styles as $style => $name) {
+    $counter ++;
+    // Prepare the popup and the style name.
+    $profile_example_link = '<a href="#" class="profile-pop" data-popbox="pop'.$counter.'">' . check_plain($name) . '</a>';
+    $profile_example_title = '<h2>' . $name . '</h2>';
+    // Prepare the profile style example for the popup.
+    $profile_example = _os_profiles_build_display_style_example($style);
+    $profile_example_text = '<p>' . $profile_example . '</p>';
+    $profile_example_output = $profile_example_link . '<div id="pop'.$counter.'" class="stylebox">' . $profile_example_title . $profile_example_text . '</div>';
+    $profile_styles_hover[$style] = $profile_example_output;
+  }
+
+  // Form element to choose display type.
+  $form['os_profiles_display_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Display Types'),
+    '#default_value' => variable_get('os_profiles_display_type', 'teaser'),
+    '#options' => $profile_styles_hover,
+    '#description' => t('Choose the display type of a person in the "/people" page.'),
+    '#weight' => -999,
+    '#attached' => array(
+      'css' => array(
+        drupal_get_path('module', 'os_profiles') . '/misc/os_profiles_settings.css',
+      ),
+      'js' => array(
+        drupal_get_path('module', 'os_profiles') . '/misc/os_profiles_settings_hover.js',
+      )
+    ),
+  );
+
+  // Get properties of the image if there's a custom default image.
+  if (module_exists('vsite') && $vsite = vsite_get_vsite() && $fid = variable_get('os_profiles_default_image_file', NULL)) {
+    $dimensions = variable_get('os_profiles_default_image_properties', array());
+
+    $instance = field_info_instance('node', 'field_person_photo', 'person');
+    if ($instance['widget']['settings']['resolution']) {
+      $ratio = explode('x', $instance['widget']['settings']['resolution']);
+      $ratio = $ratio[0]/$ratio[1];
+    }
+  }
+
+  // Show the default image used before a custom default image has been uploaded.
+  $path = drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png';
+  $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+
+  // Form element for uploading a default image.
+  $allowed_file_types = 'gif png jpg jpeg';
+  $form['file'] = array(
+    '#type' => 'managed_file',
+    '#title' => t('Default image'),
+    '#field_prefix' => '<div class="">',
+    '#field_suffix' => '</div>' . $image,
+    '#default_value' => variable_get('os_profiles_default_image_file', NULL),
+    '#description' => t('The default image will be used if a profile photo is not available. Instead, you can upload your own default image.<br/>Position the cropping tool over it if necessary. Allowed file types: <strong> @allowed_file_types </strong>', array('@allowed_file_types' => $allowed_file_types)),
+    '#upload_validators' => array(
+      'file_validate_extensions' => array($allowed_file_types),
+    ),
+    '#process' => array('_os_profiles_default_image_process'),
+    '#dimensions' => array(
+      'x' => isset($dimensions['x']) ? $dimensions['x'] : 0,
+      'y' => isset($dimensions['y']) ? $dimensions['y'] : 0,
+      'height' => isset($dimensions['height']) ? $dimensions['height'] : 140,
+      'width' => isset($dimensions['width']) ? $dimensions['width'] : 180,
+      'ratio' => isset($ratio) ? $ratio : 0,
+    ),
+    '#attached' => array(
+      'css' => array(
+        '.form-managed-file img { max-width: none; }' => array(
+          'type' => 'inline'
+        )
+      ),
+    ),
+    '#weight' => -100,
+  );
+
+  // Set upload location.
+  if (module_exists('vsite') && $space = spaces_get_space()) {
+    $form['file']['#upload_location'] = 'public://' . $space->group->purl . '/files';
+  }
+
+  $form['#submit'][] = 'os_profiles_display_settings_submit';
+}
+
+/**
+ * Process function; For uploading a default profile image.
+ */
+function _os_profiles_default_image_process($element, $form_state, $form) {
+  $element = file_managed_file_process($element, $form_state, $form);
+  $element = os_files_imagefield_crop_process($element, $form_state, $form);
+  $element['remove_button']['#submit'][] = '_os_image_remove_handler';
+
+  // When pressing "remove" call the original form's submit handler in order to
+  // set the default image file id to 0.
+  $element['remove_button']['#submit'][] = 'os_profiles_display_settings_submit';
+
+  module_load_include('inc', 'comment_sources', 'comment_sources.admin');
+  $fid = isset($element['#value']['fid']) ? $element['#value']['fid'] : 0;
+
+  // A custom default image has been uploaded.
+  if ($fid && $element['#file']) {
+    // Remove the preview of the default image.
+    unset($element['#field_prefix']);
+    unset($element['#field_suffix']);
+
+    unset($element['filename']);
+    // file_to_crop() take the cropped image and gets the original back
+    $file_to_crop = _imagefield_crop_file_to_crop($element['#file']->fid);
+    $element['preview'] = array(
+      '#type' => 'markup',
+      '#file' => $file_to_crop, // This is used by the #process function
+      '#prefix' => '<div class="imagefield-crop-preview">',
+      '#suffix' => '</div>',
+      '#process' => array('_os_profiles_default_image_preview_process'),
+      '#theme' => 'imagefield_crop_preview',
+      '#markup' => theme('image', array(
+          'path' => $element['#file']->uri,
+          'getsize' => FALSE,
+          'attributes' => array('class' => 'preview-existing'))
+      ),
+    );
+    $element['cropbox'] = array(
+      '#markup' => theme('image', array(
+          'path' => $file_to_crop->uri,
+          'attributes' => array(
+            'class' => 'cropbox',
+            'id' => $element['#id'] . '-cropbox',
+          )
+        )
+      ),
+    );
+    $settings = array(
+      $element['#id'] => array(
+        'box' => array(
+          'ratio' => $element['#dimensions']['ratio'],
+          'box_width' => 400,
+          'box_height' => 400,
+        ),
+        'minimum' => array(
+          'width' => NULL,
+          'height' => NULL,
+        ),
+      ),
+    );
+    $element['#attached']['js'][] = array(
+      'data' => array('imagefield_crop' => $settings),
+      'type' => 'setting',
+      'scope' => 'header',
+    );
+    $element['#attached']['js'][] = drupal_get_path('module', 'imagefield_crop').'/Jcrop/js/jquery.Jcrop.js';
+    $element['#attached']['js'][] = drupal_get_path('module', 'imagefield_crop').'/imagefield_crop.js';
+    $element['#attached']['css'][] = drupal_get_path('module', 'imagefield_crop').'/Jcrop/css/jquery.Jcrop.css';
+
+    $element['x'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $element['#dimensions']['x'],
+      '#attributes' => array(
+        'class' => array(
+          'edit-image-crop-x'
+        )
+      )
+    );
+
+    $element['y'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $element['#dimensions']['y'],
+      '#attributes' => array(
+        'class' => array(
+          'edit-image-crop-y'
+        )
+      )
+    );
+
+    $element['height'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $element['#dimensions']['height'],
+      '#attributes' => array(
+        'class' => array(
+          'edit-image-crop-height'
+        )
+      )
+    );
+
+    $element['width'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $element['#dimensions']['width'],
+      '#attributes' => array(
+        'class' => array(
+          'edit-image-crop-width'
+        )
+      )
+    );
+  }
+
+  return $element;
+}
+
+/**
+ * Preview process function; For previewing an uploaded default profile image.
+ */
+function _os_profiles_default_image_preview_process($element, $form_state, $form) {
+  $element = @imagefield_crop_widget_preview_process($element, $form_state, $form);
+
+  $scale = null;
+  if (module_exists('vsite') && $vsite = spaces_get_space()) {
+    $instance = field_info_instance('node', 'field_person_photo', 'person');
+    if ($instance['widget']['settings']['resolution']) {
+      $scale = explode('x', $instance['widget']['settings']['resolution']);
+      $scale = array(
+        'width' => $scale[0],
+        'height' => $scale[1],
+      );
+    }
+  }
+
+  $element['#attached']['js'][0]['data']['imagefield_crop']['edit-file']['preview']['width'] = isset($scale) ? $scale['width'] : 0;
+  $element['#attached']['js'][0]['data']['imagefield_crop']['edit-file']['preview']['height'] = isset($scale) ? $scale['height'] : 0;
+
+  $element['#imagefield_crop']['#width'] = isset($scale) ? $scale['width'] : 0;
+  $element['#imagefield_crop']['#height'] = isset($scale) ? $scale['height'] : 0;
+
+  return $element;
+}
+
+/**
+ * Submit handler for uploading a custom default profile image.
+ */
+function os_profiles_display_settings_submit($form, $form_state) {
+  $file_data = $form_state['input']['file'];
+
+  // When removing an uploaded picture set the default image file id to 0.
+  if ($form_state['triggering_element']['#value'] == 'remove') {
+    variable_set('os_profiles_default_image_file', 0);
+    return;
+  }
+
+  if ($file_data['fid']) {
+    // An image was uploaded.
+    $file = file_load($file_data['fid']);
+
+    $item = array(
+      'cropbox_x' => $file_data['x'],
+      'cropbox_y' => $file_data['y'],
+      'cropbox_height' => $file_data['height'],
+      'cropbox_width' => $file_data['width'],
+    );
+
+    $scale = null;
+    if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+      $instance = field_info_instance('node', 'field_person_photo', 'person');
+      if ($instance['widget']['settings']['resolution']) {
+        $scale = explode('x', $instance['widget']['settings']['resolution']);
+        $scale = array(
+          'width' => $scale[0],
+          'height' => $scale[1],
+        );
+      }
+    }
+
+    // This creates two images. $orig is the original, unmodified image. It is
+    // saved so we can refer to it later. $file is original uploaded image that
+    // is then cropped and is displayed in the rendered output.
+    // It relates to the original file, through the file usage table.
+    $orig = _imagefield_crop_file_to_crop($file->fid);
+    if ($orig->fid == $file->fid) {
+      $orig = imagefield_crop_create_copy($file);
+      file_usage_add($orig, 'imagefield_crop', 'file', $file->fid);
+    }
+    _imagefield_crop_resize(drupal_realpath($orig->uri), $item, $scale, $file);
+    file_save($file);
+
+    if (module_exists('vsite') && $space = spaces_get_space() && $file->fid) {
+      // Save the state of the crop tool image.
+      variable_set('os_profiles_default_image_file', $file_data['fid']);
+      $dimensions = array(
+        'x' => $file_data['x'],
+        'y' => $file_data['y'],
+        'width' => $file_data['width'],
+        'height' => $file_data['height'],
+      );
+      variable_set('os_profiles_default_image_properties', $dimensions);
+    }
+  }
+  else {
+    // No file is uploaded.
+    variable_set('os_profiles_default_image_file', 0);
+  }
+
+  // Set the display style for the profiles in the "/people" path.
+  variable_set('os_profiles_display_type', $form_state['input']['os_profiles_display_type']);
+
+  // Clear the os_profiles view cache so the setting will take effect.
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    cache_clear_all('og:node:' . $vsite->id . ':', 'cache_views_data', TRUE);
+  }
+}
+
+/**
+ * Provide display style examples for the os_profiles app settings.
+ */
+function _os_profiles_build_display_style_example($style) {
+  // Use custom default image if available.
+  if ($custom_default_image = variable_get('os_profiles_default_image_file', 0)) {
+    $image_file = file_load($custom_default_image);
+    $path = $image_file->uri;
+    $options = array(
+      'path' => $path,
+      'style_name' => 'profile_thumbnail',
+    );
+    $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
+  }
+  else {
+    // Use default image.
+    $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+    $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
+  }
+
+  switch ($style) {
+    case 'title':
+      $result = '
+        <div class="dummy-content">
+          <h1>John Fitzgerald Kennedy</h1>
+        </div>
+      ';
+      break;
+    case 'teaser':
+      $result = '
+        <div class="dummy-person-photo">
+          ' . $image . '
+        </div>
+        <div class="dummy-content">
+          <h1><a>John Fitzgerald Kennedy</a></h1>
+				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
+				  <div>Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
+				  <div>555-1234</div>
+				  <div><a>example@address.com</a></div>
+        </div>
+      ';
+      break;
+    case 'sidebar_teaser':
+      $result = '
+        <div class="dummy-person-photo">
+          ' . $image . '
+        </div>
+        <div class="dummy-content">
+          <h1><a>John Fitzgerald Kennedy</a></h1>
+				  <div class="dummy-professional-title">Drupal developer at Gizra.inc, QA person at Gizra.inc</div>
+        </div>
+      ';
+      break;
+    case 'no_image_teaser':
+      $result = '
+        <div class="dummy-content">
+          <h1><a>John Fitzgerald Kennedy</a></h1>
+				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
+				  <div>Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
+       	  <div>555-1234</div>
+				  <div><a>example@address.com</a></div>
+        </div>
+      ';
+      break;
+    default:
+      $result = '';
+  }
+
+  return $result;
+}
+
+/**
+ * Implements hook_entity_view_mode_alter().
+ *
+ * Changes the display type for profiles in the "/people" page or in a person
+ * term page (i.e "people/science/air") according to the settings in os_profiles
+ * app settings.
+ */
+function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
+  $vocabs = os_sv_list_get_content_type_vocabs('person');
+  $args = explode('/', $_GET['q']);
+
+  if ($args[0] != 'people') {
+    // The first part of the path in not "/people".
+    return;
+  }
+
+  if (!empty($args[1]) && !in_array($args[1], $vocabs)) {
+    // The second part of the path after "/people" is not empty and
+    // not a vocabulary related to that person.
+    return;
+  }
+
+  if (!isset($context['entity']->view)) {
+    // No view is used.
+    return;
+  }
+
+  if ($context['entity']->view->name != 'os_profiles') {
+    // The view in use is not the os_profiles view.
+    return;
+  }
+
+  // Don't change the view mode if the profiles are in a box.
+  if (empty($context['entity']->sv_list)) {
+    $view_mode = variable_get('os_profiles_display_type', 'teaser');
   }
 }

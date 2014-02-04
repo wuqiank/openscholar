@@ -2,6 +2,7 @@
  * Adds behavior to self-hiding wysiwyg widget
  */
 (function ($) {
+  
   function wysiwyg_focus(e) {
     var base_id = e.currentTarget.name.replace('_ifr', ''),
       editor = $('#'+base_id+' + .mceEditor table.mceLayout'),
@@ -10,17 +11,30 @@
     editor.css('height', height+'px')
       .removeClass('os-wysiwyg-collapsed');
     $('iframe', editor).css('height', height+1+'px')
-
   }
 
   function wysiwyg_minimize(element) {
     var base_id = element.name?element.name.replace('_ifr', ''):element.id.replace('_ifr', ''),
       editor = $('#'+base_id+' + .mceEditor table.mceLayout'),
-      height = (parseInt($('#'+base_id).attr('data-minrows')) * 20);
+      height = (parseInt($('#'+base_id).attr('data-minrows')) * 20),
+      scrollSize = document.body.scrollHeight,
+      scrollPos = document.body.scrollTop;
+
+    // when a scrollable area is resized, it calculates the new scroll position with the following formula:
+    // document.body.scrollTop = min(document.body.scrollTop, document.body.scrollHeight - window.innerHeight)
+    // if the old scroll position was higher than the new maximum, it gets set to maximum
+    // otherwise, nothing happens
+    // we need to get the difference between old scroll position and new, subtract it from the height the wysiwyg tags,
+    // and then subtract that from the new position
+
 
     editor.css('height', height+'px')
       .addClass('os-wysiwyg-collapsed');
     $('iframe', editor).css('height', height+1+'px');
+
+    var scrollDiff = scrollSize - document.body.scrollHeight,
+      scrollDelta = scrollPos - document.body.scrollTop;
+    document.body.scrollTop -= (scrollDiff - scrollDelta)
   }
 
   function blurHandler (e) {
