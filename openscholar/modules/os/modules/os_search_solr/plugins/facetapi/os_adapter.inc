@@ -12,6 +12,13 @@ class OsApacheSolrFacetapiAdapter extends ApacheSolrFacetapiAdapter {
    */
   public function getFacetSettingsGlobal(array $facet) {
     $result = parent::getFacetSettingsGlobal($facet);
+
+    if ($facet['name'] == 'sm_og_vocabulary') {
+      // Set the operator by variable
+      $operator = variable_get('os_search_og_vocabulary_operator', FACETAPI_OPERATOR_OR);
+      $result->settings['operator'] = $operator;
+    }
+
     return $result;
   }
 
