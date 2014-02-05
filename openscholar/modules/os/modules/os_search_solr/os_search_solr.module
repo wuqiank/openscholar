@@ -795,14 +795,11 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
  * Implements hook_form_alter()
  */
 function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
-
   /**
    * Override the Apache Solr Search Page configuration form.
    */
   if ($form_id == 'apachesolr_search_page_settings_form') {
-
     $view_modes = array('' => t('Use default core search result'));
-
     $entity_info = entity_get_info('node');
 
     /**
@@ -823,9 +820,7 @@ function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
        * Fetch currently save Solr view modes
        */
       $solr_view_modes = variable_get('os_search_solr_display_mode', '');
-
       $form['info']['page_title']['#weight'] = -2;
-
       $form['info']['apachesolr_search_view_mode'] = array(
         '#type' => 'select',
         '#title' => t('View Mode'),
@@ -845,10 +840,8 @@ function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
  * Apache Solr Save View Mode Form Submit Handler
  */
 function os_search_solr_save_view_mode($form, &$form_state) {
-
   // Get Solr View Modes
   $solr_view_modes = variable_get('os_search_solr_display_mode', '');
-
   $values = $form_state['values'];
 
   // Set View Modes
@@ -878,7 +871,6 @@ function os_search_solr_preprocess_search_results(&$variables) {
    * Check to see if the search results page we are on has a view mode selected.
    */
   if (isset($variables['search_page']['page_id']) && isset($solr_view_modes[$variables['search_page']['page_id']])) {
-
     $view_mode = $solr_view_modes[$variables['search_page']['page_id']];
 
     /**
@@ -892,11 +884,9 @@ function os_search_solr_preprocess_search_results(&$variables) {
       foreach ($variables['results'] as $result) {
         if ($result['entity_type'] == 'node'){
           $node = node_load($result['node']->entity_id);
-
-          if (is_object($node)){
+          if (is_object($node)) {
             $build = node_view($node, $view_mode);
             $build['links']['#access'] = FALSE; //hide links
-
             $variables['search_results'] .= render($build);
           }
         }
