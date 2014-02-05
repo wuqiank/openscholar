@@ -794,26 +794,26 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
 /**
  * Implementation of hook_form_alter()
  */
-function os_search_solr_form_alter(&$form, &$form_state, $form_id){
+function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
 
   /**
-   * Override the Apache Solr Search Page configuration form
+   * Override the Apache Solr Search Page configuration form.
    */
-  if ($form_id == 'apachesolr_search_page_settings_form'){
+  if ($form_id == 'apachesolr_search_page_settings_form') {
 
-    $view_modes = array('' => 'Use default core search result');
+    $view_modes = array('' => t('Use default core search result'));
 
     $entity_info = entity_get_info('node');
 
     /**
      * Build the view modes dropdown list
      */
-    foreach ($entity_info['view modes'] as $machine_name => $view_mode){
+    foreach ($entity_info['view modes'] as $machine_name => $view_mode) {
       $view_modes[$machine_name] = $view_mode['label'];
     }
 
     /**
-     * Override form to add custom view modes dropdown
+     * Override form to add custom view modes dropdown.
      */
     if ($view_modes) {
 
@@ -863,28 +863,28 @@ function os_search_solr_save_view_mode($form, &$form_state) {
 }
 
 /**
- * Implementation of hook_preprocess_search_results()
+ * Implements hook_preprocess_search_results().
  */
 function os_search_solr_preprocess_search_results(&$variables) {
   $vsite = vsite_get_vsite();
   $view_mode_variable_name = "";
 
   /**
-   * This will override node results if a node view mode way selected on the apachesolr page
-   * configuration page.
+   * This will override node results if a node view mode way selected on the
+   * apachesolr page configuration page.
    */
   $solr_view_modes =  variable_get($view_mode_variable_name, '');
 
   /**
-   * Check to see if the search results page we are on has a view mode selected .
+   * Check to see if the search results page we are on has a view mode selected.
    */
   if (isset($variables['search_page']['page_id']) && isset($solr_view_modes[$variables['search_page']['page_id']])) {
 
     $view_mode = $solr_view_modes[$variables['search_page']['page_id']];
 
     /**
-     * Iterate through results and load the node view mode instead of the default search result
-     * snippet.
+     * Iterate through results and load the node view mode instead of the
+     * default search result snippet.
      */
     if ($view_mode) {
       // Reset Search Results, we are going to completely override
