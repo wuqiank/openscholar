@@ -235,3 +235,9 @@ function media_draggable_dnd_pre_render($element) {
 
   return $element;
 }
+
+function media_draggable_file_presave($file) {
+  if (isset($file->original)) {
+    $file->timestamp = $file->original->timestamp;
+  }
+}
