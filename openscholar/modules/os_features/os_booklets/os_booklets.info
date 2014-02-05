@@ -35,6 +35,7 @@ features[features_api][] = api:2
 features[field_instance][] = node-book-body
 features[field_instance][] = node-book-field_upload
 features[node][] = book
+features[metatag][] = node:book
 features[variable][] = book_allowed_types
 features[variable][] = book_child_type
 features[variable][] = comment_anonymous_book
