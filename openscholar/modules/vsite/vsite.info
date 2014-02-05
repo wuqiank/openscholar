@@ -112,6 +112,7 @@ features[variable][] = og_features_ignore_og_fields
 features[variable][] = og_node_access_strict
 features[variable][] = os_enabled_spaces_presets
 features[variable][] = os_vsites_per_user
+features[variable][] = theme_settings
 features[views_view][] = os_subsites
 features[views_view][] = os_websites
 files[] = plugins/vsite.inc

@@ -27,6 +27,9 @@ function os_faq_os_app_info() {
         'csv' => 'os_faq',
       ),
     ),
+    'browse_pages' => array(
+      'faq' => TRUE,
+    ),
   );
 
   return $apps;

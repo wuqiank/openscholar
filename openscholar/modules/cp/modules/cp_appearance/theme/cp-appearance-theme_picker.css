@@ -196,3 +196,16 @@ padding-left: 55px;
     overflow: auto;
     margin-bottom: 1em;
 }
+
+.delete-subtheme,
+.git-pull-button,
+.zip-pull-button {
+  float: right;
+  padding-left: 5px;
+}
+
+.delete-subtheme a,
+.git-pull-button a,
+.zip-pull-button a {
+  color: white;
+}
