@@ -25,6 +25,7 @@ function harvard_courses_os_app_info() {
         'url' => 'browse/courses',
         'title' => t('Browse courses'),
         'menu_item' => 'courses',
+        'display_mode' => 'teaser',
       ),
     ),
   );

@@ -719,7 +719,11 @@ function os_search_solr_apachesolr_search_default_searchers() {
   $export['core_search'] = os_search_solr_setup_core_searcher();
 
   foreach (os_search_solr_get_browse_pages_info() as $bundle_name => $bundle_info) {
-    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_searcher($bundle_name, $bundle_info['title'], $bundle_info['url']);
+    $page_id = 'browse_' . $bundle_name;
+    $export[$page_id] = os_search_solr_setup_bundle_searcher($bundle_name, $bundle_info['title'], $bundle_info['url']);
+
+    // Set the default display mode for the searcher.
+    os_search_solr_save_view_mode($page_id, $bundle_info['display_mode']);
   }
   return $export;
 }
@@ -831,7 +835,7 @@ function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
       );
 
       // Add custom submit handler
-      $form['#submit'][] = 'os_search_solr_save_view_mode';
+      $form['#submit'][] = 'os_search_solr_save_view_mode_from_form';
     }
   }
 }
@@ -839,13 +843,25 @@ function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
 /**
  * Apache Solr Save View Mode Form Submit Handler
  */
-function os_search_solr_save_view_mode($form, &$form_state) {
+function os_search_solr_save_view_mode_from_form($form, &$form_state) {
+  $values = $form_state['values'];
+  os_search_solr_save_view_mode($values['page_id'], $values['apachesolr_search_view_mode']);
+}
+
+/**
+ * Set the vide mode for the given page id for current vsite or globally.
+ *
+ * @param $page_id
+ *   Page id as defined for the Solr pages.
+ * @param $view_mode
+ *   View mode name.
+ */
+function os_search_solr_save_view_mode($page_id, $view_mode) {
   // Get Solr View Modes
   $solr_view_modes = variable_get('os_search_solr_display_mode', '');
-  $values = $form_state['values'];
 
   // Set View Modes
-  $solr_view_modes[$values['page_id']] = $values['apachesolr_search_view_mode'];
+  $solr_view_modes[$page_id] = $view_mode;
 
   // Save Apache Solr View Modes. Use VSite if exists.
   $vsite = vsite_get_vsite();
