@@ -365,8 +365,8 @@ function theme_cp_appearance_theme_picker_form($variables) {
       }
       $class = strpos($info['path'], 'zip') !== FALSE ? 'zip-pull-button' : 'git-pull-button';
       $actions = array(
+        "<div class='delete-subtheme'>" . l(t('Delete'), 'cp/appearance/delete-subtheme/' . $flavor) . "</div>",
         "<div class='" . $class . "'>" . l(t('Update'), 'cp/appearance/update-subtheme/' . $flavor) . "</div>",
-        "<div class='delete-subtheme'>" . l(t('Delete'), 'cp/appearance/delete-subtheme/' . $flavor) . "</div>"
       );
 
       $items[] = array(
@@ -1079,10 +1079,54 @@ function cp_appearance_pull_subtheme_submit($form, $form_state) {
  * Delete a subtheme.
  */
 function cp_appearance_delete_subtheme($form, $form_sate, $type) {
-  return $form;
+  $form['type'] = array('#type' => 'value', '#value' => $type);
+  $flavors = variable_get('flavors');
+  $params = array('%title' => $flavors[$type]['name']);
+
+  return confirm_form($form,
+    t('Are you sure you want to delete the sub theme %title?', $params),
+    'cp/appearance',
+    t('Deleting the sub theme will remove her files and cannot be undone.'),
+    t('Delete'),
+    t('Cancel'));
 }
 
+/**
+ * Submit handler; Delete the subtheme.
+ */
+function cp_appearance_delete_subtheme_submit($form, &$form_state) {
+  $flavors = variable_get('flavors');
+  $info = $flavors[$form_state['values']['type']];
 
+  // Remove the folder and set the redirect.
+  os_profiles_rrmdir($info['path']);
+  $form_state['redirect'] = 'cp/appearance';
+
+  // Set the title.
+  $params = array('%title' => $info['name']);
+  drupal_set_message(t('The theme %title has been removed.', $params));
+
+  // Remove the theme from the variable.
+  unset($flavors[$form_state['values']['type']]);
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $vsite->controllers->variable->set('flavors', $flavors);
+  }
+}
+
+/**
+ * Delete folder recursively.
+ */
+function os_profiles_rrmdir($dir) {
+  foreach (glob($dir . '/*') as $file) {
+    if (is_dir($file)) {
+      os_profiles_rrmdir($file);
+    }
+    else {
+      unlink($file);
+    }
+  }
+  rmdir($dir);
+}
 
 /**
  * Implements hook_form_FORM_ID_alter() for os_settings_form.
