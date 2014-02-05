@@ -35,6 +35,7 @@ function os_classes_os_app_info() {
       'class' => array(
         'url' => 'browse/classes',
         'title' => t('Browse classes'),
+        'display_mode' => 'teaser',
         'menu_item' => 'classes',
       ),
     ),
