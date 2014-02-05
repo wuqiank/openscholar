@@ -816,14 +816,13 @@ function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
      * Override form to add custom view modes dropdown.
      */
     if ($view_modes) {
-
       // Grab search page id
       $search_page_id = $form['search_page']['#value']['page_id'];
 
       /**
        * Fetch currently save Solr view modes
        */
-      $solr_view_modes =  variable_get('os_search_solr', '');
+      $solr_view_modes = variable_get('os_search_solr_display_mode', '');
 
       $form['info']['page_title']['#weight'] = -2;
 
@@ -847,33 +846,33 @@ function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
  */
 function os_search_solr_save_view_mode($form, &$form_state) {
 
-  $vsite = vsite_get_vsite();
-  $view_mode_variable_name = "";
-
   // Get Solr View Modes
-  $solr_view_modes =  variable_get($view_mode_variable_name, '');
+  $solr_view_modes = variable_get('os_search_solr_display_mode', '');
 
   $values = $form_state['values'];
 
   // Set View Modes
   $solr_view_modes[$values['page_id']] = $values['apachesolr_search_view_mode'];
 
-  // Save Apache Solr View Modes
-  $vsite->controllers->variable->set($view_mode_variable_name, $solr_view_modes);
+  // Save Apache Solr View Modes. Use VSite if exists.
+  $vsite = vsite_get_vsite();
+  if ($vsite) {
+    $vsite->controllers->variable->set('os_search_solr_display_mode', $solr_view_modes);
+  }
+  else {
+    variable_set('os_search_solr_display_mode', $solr_view_modes);
+  }
 }
 
 /**
  * Implements hook_preprocess_search_results().
  */
 function os_search_solr_preprocess_search_results(&$variables) {
-  $vsite = vsite_get_vsite();
-  $view_mode_variable_name = "";
-
   /**
    * This will override node results if a node view mode way selected on the
    * apachesolr page configuration page.
    */
-  $solr_view_modes =  variable_get($view_mode_variable_name, '');
+  $solr_view_modes = variable_get('os_search_solr_display_mode', '');
 
   /**
    * Check to see if the search results page we are on has a view mode selected.
