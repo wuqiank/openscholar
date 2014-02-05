@@ -31,6 +31,7 @@ function os_faq_os_app_info() {
       'faq' => array(
         'url' => 'browse/faq',
         'title' => t('Browse faq'),
+        'menu_item' => 'faq',
       ),
     ),
   );

@@ -3,7 +3,6 @@ description = Provides OpenScholar Solr Search support and facets
 core = 7.x
 package = OpenScholar
 dependencies[] = apachesolr_search
-dependencies[] = apachesolr_og
 dependencies[] = context
 dependencies[] = ctools
 dependencies[] = current_search

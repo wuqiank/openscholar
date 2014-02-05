@@ -31,6 +31,7 @@ function os_links_os_app_info() {
       'link' => array(
         'url' => 'browse/links',
         'title' => t('Browse links'),
+        'menu_item' => 'links',
       ),
     ),
   );

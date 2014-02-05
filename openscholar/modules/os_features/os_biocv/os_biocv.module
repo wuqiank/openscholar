@@ -32,14 +32,8 @@ function os_biocv_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'bio' => array(
-        'url' => 'browse/bios',
-        'title' => t('Browse bios'),
-      ),
-      'cv' => array(
-        'url' => 'browse/cvs',
-        'title' => t('Browse CVs'),
-      ),
+      'bio' => FALSE,
+      'cv' => FALSE,
     ),
   );
 

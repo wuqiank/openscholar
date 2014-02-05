@@ -30,6 +30,7 @@ function os_image_gallery_os_app_info() {
       'media_gallery' => array(
         'url' => 'browse/gallery',
         'title' => t('Browse gallery'),
+        'menu_item' => 'galleries',
       ),
     ),
   );

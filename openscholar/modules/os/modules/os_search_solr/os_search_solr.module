@@ -44,13 +44,21 @@ function os_search_solr_block_view($delta = '') {
  * into account.
  */
 function os_search_solr_apachesolr_search_page_alter(&$build, $search_page) {
-  if (empty($build['search_results']['#results']) || !module_exists('vsite')) {
-    // No return values, or no VSite enabled.
+  if (!module_exists('vsite')) {
+    // No VSite enabled.
+    return;
+  }
+  if (!vsite_get_vsite()) {
+    // Not inside a VSite context.
     return;
   }
 
-  if (!vsite_get_vsite()) {
-    // Not inside a VSite context.
+  // If only markup exist, it means there are no results, we want an empty page.
+  if (empty($build['search_results']['#results']) && !empty($build['search_results']['#markup'])) {
+    $build['search_results']['#markup'] = '';
+  }
+  if (empty($build['search_results']['#results'])) {
+    // No return values, or no VSite enabled.
     return;
   }
 
@@ -507,7 +515,7 @@ function os_search_solr_context_default_contexts() {
   $export['os_search'] = os_search_solr_setup_core_search_context();
 
   foreach (os_search_solr_get_browse_pages_info() as $bundle_name => $bundle_info) {
-    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_context($bundle_name, $bundle_info['title'], $bundle_info['url']);
+    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_context($bundle_name, $bundle_info['title'], $bundle_info['url'], $bundle_info['menu_item']);
   }
 
   return $export;
@@ -548,7 +556,7 @@ function os_search_solr_get_browse_pages_info() {
  * @return stdClass
  *   Bundle context information.
  */
-function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundle_url) {
+function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundle_url, $menu_item) {
   $searcher_name = os_search_solr_get_searcher_name();
   // Gets delta map
   if (!$map = facetapi_get_delta_map()) {
@@ -574,9 +582,10 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
     ),
   );
   $context->reactions = array(
+    'menu' => $menu_item,
     'block' => array(
       'blocks' => array(
-        'facetapi-browse-' . $delta_og_vocab => array(
+        'facetapi-' . $delta_og_vocab => array(
           'module' => 'facetapi',
           'delta' => $delta_og_vocab,
           'region' => 'sidebar_second',
@@ -664,7 +673,7 @@ function os_search_solr_setup_core_search_context() {
           'region' => 'sidebar_second',
           'weight' => '-8',
         ),
-        'facetapi'.$delta_bundle => array(
+        'facetapi-'.$delta_bundle => array(
           'module' => 'facetapi',
           'delta' => $delta_bundle,
           'region' => 'sidebar_second',
@@ -729,7 +738,7 @@ function os_search_solr_setup_core_searcher() {
   $searcher->description = 'Openscholar Search Page';
   $searcher->search_path = 'search/site';
   $searcher->page_title = 'Site';
-  $searcher->env_id = 'solr';
+  $searcher->env_id = apachesolr_default_environment();
   $searcher->settings = array(
     'fq' => array(),
     'apachesolr_search_custom_enable' => 0,
@@ -764,7 +773,7 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
   $searcher->description = $bundle_title;
   $searcher->search_path = $bundle_url;
   $searcher->page_title = $bundle_title;
-  $searcher->env_id = 'solr';
+  $searcher->env_id = apachesolr_default_environment();
   $searcher->settings = array(
     'fq' => array(
       0 => 'bundle:' . $bundle_name,
