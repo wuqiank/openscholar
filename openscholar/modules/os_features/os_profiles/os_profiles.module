@@ -884,9 +884,9 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
     return;
   }
 
-  if (!in_array($args[1], $vocabs) && !os_profiles_is_term_page($args[1])) {
-    // The second part of the path after "/people" is not empty and
-    // not a vocabulary or a term related to a person.
+  if (!in_array($args[1], $vocabs) && !_os_profiles_is_term_page($args[1])) {
+    // The second part of the path after "/people" is not a vocabulary or a term
+    // related to a person.
     return;
   }
 
@@ -906,8 +906,18 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
   }
 }
 
-
-function os_profiles_is_term_page($arg) {
+/**
+ * Helper function. Checks if a page is a people term page.
+ *
+ * The function checks if the current page is a term page that is, the URL is
+ * in the form "john/science" where "science" is a vocabulary or if the URL is
+ * in the form "john/faculty" where "faculty" is a term.
+ *
+ * @param $arg
+ *  The part of $_GET['q] that comes after "people"
+ *  up to a "/".
+ */
+function _os_profiles_is_term_page($arg) {
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
     $source = drupal_lookup_path('source', $vsite->group->purl . '/' . $arg);
     if (strpos($source, 'taxonomy/term') == 0) {
