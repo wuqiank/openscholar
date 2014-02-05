@@ -790,3 +790,118 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
 
   return $searcher;
 }
+
+/**
+ * Implementation of hook_form_alter()
+ */
+function os_search_solr_form_alter(&$form, &$form_state, $form_id){
+
+  /**
+   * Override the Apache Solr Search Page configuration form
+   */
+  if ($form_id == 'apachesolr_search_page_settings_form'){
+
+    $view_modes = array('' => 'Use default core search result');
+
+    $entity_info = entity_get_info('node');
+
+    /**
+     * Build the view modes dropdown list
+     */
+    foreach ($entity_info['view modes'] as $machine_name => $view_mode){
+      $view_modes[$machine_name] = $view_mode['label'];
+    }
+
+    /**
+     * Override form to add custom view modes dropdown
+     */
+    if ($view_modes) {
+
+      // Grab search page id
+      $search_page_id = $form['search_page']['#value']['page_id'];
+
+      /**
+       * Fetch currently save Solr view modes
+       */
+      $solr_view_modes =  variable_get('os_search_solr', '');
+
+      $form['info']['page_title']['#weight'] = -2;
+
+      $form['info']['apachesolr_search_view_mode'] = array(
+        '#type' => 'select',
+        '#title' => t('View Mode'),
+        '#description' => t('Select another view mode in favor of the default search view mode.'),
+        '#options' => $view_modes,
+        '#weight' => -1,
+        '#default_value' => isset($solr_view_modes[$search_page_id]) ? $solr_view_modes[$search_page_id] : '',
+      );
+
+      // Add custom submit handler
+      $form['#submit'][] = 'os_search_solr_save_view_mode';
+    }
+  }
+}
+
+/**
+ * Apache Solr Save View Mode Form Submit Handler
+ */
+function os_search_solr_save_view_mode($form, &$form_state) {
+
+  $vsite = vsite_get_vsite();
+  $view_mode_variable_name = "";
+
+  // Get Solr View Modes
+  $solr_view_modes =  variable_get($view_mode_variable_name, '');
+
+  $values = $form_state['values'];
+
+  // Set View Modes
+  $solr_view_modes[$values['page_id']] = $values['apachesolr_search_view_mode'];
+
+  // Save Apache Solr View Modes
+  $vsite->controllers->variable->set($view_mode_variable_name, $solr_view_modes);
+}
+
+/**
+ * Implementation of hook_preprocess_search_results()
+ */
+function os_search_solr_preprocess_search_results(&$variables) {
+  $vsite = vsite_get_vsite();
+  $view_mode_variable_name = "";
+
+  /**
+   * This will override node results if a node view mode way selected on the apachesolr page
+   * configuration page.
+   */
+  $solr_view_modes =  variable_get($view_mode_variable_name, '');
+
+  /**
+   * Check to see if the search results page we are on has a view mode selected .
+   */
+  if (isset($variables['search_page']['page_id']) && isset($solr_view_modes[$variables['search_page']['page_id']])) {
+
+    $view_mode = $solr_view_modes[$variables['search_page']['page_id']];
+
+    /**
+     * Iterate through results and load the node view mode instead of the default search result
+     * snippet.
+     */
+    if ($view_mode) {
+      // Reset Search Results, we are going to completely override
+      $variables['search_results'] = '';
+
+      foreach ($variables['results'] as $result) {
+        if ($result['entity_type'] == 'node'){
+          $node = node_load($result['node']->entity_id);
+
+          if (is_object($node)){
+            $build = node_view($node, $view_mode);
+            $build['links']['#access'] = FALSE; //hide links
+
+            $variables['search_results'] .= render($build);
+          }
+        }
+      }
+    }
+  }
+}
