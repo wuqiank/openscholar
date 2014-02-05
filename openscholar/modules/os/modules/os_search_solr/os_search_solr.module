@@ -793,13 +793,13 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
 /**
  * Implements hook_ctools_plugin_pre_alter().
  *
- * Use OS's Facet API class for terms.
+ * Use OS's Facet API adapter.
  */
 function os_search_solr_ctools_plugin_pre_alter(&$plugin, &$info) {
-  if ($plugin['name'] != 'apachesolr_term') {
+  if ($plugin['name'] != 'apachesolr' || $plugin['plugin type'] != 'adapters') {
     return;
   }
 
-  $plugin['handler']['class'] = 'OsApacheSolrFacetapiTerm';
+  $plugin['handler']['class'] = 'OsApacheSolrFacetapiAdapter';
 }
 
