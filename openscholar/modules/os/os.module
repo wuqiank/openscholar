@@ -921,7 +921,15 @@ function os_form_node_form_alter(&$form, $form_state) {
   if (isset($form['og_group_ref']['und'][0]['admin']['add_more']['#value'])) {
     $form['og_group_ref']['und'][0]['admin']['add_more']['#value'] = t('Add administrator');
   }
+
+  unset($form['additional_settings']);
+  foreach (element_children($form) as $c) {
+    unset($form[$c]['#group']);
+  }
+
+  $form['actions_top'] = $form['actions'];
 }
+
 
 /**
  * Page argument; passed to drupal_get_form in os_menu().
