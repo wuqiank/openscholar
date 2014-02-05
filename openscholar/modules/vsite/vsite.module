@@ -316,10 +316,10 @@ function vsite_path_admin_validate($form, $form_state) {
 
   // Check that the alias is not taken in the vsite.
   $source = explode('/', $form_state['values']['source']);
-  $entity_type = strpos('node/', $form_state['values']['source']) === 0 ? 'node' : 'taxonomy_term';
+  $entity_type = strpos($form_state['values']['source'], 'node/') === 0 ? 'node' : 'taxonomy_term';
   $entity_id = end($source);
 
-  if (!vsite_alias_has_purl_prefix($purl, $entity_id)) {
+  if (!vsite_alias_has_purl_prefix($purl)) {
     form_set_error('alias', t('The prefix of the vsite is missing.'));
   }
 
@@ -344,17 +344,15 @@ function vsite_path_admin_validate($form, $form_state) {
  * @return bool
  *  TRUE if the alias has PURL prefix.
  */
-function vsite_alias_has_purl_prefix($alias, $vsite_id) {
+function vsite_alias_has_purl_prefix($alias) {
   $alias = explode('/', $alias);
   $purl = reset($alias);
 
   $result = db_select('purl')
     ->fields('purl')
-    ->condition('id', $vsite_id)
-    ->condition('provider', 'spaces_og')
     ->condition('value', $purl)
-    ->count()
-    ->execute();
+    ->execute()
+    ->rowCount();
 
   return $result;
 }
