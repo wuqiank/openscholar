@@ -558,6 +558,9 @@ function os_update_7026() {
 function os_update_2027($ctx) {
   $modules = array(
     'nodeformcols',
+    'metatag',
+    'metatag_opengraph',
+    'metatag_twitter_cards',
   );
 
   module_enable($modules);
