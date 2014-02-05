@@ -535,8 +535,8 @@ fieldset#edit-biblio-authors .fieldset-legend {
 }
 
 
-form.node-form .form-region-main input.form-text,
-.node-form .form-region-right {
+form.node-form .form-region-main input a,
+.node-form .form-region-right .node-form-options a {
      color:#0074BD;
 }
 
