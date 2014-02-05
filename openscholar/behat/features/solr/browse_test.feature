@@ -10,7 +10,7 @@ Feature:
      Then I click "Air"
       And I should not see "Norma"
 
-  @api
+  @api @wip
   Scenario: Test browse with one term not showing categories block
     Given I visit "john/browse/bios"
      Then I should not see "filter by taxonomy"
