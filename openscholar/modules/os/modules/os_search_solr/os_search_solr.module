@@ -791,15 +791,16 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
 }
 
 /**
- * Implements hook_facetapi_searcher_info_alter()
+ * Implements hook_ctools_plugin_pre_alter().
+ *
+ * Use OS's Facet API class for terms.
  */
-function os_search_solr_facetapi_searcher_info_alter(array &$searcher_info) {
-  foreach ($searcher_info as &$row) {
-    if ($row['adapter'] == 'apachesolr') {
-      $row['adapter'] = 'os_apachesolr';
-      $row['module'] = 'os_search_solr';
-    }
+function os_search_solr_ctools_plugin_pre_alter(&$plugin, &$info) {
+  if ($plugin['name'] != 'apachesolr_term') {
+    return;
   }
+
+  $plugin['handler']['class'] = 'OsApacheSolrFacetapiTerm';
 }
 
 /**
