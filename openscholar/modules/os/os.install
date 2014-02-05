@@ -551,3 +551,16 @@ function os_update_7026() {
   );
   features_revert($revert);
 }
+
+/**
+ * Installs modules new to 3.11
+ */
+function os_update_2027($ctx) {
+  $modules = array(
+    'nodeformcols',
+  );
+
+  module_enable($modules);
+
+  return t('Enabled new modules: @modules', array('@modules' => implode(', ', $modules)));
+}

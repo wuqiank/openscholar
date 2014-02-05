@@ -39,6 +39,80 @@ function os_profiles_os_app_info() {
 }
 
 /**
+ * Implements hook_init().
+ */
+function os_profiles_init() {
+  if (!($uuid = variable_get('os_profiles_nodes_uuid'))) {
+    // Return if no UUID is set that is, no profile nodes need to be updated.
+    return;
+  }
+
+  if (!($time = variable_get('os_profiles_nodes_uuid_time'))) {
+    // Return if no time for the update of the profiles has been set.
+    return;
+  }
+
+  if (isset($_GET['REST_CALL'])) {
+    // If profiles that need to be updated are on the same installation return
+    // in order to avoid a loop of recurring calls to itself.
+    return;
+  }
+
+  // When the original node and the destination node are on the same installation
+  // and the original has been updated the updating of the destination node will
+  // be accomplished instantly. We need to wait approximately 5 seconds so a
+  // normal end user that updates a profile that was copied won't think the
+  // update of the node is slow.
+  if ($time + 5 >= time()) {
+    return;
+  }
+
+  // Load the nodes that need to be updated.
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'person')
+    ->fieldCondition('field_uuid', 'value', $uuid)
+    ->execute();
+
+  if (empty($results['node'])) {
+    return;
+  }
+
+  $nids = array_keys($results['node']);
+  $nodes = node_load_multiple($nids);
+  $fields = os_profiles_profiles_fields();
+  $handler = restws_resource_controller('node');
+
+  foreach ($nodes as $node) {
+    if (empty($node->field_original_destination_url)) {
+      continue;
+    }
+
+    $data = os_profiles_get_origin_node_values($node->field_original_destination_url[LANGUAGE_NONE][0]['value'], $fields);
+
+    // The field person is an array. Remove him for the update method but keep
+    // it for later.
+    $person_photo = $data->values['field_person_photo'];
+    unset($data->values['field_person_photo']);
+    $handler->update($node->nid, $data->values);
+
+    // We need to replace the field ID in the field with the new file ID we got.
+    if ($person_photo) {
+      $file_info = os_profiles_get_origin_node_values($person_photo['file']['uri'] . '.json', array('url'));
+      $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
+      $node->field_person_photo[$node->language][0]['fid'] = $file->fid;
+      node_save($node);
+    }
+  }
+
+  // Delete the UUID that needs to be updated and the time in which the UUID
+  // was set.
+  variable_del('os_profiles_nodes_uuid');
+  variable_del('os_profiles_nodes_uuid_time');
+}
+
+/**
  * Implements hook_menu().
  */
 function os_profiles_menu() {
@@ -55,6 +129,21 @@ function os_profiles_menu() {
     'title' => 'Sync',
     'page callback' => 'os_profile_return_auto_complete',
     'access arguments' => array('access content'),
+  );
+
+  $items['people/insert_profile'] = array(
+    'page callback' => 'os_profiles_insert_listeners',
+    'access callback' => TRUE,
+  );
+
+  $items['people/update_profile'] = array(
+    'page callback' => 'os_profiles_update_listeners',
+    'access callback' => TRUE,
+  );
+
+  $items['people/unlink_profile'] = array(
+    'page callback' => 'os_profiles_unlink_listeners',
+    'access callback' => TRUE,
   );
 
   return $items;
@@ -86,7 +175,7 @@ function os_profiles_process_node(&$vars) {
     return;
   }
 
-  // Adding header for determine the node ID.
+  // Adding a header for determining the node ID.
   drupal_add_http_header('node_json', url('node/' . $vars['nid'] . '.json', array('absolute' => TRUE)));
 
   // Helps poor theme developers find these changes to $variables
@@ -194,10 +283,22 @@ function os_profiles_field_display_node_alter(&$display, $context) {
 }
 
 /**
- * Restrict access to the redirect field on the person node.
- * @return boolean
+ * Implements hook_field_access().
  */
 function os_profiles_field_access($op, $field, $entity_type, $entity, $account) {
+  if ($entity_type == 'node' && $entity->type == 'person') {
+    $fields = array('field_uuid', 'field_original_destination_url', 'field_destination_url');
+
+    // When the node is listening to other node, hide the field we syncing.
+    if (!empty($entity->field_original_destination_url[$entity->language])) {
+      $fields = array_merge($fields, os_profiles_profiles_fields());
+    }
+
+    if (in_array($field['field_name'], $fields) && $op == 'edit') {
+      return FALSE;
+    }
+  }
+
   if (!empty($entity) && $field['field_name'] == 'field_url' && $entity_type == 'node' && $entity->type == 'person' && $op == 'edit') {
     return user_access('bypass redirection', $account);
   }
@@ -257,6 +358,18 @@ function os_profiles_os_add_new_links_alter(&$links) {
     return;
   }
 
+  // Verify the user can create person node.
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $access = og_user_access('node', $vsite->id, "create person content");
+  }
+  else {
+    $access = user_access("create person content");
+  }
+
+  if (!$access) {
+    return;
+  }
+
   $links['sync'] = array(
     'title' => t('Sync'),
     'href' => 'cp/people/syc-profiles',
@@ -284,7 +397,7 @@ function os_profiles_sync_profile($form, $form_state) {
   $form['url'] = array(
     '#type' => 'textfield',
     '#title' => '',
-    '#description' => t('Enter the URL of the profile from anotehr site.'),
+    '#description' => t('Enter the URL of the profile from another site. For example: http://www.example.com/people/john-doe'),
   );
 
   $form['actions'] = array(
@@ -314,7 +427,7 @@ function os_profile_return_auto_complete($string = '') {
     ->condition('first.field_first_name_value', '%' . $string . '%', 'LIKE')
     ->condition('last.field_last_name_value', '%' . $string . '%', 'LIKE');
 
-  // Build the SQL query. We usק DB select and not EFQ due to lack of support
+  // Build the SQL query. We use DB select and not EFQ due to lack of support
   // EFQ has with NULL values.
   $query = db_select('node', 'n');
   $query->leftJoin($first_name_field, 'first', 'first.entity_id = n.nid');
@@ -371,12 +484,22 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
   }
 
   if (!empty($form_state['values']['url'])) {
-    $headers = get_headers($form_state['values']['url']);
-    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      form_set_error('url', t('The address your provided is not a Drupal 7 site.'));
+    // If the URL doesn't include the word "people" don't make the request.
+    if (strpos($form_state['values']['url'],'people') == FALSE) {
+      form_set_error('url', t('Make sure the URL is correct and that it includes the term "/people/"'));
       return;
     }
 
+    $headers = get_headers($form_state['values']['url']);
+    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+      form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
+      return;
+    }
+
+    // When addressing the URL of the profile that is imported, an http header
+    // named "node_json" is added to the response. This is done in order for the
+    // importing side to get the JSON address of the node. It will be saved in
+    // the field "field_original_destination_url".
     foreach ($headers as $header) {
       if (strpos($header, 'node_json: ') === 0) {
         $form_state['json_address'] = str_replace('node_json: ', '', $header);
@@ -384,16 +507,16 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
       }
     }
 
-    // JSON address was not found in the header.
+    // A JSON address was not found in the header.
     form_set_error('url', t('Make sure you have an updated OpenScholar installation.'));
   }
 }
 
 /**
- * Submit handler; Importing person profile from external source.
+ * List of fields which holds the person information.
  */
-function os_profiles_sync_profile_submit($form, $form_state) {
-  $keys = array(
+function os_profiles_profiles_fields() {
+  return array(
     'title',
     'body',
     'field_first_name',
@@ -404,34 +527,69 @@ function os_profiles_sync_profile_submit($form, $form_state) {
     'field_middle_name_or_initial',
     'field_professional_title',
     'field_website',
+    'field_person_photo',
   );
+}
 
+/**
+ * Submit handler; Importing person profile from external source.
+ */
+function os_profiles_sync_profile_submit($form, $form_state) {
+  global $base_url, $user;
+  $keys = os_profiles_profiles_fields();
+  $values = $data = array();
+
+  // Import a person node using URL field.
   if (!empty($form_state['values']['url'])) {
-    $json_address = $form_state['json_address'];
-    $request = drupal_http_request($json_address);
-    $data = drupal_json_decode($request->data);
+    $origin = os_profiles_get_origin_node_values($form_state['json_address'], $keys);
+    $values = $origin->values;
+    $data = $origin->data;
 
-    foreach ($keys as $key) {
-      if (empty($data[$key])) {
-        continue;
-      }
+    // Get the URL of the original node.
+    $url = str_replace('/node/' . $data['nid'] . '.json', '', $form_state['json_address']);
 
-      $values[$key] = $data[$key];
-    }
+    // Get the original node's UUID.
+    $values['field_uuid'] = $data['field_uuid'];
+
+    // Save the original address of the JSON.
+    $values['field_original_destination_url'] = $form_state['json_address'];
   }
   else {
+    // Import a person node using the auto-complete field.
     preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
-    $wrapper = entity_metadata_wrapper('node', $matches[1]);
+    $nid = $matches[1];
+    $wrapper = entity_metadata_wrapper('node', $nid);
     foreach ($keys as $key) {
       if (isset($wrapper->{$key}) && $value = $wrapper->{$key}->value()) {
         $values[$key] = $value;
       }
     }
+
+    // Get the URL of the original node.
+    $vsite = vsite_get_vsite($wrapper->og_group_ref->get(0)->value()->nid);
+    $url = $vsite->get_absolute_url();
+
+    // Get the original node's UUID if it exist. Else, generate it.
+    $values['field_uuid'] = isset($wrapper->field_uuid) && $wrapper->field_uuid->value() ? $wrapper->field_uuid->value() : md5($matches[1]);
+
+    // Save the original address of the JSON.
+    $values['field_original_destination_url'] = $url . '/node/' . $nid . '.json';
   }
 
-  $values['type'] = 'person';
+  // Retrieve the file from the original node.
+  if ($values['field_person_photo']) {
+    $file_info = os_profiles_get_origin_node_values($values['field_person_photo']['file']['uri'] . '.json', array('url'));
+    $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
+    unset($values['field_person_photo']);
+  }
 
-  // When there is a node in the current vsite with the title of the source node
+  // Set up default values.
+  $values += array(
+    'type' => 'person',
+    'author' => $user->uid,
+  );
+
+  // When there is a node in the current VSite with the title of the source node
   // we need to update the current node.
   $method = 'create';
   $arguments = array($values);
@@ -458,8 +616,21 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   if ($method == 'update') {
     $nid = $arguments[0];
   }
+  else {
+    // Write the current site as a listener in the node's origin site.
+    $arguments = array(
+      'action' => 'insert_person',
+      'UUID' => $values['field_uuid'],
+      'listener' => $base_url,
+    );
+    os_profiles_manage_synced_profiles($url, $arguments);
+  }
 
   $node = node_load($nid);
+
+  if ($file) {
+    os_profiles_insert_image($node, $file);
+  }
 
   $params = array(
     '@title' => $node->title,
@@ -468,6 +639,246 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   );
 
   drupal_set_message(t('The person @title has @op. You can <a href="@url">visit</a> their page.', $params));
+}
+
+/**
+ * Copy the image from the source node to any node.
+ *
+ * @param $node
+ *  The node object.
+ * @param $file
+ *  The file object.
+ */
+function os_profiles_insert_image($node, $file) {
+  $node->field_person_photo[$node->language][0] = array(
+    'fid' => $file->fid,
+    'display' => 1,
+    'description' => '',
+    'cropbox_x' => 0,
+    'cropbox_y' => 0,
+    'cropbox_height' => 0,
+    'cropbox_width' => 0,
+  );
+
+  node_save($node);
+}
+
+/**
+ * Build the original node values from the source node JSON output.
+ *
+ * @param $address
+ *  The JSON address of the node.
+ * @param $fields
+ *  The fields which holds the values we need.
+ *
+ * @return stdClass
+ *  Return an object with the values and the full JSON of the original node.
+ */
+function os_profiles_get_origin_node_values($address, $fields) {
+  $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1))));
+  $data = drupal_json_decode($request->data);
+
+  foreach ($fields as $key) {
+    if (empty($data[$key])) {
+      continue;
+    }
+
+    $values[$key] = $data[$key];
+  }
+
+  return (object) array(
+    'values' => $values,
+    'data' => $data,
+  );
+}
+
+/**
+ * A new site synced a profile. Get the node with the provided UUID and add the
+ * listener listeners fields.
+ */
+function os_profiles_insert_listeners() {
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('type', 'person')
+    ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
+    ->execute();
+
+  if (empty($results['node'])) {
+    return;
+  }
+
+  $nid = reset($results['node'])->nid;
+
+  $wrapper = entity_metadata_wrapper('node', $nid);
+  $destinations = isset($wrapper->field_destination_url) ? $wrapper->field_destination_url->value() : array();
+
+  if (in_array($_GET['listener'], $destinations)) {
+    // The destination is already in the field.
+    return;
+  }
+
+  // Add the site to the list of destinations.
+  $wrapper->field_destination_url[] = $_GET['listener'];
+  $wrapper->save();
+}
+
+/**
+ * Set the received UUID that matches the nodes that need to be updated.
+ */
+function os_profiles_update_listeners($uuid = NULL) {
+  $uuid = $uuid ? $uuid : $_GET['UUID'];
+
+  // Set the received UUID in a variable. This way we can pull the nodes
+  // that need to be updated later.
+  variable_set('os_profiles_nodes_uuid', $uuid);
+
+  // Set the time for receiving the UUID. This is used in os_profiles_init() in
+  // order to allow the saving of the node before "signaling" the listening sites
+  // about a node update.
+  variable_set('os_profiles_nodes_uuid_time', time());
+}
+
+/**
+ * A site deleted a profile. Get the node with the provided UUID and
+ * according to the query string do the following:
+ *
+ * 1. If $_GET['origin_deleted'] is TRUE, delete the original destination
+ *    field entry as this node no longer exist in the origin site.
+ * 2. If $_GET['origin_deleted'] is FALSE, delete the destination of
+ *    the deleted node from the list of destinations in the destination field.
+ */
+function os_profiles_unlink_listeners() {
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('type', 'person')
+    ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
+    ->execute();
+
+  if (!$results['node']) {
+    return;
+  }
+
+  $nid = reset($results['node'])->nid;
+  $wrapper = entity_metadata_wrapper('node', $nid);
+
+  if ($_GET['origin_deleted']) {
+    // Origin profile node was deleted. Stop "listening" for changes
+    // from that node.
+    if (isset($wrapper->field_original_destination_url)){
+      $wrapper->field_original_destination_url->set('');
+      $wrapper->save();
+    }
+  }
+  elseif (isset($wrapper->field_destination_url)) {
+    // The deleted node was not an origin node. That means it was a "listener"
+    // in some site that is, a node that was imported from the current site.
+    // In that case remove that destination from the list of destinations.
+    $destinations = $wrapper->field_destination_url->value();
+    if (($destination = array_search($_GET['remove_destination'], $destinations)) !== FALSE) {
+      unset($destinations[$destination]);
+      $wrapper->field_destination_url->set($destinations);
+      $wrapper->save();
+    }
+  }
+}
+
+/**
+ * When need to update a profile node with listeners or ping to update the
+ * listeners. This page callback will handle it.
+ *
+ * In order to notify Drupal to update the synced profile nodes we will
+ * need to access the server with the next $_GET:
+ * @code
+ *  $_GET = array(
+ *    'action' => 'update',
+ *    'uuid' => 'foobar',
+ *  );
+ * @endcode
+ *
+ * When a node person is being updated he need to ping all his listeners.
+ * In order to add listeners we will need to access the server with the next
+ * $_GET:
+ * @code
+ *  array(
+ *    'action' => 'insert',
+ *    'UUID' => 'foobar',
+ *    'listener' => 'http://www.harvard.edu/',
+ *  );
+ * @endcode
+ *
+ * In order to notify Drupal to unlink the synced profile node we will
+ * need to access the server with the next $_GET when the original node is
+ * deleted:
+ * @code
+ *  $_GET = array(
+ *    'action' => 'unlink',
+ *    'uuid' => 'foobar',
+ *    'origin_deleted' => TRUE,
+ *  );
+ * @endcode
+ *
+ * When a listener profile (that is, a profile that was imported) is deleted
+ * we will need to access the server with the next $_GET:
+ * @code
+ *  $_GET = array(
+ *    'action' => 'unlink',
+ *    'uuid' => 'foobar',
+ *    'origin_deleted' => FALSE,
+ *    'remove_destination' => http://www.example.com,
+ *  );
+ * @endcode
+ *
+ *
+ * @param $url
+ *  The address of the server.
+ * @param $values
+ *  The values of the $_GET. No need to pass the q index.
+ */
+function os_profiles_manage_synced_profiles($url, $values) {
+  switch ($values['action']) {
+    case 'insert_person':
+      $path = $url . '/people/insert_profile';
+      break;
+    case 'update':
+      $path = $url . '/people/update_profile';
+      break;
+    case 'unlink':
+      $path = $url . '/people/unlink_profile';
+      break;
+    default:
+      $path = NULL;
+      break;
+  }
+
+  $values['REST_CALL'] = TRUE;
+
+  if ($path) {
+    drupal_http_request(url($path, array('query' => $values)));
+  }
+}
+
+/**
+ * Implements hook_restws_request_alter().
+ *
+ * Setting the person node UUID when accessing the node via JSON and the UUID
+ * field is not populate.
+ */
+function os_profiles_restws_request_alter(&$request) {
+  if ($request['resource']->resource() != 'node') {
+    return;
+  }
+
+  $node = node_load($request['id']);
+
+  $wrapper = entity_metadata_Wrapper('node', $node);
+
+  if (isset($wrapper->field_uuid) && !$wrapper->field_uuid->value()) {
+    // No UUID in the UUID field. Set it.
+    $wrapper->field_uuid->set(md5($request['id']));
+    $wrapper->save();
+  }
 }
 
 /**
@@ -797,6 +1208,134 @@ function os_profiles_display_settings_submit($form, $form_state) {
 }
 
 /**
+ * Implements hook_node_update().
+ */
+function os_profiles_node_update($node) {
+  if ($node->type != 'person') {
+    return;
+  }
+
+  if (!os_profiles_profile_changed($node)) {
+    // Fields in the profile are not changed: if no data fields (returned in
+    // os_profiles_profiles_fields()) were changed during the update don't
+    // send a request to the listeners.
+    return;
+  }
+
+  $wrapper = entity_metadata_wrapper('node', $node);
+  if (!$destinations = $wrapper->field_destination_url->value()) {
+    return;
+  }
+
+  foreach ($destinations as $destination) {
+    $arguments = array(
+      'action' => 'update',
+      'UUID' => $wrapper->field_uuid->value(),
+    );
+
+    os_profiles_manage_synced_profiles($destination, $arguments);
+  }
+}
+
+/**
+ * Helper function; Return TRUE if the a data field changed in a profile.
+ *
+ * @param $node
+ *  The node to check.
+ * @return bool
+ *  TRUE - A field was changed.
+ *  FALSE - No fields were changed.
+ */
+function os_profiles_profile_changed($node) {
+  $wrapper = entity_metadata_wrapper('node', $node);
+  $wrapper_original = entity_metadata_wrapper('node', $node->original);
+  foreach (os_profiles_profiles_fields() as $field) {
+    if ($wrapper->$field->value() !== $wrapper_original->$field->value()) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Implements hook_node_delete().
+ *
+ * When a profile that was copied is deleted we have two cases:
+ *
+ * 1. The deleted node was copied from another site. In that case the origin site
+ *    will need to remove the current site from the node's destinations list.
+ * 2. The deleted node was copied to another site. In that case the listeners
+ *    will need to remove the current site as an original node's destination.
+ */
+function os_profiles_node_delete($node) {
+  global $base_url;
+
+  if ($node->type != 'person') {
+    return;
+  }
+
+  $wrapper = entity_metadata_wrapper('node', $node);
+  $arguments = array(
+    'action' => 'unlink',
+    'UUID' => $wrapper->field_uuid->value(),
+  );
+
+  // Check if the node was imported from another site.
+  // If it was, "inform" the original node that the current site
+  // is no longer on of its destinations. This will prevent from
+  // the origin site to signal about a node's update.
+  if ($destination = $wrapper->field_original_destination_url->value()) {
+    $arguments['origin_deleted'] = FALSE;
+
+    // The destination to be removed.
+    $arguments['remove_destination'] = $base_url;
+
+    // $destination is the JSON address that is,
+    // http://www.example.com/vsite/node/1.json and we need just the
+    // http://www.example.com/vsite part of that address.
+    $destination = preg_replace("/\/node\/\d{1,}\.json/", "", $destination);
+    os_profiles_manage_synced_profiles($destination, $arguments);
+  }
+
+  // Check if the node was imported to another site.
+  // If it was, "inform" the destination sites which copied the node
+  // (that is, the listeners) to clear the original destination field
+  // to avoid making requests for update of a deleted node later on.
+  if (!$destinations = $wrapper->field_destination_url->value()) {
+    return;
+  }
+  else {
+    foreach ($destinations as $destination) {
+      $arguments['origin_deleted'] = TRUE;
+      os_profiles_manage_synced_profiles($destination, $arguments);
+    }
+  }
+}
+
+/**
+ * Implements hook_node_access().
+ *
+ * Users should not be allowed to edit profiles that were imported
+ * (with the "sync" option) from another site.
+ */
+function os_profiles_node_access($node, $op, $account) {
+  if ($op != 'update') {
+    return;
+  }
+
+  if ($node->type != 'person') {
+    return;
+  }
+
+  if (!empty($node->field_original_destination_url)) {
+    // This node was imported from another site if this field is not empty.
+    // Editing of this profile is not allowed.
+    return NODE_ACCESS_DENY;
+  }
+}
+
+/**
  * Provide display style examples for the os_profiles app settings.
  */
 function _os_profiles_build_display_style_example($style) {
@@ -903,4 +1442,13 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
   if (empty($context['entity']->sv_list)) {
     $view_mode = variable_get('os_profiles_display_type', 'teaser');
   }
+}
+
+/**
+ * Implements hook_field_info_alter().
+ *
+ * Adding entity metadata wrapper support for the image field crop module.
+ */
+function os_profiles_field_info_alter(&$info) {
+  $info['imagefield_crop']['property_callbacks'] = array('entity_metadata_field_image_callback', 'entity_metadata_field_file_callback');
 }
