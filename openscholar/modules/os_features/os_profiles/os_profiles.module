@@ -121,23 +121,23 @@ function os_profiles_menu() {
     'access arguments' => array('create person content'),
   );
 
-  $items['people/profile_autocomplete'] = array(
+  $items['cp/people/profile_autocomplete'] = array(
     'title' => 'Sync',
     'page callback' => 'os_profile_return_auto_complete',
     'access arguments' => array('access content'),
   );
 
-  $items['people/insert_profile'] = array(
+  $items['cp/people/insert_profile'] = array(
     'page callback' => 'os_profiles_insert_listeners',
     'access callback' => TRUE,
   );
 
-  $items['people/update_profile'] = array(
+  $items['cp/people/update_profile'] = array(
     'page callback' => 'os_profiles_update_listeners',
     'access callback' => TRUE,
   );
 
-  $items['people/unlink_profile'] = array(
+  $items['cp/people/unlink_profile'] = array(
     'page callback' => 'os_profiles_unlink_listeners',
     'access callback' => TRUE,
   );
@@ -382,7 +382,7 @@ function os_profiles_sync_profile($form, $form_state) {
     '#type' => 'textfield',
     '#title' => '',
     '#description' => t('Search the person by the first or last name.'),
-    '#autocomplete_path' => 'people/profile_autocomplete',
+    '#autocomplete_path' => 'cp/people/profile_autocomplete',
   );
 
   $form['or'] = array(
@@ -837,13 +837,13 @@ function os_profiles_unlink_listeners() {
 function os_profiles_manage_synced_profiles($url, $values) {
   switch ($values['action']) {
     case 'insert_person':
-      $path = $url . '/people/insert_profile';
+      $path = $url . '/cp/people/insert_profile';
       break;
     case 'update':
-      $path = $url . '/people/update_profile';
+      $path = $url . '/cp/people/update_profile';
       break;
     case 'unlink':
-      $path = $url . '/people/unlink_profile';
+      $path = $url . '/cp/people/unlink_profile';
       break;
     default:
       $path = NULL;
