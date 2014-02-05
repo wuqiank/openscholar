@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implements hook_field_widget_info.
+ */
 function media_draggable_field_widget_info() {
   return array(
     'media_draggable_file' => array(
@@ -27,6 +30,11 @@ function media_draggable_field_widget_info() {
   );
 }
 
+/**
+ * Implements hook_field_widget_settings_form.
+ *
+ * Just puts together a form from the dragndrop_upload and media widget settings form
+ */
 function media_draggable_field_widget_settings_form($field, $instance) {
   $form = dragndrop_upload_file_field_widget_settings_form($field, $instance);
   $form += media_field_widget_settings_form($field, $instance);
@@ -34,6 +42,12 @@ function media_draggable_field_widget_settings_form($field, $instance) {
   return $form;
 }
 
+/**
+ * Implements hook_field_widget_form.
+ *
+ * Puts together a row for each file in the field, as well as a template row that the js can use to make new rows for
+ * itself. Also adds the drop region
+ */
 function media_draggable_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $field_settings = $instance['settings'];
   $widget_settings = $instance['widget']['settings'];
@@ -139,6 +153,11 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
   return $element;
 }
 
+/**
+ * Widget process function
+ *
+ * Processes files input by adding or removing rows to the form, based on the user's input
+ */
 function media_draggable_field_widget_process($element, &$form_state, &$form) {
 
   if (!empty($form_state['input'])) {
@@ -173,6 +192,11 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {
   return $element;
 }
 
+/**
+ * Row process function
+ *
+ * Expands the row definitions in the original form array into everything the user needs to see and interact with.
+ */
 function media_draggable_field_widget_indiv_process($element) {
   $file = $element['#file'];
 
@@ -214,6 +238,9 @@ function media_draggable_field_widget_indiv_process($element) {
   return $element;
 }
 
+/**
+ * Clears the droppable region so it's always empty and ready to upload a new file
+ */
 function media_draggable_dnd_pre_render($element) {
   if (!empty($element['#value']['fid'])) {
     $file = $element['#file'];
@@ -236,6 +263,10 @@ function media_draggable_dnd_pre_render($element) {
   return $element;
 }
 
+/**
+ * Undoes any automatic change in the timestamp.
+ * Prevent filefield_paths from doing anything to a pre-uploaded file
+ */
 function media_draggable_file_presave($file) {
   if (isset($file->original)) {
     $file->timestamp = $file->original->timestamp;

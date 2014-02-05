@@ -558,6 +558,7 @@ function os_update_7026() {
 function os_update_2027($ctx) {
   $modules = array(
     'nodeformcols',
+    'media_draggable',
   );
 
   module_enable($modules);
