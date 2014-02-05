@@ -985,6 +985,20 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @When /^I choose the radio button named "([^"]*)" with value "([^"]*)" for the vsite "([^"]*)"$/
+   */
+  public function iSelectRadioNamedWithValueForVsite($name, $value, $vsite) {
+    $page = $this->getSession()->getPage();
+    $radiobutton = $page->find('xpath', "//*[@name='{$name}'][@value='{$value}']");
+    if (!$radiobutton) {
+      throw new Exception("A radio button with the name {$name} and value {$value} was not found on the page");
+    }
+    $radiobutton->selectOption($value, FALSE);
+    $option = $radiobutton->getValue();
+    $this->invoke_code('os_migrate_demo_vsite_set_variable', array("'{$vsite}'", "'{$name}'", "'{$option}'"));
+  }
+
+  /**
    * @When /^I visit the original page for the term "([^"]*)"$/
    */
   public function iVisitTheOriginalPageForTheTerm($term) {
