@@ -1449,3 +1449,25 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
 function os_profiles_field_info_alter(&$info) {
   $info['imagefield_crop']['property_callbacks'] = array('entity_metadata_field_image_callback', 'entity_metadata_field_file_callback');
 }
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function os_profiles_entity_property_info_alter(&$info) {
+  $info['node']['bundles']['person']['properties']['person_photo_dimension'] = array(
+    'label' => t('Person picture dimension'),
+    'getter callback' => 'os_profiles_image_dimension',
+  );
+}
+
+function os_profiles_image_dimension($entity, array $options, $name, $type) {
+  $wrapper = entity_metadata_wrapper($type, $entity);
+  $info = $wrapper->field_person_photo->value();
+
+  return array(
+    'cropbox_height' => $info['cropbox_height'],
+    'cropbox_width' => $info['cropbox_width'],
+    'cropbox_x' => $info['cropbox_x'],
+    'cropbox_y' => $info['cropbox_y'],
+  );
+}
