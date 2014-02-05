@@ -65,6 +65,7 @@ features[variable][] = comment_default_per_page_media_gallery
 features[variable][] = comment_media_gallery
 features[variable][] = node_options_media_gallery
 features[variable][] = node_submitted_media_gallery
+features[variable][] = nodeformscols_field_placements_media_gallery_default
 features[variable][] = pathauto_node_media_gallery_pattern
 features[views_view][] = os_image_gallery
 features[views_view][] = os_image_gallery_slideshow

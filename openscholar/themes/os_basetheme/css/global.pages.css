@@ -109,6 +109,12 @@ div.messages {
   margin-right: 15px;
 }
 
+/*** SOME BASE STLYES FOR THE COLUMNS WIDGET ***/
+.block-boxes-os_boxes_columns .region .region-inner {padding-right:18px;}
+
+.block-boxes-os_boxes_columns .region:last-child .region-inner {padding-right:0;}
+
+
 /*** FRONTPAGE PANELS ***/
 
 .content-left .at-panel .region.region-content-first, 
@@ -857,6 +863,10 @@ border-top:1px solid #ccc;
     padding: 0.15em 1em;
      text-decoration: none !important;
   }
+  
+   .ui-tabs-nav.ui-helper-reset {
+	line-height:1.3;
+}
 
 .page-cp #tabs,
 .page-cp #tabs .links {
