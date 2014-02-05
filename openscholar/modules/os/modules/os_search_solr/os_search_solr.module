@@ -6,7 +6,8 @@ include_once ('os_search_solr.features.inc');
  * Implements hook_block_info().
  */
 function os_search_solr_block_info() {
-  $blocks = array();
+  $realms = (array) facetapi_realms_realms_load_multiple();
+  $blocks = facetapi_get_block_info(array_keys($realms));
 
   $blocks['site-search'] = array(
       'info' => t('Site Search'),
@@ -32,7 +33,7 @@ function os_search_solr_block_view($delta = '') {
       return $block;
 
     default:
-    break;
+      return facetapi_block_view($delta);
   }
 }
 
@@ -802,4 +803,23 @@ function os_search_solr_ctools_plugin_pre_alter(&$plugin, &$info) {
 
   $plugin['handler']['class'] = 'OsApacheSolrFacetapiAdapter';
 }
+
+/**
+ * Implements hook_facetapi_facet_info_alter()
+ */
+function os_search_solr_facetapi_facet_info_alter(array &$facet_info, array $searcher_info) {
+  $facet_info['sm_og_vocabulary__1'] = $facet_info['sm_og_vocabulary'];
+  dpm($facet_info['sm_og_vocabulary__1']);
+}
+
+/**
+ * Implements hook_facetapi_realm_info_alter().
+ */
+function os_search_solr_facetapi_realm_info_alter(array &$realm_info) {
+  dpm($realm_info);
+
+  $realm_info['block__1'] = $realm_info['block'];
+  $realm_info['block__1']['label'] = 'Blocks 1';
+}
+
 
