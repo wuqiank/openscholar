@@ -792,7 +792,7 @@ function os_search_solr_setup_bundle_searcher($bundle_name, $bundle_title, $bund
 }
 
 /**
- * Implementation of hook_form_alter()
+ * Implements hook_form_alter()
  */
 function os_search_solr_form_alter(&$form, &$form_state, $form_id) {
 
