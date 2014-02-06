@@ -6,13 +6,11 @@ include_once ('os_search_solr.features.inc');
  * Implements hook_block_info().
  */
 function os_search_solr_block_info() {
-  $realms = (array) facetapi_realms_realms_load_multiple();
-  $blocks = facetapi_get_block_info(array_keys($realms));
+  $blocks = array();
 
   $blocks['site-search'] = array(
-      'info' => t('Site Search'),
-      'weight' => '10',
-      //'cache' => DRUPAL_CACHE_CUSTOM
+    'info' => t('Site Search'),
+    'weight' => '10',
   );
 
   return $blocks;
@@ -25,16 +23,14 @@ function os_search_solr_block_info() {
  * all os menu blocks.
  */
 function os_search_solr_block_view($delta = '') {
-  $block = array();
-  switch ($delta) {
-    case 'site-search' :
-      $block['subject'] = NULL;
-      $block['content'] = drupal_get_form('search_block_form');
-      return $block;
-
-    default:
-      return facetapi_block_view($delta);
+  if ($delta != 'site-search') {
+    return array();
   }
+
+  $block = array();
+  $block['subject'] = NULL;
+  $block['content'] = drupal_get_form('search_block_form');
+  return $block;
 }
 
 
