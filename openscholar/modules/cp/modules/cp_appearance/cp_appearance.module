@@ -848,7 +848,7 @@ function cp_appearance_manage_git_validate($form, $form_state) {
 
   // We pull, in case the user wants to reload a subtheme.
   try {
-    os_profiles_git_checkout($git, $branch);
+    cp_appearance_git_checkout($git, $branch);
   }
   catch (GitException $e) {
   }
@@ -1025,7 +1025,7 @@ function _cp_appearance_pull_subtheme_git(&$form, &$form_state, $info) {
   $text = '';
   if ($branch) {
     try {
-      os_profiles_git_checkout($git, $branch);
+      cp_appearance_git_checkout($git, $branch);
     }
     catch (GitException $e) {
       drupal_set_message($e->getMessage(), 'error');
@@ -1067,6 +1067,7 @@ function _cp_appearance_pull_subtheme_git(&$form, &$form_state, $info) {
   );
 
   $form['#attached']['css'][] = drupal_get_path('module', 'cp_appearance') . '/theme/cp_appearance.css';
+  $form['#attached']['js'][] = drupal_get_path('module', 'cp_appearance') . '/theme/cp_appearance_theme_picker.js';
 }
 
 function cp_appearance_git_method_update_branch($form, $form_state) {
@@ -1097,7 +1098,7 @@ function cp_appearance_pull_subtheme_submit($form, $form_state) {
 
     // We didn't just updated - we change the branch. Checking out to that branch.
     try {
-      os_profiles_git_checkout($git, $branch);
+      cp_appearance_git_checkout($git, $branch);
     }
     catch (GitException $e) {
       drupal_set_message($e->getMessage(), 'error');
@@ -1126,7 +1127,7 @@ function cp_appearance_pull_subtheme_submit($form, $form_state) {
  * @param $branch
  *  The name of the branch.
  */
-function os_profiles_git_checkout(\GitWrapper\GitWorkingCopy $git, $branch) {
+function cp_appearance_git_checkout(\GitWrapper\GitWorkingCopy $git, $branch) {
   if (strpos($branch, 'remotes') === 0) {
     $git->checkout($branch, array('t' => TRUE));
   }
