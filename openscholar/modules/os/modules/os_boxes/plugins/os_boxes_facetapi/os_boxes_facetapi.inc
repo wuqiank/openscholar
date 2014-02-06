@@ -6,7 +6,7 @@ class os_boxes_facetapi extends os_boxes_default {
    */
   public function options_defaults() {
     $options = parent::options_defaults();
-    $options['vocabularies'] = FALSE;
+    $options['vocabularies'] = $this->get_all_vocabularies();
 
     return $options;
   }
