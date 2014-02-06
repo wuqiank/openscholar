@@ -10,12 +10,12 @@ Feature:
      Then I click "Air"
       And I should not see "Norma"
 
-  @api @wip
+  @api
   Scenario: Test browse with one term not showing categories block
-    Given I visit "john/browse/bios"
+    Given I visit "obama/browse/blogs"
      Then I should not see "filter by taxonomy"
-      And I should see "browse bio"
-      And I should see "John doe biography"
+      And I should see "browse blogs"
+      And I should see "Me and michelle obama"
 
   @api
   Scenario: Test direct browsing of category
