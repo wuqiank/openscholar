@@ -128,7 +128,7 @@ function os_publications_field_default_field_instances() {
   $field_instances['node-biblio-field_biblio_image'] = array(
     'bundle' => 'biblio',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Image should not be less than 150px wide.',
     'display' => array(
       'default' => array(
         'label' => 'hidden',
