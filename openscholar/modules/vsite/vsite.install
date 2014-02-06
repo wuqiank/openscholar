@@ -581,7 +581,7 @@ function vsite_update_7018() {
   variable_set($name, $value);
 }
 
-/**
+/*
  * Set "content editor" permissions for "synced" permissions.
  */
 function vsite_update_7019() {
@@ -594,4 +594,11 @@ function vsite_update_7019() {
     $rid = array_search('content editor', $og_roles);
     og_role_grant_permissions($rid, $permissions);
   }
+}
+
+/**
+ * Add description to image fields
+ */
+function vsite_update_7020() {
+  features_revert(array('vsite' => array('field_instance')));
 }

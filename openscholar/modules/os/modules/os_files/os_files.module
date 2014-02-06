@@ -1053,6 +1053,11 @@ function os_files_media_widget_process($element, $form_state, $form) {
  */
 function os_files_imagefield_crop_process($element, $form_state, $form) {
 
+  $instance = field_widget_instance($element, $form_state);
+  if (isset($instance['description'])) {
+    $element['#description'] .= '. '.$instance['description'];
+  }
+
   unset($element['upload']);
   $element['upload_button']['#submit'] = array(
     'os_files_no_func'
