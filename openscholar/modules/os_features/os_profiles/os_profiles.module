@@ -889,6 +889,8 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     return;
   }
 
+  $vsite = vsite_get_vsite();
+
   // Form element for disabling the use of a default image.
   $form['os_profiles_disable_default_image'] = array(
     '#type' => 'checkbox',
@@ -921,8 +923,10 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     $profile_styles_hover[$style] = $profile_example_output;
   }
 
-  // Form element to choose display type.
-  $form['os_profiles_display_type'] = array(
+  // Form element to choose display type. We use a "dummy" variable to be able
+  // to get the value that is set in the vsite level and not the site-wide
+  // level value.
+  $form['dummy__os_profiles_display_type'] = array(
     '#type' => 'radios',
     '#title' => t('Display Types'),
     '#default_value' => variable_get('os_profiles_display_type', 'teaser'),
@@ -1138,9 +1142,11 @@ function _os_profiles_default_image_preview_process($element, $form_state, $form
 function os_profiles_display_settings_submit($form, $form_state) {
   $file_data = $form_state['input']['file'];
 
+  $vsite = vsite_get_vsite();
+
   // When removing an uploaded picture set the default image file id to 0.
   if ($form_state['triggering_element']['#value'] == 'remove') {
-    variable_set('os_profiles_default_image_file', 0);
+    $vsite->controllers->variable->set('os_profiles_default_image_file', 0);
     return;
   }
 
@@ -1181,23 +1187,23 @@ function os_profiles_display_settings_submit($form, $form_state) {
 
     if (module_exists('vsite') && $space = spaces_get_space() && $file->fid) {
       // Save the state of the crop tool image.
-      variable_set('os_profiles_default_image_file', $file_data['fid']);
+      $vsite->controllers->variable->set('os_profiles_default_image_file', $file_data['fid']);
       $dimensions = array(
         'x' => $file_data['x'],
         'y' => $file_data['y'],
         'width' => $file_data['width'],
         'height' => $file_data['height'],
       );
-      variable_set('os_profiles_default_image_properties', $dimensions);
+      $vsite->controllers->variable->set('os_profiles_default_image_properties', $dimensions);
     }
   }
   else {
     // No file is uploaded.
-    variable_set('os_profiles_default_image_file', 0);
+    $vsite->controllers->variable->set('os_profiles_default_image_file', 0);
   }
 
   // Set the display style for the profiles in the "/people" path.
-  variable_set('os_profiles_display_type', $form_state['input']['os_profiles_display_type']);
+  $vsite->controllers->variable->set('os_profiles_display_type', $form_state['values']['dummy__os_profiles_display_type']);
 
   // Clear the os_profiles view cache so the setting will take effect.
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
@@ -1357,7 +1363,7 @@ function _os_profiles_build_display_style_example($style) {
     case 'title':
       $result = '
         <div class="dummy-content">
-          <h1>John Fitzgerald Kennedy</h1>
+          <h1><a>John Fitzgerald Kennedy</a></h1>
         </div>
       ';
       break;
@@ -1408,11 +1414,9 @@ function _os_profiles_build_display_style_example($style) {
  * Implements hook_entity_view_mode_alter().
  *
  * Changes the display type for profiles in the "/people" page or in a person
- * term page (i.e "people/science/air") according to the settings in os_profiles
- * app settings.
+ * term page according to the settings in os_profiles app settings.
  */
 function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
-  $vocabs = os_sv_list_get_content_type_vocabs('person');
   $args = explode('/', $_GET['q']);
 
   if ($args[0] != 'people') {
@@ -1420,9 +1424,9 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
     return;
   }
 
-  if (!empty($args[1]) && !in_array($args[1], $vocabs)) {
-    // The second part of the path after "/people" is not empty and
-    // not a vocabulary related to that person.
+  if (!empty($args[1]) && !_os_profiles_is_term_page($args[1])) {
+    // The second part of the path after "/people" is not a vocabulary or a term
+    // related to a person (that is, not a term page).
     return;
   }
 
@@ -1440,6 +1444,35 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
   if (empty($context['entity']->sv_list)) {
     $view_mode = variable_get('os_profiles_display_type', 'teaser');
   }
+}
+
+/**
+ * Helper function. Checks if a page is a people term page.
+ *
+ * The function checks if the current page is a term page that is, the URL is
+ * in the form "john/people/science" where "science" is a vocabulary or if the URL is
+ * in the form "john/people/faculty" where "faculty" is a term.
+ *
+ * @param $arg
+ *  The part of $_GET['q] that comes after "people"
+ *  up to a "/".
+ */
+function _os_profiles_is_term_page($arg) {
+  $vocabs = os_sv_list_get_content_type_vocabs('person');
+
+  if (in_array($arg, $vocabs)) {
+    // Path is in the form "john/people/<vocab-name>".
+    return TRUE;
+  }
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $source = drupal_lookup_path('source', $vsite->group->purl . '/' . $arg);
+    if (strpos($source, 'taxonomy/term') == 0) {
+      // Path is in the form "john/people/<term-name>".
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 /**
