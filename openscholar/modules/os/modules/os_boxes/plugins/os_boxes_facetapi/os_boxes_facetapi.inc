@@ -18,12 +18,12 @@ class os_boxes_facetapi extends os_boxes_default {
     ctools_include('taxonomy', 'os');
     $form = parent::options_form($form_state);
 
-    $vocabularies = os_get_vocabularies();
     $form['vocabularies'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Vocabularies'),
       '#description' => t('Select which vocabularies to show. No selection will show all vocabularies.'),
       '#options' => self::get_all_vocabularies(),
+      '#default_values' => $this->options['vocabularies'],
     );
     return $form;
   }
