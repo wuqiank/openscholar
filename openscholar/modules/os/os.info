@@ -156,6 +156,7 @@ features[variable][] = expire_node_actions
 features[variable][] = expire_node_node_page
 features[variable][] = expire_status
 features[variable][] = pathauto_node_pattern
+features[variable][] = pathauto_taxonomy_vocabulary_pattern
 features[variable][] = pathauto_update_action
 features[variable][] = securepages_enable
 features[variable][] = securepages_pages
