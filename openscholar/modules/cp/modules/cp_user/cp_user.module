@@ -258,7 +258,7 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   // In addition to CRUD permissions, the permission 'Change theme' is the only
   // non-CRUD permission that should be displayed on the list.
-  foreach (vsite_get_os_sync_permissions() as $permission) {
+  foreach (vsite_get_os_override_permissions() as $permission) {
     $allowed_permissions[$permission] = 'general';
   }
   $allowed_permissions['change theme'] = 'general';

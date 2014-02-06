@@ -2849,15 +2849,19 @@ function vsite_og_default_roles_alter(&$roles) {
 }
 
 /**
- * Get the VSite permissions that should be "OS synced".
+ * Get the VSite permissions that should be "OS override".
+ *
+ * Overriding permissions are those permissions that are defined as site-wide,
+ * however we re-assign those permissions on the fly, based on the permission
+ * given in the VSite level.
  *
  * @return array
- *   Array of permissions to be synced.
+ *   Array of permissions to be overriding.
  */
-function vsite_get_os_sync_permissions() {
+function vsite_get_os_override_permissions() {
   $return = array();
   foreach (og_get_permissions() as $name => $params) {
-    if (empty($params['os_sync'])) {
+    if (empty($params['os_override'])) {
       continue;
     }
 
@@ -2873,12 +2877,12 @@ function vsite_og_permission() {
   return array(
     'administer boxes' => array(
       'title' => t('Administer boxes'),
-      'os_sync' => TRUE,
+      'os_override' => TRUE,
     ),
     'edit boxes' => array(
       'title' => t('Edit boxes'),
       'description' => t('Edit existing boxes.'),
-      'os_sync' => TRUE,
+      'os_override' => TRUE,
     ),
   );
 }
