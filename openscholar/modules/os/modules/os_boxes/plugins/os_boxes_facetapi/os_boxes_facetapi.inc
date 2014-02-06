@@ -22,8 +22,8 @@ class os_boxes_facetapi extends os_boxes_default {
       '#type' => 'checkboxes',
       '#title' => t('Vocabularies'),
       '#description' => t('Select which vocabularies to show. No selection will show all vocabularies.'),
-      '#options' => self::get_all_vocabularies(),
-      '#default_values' => $this->options['vocabularies'],
+      '#options' => $this->get_all_vocabularies(),
+      '#default_value' => $this->options['vocabularies'],
     );
     return $form;
   }
