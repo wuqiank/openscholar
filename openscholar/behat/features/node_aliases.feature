@@ -100,7 +100,7 @@ Feature:
   Scenario: Verify that admin can't enter a path alias in without a prefix
             (i.e "john").
     Given I am logging in as "admin"
-      And I visit "http://localhost/openscholar/www/admin/config/search/path/edit/66?destination=admin/config/search/path"
+      And I visit "admin/config/search/path/edit/66?destination=admin/config/search/path"
       And I fill in "Path alias" with "people/john-fitzgerald-kennedy"
      When I press "Save"
      Then I should see "The prefix of the vsite is missing."
