@@ -22,7 +22,7 @@
  * Return the current vocabularies
  *
  * @return array|bool
- *   An array of all avalible vocabulary objects, indexed by vid, or FALSE.
+ *   An array of all available vocabulary objects, indexed by vid, or FALSE.
  */
 function os_get_vocabularies(){
 

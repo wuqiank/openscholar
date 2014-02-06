@@ -297,5 +297,14 @@ function _os_boxes_boxes_plugins() {
     )
   );
 
+  $info['os_boxes_facetapi'] = array(
+    'title' => 'Facetapi box',
+    'handler' => array(
+      'class' => 'os_boxes_facetapi',
+      'file' => 'os_boxes_facetapi.inc',
+      'path' => $path  . '/os_boxes_facetapi',
+      'parent' => 'os_boxes_default',
+    ),
+  );
   return $info;
 }
