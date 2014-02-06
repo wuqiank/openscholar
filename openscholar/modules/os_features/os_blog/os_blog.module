@@ -35,6 +35,7 @@ function os_blog_os_app_info() {
       'blog' => array(
         'url' => 'browse/blogs',
         'title' => t('Browse blogs'),
+        'display_mode' => 'teaser',
         'menu_item' => 'blog',
       ),
     ),

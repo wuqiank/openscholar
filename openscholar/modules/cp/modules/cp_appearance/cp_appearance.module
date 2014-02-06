@@ -12,33 +12,25 @@ use GitWrapper\GitException;
 /**
  * Implements hook_menu().
  */
-function cp_appearance_menu(){
+function cp_appearance_menu() {
   $items = array();
   $items['cp/appearance'] = array(
     'title' => 'Appearance',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array(
-      'cp_appearance_theme_picker_form'
-    ),
+    'page arguments' => array('cp_appearance_theme_picker_form'),
     'weight' => 20,
     'menu_name' => 'cp',
-    'access callback' => array(
-      'cp_appearance_change_theme_access'
-    )
+    'access callback' => array('cp_appearance_change_theme_access'),
   );
 
   $items['cp/appearance/theme'] = array(
     'title' => t('Theme'),
     'page callback' => 'drupal_get_form',
     'type' => MENU_DEFAULT_LOCAL_TASK,
-    'page arguments' => array(
-      'cp_appearance_theme_picker_form'
-    ),
+    'page arguments' => array('cp_appearance_theme_picker_form'),
     'weight' => 20,
     'menu_name' => 'cp',
-    'access callback' => array(
-      'cp_appearance_change_theme_access'
-    )
+    'access callback' => array('cp_appearance_change_theme_access'),
   );
 
   $items['cp/appearance/add-subtheme'] = array(
@@ -64,6 +56,13 @@ function cp_appearance_menu(){
     'title' => 'Update subtheme',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('cp_appearance_pull_subtheme', 3),
+    'access callback' => 'cp_appearance_sub_theme_access',
+  );
+
+  $items['cp/appearance/delete-subtheme/%'] = array(
+    'title' => 'Delete subtheme',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cp_appearance_delete_subtheme', 3),
     'access callback' => 'cp_appearance_sub_theme_access',
   );
 
@@ -364,13 +363,18 @@ function theme_cp_appearance_theme_picker_form($variables) {
       if ($theme_default == $parsed_info['module'] && variable_get('os_appearance_' . $theme_default . '_flavor') == $flavor) {
         $selected_subtheme = 'current';
       }
+      $class = strpos($info['path'], 'zip') !== FALSE ? 'zip-pull-button' : 'git-pull-button';
+      $actions = array(
+        "<div class='delete-subtheme'>" . l(t('Delete'), 'cp/appearance/delete-subtheme/' . $flavor) . "</div>",
+        "<div class='" . $class . "'>" . l(t('Update'), 'cp/appearance/update-subtheme/' . $flavor) . "</div>",
+      );
 
       $items[] = array(
         'class' => array('item-theme-picker', $selected_subtheme),
         'id' => 'theme-' . str_replace('_', '-', $flavor),
         'data' => theme('cp-appearance-subtheme-item', array(
           'info' => $theme_info ,
-          'actions' => "<div class='git-pull-button'>" . l(t('Update'), 'cp/appearance/update-subtheme/' . $flavor) . "</div>",
+          'actions' => implode("", $actions),
         )),
       );
     }
@@ -525,6 +529,7 @@ function cp_appearance_admin_paths() {
     'cp/appearance/add-subtheme' => TRUE,
     'cp/appearance/add-subtheme/*' => TRUE,
     'cp/appearance/update-subtheme/*' => TRUE,
+    'cp/appearance/delete-subtheme/*' => TRUE,
   );
 }
 
@@ -1068,6 +1073,59 @@ function cp_appearance_pull_subtheme_submit($form, $form_state) {
       drupal_set_message(t('The subtheme updated succesfully.'));
     }
   }
+}
+
+/**
+ * Delete a subtheme.
+ */
+function cp_appearance_delete_subtheme($form, $form_sate, $type) {
+  $form['type'] = array('#type' => 'value', '#value' => $type);
+  $flavors = variable_get('flavors');
+  $params = array('%title' => $flavors[$type]['name']);
+
+  return confirm_form($form,
+    t('Are you sure you want to delete the sub theme %title?', $params),
+    'cp/appearance',
+    t('Deleting the sub theme will remove her files and cannot be undone.'),
+    t('Delete'),
+    t('Cancel'));
+}
+
+/**
+ * Submit handler; Delete the subtheme.
+ */
+function cp_appearance_delete_subtheme_submit($form, &$form_state) {
+  $flavors = variable_get('flavors');
+  $info = $flavors[$form_state['values']['type']];
+
+  // Remove the folder and set the redirect.
+  os_profiles_rrmdir($info['path']);
+  $form_state['redirect'] = 'cp/appearance';
+
+  // Set the title.
+  $params = array('%title' => $info['name']);
+  drupal_set_message(t('The theme %title has been removed.', $params));
+
+  // Remove the theme from the variable.
+  unset($flavors[$form_state['values']['type']]);
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $vsite->controllers->variable->set('flavors', $flavors);
+  }
+}
+
+/**
+ * Delete folder recursively.
+ */
+function os_profiles_rrmdir($dir) {
+  foreach (glob($dir . '/*') as $file) {
+    if (is_dir($file)) {
+      os_profiles_rrmdir($file);
+    }
+    else {
+      unlink($file);
+    }
+  }
+  rmdir($dir);
 }
 
 /**
