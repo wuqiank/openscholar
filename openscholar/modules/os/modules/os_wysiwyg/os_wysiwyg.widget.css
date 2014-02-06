@@ -8,5 +8,5 @@
 
 .mceEditor table.mceLayout.os-wysiwyg-collapsed > tbody > tr.mceFirst,
 .mceEditor table.mceLayout.os-wysiwyg-collapsed > tbody > tr.mceLast {
-  visibility: hidden;
+  display: none;
 }
