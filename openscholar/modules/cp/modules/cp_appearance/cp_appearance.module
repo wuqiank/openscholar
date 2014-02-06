@@ -930,11 +930,11 @@ function cp_appearance_pull_subtheme($form, &$form_state, $type) {
   $form_state['path'] = $info['path'];
 
   if (strpos($info['path'], 'zip') !== FALSE) {
-    _cp_appearance_pull_subtheme_zip($form, $info);
+    _cp_appearance_pull_subtheme_zip($form, $form_state, $info);
     $form_state['subtheme_method'] = 'zip';
   }
   else {
-    _cp_appearance_pull_subtheme_git($form, $info);
+    _cp_appearance_pull_subtheme_git($form, $form_state, $info);
     $form_state['subtheme_method'] = 'git';
   }
 
@@ -946,10 +946,12 @@ function cp_appearance_pull_subtheme($form, &$form_state, $type) {
  *
  * @param $form
  *  The form variable.
+ * @param $form_state
+ *  The form state variable.
  * @param $info
  *  The info of the subtheme.
  */
-function _cp_appearance_pull_subtheme_zip(&$form, $info) {
+function _cp_appearance_pull_subtheme_zip(&$form, $form_state, $info) {
   $form['file'] = array(
     '#title' => t('Theme'),
     '#type' => 'managed_file',
@@ -973,7 +975,7 @@ function _cp_appearance_pull_subtheme_zip(&$form, $info) {
 /**
  * Updating subtheme which added in GIT.
  */
-function _cp_appearance_pull_subtheme_git(&$form, $info) {
+function _cp_appearance_pull_subtheme_git(&$form, &$form_state, $info) {
   require_once libraries_get_path('git') . '/autoload.php';
 
   $wrapper = new GitWrapper();
@@ -1006,7 +1008,9 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
     $branches[$branch] = $branch;
   }
 
-  $form['branch'] = array(
+  $branch = !empty($form_state['values']['branch']) ? $form_state['values']['branch'] : NULL;
+
+  $form['branches']['branch'] = array(
     '#type' => 'select',
     '#title' => t('Branch'),
     '#options' => $branches,
@@ -1014,10 +1018,41 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
     '#description' => t('Change the new branch or select the old one and update.'),
     '#ajax' => array(
       'callback' => 'cp_appearance_git_method_update_branch',
-      'wrapper' => 'edit-branch',
+      'wrapper' => 'checkboxes-div',
     ),
-    '#prefix' => '<div id="branch_wrapper">',
+  );
+
+  $text = '';
+
+  if ($branch) {
+    try {
+      $git->checkout($branch);
+    }
+    catch (GitException $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
+
+    // Pulling hte data from the git repository.
+    try {
+      $git->pull();
+    }
+    catch (GitException $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
+
+    $params = array(
+      '%branch' => $branch,
+    );
+
+    drupal_set_message(t('The branch changed to %branch.', $params));
+    $text = theme('status_messages');
+  }
+
+  $form['branches']['result'] = array(
+    '#prefix' => '<div id="checkboxes-div">',
     '#suffix' => '</div>',
+    '#type' => 'item',
+    '#markup' => $text,
   );
 
   $form['actions'] = array(
@@ -1036,8 +1071,7 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
 }
 
 function cp_appearance_git_method_update_branch($form, $form_state) {
-  dpm('a');
-  return $form['branch_wrapper'];
+  return $form['branches']['result'];
 }
 
 /**
