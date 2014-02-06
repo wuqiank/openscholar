@@ -1012,6 +1012,12 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
     '#options' => $branches,
     '#default_value' => $selected_branch,
     '#description' => t('Change the new branch or select the old one and update.'),
+    '#ajax' => array(
+      'callback' => 'cp_appearance_git_method_update_branch',
+      'wrapper' => 'edit-branch',
+    ),
+    '#prefix' => '<div id="branch_wrapper">',
+    '#suffix' => '</div>',
   );
 
   $form['actions'] = array(
@@ -1027,6 +1033,11 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
   );
 
   $form['#attached']['css'][] = drupal_get_path('module', 'cp_appearance') . '/theme/cp_appearance.css';
+}
+
+function cp_appearance_git_method_update_branch($form, $form_state) {
+  dpm('a');
+  return $form['branch_wrapper'];
 }
 
 /**
@@ -1110,6 +1121,9 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
   unset($flavors[$form_state['values']['type']]);
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
     $vsite->controllers->variable->set('flavors', $flavors);
+  }
+  else {
+    variable_set('flavors', $flavors);
   }
 }
 
