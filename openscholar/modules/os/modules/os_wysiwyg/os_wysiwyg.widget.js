@@ -5,6 +5,13 @@
   
   function wysiwyg_expand(e) {
     var parent;
+    if (typeof e == 'undefined') { //wtf IE
+      // only happens in IE when we click on the body element
+      // IE doesn't pass an event object in when the event handler is assigned using onclick attribute
+      e = this.document.parentWindow.event;
+      e.currentTarget = e.srcElement;
+      e.currentTarget.ownerDocument.defaultView = e.currentTarget.ownerDocument.parentWindow;
+    }
     if (e.currentTarget.nodeName == 'BODY') {
       if (e.currentTarget.ownerDocument.defaultView.name.indexOf('_ifr') != -1) {
         parent = $('#'+e.currentTarget.ownerDocument.defaultView.name.replace('_ifr', '')).parents('.form-item');
@@ -22,10 +29,9 @@
       height = (parseInt(parent.find('[data-maxrows]').attr('data-maxrows')) * 25);
 
     editor.removeClass('os-wysiwyg-collapsed');
-    editor.animate({height: height+'px'}, 600, 'swing', function() {
-      parent.find('.wysiwyg-toggle-wrapper').show();
-    });
-    $('iframe', editor).animate({height: height+1+'px'}, 600);
+    parent.find('.wysiwyg-toggle-wrapper').show();
+    editor.stop().animate({height: height+'px'}, 600);
+    $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
     editor.children('tbody').children('tr.mceFirst, tr.mceLast').animate({opacity: 1.0}, 600);
   }
 
@@ -44,9 +50,9 @@
     // and then subtract that from the new position
 
 
-    editor.animate({height: height+'px'}, 600)
+    editor.stop().animate({height: height+'px'}, 600)
       .addClass('os-wysiwyg-collapsed');
-    $('iframe', editor).animate({height: height+1+'px'}, 600);
+    $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
     parent.find('.wysiwyg-toggle-wrapper').hide();
 
     var scrollDiff = scrollSize - document.body.scrollHeight,
