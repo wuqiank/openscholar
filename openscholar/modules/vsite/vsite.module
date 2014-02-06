@@ -2856,6 +2856,45 @@ function vsite_og_default_roles_alter(&$roles) {
 }
 
 /**
+ * Get the VSite permissions that should be "OS override".
+ *
+ * Overriding permissions are those permissions that are defined as site-wide,
+ * however we re-assign those permissions on the fly, based on the permission
+ * given in the VSite level.
+ *
+ * @return array
+ *   Array of permissions to be overriding.
+ */
+function vsite_get_os_override_permissions() {
+  $return = array();
+  foreach (og_get_permissions() as $name => $params) {
+    if (empty($params['os_override'])) {
+      continue;
+    }
+
+    $return[] = $name;
+  }
+  return $return;
+}
+
+/**
+ * Implements hook_og_permission().
+ */
+function vsite_og_permission() {
+  return array(
+    'administer boxes' => array(
+      'title' => t('Administer boxes'),
+      'os_override' => TRUE,
+    ),
+    'edit boxes' => array(
+      'title' => t('Edit boxes'),
+      'description' => t('Edit existing boxes.'),
+      'os_override' => TRUE,
+    ),
+  );
+}
+
+/**
  * Implements hook_og_permission_alter().
  */
 function vsite_og_permission_alter(&$perms) {
@@ -2894,10 +2933,18 @@ function vsite_og_permission_alter(&$perms) {
   }
 
   // Add editional permissions to vsite user and content editor.
-  $perms['view users outside groups']['default role'][] = 'vsite user';
-  $perms['unsubscribe']['default role'][] = 'vsite user';
-  $perms['view users outside groups']['default role'][] = 'content editor';
-  $perms['unsubscribe']['default role'][] = 'content editor';
+  $permissions = array(
+    'view users outside groups',
+    'unsubscribe',
+  );
+
+  foreach ($permissions as $permission) {
+    $perms[$permission]['default role'][] = 'content editor';
+    $perms[$permission]['default role'][] = 'vsite user';
+  }
+
+  // Edit boxes should be given to the "content editor".
+  $perms['edit boxes']['default role'][] = 'content editor';
 }
 
 /**
