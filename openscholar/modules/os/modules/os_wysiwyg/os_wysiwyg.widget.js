@@ -5,8 +5,15 @@
   
   function wysiwyg_expand(e) {
     var parent;
-    if (e.currentTarget.ownerDocument.defaultView.name.indexOf('_ifr') != -1) {
-      parent = $('#'+e.currentTarget.ownerDocument.defaultView.name.replace('_ifr', '')).parents('.form-item');
+    if (e.currentTarget.nodeName == 'BODY') {
+      if (e.currentTarget.ownerDocument.defaultView.name.indexOf('_ifr') != -1) {
+        parent = $('#'+e.currentTarget.ownerDocument.defaultView.name.replace('_ifr', '')).parents('.form-item');
+      }
+      else {
+        var id = $(e.currentTarget).attr('onload').match(/'[\w\d-]+'/);
+        id = id[0].slice(1, -1);
+        parent = $('#'+id).parents('.form-item');
+      }
     }
     else {
       parent = $(e.currentTarget).parents('.form-item');
