@@ -1040,7 +1040,7 @@ class FeatureContext extends DrupalContext {
     $element = $page->find('xpath', "//h2[contains(., '{$facet}')]/following-sibling::div//a[contains(., '{$option}')]");
 
     if (!$element) {
-      throw new Exception("'%s' was not found under the facet '%s'", $option, $facet);
+      throw new Exception(sprintf("'%s' was not found under the facet '%s'", $option, $facet));
     }
 
     $element->press();
