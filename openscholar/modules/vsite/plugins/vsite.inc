@@ -438,6 +438,10 @@ class vsite extends space_og {
         // the allowed permissions.
         unset($perms[$permission]);
       }
+      else {
+        // Grant permission.
+        $perms[$permission] = TRUE;
+      }
     }
 
     $perm[$user->uid] = $perms;
