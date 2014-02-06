@@ -41,6 +41,7 @@ features[field_instance][] = node-news-field_upload
 features[field_instance][] = node-news-field_url
 features[image][] = os_news_full_140_x_180
 features[node][] = news
+features[metatag][] = node:news
 features[user_permission][] = create news content
 features[user_permission][] = delete any news content
 features[user_permission][] = delete own news content

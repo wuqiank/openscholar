@@ -30,6 +30,7 @@ features[field_instance][] = node-link-body
 features[field_instance][] = node-link-field_links_link
 features[field_instance][] = node-link-field_upload
 features[node][] = link
+features[metatag][] = node:link
 features[user_permission][] = create link content
 features[user_permission][] = delete any link content
 features[user_permission][] = delete own link content
