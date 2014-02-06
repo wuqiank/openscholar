@@ -565,7 +565,9 @@ function os_files_form_media_internet_add_alter(&$form, &$form_state) {
         'path' => 'http://embed.ly/embed/features/providers',
         'text' => t('these providers'),
         'options' => array(
-          'attributes' => array(),
+          'attributes' => array(
+            'target' => '_blank'
+          ),
           'html' => FALSE
         )
       )),
@@ -1325,14 +1327,17 @@ function os_files_file_view($file, $view_mode, $langcode) {
         '#text' => $file->filename,
         '#options' => array('attributes' => array('class' => array('entity-link')), 'html' => FALSE),
       ),
-      'download' => array(
-        '#theme' => 'link',
-        '#path' => file_create_url($file->uri),
-        '#text' => 'Download',
-        '#options' => array('attributes' => array('class' => array('download-link')), 'html' => FALSE),
-      ),
-    )
+    ),
   );
+  
+  if (!isset($file->oembed) || !$file->oembed) {
+    $content['file-info']['download'] = array(
+      '#theme' => 'link',
+      '#path' => file_create_url($file->uri),
+      '#text' => 'Download',
+      '#options' => array('attributes' => array('class' => array('download-link')), 'html' => FALSE),
+    );
+  }
       
   //teasers get read more link
   if ($view_mode == 'teaser' && $file->os_file_description) {

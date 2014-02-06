@@ -61,7 +61,7 @@ blockquote {
      border-right:1px solid #CCC;
 }
 
-#columns .links li a {
+#columns a.node-readmore {
     border-bottom: none;
     font-size:12px;
     font-weight:bold;
@@ -139,6 +139,10 @@ blockquote {
 
 }
 
+ul.nice-menu-down li ul li ul {
+  left: 12em;
+}
+
 #menu-bar ul.nice-menu .menuparent.over > a,
 #menu-bar ul.nice-menu .menuparent a:hover {
     background: url('../../hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat #86111E;
@@ -147,6 +151,12 @@ blockquote {
 #menu-bar ul.nice-menu .menuparent a.active,
 #menu-bar ul.nice-menu .menuparent a.active:hover {
     background: url('../../hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat #6a1319;
+}
+
+#menu-bar ul.nice-menu ul .menuparent.over > a,
+#menu-bar ul.nice-menu ul .menuparent a:hover,
+#menu-bar ul.nice-menu ul .menuparent a.active {
+     color:#FFF;
 }
 
 
@@ -358,36 +368,7 @@ h1#page-title {
   
 
 /* Blocks */
-/*
-.sidebar .block,
-.front #content-column .block,
-.page-node.node-type-person #content-column .node-person .block-inner,
-.not-front #content-column .region-content-first .block,
-.not-front #content-column .region-content-second .block {
-  border-top: 4px solid #8996A1;
-  margin-bottom: 20px;
-}
 
-
-#block-os-pages-main-content .block,
-.block-boxes-os_boxes_tabs .block {
-margin-bottom: 0 !important;
-border-top: none;
-}
-
-.block.block-os-secondary-menu,
-.block.os-custom-menu,
-.block.block-boxes-os_boxes_addthis,
-#block-views-os-events-block-1 .block,
-.block-boxes block-boxes-os_sv_list_box,
-.block-boxes-os_boxes_manual_list,
-.sidebar .block.section-nav,
-#content-column .block.section-nav,
-.front #content-column .block.block-boxes-os_slideshow_box,
-.page-node.node-type-person #content-column .node-person .block,
-#block-views-os-events-block-1.block {
-	border-top: none;
-}*/
 
 .not-front #content-column .region-content-first .block,
 .not-front #content-column .region-content-second .block,
@@ -404,7 +385,7 @@ border-top: none;
 .sidebar #block-views-os-events-block-1.block,
 #content-column #block-views-os-events-block-1.block,
 #content-column .block.block-boxes-os_slideshow_box,
-.block-boxes block-boxes-os_sv_list_box,
+.block-boxes.block-boxes-os_sv_list_box .node-person .block-inner,
 .block-boxes-os_boxes_manual_list, 
 .sidebar .block.section-nav,
 #content-column .block.section-nav  {
@@ -732,6 +713,38 @@ background-color: #f3f3f1 !important;
 .section-nav .leaf.menu-depth-5 > a:hover,
 .section-nav .leaf.menu-depth-6 > a:hover {
 background-color: none !important;
+}
+
+.block-boxes-os_taxonomy_fbt.navigation a {
+	color: #6C6C6C;
+	font-weight: bold;
+}
+
+
+.block-boxes-os_taxonomy_fbt.navigation {
+border-top: none;
+}
+
+
+.block-boxes-os_taxonomy_fbt.navigation h2 {
+	border-top: 4px solid #A51C30;
+	padding-top:12px;
+}
+
+
+.block-boxes-os_taxonomy_fbt.navigation ul {
+	border-top: 4px solid #A51C30;
+}
+
+.block-boxes-os_taxonomy_fbt.navigation h2 ~ .block-content ul {
+	border-top: none !important;
+}
+
+.block-boxes-os_taxonomy_fbt.navigation ul {
+border-bottom: none;
+border-left: none;
+border-right: none;
+
 }
 
 /* Footer */

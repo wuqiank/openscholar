@@ -31,6 +31,10 @@ function os_biocv_os_app_info() {
         'csv' => 'os_bio',
       ),
     ),
+    'browse_pages' => array(
+      'bio' => TRUE,
+      'cv' => TRUE,
+    ),
   );
 
   return $apps;

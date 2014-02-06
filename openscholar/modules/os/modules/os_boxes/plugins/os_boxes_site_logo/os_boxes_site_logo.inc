@@ -227,7 +227,7 @@ function os_boxes_site_logo_submit($form, $form_state) {
 function _os_boxes_site_logo_process($element, $form_state, $form) {
   $element = file_managed_file_process($element, $form_state, $form);
   $element = os_files_imagefield_crop_process($element, $form_state, $form);
-  $element['remove_button']['#submit'][] = '_os_boxes_site_logo_remove_handler';
+  $element['remove_button']['#submit'][] = '_os_image_remove_handler';
 
   $fid = isset($element['#value']['fid']) ? $element['#value']['fid'] : 0;
 
@@ -345,25 +345,4 @@ function _os_boxes_site_logo_preview_process($element, $form_state, $form) {
   $element['#imagefield_crop']['#height'] = isset($scale)?$scale['height']:0;
 
   return $element;
-}
-
-function _os_boxes_site_logo_remove_handler($form, $form_state) {
-  $parents = $form_state['triggering_element']['#array_parents'];
-  $button_key = array_pop($parents);
-  $element = drupal_array_get_nested_value($form, $parents);
-
-  // @see: file_managed_file_submit
-  if (isset($element['#file'])) {
-    $orig = _imagefield_crop_file_to_crop($element['#file']->fid);
-    file_usage_delete($orig, 'imagefield_crop', null, null, 0);
-    file_usage_delete($element['#file'], 'os_boxes', null, null, 0);
-    file_delete($orig);
-    file_delete($element['#file']);
-    $element['#value']['fid'] = null;
-    unset($element['#file']);
-
-    $values_element = $element['#extended'] ? $element['fid'] : $element;
-    form_set_value($values_element, NULL, $form_state);
-    drupal_array_set_nested_value($form_state['input'], $values_element['#parents'], NULL);
-  }
 }

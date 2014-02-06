@@ -140,6 +140,11 @@ a.biblio-abstract-link.toggle {
     margin-bottom: 0;
 }
 
+.block .node:only-child {
+    margin-bottom: 20px;
+}
+
+
 /* Search Results */
 .page-search input.form-text {
   width: auto;
@@ -454,17 +459,23 @@ ol.search-results li.search-result:last-child {
   margin-left: 70px;
 }
 
-.node-event .field-name-field-date {
+/* Gray color for both Date and Location fields */
+.node-event .field-name-field-date,
+.node-event .field-name-field-event-location {
   color: #6D6D6D;
+}
+
+/* Adds bottom margin to event date fields everywhere */
+.node-event .field-name-field-date {
   margin-bottom: 7px;
 }
 
-.node-event .field-name-field-date .field-label {
-  float: left;
+/* Overrides bottom margin for event fields on full node view only. */
+.node-event .field-name-field-date.view-mode-full.field-label-inline {
+    margin-bottom: 0px;
 }
-
-.node-event .field-name-field-date.field-label-above .field-label {
-	float: none;
+.node-event .field-name-field-event-location.view-mode-full .field-label {
+    margin-bottom: 7px;
 }
 
 .node-event .field-name-field-date .field-item div {
@@ -572,6 +583,12 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   display: table-cell;
 }
 
+/* An empty div styling in case of no default image */
+.node-person .no-default-image {
+  width: 75px;
+  height: 75px;
+}
+
 .node-type-person #content .node-person .field-name-body {
   margin: 0;
 }
@@ -629,6 +646,9 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   padding: 15px 0 30px;
 }
 
+.block-boxes-os_boxes_manual_list .node-teaser.node-person {
+  padding: 0 0 30px;
+}
 
 .person-teaser-wrapper {
 	display:table-cell;
@@ -638,6 +658,13 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 .node-link.node-teaser {
 	padding: 10px 0 5px;
 	}
+
+
+.sidebar .node-person .person-teaser-wrapper,
+.block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper {
+	display:inline;
+}
+
 
 
 /**
@@ -652,7 +679,7 @@ LIST OF POSTS - PERSON TEASER IN SIDEBAR
 /* Node FAQ */
 .node-teaser.node-faq {
   line-height: 19px;
-  padding: 5px 0 30px;
+  padding: 5px 0 2px;
 }
 
 .sidebar .node-teaser.node-faq {
@@ -762,6 +789,10 @@ h2.comment-title.comment-form {
 }
 
 .links li a {
+  text-decoration: underline;
+}
+
+a.node-readmore {
   text-decoration: underline;
 }
 

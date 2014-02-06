@@ -65,6 +65,13 @@ margin-top: 12px;
 }
 
 
+.block-boxes-os_taxonomy_fbt.navigation a {
+	font-size: 16px;
+	font-family:georgia;
+
+	}
+
+
 
 h1#page-title,
 h1.node-title, 
@@ -165,7 +172,7 @@ margin-left:6em;
 	margin-top:12px;
 }
 
-.block-boxes block-boxes-os_sv_list_box,
+.block-boxes-os_sv_list_box .block-inner,
 .block-boxes-os_boxes_manual_list, 
 .sidebar .block.section-nav,
 #content-column .block.section-nav  {

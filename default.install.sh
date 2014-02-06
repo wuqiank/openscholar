@@ -7,7 +7,7 @@ MYSQL_HOST="localhost"
 MYSQL_DB_NAME="openscholar"
 
 # Modify the URL below to match your OpenScholar base domain URL.
-BASE_DOMAIN_URL="http://localhost/openscholar"
+BASE_DOMAIN_URL="http://localhost/openscholar/www"
 
 # Modify the login details below to be the desired login details for the Administrator account.
 ADMIN_USERNAME="admin"

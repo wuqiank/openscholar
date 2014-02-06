@@ -28,6 +28,9 @@ function os_presentations_os_app_info() {
         'csv' => 'os_presentation',
       ),
     ),
+    'browse_pages' => array(
+      'presentation' => TRUE,
+    ),
   );
 
   return $apps;

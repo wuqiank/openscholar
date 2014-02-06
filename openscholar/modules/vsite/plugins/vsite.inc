@@ -428,6 +428,22 @@ class vsite extends space_og {
     foreach ($role_permissions as $one_role) {
       $perms += $one_role;
     }
+
+    // Iterate over "overriding" permissions.
+    foreach (vsite_get_os_override_permissions() as $permission) {
+      // Set the permission of the site-wide level, based on the value on the
+      // VSite level.
+      if (!og_user_access('node', $this->id, $permission)) {
+        // Setting to FALSE isn't enough, we need to unset the permission from
+        // the allowed permissions.
+        unset($perms[$permission]);
+      }
+      else {
+        // Grant permission.
+        $perms[$permission] = TRUE;
+      }
+    }
+
     $perm[$user->uid] = $perms;
   }
 

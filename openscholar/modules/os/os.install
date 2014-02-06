@@ -551,3 +551,68 @@ function os_update_7026() {
   );
   features_revert($revert);
 }
+
+/**
+ * Installs modules new to 3.11
+ */
+function os_update_7027($ctx) {
+  $modules = array(
+    'nodeformcols',
+  );
+
+  module_enable($modules);
+
+  return t('Enabled new modules: @modules', array('@modules' => implode(', ', $modules)));
+}
+
+/**
+ * Revert variables of the app features
+ */
+function os_update_7028($ctx) {
+  $revert = array(
+    'os_biocv' => array(
+      'variable',
+    ),
+    'os_blog' => array(
+      'variable',
+    ),
+    'os_booklets' => array(
+      'variable',
+    ),
+    'os_classes' => array(
+      'variable',
+    ),
+    'os_events' => array(
+      'variable',
+    ),
+    'os_faq' => array(
+      'variable',
+    ),
+    'os_image_gallery' => array(
+      'variable',
+    ),
+    'os_links' => array(
+      'variable',
+    ),
+    'os_news' => array(
+      'variable',
+    ),
+    'os_pages' => array(
+      'variable',
+    ),
+    'os_presentations' => array(
+      'variable',
+    ),
+    'os_profiles' => array(
+      'variable',
+    ),
+    'os_publications' => array(
+      'variable',
+    ),
+    'os_software' => array(
+      'variable',
+    ),
+  );
+
+  features_revert($revert);
+}
