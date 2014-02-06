@@ -6,6 +6,8 @@ class os_boxes_facetapi extends os_boxes_default {
    */
   public function options_defaults() {
     $options = parent::options_defaults();
+    $options['vocabularies'] = FALSE;
+
     return $options;
   }
 
@@ -30,9 +32,28 @@ class os_boxes_facetapi extends os_boxes_default {
    * Implementation of boxes_content::render().
    */
   public function render() {
-    //@todo
     $block = parent::render();
 
+    $searcher_name = os_search_solr_get_searcher_name();
+    // Gets delta map
+    if (!$map = facetapi_get_delta_map()) {
+      return $block;
+    }
+
+    // Filter by OG vocab.
+    $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
+    $delta_og_vocab = array_search($string_og_vocab, $map);
+
+    $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
+    // Remove unselected vocabularies
+    if ($this->options['vocabularies']) {
+      foreach (array_keys($block['content']['sm_og_vocabulary']) as $vocabulary_name) {
+        if (!($this->options['vocabularies'][$vocabulary_name])) {
+          unset($block['content']['sm_og_vocabulary'][$vocabulary_name]);
+        }
+      }
+    }
+    $block['content'] = render($block['content']);
     return $block;
   }
 
@@ -46,7 +67,7 @@ class os_boxes_facetapi extends os_boxes_default {
     $vocabularies = array();
 
     foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
-      $vocabularies[$taxonomy_vocabulary->vid] = $taxonomy_vocabulary->name;
+      $vocabularies[$taxonomy_vocabulary->machine_name] = $taxonomy_vocabulary->name;
     }
 
     return $vocabularies;
