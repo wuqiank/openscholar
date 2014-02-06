@@ -960,6 +960,20 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I remove the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
+   */
+  public function iRemoveTheRoleThePermissionInTheGroup($role, $group, $permission) {
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
+    $rid = $this->invoke_code('os_migrate_demo_get_role_by_name', array("'{$role}'", "'{$nid}'"));
+
+    return array(
+      new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
+      new Step\When('I uncheck the box "' . $permission . '"'),
+      new Step\When('I press "Save permissions"'),
+    );
+  }
+  
+  /**
    * @Then /^I should verify that the user "([^"]*)" has a role of "([^"]*)" in the group "([^"]*)"$/
    */
   public function iShouldVerifyThatTheUserHasRole($name, $role, $group) {
@@ -982,6 +996,20 @@ class FeatureContext extends DrupalContext {
       throw new Exception("A radio button with the name {$name} and value {$value} was not found on the page");
     }
     $radiobutton->selectOption($value, FALSE);
+  }
+
+  /**
+   * @When /^I choose the radio button named "([^"]*)" with value "([^"]*)" for the vsite "([^"]*)"$/
+   */
+  public function iSelectRadioNamedWithValueForVsite($name, $value, $vsite) {
+    $page = $this->getSession()->getPage();
+    $radiobutton = $page->find('xpath', "//*[@name='{$name}'][@value='{$value}']");
+    if (!$radiobutton) {
+      throw new Exception("A radio button with the name {$name} and value {$value} was not found on the page");
+    }
+    $radiobutton->selectOption($value, FALSE);
+    $option = $radiobutton->getValue();
+    $this->invoke_code('os_migrate_demo_vsite_set_variable', array("'{$vsite}'", "'{$name}'", "'{$option}'"));
   }
 
   /**
