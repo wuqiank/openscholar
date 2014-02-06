@@ -922,8 +922,10 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     $profile_styles_hover[$style] = $profile_example_output;
   }
 
-  // Form element to choose display type.
-  $form['os_profiles_display_type'] = array(
+  // Form element to choose display type. We use a "dummy" variable to be able
+  // to get the value that is set in the vsite level and not the site-wide
+  // level value.
+  $form['dummy__os_profiles_display_type'] = array(
     '#type' => 'radios',
     '#title' => t('Display Types'),
     '#default_value' => variable_get('os_profiles_display_type', 'teaser'),
@@ -1200,7 +1202,7 @@ function os_profiles_display_settings_submit($form, $form_state) {
   }
 
   // Set the display style for the profiles in the "/people" path.
-  $vsite->controllers->variable->set('os_profiles_display_type', $form_state['input']['os_profiles_display_type']);
+  $vsite->controllers->variable->set('os_profiles_display_type', $form_state['values']['dummy__os_profiles_display_type']);
 
   // Clear the os_profiles view cache so the setting will take effect.
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
