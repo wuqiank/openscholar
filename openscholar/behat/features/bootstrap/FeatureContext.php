@@ -960,6 +960,20 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I remove the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
+   */
+  public function iRemoveTheRoleThePermissionInTheGroup($role, $group, $permission) {
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
+    $rid = $this->invoke_code('os_migrate_demo_get_role_by_name', array("'{$role}'", "'{$nid}'"));
+
+    return array(
+      new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
+      new Step\When('I uncheck the box "' . $permission . '"'),
+      new Step\When('I press "Save permissions"'),
+    );
+  }
+  
+  /**
    * @Then /^I should verify that the user "([^"]*)" has a role of "([^"]*)" in the group "([^"]*)"$/
    */
   public function iShouldVerifyThatTheUserHasRole($name, $role, $group) {

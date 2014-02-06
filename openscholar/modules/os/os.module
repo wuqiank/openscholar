@@ -1537,17 +1537,17 @@ function os_access_region($module, $delta) {
   $region = os_get_region($module, $delta);
 
   $locked = variable_get('os_locked_regions', array());
-  $spaces = spaces_access_admin();
+  if (!boxes_access_edit()) {
+    return;
+  }
 
-  // the region is locked
-  if (isset($locked[$region]) && $locked[$region]) {
+  // The region is locked
+  if (!empty($locked[$region]) && $locked[$region]) {
     // check the permission
-    return $spaces && (user_access('edit locked regions') || user_access('manage locked regions'));
+    return user_access('edit locked regions') || user_access('manage locked regions');
   }
-  else {
-    // the region is not locked, so just return whatever spaces says
-    return $spaces;
-  }
+
+  return TRUE;
 }
 
 /**
