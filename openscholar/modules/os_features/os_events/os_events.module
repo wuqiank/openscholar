@@ -230,6 +230,11 @@ function os_events_process_node(&$variables) {
     $subscribe = l(t('subscribe'), 'calendar/export.ics/' . $variables['node']->nid, $options);
     $subscribe = str_replace('http://', 'webcal://', $subscribe);
 
+    // Hiding the original registration link because we are using our own link
+    // with a ctools modal effect and because we placing the registration link
+    // in the export area.
+    hide($variables['content']['field_event_registration']);
+
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
 
     $registrations_type = !empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']);
