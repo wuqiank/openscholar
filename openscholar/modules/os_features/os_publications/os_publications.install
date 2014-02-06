@@ -1085,11 +1085,7 @@ function os_publications_update_7015() {
  * Revert fields to use new field widget
  */
 function os_publications_update_7016() {
-  $revert = array(
-    'os_publications' => array(
-      'field_instance'
-    )
-  );
+  $revert = array('os_publications' => array('field_instance'));
 
   features_revert($revert);
 
