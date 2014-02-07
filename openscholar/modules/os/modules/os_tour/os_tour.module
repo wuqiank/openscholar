@@ -280,5 +280,22 @@ function _os_tour_help() {
     );
   }
 
+  // Provides tour for "node/add/page".
+  if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'page') {
+    $path = drupal_get_path('module', 'os_tour');
+    $tour_info = array(
+      'id' => 'os-tour-node-add-page',
+      'title' => t('Take a tour'),
+      'attached' => array(
+        'css' => array(
+          "$path/theme/os_tour.node_add_page.css",
+        ),
+        'js' => array(
+          "$path/theme/os_tour.node_add_page.js",
+        ),
+      ),
+    );
+  }
+
   return $tour_info;
 }
