@@ -913,6 +913,24 @@ function os_entity_form_after_build($form, $form_state) {
  * Cleans up some advanced settings and places them in a fieldset.
  */
 function os_form_node_form_alter(&$form, $form_state) {
+  $wrapper = entity_metadata_wrapper('node', $form['#node']);
+  $default_value = $wrapper->body->summary->value();
+  $form['os_advanced'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Advanced options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'additional_settings',
+    'os_summary' => array(
+      '#type' => 'textarea',
+      '#title' => t('Summary'),
+      '#description' => t('Best if 150 characters or less. Used as a meta description tag and instead of trimmed body in certain lists.'),
+      '#rows' => 3,
+      '#default_value' => $default_value,
+    ),
+  );
+  $form['#submit'][] = '_os_node_form_summary_submit';
+
   unset($form['options']['promote']);
   $form['path']['pathauto']['#description'] = t('Uncheck this to create a custom alias below.');
   if (isset($form['field_upload']['und']['add_more']['#value'])) {
@@ -930,6 +948,20 @@ function os_form_node_form_alter(&$form, $form_state) {
   $form['actions_top'] = $form['actions'];
 }
 
+/**
+ * Submit callback; processes node summary field.
+ */
+function _os_node_form_summary_submit($form, $form_state) {
+  if (!isset($form_state['values']['os_summary'])) {
+    return;
+  }
+
+  $summary = $form_state['values']['os_summary'];
+  $node = node_load($form['#node']->nid);
+  $node->body[$node->language][0]['summary'] = $summary;
+  node_save($node);
+  entity_get_controller('node')->resetCache(array($node->nid));
+}
 
 /**
  * Page argument; passed to drupal_get_form in os_menu().
