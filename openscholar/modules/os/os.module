@@ -1803,6 +1803,11 @@ function os_restws_resource_info_alter(&$info){
 function os_grant_unpublished_viewing_permission() {
   $group_content = og_get_all_group_content_bundle();
 
+  $modules = array();
+  foreach (og_get_permissions() as $name => $value) {
+    $modules[$name] = $value['module'];
+  }
+
   foreach (array_keys($group_content['node']) as $bundle) {
     $group_types = array('department', 'personal', 'project');
 
@@ -1812,10 +1817,25 @@ function os_grant_unpublished_viewing_permission() {
         if (!in_array($role, array('vsite admin', 'content editor'))) {
           continue;
         }
-        og_role_grant_permissions($rid, array('view any unpublished ' . $bundle . ' content'));
+
+        // Grant new permissions for the role.
+        $name = 'view any unpublished ' . $bundle . ' content';
+
+        // Prevent WSOD, if the permission name is wrong, and we can't find its module.
+        if (!empty($modules[$name])) {
+          db_merge('og_role_permission')
+          ->key(array(
+          'rid' => $rid,
+          'permission' => $name,
+          'module' => $modules[$name],
+          ))
+          ->execute();
+        }
       }
     }
   }
+
+  og_invalidate_cache();
 }
 
 /**
