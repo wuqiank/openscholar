@@ -344,6 +344,12 @@ function os_publications_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -368,21 +374,17 @@ function os_publications_field_default_field_instances() {
     'label' => 'Title',
     'required' => 1,
     'settings' => array(
-      'text_processing' => 0,
-      'user_register_form' => FALSE,
-      'hide_label' => array(
-        'entity' => 0,
-        'page' => 0,
-      ),
       'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'module' => 'text',
+      'active' => 1,
+      'module' => 'os_wysiwyg',
       'settings' => array(
+        'max_rows' => 2,
         'rows' => 1,
       ),
-      'type' => 'text_textarea',
+      'type' => 'os_wysiwyg_expanding_textarea',
       'weight' => -5,
     ),
   );
@@ -392,6 +394,7 @@ function os_publications_field_default_field_instances() {
   t('Attach Files');
   t('Body');
   t('Extra Fields');
+  t('Image should not be less than 150px wide.');
   t('Publication Image');
   t('Title');
   t('You may use these fields to add extra information about your publication that may not be common to publications if this type. For example, key "Publication Global ID" and value "http://hdl.handle.net/1902.1".');
