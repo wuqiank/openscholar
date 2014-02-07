@@ -258,6 +258,9 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   // In addition to CRUD permissions, the permission 'Change theme' is the only
   // non-CRUD permission that should be displayed on the list.
+  foreach (vsite_get_os_override_permissions() as $permission) {
+    $allowed_permissions[$permission] = 'general';
+  }
   $allowed_permissions['change theme'] = 'general';
 
   foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
@@ -330,7 +333,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   foreach ($rows_per_category as $category) {
     $rows = array_merge($rows, array_values($category));
   }
-  
+
   $header[] = (t('Permission'));
   foreach (element_children($form['role_names']) as $rid) {
     if (empty($roles_human_names[$rid])) {
@@ -638,6 +641,19 @@ function cp_user_form_user_register_form_alter(&$form, &$form_state, $form_id) {
     // Change the submit button text to let the user know they will also
     // be adding to their site as well as creating the user, in one step.
     $form['actions']['submit']['#value'] = t('Create and add member');
+  }
+
+  // Remove vsite user, vsite admin and content editor roles from list of
+  // site-wide roles.
+  $roles = array(
+    'vsite user',
+    'vsite admin',
+    'content editor',
+  );
+  foreach ($roles as $role) {
+    if (($key = array_search($role, $form['account']['roles']['#options'])) !== FALSE)  {
+      unset($form['account']['roles']['#options'][$key]);
+    }
   }
 }
 

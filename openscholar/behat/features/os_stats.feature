@@ -1,7 +1,7 @@
 Feature:
   Testing the stats feature JSON ouput.
 
-  @api
+  @api @wip
   Scenario: Verify for the json output for a specific node.
     Given I visit "stats"
       And I should get:

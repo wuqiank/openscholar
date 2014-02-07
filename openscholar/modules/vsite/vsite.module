@@ -227,6 +227,15 @@ function vsite_form_node_form_alter(&$form, &$form_state, $form_id){
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter() for vocabulary form.
+ *
+ */
+function vsite_form_taxonomy_form_vocabulary_alter(&$form, &$form_state, $form_id){
+  $form['#after_build'][] = 'vsite_node_term_form_after_build';
+  drupal_add_js(drupal_get_path('module', 'vsite') . '/vsite.pathauto.js');
+}
+
+/**
  * Implements hook_form_FORM_ID_alter() for taxonomy form.
  *
  * Hides the comment settings form from the VSites.
@@ -314,42 +323,49 @@ function vsite_path_admin_validate($form, $form_state) {
   $alias = explode('/', $form_state['values']['alias']);
   $purl = reset($alias);
 
-  if (!vsite_alias_has_purl_at_start($purl)) {
-    form_set_error('alias', t('The url of the vsite is missing.'));
-  }
-
   // Check that the alias is not taken in the vsite.
   $source = explode('/', $form_state['values']['source']);
   $entity_type = strpos('node/', $form_state['values']['source']) === 0 ? 'node' : 'taxonomy_term';
   $entity_id = end($source);
 
+  if (!vsite_alias_has_purl_prefix($purl, $entity_id)) {
+    form_set_error('alias', t('The prefix of the vsite is missing.'));
+  }
+
   if (!$entity = entity_load_single($entity_type, $entity_id)) {
-    // The entity is not exists.
+    // The entity does not exist.
     return;
   }
 
   if (!_vsite_form_alias_validate($entity_type, $entity, $form_state['values']['alias'])) {
-    form_set_error('alias', t('Already in use.'));
+    form_set_error('alias', t('Alias is already in use.'));
   }
 }
 
 /**
- * Check if the alias has a purl at the start.
+ * Check if the alias has a PURL prefix.
  *
  * @param $alias
- *  The alias of the node/taxonomy term,
+ *  The alias of the node or taxonomy term.
+ * @param $vsite_id
+ *  The VSite ID.
+ *
  * @return bool
- *  True or false if the alias has PURL at the beginning.
+ *  TRUE if the alias has PURL prefix.
  */
-function vsite_alias_has_purl_at_start($alias) {
+function vsite_alias_has_purl_prefix($alias, $vsite_id) {
   $alias = explode('/', $alias);
   $purl = reset($alias);
 
-  $query = db_select('purl')
+  $result = db_select('purl')
     ->fields('purl')
-    ->condition('value', $purl);
+    ->condition('id', $vsite_id)
+    ->condition('provider', 'spaces_og')
+    ->condition('value', $purl)
+    ->count()
+    ->execute();
 
-  return $query->execute()->rowCount();
+  return $result;
 }
 
 /**
@@ -2234,6 +2250,10 @@ function vsite_mail($key, &$message, $params){
       $message['body'][] = t("If you don't want to receive such e-mails, you can change your settings at !url.", array(
         '!url' => $vsite->get_absolute_url("cp/settings")
       ));
+
+      // This is done so that when the recipient auto-reply is on, the response
+      // won't be sent to the site email (held in the site_mail variable).
+      $message['headers']['Sender'] = $message['headers']['Return-Path'] = $message['headers']['From'];
       break;
   }
 }
@@ -2311,6 +2331,8 @@ function vsite_preprocess_html(&$vars){
     if (!empty($fid)) {
       $uri = db_query('SELECT uri FROM {file_managed} WHERE fid = :fid', array(':fid' => $fid))->fetchColumn();
     }
+    // Attempts to add head link tags for author and publishes, if available.
+    _vsite_add_html_head_rel_links();
   }
 
   // If we aren't in a vsite, or if this vsite hasn't uploaded a custom favicon.
@@ -2330,6 +2352,23 @@ function vsite_preprocess_html(&$vars){
   $favicon = file_create_url($uri);
   $type = theme_get_setting('favicon_mimetype');
   drupal_add_html_head_link(array('rel' => 'shortcut icon', 'href' => drupal_strip_dangerous_protocols($favicon), 'type' => $type));
+}
+
+/**
+ * Attempts to add head link tags for author and publishes, if available.
+ */
+function _vsite_add_html_head_rel_links() {
+  $types = array('author', 'publisher');
+  foreach ($types as $type) {
+    $href = variable_get("vsite_head_link_rel_{$type}", '');
+    if (!empty($href)) {
+      $attributes = array(
+        'rel' => $type,
+        'href' => drupal_strip_dangerous_protocols($href),
+      );
+      drupal_add_html_head_link($attributes);
+    }
+  }
 }
 
 /**
@@ -2570,6 +2609,10 @@ function vsite_taxonomy_term_presave($term) {
 function vsite_form_alias_validate($form, &$form_state) {
   $entity_type = $form['#entity_type'];
 
+  if(!$entity_type && $form['#form_id'] == 'taxonomy_form_vocabulary'){
+    $entity_type = 'taxonomy_vocabulary';
+  }
+
   switch ($entity_type) {
     case 'node':
       // Nodes must have an audience field in order to generate their alias.
@@ -2583,6 +2626,10 @@ function vsite_form_alias_validate($form, &$form_state) {
       $entity = $form_state['term'];
       $entity->vid = $form_state['values']['vid'];
       break;
+    case 'taxonomy_vocabulary':
+        // Vocabs must have a vid in order to generate their alias.
+        $entity = $form_state['vocabulary'];
+        break;
   }
 
   // Verify the path is not in use.
@@ -2713,7 +2760,7 @@ function vsite_get_entity_alias($entity_type, $entity, $alias = NULL) {
     return NULL;
   }
 
-  if (!in_array($entity_type, array('taxonomy_term', 'node'))) {
+  if (!in_array($entity_type, array('taxonomy_term', 'taxonomy_vocabulary', 'node'))) {
     return $alias;
   }
 
@@ -2730,7 +2777,7 @@ function vsite_get_entity_alias($entity_type, $entity, $alias = NULL) {
     $vsite = vsite_get_vsite($gid);
   }
   else {
-    // Taxonomy term. Get vsite from its vocabulary.
+    // Taxonomy term/vocab. Get vsite from its vocabulary.
     $vid = $entity->vid;
     if (!$og_vocab_relation = og_vocab_relation_get($vid)) {
       // Not a group content.
@@ -2766,13 +2813,47 @@ function vsite_cp_settings() {
   if (!$vsite || !isset($vsite->group->type)) {
     return;
   }
+  $settings = array();
+
+  // For personal sites only, allow an author link.
+  if ($vsite->group->type == 'personal') {
+    $default_value = variable_get('vsite_head_link_rel_author', '');
+    $settings['vsite_head_link_rel_author'] = array(
+      'form' => array(
+        '#type' => 'textfield',
+        '#title' => t('Author URL'),
+        '#default_value' => $default_value,
+        '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
+      ),
+      'group' => array(
+        '#id' => 'structured_data',
+        '#title' => t('Structured data'),
+        '#weight' => 31,
+      ),
+    );
+  }
+
+  // For all sites, allow a publisher link.
+  $default_value = variable_get('vsite_head_link_rel_publisher', '');
+  $settings['vsite_head_link_rel_publisher'] = array(
+    'form' => array(
+      '#type' => 'textfield',
+      '#title' => t('Publisher URL'),
+      '#default_value' => $default_value,
+      '#description' => t('Enter the URL to your publishing entity\'s permanent web address. Use a Google+ page URL to be eligible for a branded knowledge panel in Google search results.'),
+    ),
+    'group' => array(
+      '#id' => 'structured_data',
+      '#title' => t('Structured data'),
+      '#weight' => 31,
+    ),
+  );
+
   $default = array('department', 'project');
   $subsite_parents = variable_get('subsite_parents', $default);
   if (!in_array($vsite->group->type, $subsite_parents)) {
-    return;
+    return $settings;
   }
-
-  $settings = array();
 
   $default = 0;
   $inherit_theme = variable_get('vsite_subsite_inherit_theme', $default);
@@ -2786,7 +2867,7 @@ function vsite_cp_settings() {
     'group' => array(
       '#id' => 'vsite_subsite',
       '#title' => t('Subsites'),
-      '#weight' => -100,
+      '#weight' => 31,
     ),
   );
 
@@ -2845,6 +2926,45 @@ function vsite_og_default_roles_alter(&$roles) {
 }
 
 /**
+ * Get the VSite permissions that should be "OS override".
+ *
+ * Overriding permissions are those permissions that are defined as site-wide,
+ * however we re-assign those permissions on the fly, based on the permission
+ * given in the VSite level.
+ *
+ * @return array
+ *   Array of permissions to be overriding.
+ */
+function vsite_get_os_override_permissions() {
+  $return = array();
+  foreach (og_get_permissions() as $name => $params) {
+    if (empty($params['os_override'])) {
+      continue;
+    }
+
+    $return[] = $name;
+  }
+  return $return;
+}
+
+/**
+ * Implements hook_og_permission().
+ */
+function vsite_og_permission() {
+  return array(
+    'administer boxes' => array(
+      'title' => t('Administer boxes'),
+      'os_override' => TRUE,
+    ),
+    'edit boxes' => array(
+      'title' => t('Edit boxes'),
+      'description' => t('Edit existing boxes.'),
+      'os_override' => TRUE,
+    ),
+  );
+}
+
+/**
  * Implements hook_og_permission_alter().
  */
 function vsite_og_permission_alter(&$perms) {
@@ -2883,10 +3003,18 @@ function vsite_og_permission_alter(&$perms) {
   }
 
   // Add editional permissions to vsite user and content editor.
-  $perms['view users outside groups']['default role'][] = 'vsite user';
-  $perms['unsubscribe']['default role'][] = 'vsite user';
-  $perms['view users outside groups']['default role'][] = 'content editor';
-  $perms['unsubscribe']['default role'][] = 'content editor';
+  $permissions = array(
+    'view users outside groups',
+    'unsubscribe',
+  );
+
+  foreach ($permissions as $permission) {
+    $perms[$permission]['default role'][] = 'content editor';
+    $perms[$permission]['default role'][] = 'vsite user';
+  }
+
+  // Edit boxes should be given to the "content editor".
+  $perms['edit boxes']['default role'][] = 'content editor';
 }
 
 /**

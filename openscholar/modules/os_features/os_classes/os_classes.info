@@ -75,6 +75,7 @@ features[variable][] = node_preview_class
 features[variable][] = node_preview_class_material
 features[variable][] = node_submitted_class
 features[variable][] = node_submitted_class_material
+features[variable][] = nodeformscols_field_placements_class_default
 features[variable][] = pathauto_node_class_material_pattern
 features[variable][] = pathauto_node_class_pattern
 features[views_view][] = os_classes

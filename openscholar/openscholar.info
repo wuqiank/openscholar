@@ -59,6 +59,7 @@ dependencies[] = wysiwyg
 dependencies[] = wysiwyg_filter
 dependencies[] = media_internet
 dependencies[] = media_oembed
+dependencies[] = media_draggable
 dependencies[] = oembedprovider
 
 ; media custom
@@ -136,6 +137,8 @@ dependencies[] = shorten
 dependencies[] = respondjs
 dependencies[] = views_infinite_scroll
 dependencies[] = web_widgets
+dependencies[] = metatag
+dependencies[] = nodeformcols
 
 files[] = openscholar.profile
 

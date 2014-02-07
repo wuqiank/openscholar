@@ -183,6 +183,64 @@ function os_events_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-event-field_default_email'
+  $field_instances['node-event-field_default_email'] = array(
+    'bundle' => 'event',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 14,
+      ),
+      'links' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'sidebar_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'title' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_default_email',
+    'label' => 'Default Email',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 38,
+    ),
+  );
+
   // Exported field_instance: 'node-event-field_event_location'
   $field_instances['node-event-field_event_location'] = array(
     'bundle' => 'event',
@@ -259,8 +317,10 @@ function os_events_field_default_field_instances() {
       'default' => array(
         'label' => 'hidden',
         'module' => 'registration',
-        'settings' => array(),
-        'type' => 'registration_form',
+        'settings' => array(
+          'label' => 'Sign up for this event',
+        ),
+        'type' => 'registration_link',
         'weight' => 10,
       ),
       'links' => array(
@@ -501,6 +561,7 @@ function os_events_field_default_field_instances() {
   t('Attach Files');
   t('Body');
   t('Date');
+  t('Default Email');
   t('Department');
   t('Full name');
   t('Location');
