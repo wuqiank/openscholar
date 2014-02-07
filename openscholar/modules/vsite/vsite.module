@@ -2331,6 +2331,8 @@ function vsite_preprocess_html(&$vars){
     if (!empty($fid)) {
       $uri = db_query('SELECT uri FROM {file_managed} WHERE fid = :fid', array(':fid' => $fid))->fetchColumn();
     }
+    // Attempts to add head link tags for author and publishes, if available.
+    _vsite_add_html_head_rel_links();
   }
 
   // If we aren't in a vsite, or if this vsite hasn't uploaded a custom favicon.
@@ -2350,6 +2352,23 @@ function vsite_preprocess_html(&$vars){
   $favicon = file_create_url($uri);
   $type = theme_get_setting('favicon_mimetype');
   drupal_add_html_head_link(array('rel' => 'shortcut icon', 'href' => drupal_strip_dangerous_protocols($favicon), 'type' => $type));
+}
+
+/**
+ * Attempts to add head link tags for author and publishes, if available.
+ */
+function _vsite_add_html_head_rel_links() {
+  $types = array('author', 'publisher');
+  foreach ($types as $type) {
+    $href = variable_get("vsite_head_link_rel_{$type}", '');
+    if (!empty($href)) {
+      $attributes = array(
+        'rel' => $type,
+        'href' => drupal_strip_dangerous_protocols($href),
+      );
+      drupal_add_html_head_link($attributes);
+    }
+  }
 }
 
 /**
@@ -2794,13 +2813,47 @@ function vsite_cp_settings() {
   if (!$vsite || !isset($vsite->group->type)) {
     return;
   }
+  $settings = array();
+
+  // For personal sites only, allow an author link.
+  if ($vsite->group->type == 'personal') {
+    $default_value = variable_get('vsite_head_link_rel_author', '');
+    $settings['vsite_head_link_rel_author'] = array(
+      'form' => array(
+        '#type' => 'textfield',
+        '#title' => t('Author URL'),
+        '#default_value' => $default_value,
+        '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
+      ),
+      'group' => array(
+        '#id' => 'structured_data',
+        '#title' => t('Structured data'),
+        '#weight' => 31,
+      ),
+    );
+  }
+
+  // For all sites, allow a publisher link.
+  $default_value = variable_get('vsite_head_link_rel_publisher', '');
+  $settings['vsite_head_link_rel_publisher'] = array(
+    'form' => array(
+      '#type' => 'textfield',
+      '#title' => t('Publisher URL'),
+      '#default_value' => $default_value,
+      '#description' => t('Enter the URL to your publishing entity\'s permanent web address. Use a Google+ page URL to be eligible for a branded knowledge panel in Google search results.'),
+    ),
+    'group' => array(
+      '#id' => 'structured_data',
+      '#title' => t('Structured data'),
+      '#weight' => 31,
+    ),
+  );
+
   $default = array('department', 'project');
   $subsite_parents = variable_get('subsite_parents', $default);
   if (!in_array($vsite->group->type, $subsite_parents)) {
-    return;
+    return $settings;
   }
-
-  $settings = array();
 
   $default = 0;
   $inherit_theme = variable_get('vsite_subsite_inherit_theme', $default);
@@ -2814,7 +2867,7 @@ function vsite_cp_settings() {
     'group' => array(
       '#id' => 'vsite_subsite',
       '#title' => t('Subsites'),
-      '#weight' => -100,
+      '#weight' => 31,
     ),
   );
 
