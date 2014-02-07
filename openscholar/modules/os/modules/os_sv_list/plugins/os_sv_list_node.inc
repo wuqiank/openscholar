@@ -28,18 +28,14 @@ class os_sv_list_box extends os_sv_list {
 
     return $form;
   }
-  
-//   public function render() {
-//     $block = parent::render();
-//     //$block['content'] .= ' posts';
-//     return $block;
-//   }
 
   public function query() {
     $efq = parent::query();
     $efq->propertyCondition('status', 1); 
     return $efq;
   }
+  
+  
 
   //add our node specific sorts
   protected function _sort_options() {
