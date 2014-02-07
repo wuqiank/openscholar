@@ -345,6 +345,31 @@ function os_pages_form_node_form_alter(&$form, &$form_state) {
     return;
   }
 
+  // Adds a custom fieldset for the right-hand column to hold meta description.
+  $path = drupal_get_path('module', 'os_pages');
+  $form['os_advanced'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Advanced options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'additional_settings',
+    'field_meta_description' => array(
+      '#markup' => '&nbsp;',
+    ),
+    '#attributes' => array(
+      'class' => array(
+        'field-meta-description',
+        'os-javascript-load',
+      ),
+    ),
+    '#attached' => array(
+      'js' => array(
+        "$path/os_pages.field_meta_description.js",
+      ),
+    ),
+  );
+  $form['#validate'][] = '_os_pages_node_form_summary_submit';
+
   // Adds JS and CSS to display ajax node alias (pathauto) preview.
   os_pages_form_node_form_alter_add_assets($form, $form['#node']->type);
 
@@ -363,6 +388,18 @@ function os_pages_form_node_form_alter(&$form, &$form_state) {
   );
 }
 
+
+/**
+ * Submit callback; syncs body summary value with field_meta_summary.
+ */
+function _os_pages_node_form_summary_submit($form, &$form_state) {
+  $summary = $form_state['values']['field_meta_description'][LANGUAGE_NONE][0]['value'];
+  $form_state['values']['body'][LANGUAGE_NONE][0]['summary'] = $summary;
+}
+
+/**
+ * @TODO document
+ */
 function os_pages_form_cp_layout_full_form_alter(&$form, &$form_state) {
   $continue = false;
   foreach ($form['context']['#value'] as $c) {
