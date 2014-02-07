@@ -58,6 +58,8 @@ body.front.no-sidebars #content-panels .region-inner {
     z-index: 0;
 }
 
+
+
 #header,
 #menu-bar,
 #columns {
@@ -182,6 +184,9 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
     color: #FFF;
 }
 
+.custhtml.bythenumbs h3.custheader {
+	margin-bottom: 13px;
+}
 
 .getsite {
 	z-index:2;
@@ -195,7 +200,7 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 }
 
 
-/*.getsite .textside {float:right;}*/
+.getsite_link {cursor:pointer;}
 
 
 
@@ -210,9 +215,12 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 	line-height: 17px;
 }
 
+
 .getsite_content a {
-	text-decoration:none !important;
-	color:#215990;
+	text-decoration: none !important;
+color: #215990;
+margin-left: 2px;
+line-height: 24px;
 }
 
 
@@ -224,6 +232,7 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 
 .getsite .textside {
     margin: 70px 0 0 0;
+    background:#373737;
     }
 
 .getsite .textside p {
@@ -344,6 +353,8 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 }
 
 /* STATS SECTION */
+
+#osactivity,
 ul#firstset,
 ul#secondset {
 	background:#F6F6F6;
@@ -382,35 +393,34 @@ li#posts {
 	}
 	
 li#users {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/users.png') no-repeat;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/users.png') no-repeat -2px 0;
 	}
 	
 li#files {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/files.png') no-repeat;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/files.png') no-repeat -3px 0;
 	}
 	
 li#diskspace {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/diskspace.png') no-repeat;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/diskspace.png') no-repeat 2px 0;
 	}					
 
 
 ul#secondset li {
 	margin: 8px 8px 0 0;
     padding: 0;
-    width: 294px;
+    width: 192px;
     position:relative;
- 
+ 	height: 90px;
 }
 
 li#version {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/currentrel_version.png') no-repeat #F6F6F6 45px 10px;
-	height: 70px !important;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/currentrel_version.png') no-repeat #F6F6F6 1px 18px;
 	}
 	
 li#version span {
-	left: 64px;
-    position: absolute;
-    top: 24px;
+	left: 20px;
+position: absolute;
+top: 32px;
 	}
 
 li#getsat {
@@ -437,14 +447,26 @@ li#servertime {
 
 
 li#newposts {
-	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newpoststoday.png') no-repeat #F6F6F6 70px 12px;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newpoststoday.png') no-repeat #F6F6F6 35px 14px;
 	}
 	
 li#newposts span {
-	left: 78px;
-    position: absolute;
-    top: 58px;
+	left: 45px;
+position: absolute;
+top: 61px;
+	}
+	
+li#newsites {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newsitestoday.png') no-repeat #F6F6F6 35px 14px;
+	margin-right:0 !important;
+	}
+	
+li#newsites span {
+	left: 41px;
+position: absolute;
+top: 61px;
 	}	
+		
 
 li#servertime {
 	 background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/responsetime.png") no-repeat scroll 62px 6px #F6F6F6;
@@ -459,6 +481,47 @@ li#servertime span {
 	}
 		
 	
+#osactivity {
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/whatshappening.png") no-repeat scroll 225px 9px #F6F6F6;
+ padding: 25px 12px 5px;
+margin-top: 3px;
+width: 575px;
+}
+
+
+#osactivity ul {
+margin-left:0;
+margin-bottom:0;
+}
+
+#osactivity ul li {
+list-style-type:none;
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/activitylibg.png") no-repeat;
+padding-left:35px;
+}
+
+#osactivity .time {float:left;color:#666;margin-right:5px;}
+
+.region-content-first .block-boxes .os-embed-link {
+    width: 250px;
+}
+
+
+.region-content-top .block-boxes .os-embed-link {
+    bottom: 120px;
+right: -160px;
+     z-index: 1000;
+     color:#fff;
+     width:250px;
+}
+
+
+.block-boxes-os_boxes_html.os-boxes-embedded .getsite .textside {
+margin: 5px 0 0 0 !important;
+padding:12px;
+min-height:450px;
+}
+
 
 
 /* ROADMAP PAGE STYLES */
