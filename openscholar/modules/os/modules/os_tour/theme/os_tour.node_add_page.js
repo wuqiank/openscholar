@@ -76,40 +76,43 @@
                 target: document.querySelector('#edit-body'),
                 placement: "top",
                 xOffset: 0,
-                yOffset: 0,
-                nextOnTargetClick: true
+                yOffset: 0
               },
-              {
-                title: Drupal.t('Embed (almost) anything'),
-                content: Drupal.t('Insert and resize images, videos, maps and much much more.'),
-                target: document.querySelector('#edit-body'),
-                placement: "bottom",
-                xOffset: 500,
-                yOffset: -400
-              },
-              {
-                title: Drupal.t('Even more tools'),
-                content: Drupal.t('Click this icon to expand the second row of toolbar icons.'),
-                target: document.querySelector('#edit-body'),
-                placement: "bottom",
-                xOffset: 550,
-                yOffset: -400
-              },
-              {
-                title: Drupal.t('For best results, format'),
-                content: Drupal.t('For higher ranking on the web, use plenty of short, descriptive headings to make your paragraphs stand out and easy to skim.'),
-                target: document.querySelector('#edit-body'),
-                placement: "bottom",
-                xOffset: 0,
-                yOffset: -400
-              },
+            /**
+             *  @FIXME get WYSIWYG to stay open so we can tour inside it.
+             {
+               title: Drupal.t('Embed (almost) anything'),
+               content: Drupal.t('Insert and resize images, videos, maps and much much more.'),
+               target: document.querySelector('#edit-body'),
+               placement: "bottom",
+               xOffset: 500,
+               yOffset: -400,
+               onShow: _os_tour_focus_body
+             },
+             {
+               title: Drupal.t('Even more tools'),
+               content: Drupal.t('Click this icon to expand the second row of toolbar icons.'),
+               target: document.querySelector('#edit-body'),
+               placement: "bottom",
+               xOffset: 550,
+               yOffset: -400
+             },
+             {
+               title: Drupal.t('For best results, format'),
+               content: Drupal.t('For higher ranking on the web, use plenty of short, descriptive headings to make your paragraphs stand out and easy to skim.'),
+               target: document.querySelector('#edit-body'),
+               placement: "bottom",
+               xOffset: 0,
+               yOffset: -400
+             },
+             */
               {
                 title: Drupal.t('Attach files'),
                 content: Drupal.t('Files uploaded here will list like email attachments at the bottom of the post. Perfect for spreadsheets, PDFs, or anything else that can\'t be previewed.'),
                 target: document.querySelector('#edit-field-upload'),
                 placement: "bottom",
                 xOffset: 0,
-                yOffset: 0,
+                yOffset: -15,
                 onNext: _os_tour_expand_options
               },
               {
@@ -118,7 +121,7 @@
                 target: document.querySelector('#edit-options'),
                 placement: "bottom",
                 xOffset: 0,
-                yOffset: 30
+                yOffset: 24
               },
               {
                 title: Drupal.t('Sticky: for important posts'),
@@ -126,7 +129,7 @@
                 target: document.querySelector('#edit-options'),
                 placement: "bottom",
                 xOffset: 0,
-                yOffset: 0
+                yOffset: -5
               },
               {
                 title: Drupal.t('Happy posting!'),
@@ -134,7 +137,8 @@
                 target: document.querySelector('#edit-title'),
                 placement: "bottom",
                 xOffset: 0,
-                yOffset: 0
+                yOffset: 0,
+                onShow: _os_tour_focus_title
               }
             ]
           };
@@ -153,10 +157,13 @@
       function _os_tour_expand_options() {
         $('#edit-options .fieldset-title').click();
       }
-      /*function _os_tour_focus_body() {
+      function _os_tour_focus_body() {
         $("#edit-body-und-0-value_ifr").contents().find('body').click();
-        console.log('Clicked on the iframe p tag');
-      }*/
+        console.log('Clicked on the iframe body tag');
+      }
+      function _os_tour_focus_title() {
+        $('#edit-title').focus().select();
+      }
     }
 
   };
