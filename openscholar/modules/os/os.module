@@ -1831,8 +1831,6 @@ function os_grant_unpublished_viewing_permission() {
           ))
           ->execute();
         }
-
-        og_role_grant_permissions($rid, array());
       }
     }
   }
