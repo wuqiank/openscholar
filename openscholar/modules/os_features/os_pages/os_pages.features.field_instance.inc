@@ -89,10 +89,9 @@ function os_pages_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 7,
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'links' => array(
         'label' => 'above',
