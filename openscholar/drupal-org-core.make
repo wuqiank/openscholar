@@ -8,5 +8,5 @@ projects[drupal][download][url] = http://git.drupal.org/project/drupal.git
 projects[drupal][patch][] = "http://drupal.org/files/order-weighted-terms-941266-35-D7.patch"
 projects[drupal][patch][] = "http://drupal.org/files/drupal-apc_redeclare_database-838744-24.patch"
 projects[drupal][patch][] = "http://drupal.org/files/text-summary-word-break.patch"
-projects[drupal][patch][] = "http://drupal.org/files/issues/menu-rebuild-too-often-997918-5.patch"
+projects[drupal][patch][] = "http://drupal.org/files/issues/menu-rebuild-too-often-997918-21.patch"
 
