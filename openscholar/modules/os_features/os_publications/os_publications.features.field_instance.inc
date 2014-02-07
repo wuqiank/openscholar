@@ -30,6 +30,12 @@ function os_publications_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -89,6 +95,12 @@ function os_publications_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -141,6 +153,12 @@ function os_publications_field_default_field_instances() {
         'weight' => 1,
       ),
       'links' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'no_image_teaser' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
@@ -214,6 +232,12 @@ function os_publications_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -265,8 +289,9 @@ function os_publications_field_default_field_instances() {
     ),
     'widget' => array(
       'active' => 1,
-      'module' => 'media',
+      'module' => 'media_draggable',
       'settings' => array(
+        'allow_replace' => 0,
         'allowed_schemes' => array(
           'embed' => 'embed',
           'oembed' => 'oembed',
@@ -287,9 +312,14 @@ function os_publications_field_default_field_instances() {
           'media_internet' => 'media_internet',
           'upload' => 'upload',
         ),
+        'droppable_area_text' => 'Drop files here to upload',
+        'multiupload' => 0,
         'progress_indicator' => 'throbber',
+        'standard_upload' => 1,
+        'upload_button_text' => 'Upload',
+        'upload_event' => 'automatic',
       ),
-      'type' => 'media_generic',
+      'type' => 'media_draggable_file',
       'weight' => 33,
     ),
   );

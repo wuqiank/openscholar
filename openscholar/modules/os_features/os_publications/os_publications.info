@@ -20,6 +20,7 @@ dependencies[] = features
 dependencies[] = filefield_paths
 dependencies[] = image
 dependencies[] = media
+dependencies[] = media_draggable
 dependencies[] = menu
 dependencies[] = os
 dependencies[] = os_biocv
