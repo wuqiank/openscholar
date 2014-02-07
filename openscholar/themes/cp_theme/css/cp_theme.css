@@ -251,7 +251,7 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
 		}
 		
 .helper.columns .downarrow {
-	background-position: 52px -553px;
+	background-position: 51px -553px;
 		}
 	
 .formlabel {color: #444;
@@ -541,7 +541,7 @@ form.node-form .form-region-main input a,
 }
 
 form.node-form .form-region-right input.form-text{
-    width: 85%;
+    width: 85% !important;
    
 }
 
@@ -562,7 +562,7 @@ form.node-form.overlay-processed .form-region-right fieldset legend {
 }
 
 form.node-form.overlay-processed .form-region-right .fieldset-legend span.summary {
-     color: #444444;
+     color: #777;
      display: block;
      font-size: 0.8em;
      margin-left: 0px;

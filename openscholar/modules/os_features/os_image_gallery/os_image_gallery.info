@@ -54,6 +54,7 @@ features[image][] = slideshow_800
 features[image][] = slideshow_960
 features[menu_links][] = primary-menu:galleries
 features[node][] = media_gallery
+features[metatag][] = node:media_gallery
 features[user_permission][] = create media_gallery content
 features[user_permission][] = delete any media_gallery content
 features[user_permission][] = delete own media_gallery content

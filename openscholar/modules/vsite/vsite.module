@@ -227,6 +227,15 @@ function vsite_form_node_form_alter(&$form, &$form_state, $form_id){
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter() for vocabulary form.
+ *
+ */
+function vsite_form_taxonomy_form_vocabulary_alter(&$form, &$form_state, $form_id){
+  $form['#after_build'][] = 'vsite_node_term_form_after_build';
+  drupal_add_js(drupal_get_path('module', 'vsite') . '/vsite.pathauto.js');
+}
+
+/**
  * Implements hook_form_FORM_ID_alter() for taxonomy form.
  *
  * Hides the comment settings form from the VSites.
@@ -2581,6 +2590,10 @@ function vsite_taxonomy_term_presave($term) {
 function vsite_form_alias_validate($form, &$form_state) {
   $entity_type = $form['#entity_type'];
 
+  if(!$entity_type && $form['#form_id'] == 'taxonomy_form_vocabulary'){
+    $entity_type = 'taxonomy_vocabulary';
+  }
+
   switch ($entity_type) {
     case 'node':
       // Nodes must have an audience field in order to generate their alias.
@@ -2594,6 +2607,10 @@ function vsite_form_alias_validate($form, &$form_state) {
       $entity = $form_state['term'];
       $entity->vid = $form_state['values']['vid'];
       break;
+    case 'taxonomy_vocabulary':
+        // Vocabs must have a vid in order to generate their alias.
+        $entity = $form_state['vocabulary'];
+        break;
   }
 
   // Verify the path is not in use.
@@ -2724,7 +2741,7 @@ function vsite_get_entity_alias($entity_type, $entity, $alias = NULL) {
     return NULL;
   }
 
-  if (!in_array($entity_type, array('taxonomy_term', 'node'))) {
+  if (!in_array($entity_type, array('taxonomy_term', 'taxonomy_vocabulary', 'node'))) {
     return $alias;
   }
 
@@ -2741,7 +2758,7 @@ function vsite_get_entity_alias($entity_type, $entity, $alias = NULL) {
     $vsite = vsite_get_vsite($gid);
   }
   else {
-    // Taxonomy term. Get vsite from its vocabulary.
+    // Taxonomy term/vocab. Get vsite from its vocabulary.
     $vid = $entity->vid;
     if (!$og_vocab_relation = og_vocab_relation_get($vid)) {
       // Not a group content.
