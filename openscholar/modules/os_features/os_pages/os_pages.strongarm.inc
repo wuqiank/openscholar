@@ -101,6 +101,14 @@ function os_pages_strongarm() {
       'collapsed' => 1,
       'hidden' => 0,
     ),
+    'os_advanced' => array(
+      'region' => 'right',
+      'weight' => '7',
+      'has_required' => FALSE,
+      'title' => 'Advanced options',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
     'author' => array(
       'region' => 'right',
       'weight' => '4',
