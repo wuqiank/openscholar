@@ -88,7 +88,9 @@ function os_events_event_registration_reach_capacity($node) {
   // Get the settings of the registration for this event.
   $settings = registration_entity_settings('node', $node->nid);
 
-  if ($registrations_number < $settings['capacity'] && $settings['capacity']['status']) {
+  // When the capacity set to 0 the registration number is unlimited. When not,
+  // check if the registration number didn't pass the capacity number.
+  if ($settings['status'] && ($settings['capacity'] == 0 xor $registrations_number < $settings['capacity'])) {
     return user_access('create event_signup_simple registration');
   }
   else {
@@ -295,7 +297,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
   );
   drupal_add_js($modal_style, 'setting');
 
-  return ctools_ajax_text_button(t('Sign up for this event'), 'os_events/js/registration/' . $nid, '', 'ctools-use-modal ctools-modal-events-modal-style register');
+  return ctools_ajax_text_button(t('Sign up for this event'), 'os_events/nojs/registration/' . $nid, '', 'ctools-use-modal ctools-modal-events-modal-style register use-ajax');
 }
 
 /**
@@ -306,7 +308,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
  * @param $node
  *  The node object.
  */
-function os_events_events_register($js, $node) {
+function os_events_events_register($js, $node, $ajax = 'foo') {
   ctools_include('modal');
   ctools_include('ajax');
   $registration_type = registration_get_entity_registration_type('node', $node);
@@ -315,8 +317,12 @@ function os_events_events_register($js, $node) {
     'entity_id' => $node->nid,
     'type' => $registration_type,
   ));
-
+  
   $registration_form = drupal_get_form('registration_form', $registration);
+
+  if (!$js) {
+    return $registration_form;
+  }
 
   if (!os_events_event_registration_reach_capacity($node)) {
     drupal_set_message(t('The event has reached his maximum capacity of registrations. Sorry.'), 'error');
