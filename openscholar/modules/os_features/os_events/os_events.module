@@ -951,7 +951,7 @@ function os_events_mail_alter(&$message) {
   $default_email = $wrapper_event->field_default_email->value();
 
   // Set default email as the message's sender.
-  $message['from'] = $default_email;
+  $message['headers']['From'] = $default_email;
 }
 
 /**
