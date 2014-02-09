@@ -28,11 +28,6 @@
         $(this).closest('li.item-theme-picker').addClass('checked');
 
         $("#edit-theme-default-" + $(this).closest('li.item-theme-picker').attr('id').substr(6)).attr("checked", "checked").change();
-
-
-        if (jQuery.inArray($(this).val(), settings.subthemes) != -1) {
-          // todo: Append the button for pulling the sub theme.
-        }
       });
 
       /**
@@ -57,4 +52,15 @@
       });
     }
   };
+
+  /**
+   * The update of the branch is done via AJAX. We don't need to display the
+   * update button to the user.
+   */
+  Drupal.behaviors.CpHideUpdateButton = {
+    attach: function (context, settings) {
+      $(".page-cp-appearance-update-subtheme #edit-actions").hide();
+    }
+  };
+
 })(jQuery);

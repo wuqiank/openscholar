@@ -602,3 +602,20 @@ form.node-form.overlay-processed .form-region-right .fieldset-wrapper {
      padding-top: 15px;
      width: 89%;
 }
+
+.delete-subtheme a {
+  background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -606px no-repeat;
+  padding-left: 17px;
+}
+
+.zip-pull-button a {
+  background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -620px no-repeat #0a4476;
+  padding: 15px 7px 8px 22px;
+
+}
+
+.git-pull-button a {
+  background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -651px no-repeat #0a4476;
+  padding: 15px 7px 8px 22px;
+}
+
