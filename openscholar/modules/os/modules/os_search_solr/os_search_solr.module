@@ -580,16 +580,6 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
   );
   $context->reactions = array(
     'menu' => $menu_item,
-    'block' => array(
-      'blocks' => array(
-        'facetapi-' . $delta_og_vocab => array(
-          'module' => 'facetapi',
-          'delta' => $delta_og_vocab,
-          'region' => 'sidebar_second',
-          'weight' => '0',
-        ),
-      ),
-    ),
   );
   $context->condition_mode = 1;
 
