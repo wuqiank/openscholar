@@ -2150,14 +2150,10 @@ function os_context_default_contexts_alter(&$contexts){
  *  data(file/text).
  */
 function os_copy_file($url, $exception = FALSE) {
-  try {
-    $file = system_retrieve_file($url, 'public://', TRUE);
-  }
-  catch (Exception $e) {
-    $params = array(
-      '@message' => $e->getMessage(),
-    );
-    $message = t('An error occurred when trying to copy the file: @message', $params);
+
+  if (!$file = system_retrieve_file($url, 'public://', TRUE)) {
+    $message = t('An error occurred when trying to copy the file. Check please if the file directory is writeable.');
+
     if ($exception) {
       throw new Exception($message);
     }
