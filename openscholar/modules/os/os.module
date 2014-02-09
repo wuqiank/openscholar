@@ -2131,3 +2131,46 @@ function os_context_default_contexts_alter(&$contexts){
     $contexts['os_public']->reactions['olark_add'] = array('add' => 1);
   }
 }
+
+/**
+ * API function for copy a file from a URL and throw exception when needed.
+ *
+ * @param $url
+ *  The URL of the file.
+ * @param bool $exception
+ *  Determine if an exception need to be thrown when the copy of the file
+ *  failed. When set to false the reason for the failure will return as a text
+ *  in the returned array.
+ *
+ * @throws Exception
+ *  Throwing an error when the copy of the file failed and the $exception set to
+ *  TRUE.
+ * @return array
+ *  Return array of the file or error if occurred and the type of the return
+ *  data(file/text).
+ */
+function os_copy_file($url, $exception = FALSE) {
+  try {
+    $file = system_retrieve_file($url, 'public://', TRUE);
+  }
+  catch (Exception $e) {
+    $params = array(
+      '@message' => $e->getMessage(),
+    );
+    $message = t('An error occurred when trying to copy the file: @message', $params);
+    if ($exception) {
+      throw new Exception($message);
+    }
+    else {
+      return array(
+        'type' => 'error',
+        'message' => $message,
+      );
+    }
+  }
+
+  return array(
+    'type' => 'file',
+    'file' => $file,
+  );
+}
