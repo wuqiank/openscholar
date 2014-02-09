@@ -1,5 +1,5 @@
 <?php
-class os_boxes_facetapi extends os_boxes_default {
+class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
   /**
    * Implementation of boxes_content::options_defaults().
