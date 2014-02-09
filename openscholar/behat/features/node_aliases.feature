@@ -97,7 +97,7 @@ Feature:
      Then I should see "The alias is already in use."
 
   @api
-  Scenario: Verify that admin can't enter a pth alias that already exists.
+  Scenario: Verify that admin can't enter a path alias that already exists.
     Given I am logging in as "admin"
       And I visit "admin/config/search/path/edit/66?destination=admin/config/search/path"
       And I fill in "Path alias" with "obama/people/hillary-diane-rodham-clinton"
