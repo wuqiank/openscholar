@@ -581,7 +581,7 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'boxes-vocabulary_filter' => array(
+        'boxes-vocabulary_filter_' . $bundle_name => array(
           'module' => 'boxes',
           'delta' => 'vocabulary_filter',
           'region' => 'sidebar_second',
