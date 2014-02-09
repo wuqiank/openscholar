@@ -1311,9 +1311,6 @@ function os_url_outbound_alter(&$path, &$options, $original) {
         // When accessing to any address the spaces module use purl_goto(). The
         // purl_goto() use url() for knowing the path of the URL we accessing.
         // url() will return eventually the path.
-        // This section alter the $path to the $_GET['q'] which is node/%.json
-        // which will convert by the url() to foo/bar.
-        // $path = $_GET['q'];
         return;
       }
     }
@@ -1778,23 +1775,6 @@ function os_library() {
  */
 function os_library_alter(&$libraries) {
   $libraries['drupal.ajax']['dependencies'][] = array('os', 'os.ajax-fix');
-}
-
-/**
- * Implements hook_restws_resource_info_alter().
- *
- * Customize what resources will be avalible for RestWS to use
- */
-function os_restws_resource_info_alter(&$info){
-
-//   //Remove entity types except those listed
-//   $enabled_entities = variable_get('os_restws_entities',array('node'));
-//   foreach (entity_get_info() as $entity_type => $info) {
-//     if(isset($info[$entity_type]) && !in_array($entity_type, $enabled_entities)){
-//       unset($info[$entity_type]);
-//     }
-//   }
-
 }
 
 /**
