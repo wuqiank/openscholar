@@ -401,7 +401,7 @@ ol.search-results li.search-result:last-child {
 }
 
 .view-os-events ul li .node .field-name-field-date {
-  margin-bottom: 18px;
+  margin-bottom: 0;
 }
 
 .block .view-os-events.view-id-os_events .view-header {
@@ -464,6 +464,11 @@ ol.search-results li.search-result:last-child {
 .node-event .field-name-field-event-location {
   color: #6D6D6D;
 }
+
+.node-event .field-name-field-event-location {
+	margin-bottom: 10px;
+}
+
 
 /* Adds bottom margin to event date fields everywhere */
 .node-event .field-name-field-date {
@@ -581,6 +586,12 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   float: left;
   margin-top: 5px;
   display: table-cell;
+}
+
+/* An empty div styling in case of no default image */
+.node-person .no-default-image {
+  width: 75px;
+  height: 75px;
 }
 
 .node-type-person #content .node-person .field-name-body {

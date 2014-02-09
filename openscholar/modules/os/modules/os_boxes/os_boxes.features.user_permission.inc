@@ -25,6 +25,7 @@ function os_boxes_user_default_permissions() {
     'name' => 'edit boxes',
     'roles' => array(
       'administrator' => 'administrator',
+      'content editor' => 'content editor',
       'manager' => 'manager',
       'vsite admin' => 'vsite admin',
     ),

@@ -8,5 +8,10 @@
 
 .mceEditor table.mceLayout.os-wysiwyg-collapsed > tbody > tr.mceFirst,
 .mceEditor table.mceLayout.os-wysiwyg-collapsed > tbody > tr.mceLast {
-  visibility: hidden;
+  display: none;
+}
+
+textarea.os-wysiwyg-expandable + .wysiwyg-toggle-wrapper,
+textarea.os-wysiwyg-expandable + div.grippie + .wysiwyg-toggle-wrapper {
+  display: block !important;
 }

@@ -90,6 +90,12 @@ ul.nice-menu ul {
  padding-right:8px;
 }
 
+#menu-bar ul.nice-menu ul .menuparent.over > a,
+#menu-bar ul.nice-menu ul .menuparent a:hover,
+#menu-bar ul.nice-menu ul .menuparent a.active {
+     color:#BAC5C6;
+}
+
 
 #menu-bar ul.nice-menu ul {
     background:#7B272B;
@@ -106,7 +112,10 @@ ul.nice-menu ul {
     font-weight: bold;  
 }
 
+ul.nice-menu-down li ul li ul {
+left: 12em;
 
+}
 /* Titles & Type */
 #page-title,
 .node-title,
@@ -203,7 +212,8 @@ h2.block-title {
   border-top: 6px solid #e1e1e1;
 }
 
-.block-boxes block-boxes-os_sv_list_box,
+.front #content-column .block.block-boxes-os_boxes_columns,
+.block-boxes.block-boxes-os_sv_list_box .block-inner,
 .block-boxes-os_boxes_manual_list,
 .sidebar .block.section-nav,
 #content-column .block.section-nav,
@@ -366,9 +376,11 @@ table td.mini {
   font-size: 14px;
 }
 
-.ui-tabs ul.ui-tabs-nav li.ui-tabs-active a {
+.ui-tabs ul.ui-tabs-nav li.ui-tabs-active {
   background: #a41b2f !important;
-  border: 4px solid #fff;
+}
+
+.ui-tabs ul.ui-tabs-nav li.ui-tabs-active a {
   border-bottom-width: 1px;
   color: #fff;
 }

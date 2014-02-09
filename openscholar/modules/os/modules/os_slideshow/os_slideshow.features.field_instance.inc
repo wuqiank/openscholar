@@ -130,7 +130,7 @@ function os_slideshow_field_default_field_instances() {
   $field_instances['node-slideshow_slide-field_image'] = array(
     'bundle' => 'slideshow_slide',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Be careful to use images that are the same size or larger than your slideshow.',
     'display' => array(
       'default' => array(
         'label' => 'above',
