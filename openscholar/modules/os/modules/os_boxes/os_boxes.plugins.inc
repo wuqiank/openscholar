@@ -298,7 +298,7 @@ function _os_boxes_boxes_plugins() {
   );
 
   $info['os_boxes_facetapi_vocabulary'] = array(
-    'title' => 'Facetapi box',
+    'title' => 'Taxonomy Filter',
     'handler' => array(
       'class' => 'os_boxes_facetapi_vocabulary',
       'file' => 'os_boxes_facetapi_vocabulary.inc',

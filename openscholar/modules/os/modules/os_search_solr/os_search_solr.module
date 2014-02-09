@@ -580,6 +580,7 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
   );
   $context->reactions = array(
     'menu' => $menu_item,
+
   );
   $context->condition_mode = 1;
 
@@ -893,4 +894,25 @@ function os_search_solr_preprocess_search_results(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_default_box_alter().
+ */
+function os_search_solr_default_box_alter(&$items) {
+  $box = new stdClass();
+  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
+  $box->api_version = 1;
+  $box->delta = 'iqss_projects_fp_infoblock';
+  $box->plugin_key = 'simple';
+  $box->title = '';
+  $box->description = 'Projects Info text';
+  $box->options = array(
+    'body' => array(
+  //    'value' => iqss_projects_front_infoblock_content(),
+      'format' => 'filtered_html',
+    ),
+    'additional_classes' => '',
+  );
+//  $items['iqss_projects_fp_infoblock'] = $box;
 }
