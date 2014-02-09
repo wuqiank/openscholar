@@ -97,8 +97,11 @@ function os_profiles_init() {
     // We need to replace the field ID in the field with the new file ID we got.
     if ($person_photo) {
       $file_info = os_profiles_get_origin_node_values($person_photo['file']['uri'] . '.json', array('url'));
-      $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
-      os_profiles_insert_image($node, $file, $data->data['person_photo_dimension']);
+      $copy_file = os_copy_file($file_info->values['url'], TRUE);
+
+      if ($copy_file['type'] == 'file') {
+        os_profiles_insert_image($node, $copy_file['file'], $data->data['person_photo_dimension']);
+      }
     }
   }
 
@@ -487,10 +490,11 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
     }
 
     $headers = get_headers($form_state['values']['url']);
-    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
-      return;
-    }
+
+    //if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+    //  form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
+    //  return;
+    //}
 
     // When addressing the URL of the profile that is imported, an http header
     // named "node_json" is added to the response. This is done in order for the
@@ -573,9 +577,15 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   }
 
   // Retrieve the file from the original node.
+  $file = NULL;
   if ($values['field_person_photo']) {
     $file_info = os_profiles_get_origin_node_values($values['field_person_photo']['file']['uri'] . '.json', array('url'));
-    $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
+    $copy_file = os_copy_file($file_info->values['url'], TRUE);
+
+    if ($copy_file['type'] == 'file') {
+      $file = $copy_file['file'];
+    }
+
     unset($values['field_person_photo']);
   }
 
