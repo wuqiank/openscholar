@@ -25,7 +25,7 @@ Feature:
      When I edit the node "Unique Title"
      Then I verify the "URL alias" value is "blog/unique-title"
 
-  @api
+  @api @wip
   Scenario: Verify it is possible to use the purl as a node custom path.
     Given I am logging in as "john"
       And I visit "john/node/add/blog"

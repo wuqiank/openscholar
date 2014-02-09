@@ -57,6 +57,7 @@ dependencies[] = wysiwyg
 dependencies[] = wysiwyg_filter
 dependencies[] = media_internet
 dependencies[] = media_oembed
+dependencies[] = media_draggable
 dependencies[] = oembedprovider
 
 ; media custom

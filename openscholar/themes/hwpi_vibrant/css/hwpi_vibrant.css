@@ -455,6 +455,24 @@ ul.primary {
   box-sizing: border-box;
 }
 
+
+.front #content-column .block.block-boxes-os_boxes_columns {
+  border: none;
+  background: none;
+  box-shadow: none;
+  -webkit-border-radius: none;
+  border-radius: none;
+  -moz-box-sizing: none;
+  -webkit-box-sizing:none;
+  box-sizing: none;
+}
+
+
+.front #content-column .block.block-boxes-os_boxes_columns .block-content:first-child {
+	border-top:none;
+	padding:0;
+	}
+ 
 .sidebar .block {
   margin-bottom: 20px;
 }

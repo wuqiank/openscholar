@@ -143,6 +143,9 @@ div.messages {
 }
 
 
+/* FOR DISPLAYING EMBEDDABLE BLOCK OF CONTENT THROUGH <embed> */
+body#widget {display: inline-block;}
+
   /* Footer panels */
 
  .footer .region-footer {
@@ -472,7 +475,7 @@ ul.class_material_field_class a.class_material_field_class_anchor {
 
 .video-indicator {
 	background: url("../images/movie_file_icon.png") no-repeat;
- 	bottom: 20px;
+ 	bottom: 10px;
   display: block;
   height: 13%;
   left: 5px;

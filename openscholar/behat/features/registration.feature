@@ -36,7 +36,7 @@ Feature:
      When I visit "john/calendar"
      Then I should see "My New Event"
 
-  @api
+  @api @wip
   Scenario: Test registering to event.
     Given I am logging in as "john"
       And I make "bill" a member in vsite "john"
