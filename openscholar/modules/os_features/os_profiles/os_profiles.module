@@ -491,10 +491,10 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
 
     $headers = get_headers($form_state['values']['url']);
 
-    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
-      return;
-    }
+    //if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+    //  form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
+    //  return;
+    //}
 
     // When addressing the URL of the profile that is imported, an http header
     // named "node_json" is added to the response. This is done in order for the
