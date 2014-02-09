@@ -906,15 +906,12 @@ function os_search_solr_preprocess_search_results(&$variables) {
 }
 
 /**
- * Implements hook_default_box().
+ * Implements hook_default_box_alter().
  */
-function os_search_solr_default_box() {
-  $boxes = array();
+function os_search_solr_default_box(&$items) {
   foreach (array_keys(os_search_solr_get_browse_pages_info()) as $bundle_name) {
-    $boxes['vocabulary_filter_' . $bundle_name] = os_search_solr_vocabulary_filter_box();
+    $items['vocabulary_filter_' . $bundle_name] = os_search_solr_vocabulary_filter_box();
   }
-
-  return $boxes;
 }
 
 /**
