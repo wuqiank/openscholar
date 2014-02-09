@@ -44,7 +44,9 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
     $delta_og_vocab = array_search($string_og_vocab, $map);
 
+    $delta = $block['delta'];
     $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
+    $block['delta'] = $delta;
     // Remove unselected vocabularies
     if ($this->options['vocabularies']) {
       foreach (array_keys($block['content']['sm_og_vocabulary']) as $vocabulary_name) {
