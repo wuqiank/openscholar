@@ -322,7 +322,7 @@ function vsite_form_path_admin_form_alter(&$form, $form_state) {
 }
 
 /**
- * Validate handler - verify the path is not already taken.
+ * Validate handler; Verify the path is not already taken.
  */
 function vsite_path_admin_validate($form, &$form_state) {
   $source = explode('/', $form_state['values']['source']);
@@ -340,7 +340,7 @@ function vsite_path_admin_validate($form, &$form_state) {
   form_set_value($form['alias'], $purl . '/' . $form_state['values']['alias'], $form_state);
 
   if (!_vsite_form_alias_validate($entity_type, $entity, $form_state['values']['alias'])) {
-    form_set_error('alias', t('Alias is already in use.'));
+    form_set_error('alias', t('The alias is already in use.'));
   }
 }
 
@@ -2640,6 +2640,7 @@ function _vsite_form_alias_validate($entity_type, $entity, $path) {
 
   // Get alias.
   $alias = vsite_get_entity_alias($entity_type, $entity);
+  dpm($alias);
 
   $language = !empty($entity->path['language']) ? $entity->path['language'] : LANGUAGE_NONE;
 
@@ -2654,17 +2655,15 @@ function _vsite_form_alias_validate($entity_type, $entity, $path) {
     $query->condition('source', $source, '<>');
   }
 
-  $query->range(0, 1);
-
-  if ($query->execute()->fetchField()) {
+  if ($query->countQuery()->execute()->fetchField()) {
     // Alias already in use.
     return FALSE;
   }
 
   // Although the alias was not found in alias table, it might still be taken
-  // by something more global. For example, paths like 'PURL/user/login' should
-  // not be valid. We must make sure that the requested path is not in use
-  // with and without the purl prefix.
+  // by a system menu item. For example, paths like 'PURL/user/login' are not
+  // valid. We make sure that the requested path is not in use with and without
+  // the purl prefix.
   if (!empty($alias)) {
     // When creating a node/term and the user did not fill the alias field then
     // the alias is empty and if statement will fail.
