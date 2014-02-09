@@ -99,7 +99,7 @@ Feature:
   @api
   Scenario: Verify that admin can't enter a path alias that already exists.
     Given I am logging in as "admin"
-      And I visit "admin/config/search/path/edit/66?destination=admin/config/search/path"
+      And I visit "admin/config/search/path/edit/66"
       And I fill in "Path alias" with "obama/people/hillary-diane-rodham-clinton"
      When I press "Save"
      Then I should see "The alias obama/people/hillary-diane-rodham-clinton is already in use in this language."
