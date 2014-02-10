@@ -308,7 +308,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
  * @param $node
  *  The node object.
  */
-function os_events_events_register($js, $node, $ajax = 'foo') {
+function os_events_events_register($js, $node) {
   ctools_include('modal');
   ctools_include('ajax');
   $registration_type = registration_get_entity_registration_type('node', $node);
