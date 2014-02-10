@@ -309,6 +309,9 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
  *  The node object.
  */
 function os_events_events_register($js, $node) {
+  ctools_include('modal');
+  ctools_include('ajax');
+
   $registration_type = registration_get_entity_registration_type('node', $node);
   $registration = entity_get_controller('registration')->create(array(
     'entity_type' => 'node',
@@ -316,14 +319,12 @@ function os_events_events_register($js, $node) {
     'type' => $registration_type,
   ));
 
+  $registration->ajax = $js;
   $registration_form = drupal_get_form('registration_form', $registration);
 
   if (!$js) {
     return $registration_form;
   }
-
-  ctools_include('modal');
-  ctools_include('ajax');
 
   if (!os_events_event_registration_reach_capacity($node)) {
     drupal_set_message(t('The event has reached his maximum capacity of registrations. Sorry.'), 'error');
@@ -345,6 +346,30 @@ function os_events_events_register($js, $node) {
 
   $output = ctools_modal_form_render($form_state, $registration_form);
   print ajax_render($output);
+  drupal_exit();
+}
+
+/**
+ * Submit handler; Dismissing the ctools modal window and display a message
+ * when the registration is completed.
+ */
+function os_events_modal_submit($form, &$form_state) {
+  if (!$form_state['registration']->ajax) {
+    // The AJAX is disabled. Don't invoke the ajax_render command.
+    return;
+  }
+
+  $commands = array();
+
+  // dismiss the window
+  $commands[] = ctools_modal_command_dismiss();
+  // Display messages.
+  $commands[] = ajax_command_before('#columns', theme('status_messages'));
+
+  // Clean any message.
+  drupal_get_messages();
+
+  print ajax_render($commands);
   drupal_exit();
 }
 
@@ -825,30 +850,6 @@ function os_events_form_registration_form_alter(&$form, &$form_state) {
   unset($form['actions'], $form['field_full_name'], $form['field_department'], $form['anon_mail'], $form['user']);
 
   $form['#submit'][] = 'os_events_modal_submit';
-}
-
-/**
- * Submit handler; Dismissing the ctools modal window and display a message
- * when the registration is completed.
- */
-function os_events_modal_submit($form, $form_state) {
-  if (!function_exists('ctools_modal_command_dismiss')) {
-    // The ctools modal file was not included because the JS is disabled.
-    return;
-  }
-
-  $commands = array();
-
-  // dismiss the window
-  $commands[] = ctools_modal_command_dismiss();
-  // Display messages.
-  $commands[] = ajax_command_before('#columns', theme('status_messages'));
-
-  // Clean any message.
-  drupal_get_messages();
-
-  print ajax_render($commands);
-  drupal_exit();
 }
 
 /**
