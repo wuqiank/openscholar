@@ -166,6 +166,7 @@ margin-left:6em;
 
 .sidebar .block,
 .front #content-column .block,
+#content-column .block.block-boxes-os_boxes_columns .block,
 .node-person .block-inner,
 .comment-wrapper {
 	border-top: 3px solid #4384C4;
