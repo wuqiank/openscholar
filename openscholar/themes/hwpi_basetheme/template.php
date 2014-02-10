@@ -176,7 +176,11 @@ function hwpi_basetheme_preprocess_node(&$vars) {
 function hwpi_basetheme_process_node(&$vars) {
   // Event persons, change title markup to h1
   if ($vars['type'] == 'person') {
-    if (!$vars['teaser'] && $vars['view_mode'] != 'sidebar_teaser') {
+    if ($vars['view_mode'] == 'title') {
+      $vars['title_prefix']['#suffix'] = '<h1 class="node-title">' . l($vars['title'], 'node/' . $vars['nid']) . '</h1>';
+      $vars['title'] = NULL;
+    }
+    elseif (!$vars['teaser'] && $vars['view_mode'] != 'sidebar_teaser') {
       $vars['title_prefix']['#suffix'] = '<h1 class="node-title">' . $vars['title'] . '</h1>';
       $vars['title'] = NULL;
     }
@@ -604,9 +608,19 @@ function hwpi_basetheme_status_messages($vars) {
     if (count($messages) > 1) {
       $output .= " <ul>";
       foreach ($messages as $message) {
-        $output .= '  <li>' . $message . "</li>";
+        if (strpos($message, 'Biblio') === 0) {
+          // Allow some tags in messages about a Biblio.
+          $output .= '  <li>' . strip_tags(html_entity_decode($message), '<em><sub><sup>') . "</li>";
+        }
+        else {
+          $output .= '  <li>' . $message . "</li>";
+        }
       }
       $output .= " </ul>";
+    }
+    elseif (strpos($messages[0], 'Biblio') === 0) {
+      // Allow some tags in messages about a Biblio.
+      $output .= strip_tags(html_entity_decode($messages[0]), '<em><sub><sup>');
     }
     else {
       $output .= $messages[0];
