@@ -579,20 +579,20 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
     ),
   );
   $context->reactions = array(
-    'menu' => $menu_item,
     'block' => array(
       'blocks' => array(
-        'facetapi-' . $delta_og_vocab => array(
-          'module' => 'facetapi',
-          'delta' => $delta_og_vocab,
+        'boxes-vocabulary_filter_' . $bundle_name => array(
+          'module' => 'boxes',
+          'delta' => 'vocabulary_filter_' . $bundle_name,
+          'title' => t('Filter by taxonomy'),
           'region' => 'sidebar_second',
-          'weight' => '0',
+          'weight' => '-10',
         ),
       ),
     ),
+    'menu' => $menu_item,
   );
   $context->condition_mode = 1;
-
   return $context;
 }
 
@@ -903,4 +903,32 @@ function os_search_solr_preprocess_search_results(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_default_box_alter().
+ */
+function os_search_solr_default_box_alter(&$items) {
+  foreach (array_keys(os_search_solr_get_browse_pages_info()) as $bundle_name) {
+    $items['vocabulary_filter_' . $bundle_name] = os_search_solr_vocabulary_filter_box($bundle_name);
+  }
+}
+
+/**
+ * Utility function to create vucabulary filter box.
+ *
+ * @return stdClass
+ *   Vocabulary filter box object.
+ */
+function os_search_solr_vocabulary_filter_box($bundle_name) {
+  $box = new stdClass();
+  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
+  $box->api_version = 1;
+  $box->delta = 'vocabulary_filter_' . $bundle_name;
+  $box->plugin_key = 'os_boxes_facetapi_vocabulary';
+  $box->title = t('Filter by taxonomy');
+  $box->description = 'Vocabulary filter';
+  $box->options = array();
+
+  return $box;
 }
