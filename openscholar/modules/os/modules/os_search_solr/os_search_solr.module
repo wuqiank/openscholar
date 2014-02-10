@@ -593,7 +593,6 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
     'menu' => $menu_item,
   );
   $context->condition_mode = 1;
-
   return $context;
 }
 
