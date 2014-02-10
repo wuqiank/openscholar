@@ -2,6 +2,14 @@
 class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
   /**
+   * Create a new box.
+   */
+  protected function __construct() {
+    parent::__construct();
+    $this->title = t('Filter by taxonomy');
+  }
+
+  /**
    * Implementation of boxes_content::options_defaults().
    */
   public function options_defaults() {
@@ -47,6 +55,10 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $delta = $block['delta'];
     $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
     $block['delta'] = $delta;
+
+    // Set block subject/title from box configuration.
+    $block['subject'] = $this->title;
+    $block['title'] = $this->title;
 
     if (!empty($block['content'])) {
       // Get the list of selected vocabularies

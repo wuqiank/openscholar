@@ -584,6 +584,7 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
         'boxes-vocabulary_filter_' . $bundle_name => array(
           'module' => 'boxes',
           'delta' => 'vocabulary_filter_' . $bundle_name,
+          'title' => t('Filter by taxonomy'),
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
@@ -926,7 +927,7 @@ function os_search_solr_vocabulary_filter_box($bundle_name) {
   $box->api_version = 1;
   $box->delta = 'vocabulary_filter_' . $bundle_name;
   $box->plugin_key = 'os_boxes_facetapi_vocabulary';
-  $box->title = '';
+  $box->title = t('Filter by taxonomy');
   $box->description = 'Vocabulary filter';
   $box->options = array();
 
