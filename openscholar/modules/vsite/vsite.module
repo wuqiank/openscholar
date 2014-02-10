@@ -2638,7 +2638,7 @@ function _vsite_form_alias_validate($entity_type, $entity, $path) {
     $source = $uri['path'];
   }
 
-  // Get alias.
+  // Get the prefixed alias (e.g. john/blogs/foo).
   $alias = vsite_get_entity_alias($entity_type, $entity);
 
   $language = !empty($entity->path['language']) ? $entity->path['language'] : LANGUAGE_NONE;
