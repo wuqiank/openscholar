@@ -256,7 +256,7 @@ function vsite_field_default_field_instances() {
   $field_instances['node-department-field_site_logo'] = array(
     'bundle' => 'department',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Image can be any size, but it is recommended to not be larger than 200px.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -839,7 +839,7 @@ function vsite_field_default_field_instances() {
   $field_instances['node-personal-field_site_logo'] = array(
     'bundle' => 'personal',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Image should not be smaller than 180 x 140.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -1422,7 +1422,7 @@ function vsite_field_default_field_instances() {
   $field_instances['node-project-field_site_logo'] = array(
     'bundle' => 'project',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Image can be any size, but it is recommended to not be larger than 200px.',
     'display' => array(
       'default' => array(
         'label' => 'above',

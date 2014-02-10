@@ -56,9 +56,9 @@ function os_publications_install() {
     $field_map = biblio_get_map('field_map','csl');
     if(isset($field_map['collection-title']) && isset($field_map['container-title'])) {
       if($field_map['collection-title'] == 'biblio_secondary_title' && $field_map['container-title'] == 'biblio_secondary_title') {
-	    $field_map['collection-title'] = '';
-	    biblio_set_map('field_map', 'csl', $field_map);
-	  }
+        $field_map['collection-title'] = '';
+        biblio_set_map('field_map', 'csl', $field_map);
+      }
     }
   }
 }
@@ -1078,4 +1078,16 @@ function os_publications_update_7015() {
     ->fields(array('visible' => 1))
     ->condition('name', 'data')
     ->execute();
+}
+
+
+/**
+ * Revert fields to use new field widget
+ */
+function os_publications_update_7016() {
+  $revert = array('os_publications' => array('field_instance'));
+
+  features_revert($revert);
+
+  return t('Reverted field instances for os_publications module.');
 }

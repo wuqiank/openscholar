@@ -69,6 +69,9 @@ projects[disqus][subdir] = "contrib"
 projects[disqus][version] = 1.9
 projects[disqus][patch][] = "http://drupal.org/files/comment_sources-disqus-2120703-1.patch"
 
+projects[dragndrop_upload][subdir] = "contrib"
+projects[dragndrop_upload][version] = 1.0-alpha1
+
 projects[dyntextfield][subdir] = "contrib"
 projects[dyntextfield][type] = module
 projects[dyntextfield][download][type] = git
@@ -164,6 +167,11 @@ projects[hierarchical_taxonomy][download][url] = "http://git.drupal.org/project/
 projects[hierarchical_taxonomy][download][branch] = 7.x-1.x
 projects[hierarchical_taxonomy][download][revision] = 5bbe344
 projects[hierarchical_taxonomy][patch][] = "http://drupal.org/files/2034713-hs-comaprse-name-2.patch"
+
+projects[html_title][subdir] = "contrib"
+projects[html_title][download][type] = git
+projects[html_title][download][branch] = 7.x-1.x
+projects[html_title][download][revision] = 0f2c6e9
 
 projects[imagefield_crop][subdir] = "contrib"
 ;projects[imagefield_crop][version] = 2.0
@@ -282,6 +290,7 @@ projects[og_views][version] = 1.0
 
 projects[og_vocab][subdir] = "contrib"
 projects[og_vocab][version] = 1.2
+projects[og_vocab][patch][] = "https://drupal.org/files/issues/og-vocab-reset-to-alpahbetical-2174907-4.patch"
 
 projects[olark][subdir] = "contrib"
 projects[olark][version] = 1.0-beta1
@@ -358,6 +367,9 @@ projects[stringoverrides][subdir] = "contrib"
 
 projects[strongarm][subdir] = "contrib"
 projects[strongarm][version] = 2.0-rc1
+
+projects[title][subdir] = "contrib"
+projects[title][version] = 1.0-alpha7
 
 projects[token][subdir] = "contrib"
 projects[token][version] = 1.4

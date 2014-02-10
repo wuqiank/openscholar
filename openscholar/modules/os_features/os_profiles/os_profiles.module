@@ -102,9 +102,11 @@ function os_profiles_init() {
     // We need to replace the field ID in the field with the new file ID we got.
     if ($person_photo) {
       $file_info = os_profiles_get_origin_node_values($person_photo['file']['uri'] . '.json', array('url'));
-      $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
-      $node->field_person_photo[$node->language][0]['fid'] = $file->fid;
-      node_save($node);
+      $copy_file = os_copy_file($file_info->values['url'], TRUE);
+
+      if ($copy_file['type'] == 'file') {
+        os_profiles_insert_image($node, $copy_file['file'], $data->data['person_photo_dimension']);
+      }
     }
   }
 
@@ -127,23 +129,23 @@ function os_profiles_menu() {
     'access arguments' => array('create person content'),
   );
 
-  $items['people/profile_autocomplete'] = array(
+  $items['cp/people/profile_autocomplete'] = array(
     'title' => 'Sync',
     'page callback' => 'os_profile_return_auto_complete',
     'access arguments' => array('access content'),
   );
 
-  $items['people/insert_profile'] = array(
+  $items['cp/people/insert_profile'] = array(
     'page callback' => 'os_profiles_insert_listeners',
     'access callback' => TRUE,
   );
 
-  $items['people/update_profile'] = array(
+  $items['cp/people/update_profile'] = array(
     'page callback' => 'os_profiles_update_listeners',
     'access callback' => TRUE,
   );
 
-  $items['people/unlink_profile'] = array(
+  $items['cp/people/unlink_profile'] = array(
     'page callback' => 'os_profiles_unlink_listeners',
     'access callback' => TRUE,
   );
@@ -388,7 +390,7 @@ function os_profiles_sync_profile($form, $form_state) {
     '#type' => 'textfield',
     '#title' => '',
     '#description' => t('Search the person by the first or last name.'),
-    '#autocomplete_path' => 'people/profile_autocomplete',
+    '#autocomplete_path' => 'cp/people/profile_autocomplete',
   );
 
   $form['or'] = array(
@@ -493,10 +495,11 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
     }
 
     $headers = get_headers($form_state['values']['url']);
-    if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
-      form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
-      return;
-    }
+
+    //if (!in_array('X-Generator: Drupal 7 (http://drupal.org)', $headers)) {
+    //  form_set_error('url', t('The address you provided is not recognized as an OpenScholar profile page.'));
+    //  return;
+    //}
 
     // When addressing the URL of the profile that is imported, an http header
     // named "node_json" is added to the response. This is done in order for the
@@ -579,9 +582,15 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   }
 
   // Retrieve the file from the original node.
+  $file = NULL;
   if ($values['field_person_photo']) {
     $file_info = os_profiles_get_origin_node_values($values['field_person_photo']['file']['uri'] . '.json', array('url'));
-    $file = system_retrieve_file($file_info->values['url'], 'public://', TRUE);
+    $copy_file = os_copy_file($file_info->values['url'], TRUE);
+
+    if ($copy_file['type'] == 'file') {
+      $file = $copy_file['file'];
+    }
+
     unset($values['field_person_photo']);
   }
 
@@ -631,7 +640,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   $node = node_load($nid);
 
   if ($file) {
-    os_profiles_insert_image($node, $file);
+    os_profiles_insert_image($node, $file, $data['person_photo_dimension']);
   }
 
   $params = array(
@@ -650,16 +659,18 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  *  The node object.
  * @param $file
  *  The file object.
+ * @param $dimensions
+ *  The image field crop settings.
  */
-function os_profiles_insert_image($node, $file) {
+function os_profiles_insert_image($node, $file, $dimensions) {
   $node->field_person_photo[$node->language][0] = array(
     'fid' => $file->fid,
     'display' => 1,
     'description' => '',
-    'cropbox_x' => 0,
-    'cropbox_y' => 0,
-    'cropbox_height' => 0,
-    'cropbox_width' => 0,
+    'cropbox_x' => $dimensions['cropbox_x'],
+    'cropbox_y' => $dimensions['cropbox_y'],
+    'cropbox_height' => $dimensions['cropbox_height'],
+    'cropbox_width' => $dimensions['cropbox_width'],
   );
 
   node_save($node);
@@ -841,13 +852,13 @@ function os_profiles_unlink_listeners() {
 function os_profiles_manage_synced_profiles($url, $values) {
   switch ($values['action']) {
     case 'insert_person':
-      $path = $url . '/people/insert_profile';
+      $path = $url . '/cp/people/insert_profile';
       break;
     case 'update':
-      $path = $url . '/people/update_profile';
+      $path = $url . '/cp/people/update_profile';
       break;
     case 'unlink':
-      $path = $url . '/people/unlink_profile';
+      $path = $url . '/cp/people/unlink_profile';
       break;
     default:
       $path = NULL;
@@ -893,6 +904,8 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     return;
   }
 
+  $vsite = vsite_get_vsite();
+
   // Form element for disabling the use of a default image.
   $form['os_profiles_disable_default_image'] = array(
     '#type' => 'checkbox',
@@ -925,8 +938,10 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     $profile_styles_hover[$style] = $profile_example_output;
   }
 
-  // Form element to choose display type.
-  $form['os_profiles_display_type'] = array(
+  // Form element to choose display type. We use a "dummy" variable to be able
+  // to get the value that is set in the vsite level and not the site-wide
+  // level value.
+  $form['dummy__os_profiles_display_type'] = array(
     '#type' => 'radios',
     '#title' => t('Display Types'),
     '#default_value' => variable_get('os_profiles_display_type', 'teaser'),
@@ -1142,9 +1157,11 @@ function _os_profiles_default_image_preview_process($element, $form_state, $form
 function os_profiles_display_settings_submit($form, $form_state) {
   $file_data = $form_state['input']['file'];
 
+  $vsite = vsite_get_vsite();
+
   // When removing an uploaded picture set the default image file id to 0.
   if ($form_state['triggering_element']['#value'] == 'remove') {
-    variable_set('os_profiles_default_image_file', 0);
+    $vsite->controllers->variable->set('os_profiles_default_image_file', 0);
     return;
   }
 
@@ -1185,23 +1202,23 @@ function os_profiles_display_settings_submit($form, $form_state) {
 
     if (module_exists('vsite') && $space = spaces_get_space() && $file->fid) {
       // Save the state of the crop tool image.
-      variable_set('os_profiles_default_image_file', $file_data['fid']);
+      $vsite->controllers->variable->set('os_profiles_default_image_file', $file_data['fid']);
       $dimensions = array(
         'x' => $file_data['x'],
         'y' => $file_data['y'],
         'width' => $file_data['width'],
         'height' => $file_data['height'],
       );
-      variable_set('os_profiles_default_image_properties', $dimensions);
+      $vsite->controllers->variable->set('os_profiles_default_image_properties', $dimensions);
     }
   }
   else {
     // No file is uploaded.
-    variable_set('os_profiles_default_image_file', 0);
+    $vsite->controllers->variable->set('os_profiles_default_image_file', 0);
   }
 
   // Set the display style for the profiles in the "/people" path.
-  variable_set('os_profiles_display_type', $form_state['input']['os_profiles_display_type']);
+  $vsite->controllers->variable->set('os_profiles_display_type', $form_state['values']['dummy__os_profiles_display_type']);
 
   // Clear the os_profiles view cache so the setting will take effect.
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
@@ -1361,7 +1378,7 @@ function _os_profiles_build_display_style_example($style) {
     case 'title':
       $result = '
         <div class="dummy-content">
-          <h1>John Fitzgerald Kennedy</h1>
+          <h1><a>John Fitzgerald Kennedy</a></h1>
         </div>
       ';
       break;
@@ -1412,11 +1429,9 @@ function _os_profiles_build_display_style_example($style) {
  * Implements hook_entity_view_mode_alter().
  *
  * Changes the display type for profiles in the "/people" page or in a person
- * term page (i.e "people/science/air") according to the settings in os_profiles
- * app settings.
+ * term page according to the settings in os_profiles app settings.
  */
 function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
-  $vocabs = os_sv_list_get_content_type_vocabs('person');
   $args = explode('/', $_GET['q']);
 
   if ($args[0] != 'people') {
@@ -1424,9 +1439,9 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
     return;
   }
 
-  if (!empty($args[1]) && !in_array($args[1], $vocabs)) {
-    // The second part of the path after "/people" is not empty and
-    // not a vocabulary related to that person.
+  if (!empty($args[1]) && !_os_profiles_is_term_page($args[1])) {
+    // The second part of the path after "/people" is not a vocabulary or a term
+    // related to a person (that is, not a term page).
     return;
   }
 
@@ -1447,10 +1462,61 @@ function os_profiles_entity_view_mode_alter(&$view_mode, $context) {
 }
 
 /**
+ * Helper function. Checks if a page is a people term page.
+ *
+ * The function checks if the current page is a term page that is, the URL is
+ * in the form "john/people/science" where "science" is a vocabulary or if the URL is
+ * in the form "john/people/faculty" where "faculty" is a term.
+ *
+ * @param $arg
+ *  The part of $_GET['q] that comes after "people"
+ *  up to a "/".
+ */
+function _os_profiles_is_term_page($arg) {
+  $vocabs = os_sv_list_get_content_type_vocabs('person');
+
+  if (in_array($arg, $vocabs)) {
+    // Path is in the form "john/people/<vocab-name>".
+    return TRUE;
+  }
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $source = drupal_lookup_path('source', $vsite->group->purl . '/' . $arg);
+    if (strpos($source, 'taxonomy/term') == 0) {
+      // Path is in the form "john/people/<term-name>".
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
  * Implements hook_field_info_alter().
  *
  * Adding entity metadata wrapper support for the image field crop module.
  */
 function os_profiles_field_info_alter(&$info) {
   $info['imagefield_crop']['property_callbacks'] = array('entity_metadata_field_image_callback', 'entity_metadata_field_file_callback');
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function os_profiles_entity_property_info_alter(&$info) {
+  $info['node']['bundles']['person']['properties']['person_photo_dimension'] = array(
+    'label' => t('Person picture dimension'),
+    'getter callback' => 'os_profiles_image_dimension',
+  );
+}
+
+function os_profiles_image_dimension($entity, array $options, $name, $type) {
+  $wrapper = entity_metadata_wrapper($type, $entity);
+  $info = $wrapper->field_person_photo->value();
+
+  return array(
+    'cropbox_height' => $info['cropbox_height'],
+    'cropbox_width' => $info['cropbox_width'],
+    'cropbox_x' => $info['cropbox_x'],
+    'cropbox_y' => $info['cropbox_y'],
+  );
 }

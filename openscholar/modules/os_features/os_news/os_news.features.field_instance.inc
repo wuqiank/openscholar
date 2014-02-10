@@ -187,7 +187,7 @@ function os_news_field_default_field_instances() {
   $field_instances['node-news-field_photo'] = array(
     'bundle' => 'news',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Image should not be smaller than 250 x 250.',
     'display' => array(
       'default' => array(
         'label' => 'hidden',
