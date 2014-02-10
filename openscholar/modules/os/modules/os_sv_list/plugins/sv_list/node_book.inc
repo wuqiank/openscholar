@@ -20,6 +20,10 @@ class sv_list_node_book  extends sv_list_plugin {
    * People should use last name, not first.
    */
   public function query_alter($options, $efq) {  
+    if ($options['content_type'] != 'book') {
+      return;
+    }
+    
     // limit book depth to 1.  not a field, so use a regular query.
     $nids = db_select('menu_links', 'ml')
       ->condition('module', 'book')

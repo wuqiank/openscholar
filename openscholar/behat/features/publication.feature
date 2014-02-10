@@ -8,13 +8,13 @@ Feature:
       And I click "The Little Prince"
      Then I should see "The Little Prince. United States; 1943."
 
-  @api @wip
+  @api
   Scenario: Test the Publication tab allows caching of anonymous user
     Given cache is enabled for anonymous users
      When I visit "john/publications"
      Then I should get a "200" HTTP response
       And I visit "john/publications"
-     Then response header "X-Drupal-Cache" should be "HIT"
+     Then response header "x-drupal-cache" should be "HIT"
 
   @api
   Scenario: Test the Authors field in Publication form

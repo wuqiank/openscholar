@@ -15,7 +15,9 @@ $plugin = array(
 class sv_list_subsites extends sv_list_plugin  {
   
   public function options_defaults() {
-    return array('query_scope' => 'current');
+    if (module_exists('vsite') && $space = spaces_get_space()) {
+      return array('query_scope' => array($space->id => $space->id));
+    }
   }
   
   public function options_form($options, &$form) {
@@ -28,10 +30,16 @@ class sv_list_subsites extends sv_list_plugin  {
     }
     
     ctools_include('subsite','vsite');
+    
+    $subsites = array_reduce(node_load_multiple(array($vsite->id) + vsite_get_subsites($vsite)), function ($ret, $n) {
+      $ret[$n->nid] = $n->title; return $ret;
+    }, array());
+    
     $form['filters']['query_scope'] = array(
       '#title' => 'Include results from',
       '#type' => 'checkboxes',
-      '#options' => array('current' => "Current Site", 'subsites' => 'Subsites'),
+      //'#options' => array('current' => t('Current Site'), 'subsites' => t('Subsites')),
+      '#options' => $subsites,
       '#default_value' => $options['query_scope'],
       '#access' => vsite_has_subsites(),
       '#required' => TRUE,
@@ -48,33 +56,17 @@ class sv_list_subsites extends sv_list_plugin  {
     if (!module_exists('vsite') || (($vsite = spaces_get_space()) == FALSE)) {
       return;
     }
-    
+
     //skip this if subsites aren't an option
     if (!in_array($vsite->og->type, variable_get('subsite_parents', array()))) {
       return;
     }
-      
-    // Filter based on site or subsite.
-    $gids = array();
-    $scope = array_filter($options['query_scope']);
-    $scope = (empty($scope)) ? array('current') : array_keys($scope);
     
     //remove default og group ref condition
     $efq->fieldConditions = array_filter($efq->fieldConditions, function($a) {
       return ($a['field']['field_name'] != OG_AUDIENCE_FIELD);
     });
-    
-    //add current
-    if (in_array('current', $scope)) {
-      $gids[$vsite->id] = $vsite->id;
-    }
-    
-    //add subsite
-    if (in_array('subsites', $scope)) {
-      ctools_include('subsite','vsite');
-      $gids = array_merge($gids,vsite_get_subsites());
-    }
 
-    $efq->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $gids, 'IN');
+    $efq->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', array_filter($options['query_scope']), 'IN');
   }
 }

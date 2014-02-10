@@ -379,7 +379,7 @@ function os_boxes_preprocess_boxes_box(&$variables) {
 
     $purl = '';
     if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
-      if ($vsite->purl_provider == PURL_VSITE_PATH) {
+      if ($vsite->purl_provider != PURL_VSITE_DOMAIN) {
         $purl = $vsite->group->purl.'/';
       }
     }
@@ -501,4 +501,27 @@ function os_boxes_permission() {
   );
 
   return $perms;
+}
+
+/**
+ * Discards the default image when the user hits the "remove" button.
+ */
+function _os_image_remove_handler($form, $form_state) {
+  $parents = $form_state['triggering_element']['#array_parents'];
+  $element = drupal_array_get_nested_value($form, $parents);
+
+  // @see: file_managed_file_submit
+  if (isset($element['#file'])) {
+    $orig = _imagefield_crop_file_to_crop($element['#file']->fid);
+    file_usage_delete($orig, 'imagefield_crop', NULL, NULL, 0);
+    file_usage_delete($element['#file'], 'os_boxes', NULL, NULL, 0);
+    file_delete($orig);
+    file_delete($element['#file']);
+    $element['#value']['fid'] = NULL;
+    unset($element['#file']);
+
+    $values_element = $element['#extended'] ? $element['fid'] : $element;
+    form_set_value($values_element, NULL, $form_state);
+    drupal_array_set_nested_value($form_state['input'], $values_element['#parents'], NULL);
+  }
 }

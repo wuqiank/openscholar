@@ -105,28 +105,6 @@ function cp_menu() {
     'file path' => drupal_get_path('module', 'taxonomy'),
   );
 
-  $items["cp/build/taxonomy"] = array(
-    'title' => 'Taxonomy',
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 10,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_overview_vocabularies'),
-    'access arguments' => array('administer taxonomy'),
-    'file' => 'taxonomy.admin.inc',
-    'file path' => drupal_get_path('module', 'taxonomy'),
-    'description' => t('Manage your site\'s vocabularies')
-  );
-
-  $items["cp/build/taxonomy/add"] = array(
-    'title' => 'Add vocabulary',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_form_vocabulary'),
-    'access arguments' => array('administer taxonomy'),
-    'type' => MENU_LOCAL_ACTION,
-    'file' => 'taxonomy.admin.inc',
-    'file path' => drupal_get_path('module', 'taxonomy'),
-  );
-
   // Provides a customize form for each OS App and a version that will load in a modal
   $apps = spaces_features('site');
   foreach ($apps as $name => $app) {
@@ -469,6 +447,7 @@ function cp_cp_settings() {
         '#value' => t('Clear site cache'),
         '#suffix' => "<div class=\"description\">".t('Clear the cache to so anonymous users see the most recent updates. This removes the normal ~15 minute delay for new/updated posts to show up in lists but can slow the site down for your visitors.')."</div>",
         '#submit' => array('cp_clear_site_cache'),
+        '#access' => user_access('administer varnish'),
       ),
     );
   }
@@ -592,6 +571,15 @@ function cp_form_redirect_edit_form_alter(&$form, &$form_state, $form_id) {
     return;
   }
 
+  // Include the `purl.admin.inc` file to invoke validate callback for when
+  // users rebuild the form to confirm adding a URL redirect whose source
+  // URL is an existing menu item.
+  $form_state['build_info']['files'][] = array(
+    'type' => 'inc',
+    'module' => 'purl',
+    'name' => 'purl.admin',
+  );
+
   // Determines this vsite's purl modifier value.
   if (empty($form['purl']['modifier']['#default_value'])) {
     $default_value = "{$vsite->purl_provider}:{$vsite->id}";
@@ -675,8 +663,7 @@ function cp_redirect_get_redirects() {
   $rids = array();
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'redirect');
-  if (module_exists('vsite')) {
-    $vsite = vsite_get_vsite();
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
     $gid = $vsite->id;
     $len = strlen((string) $gid);
     // Matches a serialized array key/value pair like `array('id' => $gid)`.
@@ -750,14 +737,14 @@ function _cp_settings_redirect_build_element($redirects) {
       continue;
     }
 
-    $source = _cp_redirect_format_link($redirect->source);
-    $destination = _cp_redirect_format_link($redirect->redirect);
+    $source_url = redirect_url($redirect->source, $redirect->source_options);
+    $redirect_url = redirect_url($redirect->redirect, array_merge($redirect->redirect_options, array('alias' => TRUE)));
     $options = array('query' => array('destination' => 'cp/settings'));
     $item = array(
       'class' => array('redirect-item', "redirect-{$redirect->rid}"),
       'children' => array(
         0 => array(
-          'data' => $source,
+          'data' => $source_url,
           'class' => array('redirect-property', 'redirect-source'),
         ),
         1 => array(
@@ -765,7 +752,7 @@ function _cp_settings_redirect_build_element($redirects) {
           'class' => array('redirect-property', 'redirect-icon'),
         ),
         2 => array(
-          'data' => $destination,
+          'data' => $redirect_url,
           'class' => array('redirect-property', 'redirect-destination'),
         ),
         3 => array(
@@ -780,43 +767,6 @@ function _cp_settings_redirect_build_element($redirects) {
   }
 
   return $build;
-}
-
-/**
- * Takes an external or internal path and returns an absolute, trimmed link.
- *
- * @param string $path
- *   A path like http://example.com or an internal path like "pages/mypage".
- * @param int $trim
- *   A number of characters to trim the display to.
- *
- * @return string $link
- *   An HTML snippet like <a href="$path" title="$path">$trimmed</a>
- */
-function _cp_redirect_format_link($path, $trim = 48) {
-  // Formats the path into an absolute URL.
-  $options = array(
-    'absolute' => TRUE,
-  );
-  $path = url($path, $options);
-
-  // Trims the displayed value to the maximum length.
-  if (strlen($path) < $trim) {
-    $text = $path;
-  }
-  else {
-    $text = substr($path, 0, $trim) . '...';
-  }
-
-  // Builds the link HTML snippet.
-  $options = array(
-    'attributes' => array(
-      'title' => $path,
-    ),
-  );
-  $link = l($text, $path, $options);
-
-  return $link;
 }
 
 /**
@@ -849,4 +799,3 @@ function cp_module_implements_alter(&$implementations, $hook) {
   unset($implementations['cp']);
   $implementations['cp'] = $group;
 }
-

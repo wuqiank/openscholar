@@ -65,6 +65,13 @@ margin-top: 12px;
 }
 
 
+.block-boxes-os_taxonomy_fbt.navigation a {
+	font-size: 16px;
+	font-family:georgia;
+
+	}
+
+
 
 h1#page-title,
 h1.node-title, 
@@ -150,6 +157,8 @@ margin-left:6em;
     font-size: 13px;
 }
 
+.block-boxes-os_sv_list_box .sv-list-view-title h1 {font-family:arial;}
+
 /* Border control */
 .not-front.two-sidebars #content-column .content-inner {
 	border-right: 1px solid #e7e7e7;
@@ -163,7 +172,8 @@ margin-left:6em;
 	margin-top:12px;
 }
 
-.block-boxes block-boxes-os_sv_list_box,
+#content-column .block.block-boxes-os_boxes_columns,
+.block-boxes-os_sv_list_box .block-inner,
 .block-boxes-os_boxes_manual_list, 
 .sidebar .block.section-nav,
 #content-column .block.section-nav  {
@@ -176,6 +186,12 @@ margin-left:6em;
 
 #content-column .item-list ul.pager li {
     font-family: arial;
+}
+
+.region-content-first .block,
+.region-content-second .block,
+.region-content-bottom .block {
+	margin-bottom:12px;
 }
 
 /* Footer */

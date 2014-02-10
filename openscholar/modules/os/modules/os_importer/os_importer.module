@@ -180,10 +180,8 @@ function os_importer_menu() {
   }
 
   $items['cp/os-importer/%/template'] = array(
-    'page callback' => 'feeds_importer_template',
+    'page callback' => 'os_importer_download_template',
     'page arguments' => array(2),
-    'file' => 'feeds.pages.inc',
-    'file path' => drupal_get_path('module', 'feeds'),
     'access callback' => 'os_importer_import_access',
     'access arguments' => array(2),
   );
@@ -202,6 +200,17 @@ function os_importer_menu_alter(&$items) {
   $items['cp/os-importer/biblio']['page arguments'] = array('biblio_import_form');
   $items['cp/os-importer/biblio']['file'] = 'biblio.import.export.inc';
   $items['cp/os-importer/biblio']['file path'] = drupal_get_path('module', 'biblio') . '/includes';
+}
+
+/**
+ * Page callback; Download a template of CSV with dummy content.
+ */
+function os_importer_download_template($type) {
+  drupal_add_http_header('Cache-Control', 'max-age=60, must-revalidate');
+  drupal_add_http_header('Content-Disposition', 'attachment; filename="' . $type . '.csv"');
+  drupal_add_http_header('Content-type', 'text/csv; charset=utf-8');
+  print file_get_contents(drupal_get_path('module', 'os_importer') . '/templates/os_' . $type . '.csv');
+  return;
 }
 
 /**
@@ -225,7 +234,7 @@ function os_importer_importer_title($type) {
 /**
  * Access callback - determine if the user can import content from csv.
  *
- * @param $type
+ * @param $bundle
  *  The type of the feeds importer or the node type.
  * @param $feed
  *  Determine if the access callback is for feed or rss. Set TRUE if the access
@@ -234,11 +243,9 @@ function os_importer_importer_title($type) {
  * @return bool
  *  Return TRUE/FALSE.
  */
-function os_importer_import_access($type, $feed = TRUE) {
-  $bundle = $type;
-
+function os_importer_import_access($bundle, $feed = TRUE) {
   if ($feed) {
-    $source = feeds_source($type);
+    $source = feeds_source($bundle);
     $config = $source->importer->getConfig();
 
     if (!$bundle = $config['processor']['config']['content_type']) {
@@ -247,8 +254,16 @@ function os_importer_import_access($type, $feed = TRUE) {
   }
 
   $info = os_importer_importable_content();
+  $access = !empty($info[$bundle]);
 
-  return !empty($info[$bundle]);
+  // When we have 'vsite' we must have specific create permission per bundle.
+  if ($access && module_exists('vsite')) {
+    if (!$vsite = vsite_get_vsite()) {
+      return FALSE;
+    }
+    $access = og_user_access('node', $vsite->id, "create $bundle content");
+  }
+  return $access;
 }
 
 /**
@@ -274,6 +289,7 @@ function os_importer_map_files($source, $entity, $target, $value, $mapping) {
   $files = array();
 
   $sources = explode('|', $value);
+  // todo: Use system_retrieve_file().
   foreach ($sources as $source) {
     if ($file = system_retrieve_file($source, 'public://', TRUE)) {
       $files[] = array(
@@ -376,7 +392,7 @@ function os_importer_import($form, &$form_state, $type) {
         ),
       ),
       'template' => array(
-        '#markup' => l(t('Download a template'), 'cp/os-importer/' . $bundle['csv'] . '/template'),
+        '#markup' => l(t('Download a template'), 'cp/os-importer/' . $type . '/template'),
       ),
     );
   }

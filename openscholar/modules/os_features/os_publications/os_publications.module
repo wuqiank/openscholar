@@ -24,6 +24,9 @@ function os_publications_os_app_info() {
         'csv' => 'os_publication',
       ),
     ),
+    'browse_pages' => array(
+      'biblio' => TRUE,
+    ),
   );
 
   return $apps;
@@ -35,11 +38,12 @@ function os_publications_os_app_info() {
 function os_publications_menu_alter(&$items) {
   $items['publications'] = array(
     'title' => 'Publications',
+    'description' => 'Publications',
     'page callback' => 'os_publications_overview',
     'access callback' => 'spaces_access_feature',
     'access arguments' => array('view', 'os_publications'),
     'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
-    'menu_name' => 'primary',
+    'menu_name' => 'primary-menu',
   );
 
   $items['publications/export'] = array(
@@ -92,6 +96,13 @@ function os_publications_vsite_og_node_type_info() {
   return array(
     'biblio' => 'group content',
   );
+}
+
+/**
+ * Adds process function to text_format to remove our filter format when necessary
+ */
+function os_publications_element_info_alter(&$info) {
+  $info['text_format']['#process'][] = 'os_publications_process_format';
 }
 
 /**
@@ -183,6 +194,7 @@ function os_publications_query_biblio_alter(QueryAlterableInterface $query) {
       $new_order[$key] = $value;
       if ($key == 'biblio_type_name') {
         $new_order['n.sticky'] = 'DESC';
+        $new_order['biblio_year'] = 'DESC';
         $new_order['n.created'] = 'DESC';
       }
     }
@@ -272,6 +284,13 @@ function os_publications_theme_registry_alter(&$reg) {
 function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   if (!isset($form['#node']->nid)) {
     drupal_set_title(t('Create @name', array('@name' => 'Publication')), PASS_THROUGH);
+
+    // Since Biblio requires first selecting the type of the biblio, in
+    // og_field_widget_form() the "admin" field mode is populated with an invalid
+    // group -- the same group that is also set for the "default" field mode.
+    // To overcome this problem, we will override the values of the that field
+    // mode.
+    unset($form[OG_AUDIENCE_FIELD][LANGUAGE_NONE][0]['admin']);
   }
   else {
     drupal_set_title(t('<em>Edit @type</em> @title', array('@type' => 'Publication', '@title' => $form['#node']->title)), PASS_THROUGH);
@@ -610,6 +629,21 @@ function _os_publications_attach_abstract(&$entry, $node, $markup_element) {
 }
 
 /**
+ * Removes our title field format from fields we don't want it to be in
+ */
+function os_publications_process_format($element) {
+  if (isset($element['#field_name']) && $element['#field_name'] == 'title_field') {
+    $format = &$element['format']['format'];
+    unset($format['#options']['filtered_html']);
+    $element['#format'] = $format['#default_value'] = 'title_filter';
+  }
+  else {
+    unset($element['format']['format']['#options']['title_filter']);
+  }
+  return $element;
+}
+
+/**
  * Implements hook_preprocess_node().
  */
 function os_publications_preprocess_node(&$vars) {
@@ -823,7 +857,7 @@ function os_publications_field_attach_load($entity_type, $entities, $view_mode) 
     foreach ($entities as $e_id => $e) {
       if ($e->type != 'biblio') continue;
 
-      if (!empty($e->field_biblio_image)) {
+      if (!empty($e->field_biblio_image) && isset($e->title)) {
         $e->field_biblio_image[LANGUAGE_NONE][0]['alt'] = $e->title;
         $e->field_biblio_image[LANGUAGE_NONE][0]['title'] = $e->title;
       }

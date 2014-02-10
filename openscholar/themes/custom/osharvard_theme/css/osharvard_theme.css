@@ -58,6 +58,8 @@ body.front.no-sidebars #content-panels .region-inner {
     z-index: 0;
 }
 
+
+
 #header,
 #menu-bar,
 #columns {
@@ -166,6 +168,7 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 
 /* SPECIAL CSS FOR CUSTOM BLOCKS FOR OSHARVARD SITE */
 
+.region-content-top .block-boxes-os_boxes_html:nth-of-type(1) {float:left;}
 
 .custhtml h3.custheader {
     text-align: center;
@@ -181,6 +184,9 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
     color: #FFF;
 }
 
+.custhtml.bythenumbs h3.custheader {
+	margin-bottom: 13px;
+}
 
 .getsite {
 	z-index:2;
@@ -193,10 +199,30 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 	text-decoration:underline;
 }
 
-.getsite .slideside,
-.getsite .textside {width:48%;display:inline-block;}
 
-.getsite .textside {margin:-15px 0 0 20px;}
+.getsite_link {cursor:pointer;}
+
+
+
+.getsite_content {
+	display:none;
+	background:#FFF;
+    margin: -6px 0 0 4px;
+    width: 150px;
+	border:1px solid #ccc;
+	padding:10px;
+	font-size:14px;
+	line-height: 17px;
+}
+
+
+.getsite_content a {
+	text-decoration: none !important;
+color: #215990;
+margin-left: 2px;
+line-height: 24px;
+}
+
 
 .getsite h3 {
 	font: bold 25px arial,sans-serif;
@@ -204,7 +230,12 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
     text-shadow: 0 1px 0 rgba(37, 37, 37, 0.75);
 }
 
-.getsite p {
+.getsite .textside {
+    margin: 70px 0 0 0;
+    background:#373737;
+    }
+
+.getsite .textside p {
 	font:18px arial,sans-serif;
     margin-bottom: 12px;
     text-shadow: 0 1px 0 rgba(37, 37, 37, 0.75);
@@ -222,22 +253,19 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 }
 
 .region-content-first {
-	background:#F6F6F6 !important;
-	margin-top:-20px !important;}
-	
+	background:#FFF !important;
+	}
+
 .region-content-second {
+	background:#F6F6F6 !important;
+	}
+	
+.region-content-bottom {
 	background:#3973ac !important;
 	margin-top:-20px !important;
 	color:#FFF;
 	}
 
-/* COMMENTING OUT UNTIL THIS BE USED. ITS A THIN GREY RULE USED
- * AS A DIVIDER IN THE WHYUSE SECTION
- 
-.whyuse {
-	background:url('../images/uploads/whydivider.png') no-repeat 678px 450px !important;
-}	
-	*/
 
 .whyuse .benef2colwrapper,
 .whyuse .activitywrapper {
@@ -316,7 +344,6 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
 }
 
 
-
 .stats {
  	color:#fff;
 	position: absolute;
@@ -325,40 +352,197 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
     z-index: 20;
 }
 
-/* COMMENTING OUT UNTIL THIS BLOCK IS USED
-.block-boxes-os_boxes_twitterfeed {
- 	color:#000;
-	position: absolute;
-    right: 17px;
-    top: 357px;
-    width: 200px;
+/* STATS SECTION */
+
+#osactivity,
+ul#firstset,
+ul#secondset {
+	background:#F6F6F6;
+	width:600px;
+	margin:0 auto;
+}
+
+ul#secondset {
+	background:#FFF;
 }
 
 
-div.tweets-pulled-listing div.tweet-divider {
-    border-bottom: 1px solid #ccc;
+ul#secondset li,
+ul#firstset li {
+	color: #555555;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    height: 54px;
+    list-style-type: none;
+    margin: 8px 8px 8px 0;
+    padding: 3px 0 0 65px;
+    width: 120px;
 }
 
-.block-boxes-os_boxes_twitterfeed img{
-    display:none;
+li#websites {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/websites.png') no-repeat;
+	}
+	
+li#publications {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/publications.png') no-repeat;
+	}
+	
+li#posts {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/posts.png') no-repeat;
+	}
+	
+li#users {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/users.png') no-repeat -2px 0;
+	}
+	
+li#files {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/files.png') no-repeat -3px 0;
+	}
+	
+li#diskspace {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/diskspace.png') no-repeat 2px 0;
+	}					
+
+
+ul#secondset li {
+	margin: 8px 8px 0 0;
+    padding: 0;
+    width: 192px;
+    position:relative;
+ 	height: 90px;
 }
 
-.block-boxes-os_boxes_twitterfeed .block-content {
-     margin-left: -90px;
-     padding-top:0 !important;
+li#version {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/currentrel_version.png') no-repeat #F6F6F6 1px 18px;
+	}
+	
+li#version span {
+	left: 20px;
+position: absolute;
+top: 32px;
+	}
+
+li#getsat {
+	 background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/getsatis.png") no-repeat scroll 44px 11px #F6F6F6;
+    height: 70px !important;
+	}
+	
+li#getsat span {
+	left: 99px;
+    position: absolute;
+    top: 11px;
+	}
+	
+li#getsat,
+li#servertime {
+	margin: 8px 0 0 0 !important;
+	}
+
+li#newposts,
+li#servertime {
+	 height: 90px !important;
+	}
+
+
+
+li#newposts {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newpoststoday.png') no-repeat #F6F6F6 35px 14px;
+	}
+	
+li#newposts span {
+	left: 45px;
+position: absolute;
+top: 61px;
+	}
+	
+li#newsites {
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/newsitestoday.png') no-repeat #F6F6F6 35px 14px;
+	margin-right:0 !important;
+	}
+	
+li#newsites span {
+	left: 41px;
+position: absolute;
+top: 61px;
+	}	
+		
+
+li#servertime {
+	 background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/responsetime.png") no-repeat scroll 62px 6px #F6F6F6;
 }
 
-.block-boxes-os_boxes_twitterfeed a {
-     color: #215990 !important;
-font-weight:normal !important;
+li#servertime span {
+	color: #FFFFFF;
+    font-size: 13px;
+    left: 85px;
+    position: absolute;
+    top: 55px;
+	}
+		
+	
+#osactivity {
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/whatshappening.png") no-repeat scroll 225px 9px #F6F6F6;
+ padding: 25px 12px 5px;
+margin-top: 3px;
+width: 575px;
 }
 
 
-.block-boxes-os_boxes_twitterfeed h2.block-title {
-	background:url('../images/uploads/whytwittericon.png') no-repeat !important;
-	padding: 90px 5px 0 5px !important;
-	color: #000000 !important;
-    font: 18px/1.2em "Helvetica","Arial","sans-serif" !important;
-    border-bottom: none !important;
+#osactivity ul {
+margin-left:0;
+margin-bottom:0;
 }
-*/
+
+#osactivity ul li {
+list-style-type:none;
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/activitylibg.png") no-repeat;
+padding-left:35px;
+}
+
+#osactivity .time {float:left;color:#666;margin-right:5px;}
+
+.region-content-first .block-boxes .os-embed-link {
+    width: 250px;
+}
+
+
+.region-content-top .block-boxes .os-embed-link {
+    bottom: 120px;
+right: -160px;
+     z-index: 1000;
+     color:#fff;
+     width:250px;
+}
+
+
+.block-boxes-os_boxes_html.os-boxes-embedded .getsite .textside {
+margin: 5px 0 0 0 !important;
+padding:12px;
+min-height:450px;
+}
+
+
+
+/* ROADMAP PAGE STYLES */
+.page-roadmap #columns {
+     background: none repeat scroll 0% 0% #FFFFFF;
+}
+
+.page-roadmap #content-column {
+     float: none;
+     margin: 0px auto;
+     width: 990px;
+}
+
+.page-node.page-roadmap #content-column .content-inner, .not-front.page-roadmap .content-inner {
+     background: none repeat scroll 0% 0% #FFFFFF;
+     border-radius: 0px;
+     border: medium none;
+     box-shadow: none;
+     padding: 0px;
+}
+
+.page-roadmap ul.tabs.primary {
+     padding: 10px 0px 0.5em ! important;
+}
