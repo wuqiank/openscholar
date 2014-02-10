@@ -317,7 +317,7 @@ function os_events_events_register($js, $node) {
     'entity_id' => $node->nid,
     'type' => $registration_type,
   ));
-  
+
   $registration_form = drupal_get_form('registration_form', $registration);
 
   if (!$js) {
