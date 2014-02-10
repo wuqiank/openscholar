@@ -985,11 +985,12 @@ function os_events_mail_alter(&$message) {
   }
 
   // Get event default email address.
-  $wrapper_event = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
-  $default_email = $wrapper_event->field_default_email->value();
+  $wrapper = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
+
+  $default_email = $wrapper->field_default_email->value();
 
   // Set default email as the message's sender.
-  $message['headers']['From'] = $default_email;
+  $message['headers']['From'] = !empty($default_email) ? $default_email : $wrapper->author->mail->value();
 }
 
 /**
