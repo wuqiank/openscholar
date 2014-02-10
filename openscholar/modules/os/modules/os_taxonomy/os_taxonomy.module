@@ -996,7 +996,7 @@ function theme_os_taxonomy_tagged_nodes($variables) {
     'max_depth' => NULL,
     'indentation' => 10,
     'bundles' => array(),
-    'view_mode' => 'full',
+    'view_mode' => 'teaser',
     'description' => FALSE,
     'child_element' => TRUE,
     'indentation_type' => 'px',
@@ -1104,15 +1104,20 @@ function theme_os_taxonomy_tagged_nodes($variables) {
 
 
     //this array map is only necessary when entity types are mixed.  would it be more efficient to use the TYPE_load_multiple and TYPE_view_multipe options when the bundles are all within one entity?
-    $build += array_map(function ($a) use ($tid) {
+    $build += array_map(function ($a) use ($tid, $options) {
+      if($a['entity_type'] == "node") {
+        //Render a node.
+        $entity = node_load($a['entity_id']);
+        $entity->contextual_annotation_key = 'tid-' . $tid;
+        return node_view($entity, $options['view_mode']);
+      }
+
+      //Render a non-node entity
       $entity = entity_load_single($a['entity_type'], $a['entity_id']);
       $entity->contextual_annotation_key = 'tid-' . $tid;
-      return entity_view($a['entity_type'], array($entity));
+      return entity_view($a['entity_type'], array($entity), $options['view_mode']);
     }, $entities);
 
-//     $nodes = node_load_multiple($nids);
-//     array_walk($nodes, create_function('&$n', '$n->contextual_annotation_key = "tid-'.$taxonomy_term->tid.'";'));
-//     $build += node_view_multiple($nodes);
   }
   else if ((int) $options['cur_depth'] === 0 && !$has_children_to_display) {
     $pager = '';
