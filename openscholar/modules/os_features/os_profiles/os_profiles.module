@@ -282,7 +282,7 @@ function os_profiles_field_display_node_alter(&$display, $context) {
  * Implements hook_field_access().
  */
 function os_profiles_field_access($op, $field, $entity_type, $entity, $account) {
-  if ($entity_type == 'node' && $entity->type == 'person') {
+  if ($entity_type == 'node' && !empty($entity->type) && $entity->type == 'person') {
     $fields = array('field_uuid', 'field_original_destination_url', 'field_destination_url');
 
     // When the node is listening to other node, hide the field we syncing.
@@ -1481,7 +1481,11 @@ function _os_profiles_is_term_page($arg) {
  * Adding entity metadata wrapper support for the image field crop module.
  */
 function os_profiles_field_info_alter(&$info) {
-  $info['imagefield_crop']['property_callbacks'] = array('entity_metadata_field_image_callback', 'entity_metadata_field_file_callback');
+  $info['imagefield_crop'] += array(
+    'default_token_formatter' => 'file_url_plain',
+    'property_type' => 'field_item_image',
+    'property_callbacks' => array('entity_metadata_field_image_callback', 'entity_metadata_field_file_callback'),
+  );
 }
 
 /**
