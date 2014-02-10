@@ -697,6 +697,7 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
     '#required' => TRUE,
     '#description' => t('Email address to be displayed as the message\'s sender.'),
     '#default_value' => $from_default_value,
+    '#element_validate' => array('os_events_validate_mail'),
   );
 
   $form['#submit'][] = 'os_events_set_event_default_mail';
@@ -734,6 +735,15 @@ You request to send a reminder for the event <a href='[node:url]'>[node:title]</
   $form['reminder']['#weight'] = 9;
   $form['scheduling']['#weight'] = 10;
   $form['save']['#weight'] = 11;
+}
+
+/**
+ * Element validate; Validate the email of the user.
+ */
+function os_events_validate_mail($element, $form_state, $form) {
+  if (!valid_email_address($element['#value'])) {
+    form_error($element, t('This is not a valid email address.'));
+  }
 }
 
 /**
