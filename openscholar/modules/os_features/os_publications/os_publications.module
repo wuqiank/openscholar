@@ -25,7 +25,12 @@ function os_publications_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'biblio' => TRUE,
+      'biblio' => array(
+        'url' => 'browse/publications',
+        'title' => t('Browse publications'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'publications',
+      ),
     ),
   );
 
