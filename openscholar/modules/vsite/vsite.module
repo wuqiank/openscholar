@@ -317,7 +317,8 @@ function vsite_form_path_admin_form_alter(&$form, $form_state) {
 
   // Get the PURL and add it to th "alias" field prefix.
   $form['alias']['#field_prefix'] .= $purl . '/';
-  $form['alias']['#default_value'] = str_replace($purl . '/', '', $form['alias']['#default_value']);
+  $pattern = '/^' . $purl . '\/i';
+  $form['alias']['#default_value'] = preg_replace($pattern, '', $form['alias']['#default_value']);
   $form['#validate'][] = 'vsite_path_admin_validate';
 }
 
