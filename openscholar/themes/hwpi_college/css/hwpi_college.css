@@ -624,9 +624,9 @@ table td.mini {
 #boxes-box-os_pages_section_nav,
 .section-nav ul.menu li a {
     border-color: -moz-use-text-color -moz-use-text-color #CCC;
-    border-style: none none solid;
+    border-style: solid;
     border-width: 0 0 1px;
-    color: #6C6C6C !important;
+    color: #6C6C6C;
     font-family: arial,sans-serif;
     font-weight: bold;
     font-size: .95em;
@@ -634,6 +634,7 @@ table td.mini {
 
 #boxes-box-os_pages_section_nav {
      border-color: -moz-use-text-color -moz-use-text-color #FFF;
+     border-bottom:1px solid #fff;
 }
 
 .ui-tabs .ui-tabs-panel {
@@ -675,44 +676,43 @@ padding: 20px 0;
 
 
 
-.section-nav .menu-depth-1 > a {
-text-transform:none;
-background-color: #FFF !important;
-
-}
-
-.section-nav .expanded.menu-depth-2 > a {
-    background-color: #FFF;
-   color:#6c6c6c; 
-   
-}
-
-.section-nav .expanded.menu-depth-2 > a:hover {
-    background-color: #E6E5E3 !important;
- 
-   
-}
-
 .node-type-page .breadcrumb, .breadcrumb, .breadcrumb a {
     color: #6C6C6C;
     font-family: arial,sans-serif;
     text-transform: capitalize;
 }
 
+/** SECTION NAV **/
+
+.section-nav a,
+.block-boxes-os_taxonomy_fbt.navigation a {
+	color: #6C6C6C;
+	font-weight: bold;
+	text-transform:none !important;
+}
 
 
-.section-nav a:hover,
-/*.section-nav li.leaf.active-trail.leaf.active-trail  a.active-trail.active.active*/ {
+.section-nav .expanded.menu-depth-2 > a,
+.section-nav .menu-depth-1 > a {
+	background-color: #FFF !important;
+	color: #6C6C6C !important;
+}
+
+.section-nav .expanded.menu-depth-2 > a:hover,
+.section-nav .expanded.menu-depth-2 > a[class="active-trail active active"],
+.section-nav .menu-depth-1 > a[class="active-trail active active"],
+.section-nav a[class="active-trail active active"],
+.section-nav a:hover {
   background-color: #E6E5E3 !important;
 }
 
 
-
-
-.block-boxes-os_taxonomy_fbt.navigation a {
-	color: #6C6C6C;
-	font-weight: bold;
+.section-nav .expanded.menu-depth-2 > a[class="active-trail active active"],
+.section-nav a[class="active-trail active active"] {
+ color:#333333 !important;
 }
+
+
 
 
 .block-boxes-os_taxonomy_fbt.navigation {
