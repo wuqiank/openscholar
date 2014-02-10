@@ -692,9 +692,13 @@ padding: 20px 0;
 }
 
 
-.section-nav .expanded.menu-depth-2 > a,
 .section-nav .menu-depth-1 > a {
-	background-color: #FFF !important;
+	background-color: #FFFFFF !important;
+	color: #6C6C6C !important;
+}
+
+.section-nav .expanded.menu-depth-2 > a {
+	background-color: #E6E5E3 !important;
 	color: #6C6C6C !important;
 }
 
@@ -712,7 +716,16 @@ padding: 20px 0;
  color:#333333 !important;
 }
 
-
+.section-nav .expanded.menu-depth-2 .menu-depth-3 > a, 
+.section-nav .expanded.menu-depth-2 .menu-depth-4 > a, 
+.section-nav .expanded.menu-depth-2 .menu-depth-5 > a,
+.section-nav .expanded.menu-depth-2 .menu-depth-6 > a,
+.section-nav .leaf.menu-depth-3 > a,
+.section-nav .leaf.menu-depth-4 > a,
+.section-nav .leaf.menu-depth-5 > a,
+.section-nav .leaf.menu-depth-6 > a {
+background-color: #f3f3f1 !important;
+}
 
 
 .block-boxes-os_taxonomy_fbt.navigation {
