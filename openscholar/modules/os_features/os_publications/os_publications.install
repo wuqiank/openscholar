@@ -1091,3 +1091,12 @@ function os_publications_update_7016() {
 
   return t('Reverted field instances for os_publications module.');
 }
+
+/**
+ * Enable html_title and title modules.
+ */
+function os_publications_update_7017() {
+  module_enable(array('html_title'));
+  module_enable(array('title'));
+  features_revert_module('os_publications');
+}
