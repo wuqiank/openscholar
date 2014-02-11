@@ -11,7 +11,7 @@ Feature:
   @api
   Scenario: Testing the autocomplete field or profile syncing.
     Given I am logging in as "john"
-      And I visit "john/cp/people/syc-profiles"
+      And I visit "john/cp/people/sync-profiles"
       And I fill in "autocomplete" with "Hillary Diane Rodham Clinton (58)"
       And I press "Submit"
       And I should see "The person Hillary Diane Rodham Clinton has created. You can visit their page."
@@ -26,7 +26,7 @@ Feature:
             node and create a new one.
     Given I am logging in as "john"
       And I update the node "Hillary Diane Rodham Clinton" field "Address" to "White house"
-      And I visit "john/cp/people/syc-profiles"
+      And I visit "john/cp/people/sync-profiles"
       And I fill in "autocomplete" with "Hillary Diane Rodham Clinton (58)"
       And I press "Submit"
       And I should see "The person Hillary Diane Rodham Clinton has updated. You can visit their page."
