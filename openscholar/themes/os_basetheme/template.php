@@ -244,3 +244,11 @@ function os_basetheme_process_pager_link($variables) {
   module_load_include('inc', 'os', 'includes/pager');
   _os_pager_add_html_head_link($variables);
 }
+
+/**
+ * Implements hook_theme_registry_alter().
+ * Set OS profiles preprocess to run before any other preprocess function.
+ */
+function os_basetheme_theme_registry_alter(&$theme_registry) {
+  array_unshift($theme_registry['image_formatter']['preprocess functions'], "os_profiles_preprocess_image_formatter");
+}

@@ -1254,7 +1254,7 @@ function os_files_preprocess_media_thumbnail(&$vars) {
 }
 
 /**
- * Implements hook_preprocess_image_formatter.
+ * Implements hook_preprocess_image_formatter().
  *
  * Ensures that the alt and title attributes are filled in from the field values
  */
