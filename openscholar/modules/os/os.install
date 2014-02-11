@@ -558,9 +558,6 @@ function os_update_7026() {
 function os_update_7027($ctx) {
   $modules = array(
     'nodeformcols',
-    'metatag',
-    'metatag_opengraph',
-    'metatag_twitter_cards',
     'media_draggable',
   );
 
@@ -619,4 +616,41 @@ function os_update_7028($ctx) {
   );
 
   features_revert($revert);
+}
+
+/**
+ * Enables metatag modules and reverts metatag config components.
+ */
+function os_update_7029() {
+  $modules = array(
+    'metatag',
+    'metatag_opengraph',
+    'metatag_twitter_cards',
+  );
+  module_enable($modules);
+  $message = t('Enabled new modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
+
+  $modules = array(
+    'os',
+    'vsite',
+    'os_biocv',
+    'os_blog',
+    'os_booklets',
+    'os_events',
+    'os_image_gallery',
+    'os_links',
+    'os_news',
+    'os_presentations',
+    'os_profiles',
+    'os_publications',
+    'os_software',
+  );
+  foreach ($modules as $module) {
+    $revert = array(
+      $module => array('metatag'),
+    );
+    features_revert($revert);
+  }
+  $message .= t('Reverted metatag config for modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
+  return $message;
 }
