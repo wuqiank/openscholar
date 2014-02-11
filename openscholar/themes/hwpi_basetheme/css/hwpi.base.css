@@ -666,7 +666,10 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 
 
 .sidebar .node-person .person-teaser-wrapper,
-.block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper {
+.sidebar .block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper,
+.front .region-content-first .block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper,
+.front .region-content-second .block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper,
+.front .region-content-bottom .block-boxes-os_boxes_manual_list .node-person.node-teaser .person-teaser-wrapper {
 	display:inline;
 }
 
