@@ -31,7 +31,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       '#title' => t('Vocabularies'),
       '#description' => t('Select which vocabularies to show. No selection will show all vocabularies.'),
       '#options' => $this->get_all_vocabularies(),
-      '#default_value' => $this->options['vocabularies'],
+      '#default_value' => (!empty($this->options['vocabularies']) ? $this->options['vocabularies'] : array()),
     );
     return $form;
   }
