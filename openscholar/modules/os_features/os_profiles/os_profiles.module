@@ -916,7 +916,7 @@ function os_profiles_restws_request_alter(&$request) {
  *  The node ID.
  */
 function _os_profiles_restws_request_alter($nid) {
-  $wrapper = entity_metadata_Wrapper('node', $nid);
+  $wrapper = entity_metadata_wrapper('node', $nid);
 
   if (isset($wrapper->field_uuid) && !$wrapper->field_uuid->value()) {
     // No UUID in the UUID field. Set it.
