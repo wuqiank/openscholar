@@ -3,7 +3,7 @@
  */
 (function ($) {
 
-  Drupal.behaviors.os_notifications = {
+  Drupal.behaviors.os_tour_cp_users = {
 
     attach: function (context, settings) {
 
@@ -21,7 +21,7 @@
       $tourLink.attr('href', '#');
 
       // Adds our tour overlay behavior with desired effects.
-      $(tourLink, context).once('osTourCpUsers', function() {
+      $(tourLink, context).once(id, function() {
         $(this).click(function() {
           //$('.hopscotch-bubble').addClass('animated');
           // Sets up the tour object with the loaded feed item steps.
@@ -83,7 +83,7 @@
           // Removes animation for each step.
           $('.hopscotch-bubble').removeClass('animated');
           // Allows us to target just this tour in CSS rules.
-          $('.hopscotch-bubble').addClass('os-tour-cp-users');
+          $('.hopscotch-bubble').addClass(id);
         });
         $tourLink.slideDown('slow');
       });

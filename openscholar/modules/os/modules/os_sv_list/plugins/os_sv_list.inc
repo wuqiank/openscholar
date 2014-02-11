@@ -498,7 +498,7 @@ class os_sv_list extends os_boxes_default {
     $type = $this->entity_type;
     
     $items = array_map(function($e) use ($id, $label, $type) {
-      return l($e->{$label}, $type . '/' . $e->{$id});
+      return l($e->{$label}, $type . '/' . $e->{$id}, array('html' => TRUE));
     }, $entities);
     
     return array(

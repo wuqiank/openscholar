@@ -110,7 +110,7 @@ div.messages {
 }
 
 /*** SOME BASE STLYES FOR THE COLUMNS WIDGET ***/
-.block-boxes-os_boxes_columns .region .region-inner {padding-right:18px;}
+.block-boxes-os_boxes_columns .region .region-inner {padding-right:25px;}
 
 .block-boxes-os_boxes_columns .region:last-child .region-inner {padding-right:0;}
 
@@ -142,6 +142,9 @@ div.messages {
     float:none;
 }
 
+
+/* FOR DISPLAYING EMBEDDABLE BLOCK OF CONTENT THROUGH <embed> */
+body#widget {display: inline-block;}
 
   /* Footer panels */
 

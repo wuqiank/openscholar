@@ -28,7 +28,12 @@ function os_faq_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'faq' => TRUE,
+      'faq' => array(
+        'url' => 'browse/faq',
+        'title' => t('Browse faq'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'faq',
+      ),
     ),
   );
 

@@ -561,6 +561,7 @@ function os_update_7027($ctx) {
     'metatag',
     'metatag_opengraph',
     'metatag_twitter_cards',
+    'media_draggable',
   );
 
   module_enable($modules);

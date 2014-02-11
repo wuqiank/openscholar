@@ -25,7 +25,12 @@ function os_publications_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'biblio' => TRUE,
+      'biblio' => array(
+        'url' => 'browse/publications',
+        'title' => t('Browse publications'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'publications',
+      ),
     ),
   );
 
@@ -96,6 +101,13 @@ function os_publications_vsite_og_node_type_info() {
   return array(
     'biblio' => 'group content',
   );
+}
+
+/**
+ * Adds process function to text_format to remove our filter format when necessary
+ */
+function os_publications_element_info_alter(&$info) {
+  $info['text_format']['#process'][] = 'os_publications_process_format';
 }
 
 /**
@@ -619,6 +631,21 @@ function _os_publications_attach_abstract(&$entry, $node, $markup_element) {
       $html = substr_replace($html, ' ' . $extra, $insert, 0);
     }
   }
+}
+
+/**
+ * Removes our title field format from fields we don't want it to be in
+ */
+function os_publications_process_format($element) {
+  if (isset($element['#field_name']) && $element['#field_name'] == 'title_field') {
+    $format = &$element['format']['format'];
+    unset($format['#options']['filtered_html']);
+    $element['#format'] = $format['#default_value'] = 'title_filter';
+  }
+  else {
+    unset($element['format']['format']['#options']['title_filter']);
+  }
+  return $element;
 }
 
 /**

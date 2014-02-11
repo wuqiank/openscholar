@@ -212,6 +212,7 @@ h2.block-title {
   border-top: 6px solid #e1e1e1;
 }
 
+.front #content-column .block.block-boxes-os_boxes_columns,
 .block-boxes.block-boxes-os_sv_list_box .block-inner,
 .block-boxes-os_boxes_manual_list,
 .sidebar .block.section-nav,

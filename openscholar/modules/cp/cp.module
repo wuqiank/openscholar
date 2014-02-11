@@ -225,7 +225,7 @@ function cp_menu_alter(&$items) {
   foreach ($restricted as $path) {
     if (isset($items[$path])) {
       $items[$path]['access callback'] = 'user_access';
-      $items[$path]['access arguments'] = 'administer site settings';
+      $items[$path]['access arguments'] = array('administer site settings');
     }
   }
 }

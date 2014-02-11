@@ -690,6 +690,11 @@ padding:3px 0 3px 25px !important;
   padding-top: 30px;
 }
 
+
+.node-event.article .field-name-field-default-email.field-label-above {
+	float:left;margin-top:10px;
+}
+
 /* BOOK NAVS */
 .book-menu {
   width: 33%;

@@ -594,6 +594,7 @@ function hwpi_basetheme_links($vars) {
 function hwpi_basetheme_status_messages($vars) {
   $display = $vars['display'];
   $output = '';
+  $allowed_html_elements = '<'. implode('><', variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'))) . '>';
 
   $status_heading = array(
     'status' => t('Status update'),
@@ -608,9 +609,19 @@ function hwpi_basetheme_status_messages($vars) {
     if (count($messages) > 1) {
       $output .= " <ul>";
       foreach ($messages as $message) {
-        $output .= '  <li>' . $message . "</li>";
+        if (strpos($message, 'Biblio') === 0) {
+          // Allow some tags in messages about a Biblio.
+          $output .= '  <li>' . strip_tags(html_entity_decode($message), $allowed_html_elements) . "</li>";
+        }
+        else {
+          $output .= '  <li>' . $message . "</li>";
+        }
       }
       $output .= " </ul>";
+    }
+    elseif (strpos($messages[0], 'Biblio') === 0 || strpos($messages[0], 'Publication') === 0) {
+      // Allow some tags in messages about a Biblio.
+      $output .= strip_tags(html_entity_decode($messages[0]), $allowed_html_elements);
     }
     else {
       $output .= $messages[0];

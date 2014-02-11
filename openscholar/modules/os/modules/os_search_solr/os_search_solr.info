@@ -10,3 +10,5 @@ dependencies[] = facetapi
 dependencies[] = features
 features[ctools][] = facetapi:facetapi_defaults:1
 features[features_api][] = api:2
+
+files[] = plugins/facetapi/os_adapter.inc

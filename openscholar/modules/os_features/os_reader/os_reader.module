@@ -453,6 +453,7 @@ function os_reader_copy_feed_item_to_news($feed, $vsite) {
     $file = FALSE;
     $doc = new DOMDocument();
 
+    // todo: use os_copy_file();
     try {
       if ($feed->description) {
         $doc->loadHTML($feed->description);

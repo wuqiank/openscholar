@@ -23,6 +23,7 @@ class os_boxes_columns extends os_boxes_default {
       '#id' => 'os-boxes-columns-layout-select'
     );
 
+    /*
     $form['layout_select']['num_cols'] = array(
       '#type' => 'radios',
       '#title' => t('Layout Selection'),
@@ -34,7 +35,7 @@ class os_boxes_columns extends os_boxes_default {
         '5' => t('Five')
       ),
       '#default_value' => '0',
-    );
+    );*/
 
     $form['layout_select']['layout'] = array(
       '#type' => 'radios',
@@ -115,20 +116,30 @@ class os_boxes_columns extends os_boxes_default {
     ctools_include('layout', 'os');
     $blocks = os_layout_get_multiple(array('os_public'), true, true);
 
+    $regions = array();
+    foreach ($this->options['widgets'] as $region => $widgets) {
+      $regions[$region] = explode('|', $widgets);
+    }
+
     foreach ($blocks as $bid => $b) {
-      foreach ($this->options['widgets'] as $region => $widgets) {
-        if (strpos($widgets, $bid) !== FALSE) {
+      // prevent infinite loops
+      if ($b['delta'] == $this->delta) continue;
+
+      foreach ($regions as $region => $widgets) {
+        if (($weight = array_search($bid, $widgets)) !== FALSE) {
           $form['regions'][$region][$bid] = array(
             '#theme' => 'cp_layout_widget',
-            '#widget' => $b
+            '#widget' => $b,
+            '#weight' => $weight,
           );
           continue 2;
         }
       }
-      if ($b['region'] == - 1 || $b['region'] === FALSE) {
+      if ($b['region'] == -1 || $b['region'] === FALSE) {
         $form['unused']['widgets'][$bid] = array(
           '#theme' => 'cp_layout_widget',
-          '#widget' => $b
+          '#widget' => $b,
+          '#weight' => trim(strtolower($b['info']))
         );
       }
     }
