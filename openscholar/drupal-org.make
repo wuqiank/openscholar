@@ -169,7 +169,7 @@ projects[hierarchical_taxonomy][download][revision] = 5bbe344
 projects[hierarchical_taxonomy][patch][] = "http://drupal.org/files/2034713-hs-comaprse-name-2.patch"
 
 projects[html_title][subdir] = "contrib"
-projects[html_title][download][version] = 7.x-1.1
+projects[html_title][version] = 7.x-1.1
 
 projects[imagefield_crop][subdir] = "contrib"
 ;projects[imagefield_crop][version] = 2.0
