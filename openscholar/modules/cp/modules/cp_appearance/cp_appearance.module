@@ -309,7 +309,9 @@ function theme_cp_appearance_theme_picker_form($variables) {
 
   // Adding the sub themes to the JS so we could know if the user selected a sub
   // theme.
-  drupal_add_js(array('subthemes' => array_keys($flavors)), 'setting');
+  if ($flavors) {
+    drupal_add_js(array('subthemes' => array_keys($flavors)), 'setting');
+  }
 
   // Builds each item containing a screenshot-option or section separators.
   $items = array();
