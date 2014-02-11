@@ -30,7 +30,7 @@ function os_faq_os_app_info() {
     'browse_pages' => array(
       'faq' => array(
         'url' => 'browse/faq',
-        'title' => t('Browse faq'),
+        'title' => t('Frequently Asked Questions'),
         'display_mode' => 'teaser',
         'menu_item' => 'faq',
       ),
