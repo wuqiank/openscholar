@@ -647,10 +647,13 @@ function os_update_7029() {
   );
   foreach ($modules as $module) {
     $revert = array(
-      $module => array('metatag'),
+      $module => array(
+        'metatag',
+        'field_instance'
+      ),
     );
     features_revert($revert);
   }
-  $message .= t('Reverted metatag config for modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
+  $message .= t('Reverted metatag and field_instance config for modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
   return $message;
 }
