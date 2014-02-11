@@ -138,6 +138,14 @@ function os_pages_strongarm() {
       'title' => NULL,
       'hidden' => 0,
     ),
+    'vsite_admin' => array(
+      'region' => 'right',
+      'weight' => '8',
+      'has_required' => FALSE,
+      'title' => 'Site administration',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
     'og_vocabulary' => array(
       'region' => 'main',
       'weight' => '4',

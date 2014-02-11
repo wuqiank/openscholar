@@ -930,19 +930,26 @@ function os_form_node_form_alter(&$form, $form_state) {
   $form['actions_top'] = $form['actions'];
 
   // Hides the group audience field in a collapsed fieldset.
-  if (isset($form['og_group_ref']['und'][0])) {
-    $form['vsite_admin'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Site administration'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-      '#weight' => isset($form['og_group_ref']['#weight']) ? $form['og_group_ref']['#weight'] : 34,
-      'og_group_ref' => $form['og_group_ref'],
-    );
-    unset($form['og_group_ref']);
-  }
+  $form['#after_build'][] = 'os_form_node_form_after_building';
 }
 
+/**
+ * After build callback; moves Group Audience field into column fieldset.
+ */
+function os_form_node_form_after_building($form, $form_state) {
+  if (!isset($form['og_group_ref']['und'][0])) {
+    return;
+  }
+  $form['vsite_admin'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Site administration'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#weight' => isset($form['og_group_ref']['#weight']) ? $form['og_group_ref']['#weight'] : 34,
+    //'og_group_ref' => $form['og_group_ref'],
+  );
+  $form['og_group_ref']['#group'] = 'vsite_admin';
+}
 
 /**
  * Page argument; passed to drupal_get_form in os_menu().
