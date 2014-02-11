@@ -25,35 +25,48 @@
  *   An array of all available vocabulary objects, indexed by vid, or FALSE.
  */
 function os_get_vocabularies($entity_type = FALSE, $bundle = FALSE) {
-  $vsite = vsite_get_vsite();
-
-  $vocabularies = array();
-  // Checks if this is a multi-tenant install
-  if (module_exists('vsite_vocab')) {
-    module_load_include('inc', 'vsite_vocab', 'includes/taxonomy');
-    $vocabularies = vsite_vocab_get_vocabularies();
+  if (!$entity_type || !$bundle) {
+    // Checks if this is a multi-tenant install
+    if (module_exists('vsite_vocab')) {
+      module_load_include('inc', 'vsite_vocab', 'includes/taxonomy');
+      return vsite_vocab_get_vocabularies();
+    }
+    else {
+      return taxonomy_get_vocabularies();
+    }
   }
   else {
-    $vocabularies = taxonomy_get_vocabularies();
+    return os_get_vocabularies_by_bundle($entity_type, $bundle);
   }
-  if (!$entity_type || !$bundle) {
-    return $vocabularies;
+}
+
+/**
+ * Utility to get vocabulary entities related to entity type and bundle.
+ *
+ * @param $entity_type
+ *   Entity type name.
+ * @param $bundle
+ *   Bundle name.
+ *
+ * @return mixed
+ *   Array of vocabulary entities.
+ */
+function os_get_vocabularies_by_bundle($entity_type, $bundle) {
+  if (!$vsite = vsite_get_vsite()) {
+    return;
   }
 
+  $query = db_select('og_vocab', 'ogv');
+  $query->join('og_vocab_relation', 'ogr', 'ogr.vid = ogv.vid');
+  $result = $query
+    ->fields('ogv')
+    ->condition('ogv.entity_type', $entity_type)
+    ->condition('ogv.bundle', $bundle)
+    ->condition('ogr.gid', $vsite->id)
+    ->execute()
+    ->fetchAllAssoc('vid');
 
-    $query = new EntityFieldQuery();
-    $query->entityCondition('entity_type', 'og_vocab')
-      ->propertyCondition('entity_type', $entity_type)
-      ->propertyCondition('bundle', $bundle)
-      ->innerJoin('og_vocab_relation', 'ogr', 'ogr.vid = base.vid')
-      ->condition('ogr.group_type', $entity_type)
-      ->condition('ogr.gid', $vsite->id);
-
-    $result = $query->execute();
-
-    $vocs = entity_load('og_vocab', array_keys($result['og_vocab']));
-
-  return $vocabularies;
+  return taxonomy_vocabulary_load_multiple(array_keys($result));
 }
 
 

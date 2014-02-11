@@ -14,7 +14,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    */
   public function options_defaults() {
     $options = parent::options_defaults();
-    $options['vocabularies'] = $this->get_all_vocabularies();
+    $options['vocabularies'] = $this->get_bundle_vocabularies();
 
     return $options;
   }
@@ -30,7 +30,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       '#type' => 'checkboxes',
       '#title' => t('Vocabularies'),
       '#description' => t('Select which vocabularies to show. No selection will show all vocabularies.'),
-      '#options' => $this->get_all_vocabularies(),
+      '#options' => $this->get_bundle_vocabularies(),
       '#default_value' => (!empty($this->options['vocabularies']) ? $this->options['vocabularies'] : array()),
     );
     return $form;
@@ -84,13 +84,14 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
   }
 
   /**
-   * Get all the vocabularies id using the taxonomy terms.
+   * Get all the vocabularies id using the taxonomy terms, relevant to the
+   * current bundle.
    */
-  private function get_all_vocabularies() {
+  private function get_bundle_vocabularies() {
 
     ctools_include('taxonomy', 'os');
     $bundle = $this->options['bundle'];
-    $taxonomy_vocabularies = os_get_vocabularies('node', $bundle);
+    $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', $bundle);
     $vocabularies = array();
 
     foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
