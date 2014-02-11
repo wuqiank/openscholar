@@ -19,12 +19,12 @@ class sv_list_node  extends sv_list_plugin {
    * 
    * People should use last name, not first.
    */
-  public function sort_alter($options, $efq) { 
-    if ($options['sort_by'] != 'sort_random') { 
+  public function sort_alter($options, $efq) {
+    if ($options['sort_by'] != 'sort_random') {
       $order = $efq->order;
       $efq->order = array();
-      $efq->propertyOrderBy('sticky', 'DESC');    
-      $efq->order += $order;
+      $efq->propertyOrderBy('sticky', 'DESC');
+      $efq->order = array_merge($efq->order, $order);
     }
   }
 }

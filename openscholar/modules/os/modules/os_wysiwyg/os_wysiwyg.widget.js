@@ -36,28 +36,33 @@
   }
 
   function wysiwyg_minimize() {
-    var editor = $('.mceEditor table.mceLayout').not('.os-wysiwyg-collapsed'),
-      parent = editor.parents('.form-item'),
-      height = (parseInt(parent.find('[data-minrows]').attr('data-minrows')) * 20),
-      scrollSize = document.body.scrollHeight,
-      scrollPos = document.body.scrollTop;
+    if (arguments.length) {
+      var e = arguments[0],
+        target = e.target || e.srcElement,
+        target_id = $(target).parents('.mceEditor').find('table.mceLayout').attr('id');
+    }
+    $('.mceEditor table.mceLayout').not('.os-wysiwyg-collapsed').each(function () {
+      var editor = $(this),
+        parent = editor.parents('.form-item'),
+        height = (parseInt(parent.find('[data-minrows]').attr('data-minrows')) * 20);
 
-    // when a scrollable area is resized, it calculates the new scroll position with the following formula:
-    // document.body.scrollTop = min(document.body.scrollTop, document.body.scrollHeight - window.innerHeight)
-    // if the old scroll position was higher than the new maximum, it gets set to maximum
-    // otherwise, nothing happens
-    // we need to get the difference between old scroll position and new, subtract it from the height the wysiwyg tags,
-    // and then subtract that from the new position
+      if (this.id == target_id) {
+        return;
+      }
+
+      // when a scrollable area is resized, it calculates the new scroll position with the following formula:
+      // document.body.scrollTop = min(document.body.scrollTop, document.body.scrollHeight - window.innerHeight)
+      // if the old scroll position was higher than the new maximum, it gets set to maximum
+      // otherwise, nothing happens
+      // we need to get the difference between old scroll position and new, subtract it from the height the wysiwyg tags,
+      // and then subtract that from the new position
 
 
-    editor.stop().animate({height: height+'px'}, 600)
-      .addClass('os-wysiwyg-collapsed');
-    $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
-    parent.find('.wysiwyg-toggle-wrapper').hide();
-
-    var scrollDiff = scrollSize - document.body.scrollHeight,
-      scrollDelta = scrollPos - document.body.scrollTop;
-    //document.body.scrollTop -= (scrollDiff - scrollDelta)
+      editor.stop().animate({height: height+'px'}, 600)
+        .addClass('os-wysiwyg-collapsed');
+      $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
+      parent.find('.wysiwyg-toggle-wrapper').hide();
+    })
   }
 
   function listboxClickHandler(e) {

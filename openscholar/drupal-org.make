@@ -10,7 +10,7 @@ projects[advanced_help][version] = 1.0
 projects[advanced_help][patch][] = "http://drupal.org/files/advanced_help-removing_help_popup_theme_css-1803488-1.patch"
 
 projects[apachesolr][subdir] = "contrib"
-projects[apachesolr][version] = 1.1
+projects[apachesolr][version] = 1.6
 
 projects[apachesolr_attachments][subdir] = "contrib"
 projects[apachesolr_attachments][version] = 1.2
@@ -167,6 +167,9 @@ projects[hierarchical_taxonomy][download][url] = "http://git.drupal.org/project/
 projects[hierarchical_taxonomy][download][branch] = 7.x-1.x
 projects[hierarchical_taxonomy][download][revision] = 5bbe344
 projects[hierarchical_taxonomy][patch][] = "http://drupal.org/files/2034713-hs-comaprse-name-2.patch"
+
+projects[html_title][subdir] = "contrib"
+projects[html_title][download][version] = 7.x-1.1
 
 projects[imagefield_crop][subdir] = "contrib"
 ;projects[imagefield_crop][version] = 2.0
@@ -362,6 +365,9 @@ projects[stringoverrides][subdir] = "contrib"
 
 projects[strongarm][subdir] = "contrib"
 projects[strongarm][version] = 2.0-rc1
+
+projects[title][subdir] = "contrib"
+projects[title][version] = 1.0-alpha7
 
 projects[token][subdir] = "contrib"
 projects[token][version] = 1.4

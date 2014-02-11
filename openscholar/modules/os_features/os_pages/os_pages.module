@@ -20,7 +20,12 @@ function os_pages_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'page' => TRUE,
+      'page' => array(
+        'url' => 'browse/pages',
+        'title' => t('Browse pages'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'pages',
+      ),
     ),
   );
 

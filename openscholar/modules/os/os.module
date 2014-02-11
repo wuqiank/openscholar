@@ -1311,9 +1311,6 @@ function os_url_outbound_alter(&$path, &$options, $original) {
         // When accessing to any address the spaces module use purl_goto(). The
         // purl_goto() use url() for knowing the path of the URL we accessing.
         // url() will return eventually the path.
-        // This section alter the $path to the $_GET['q'] which is node/%.json
-        // which will convert by the url() to foo/bar.
-        // $path = $_GET['q'];
         return;
       }
     }
@@ -1781,32 +1778,10 @@ function os_library_alter(&$libraries) {
 }
 
 /**
- * Implements hook_restws_resource_info_alter().
- *
- * Customize what resources will be avalible for RestWS to use
- */
-function os_restws_resource_info_alter(&$info){
-
-//   //Remove entity types except those listed
-//   $enabled_entities = variable_get('os_restws_entities',array('node'));
-//   foreach (entity_get_info() as $entity_type => $info) {
-//     if(isset($info[$entity_type]) && !in_array($entity_type, $enabled_entities)){
-//       unset($info[$entity_type]);
-//     }
-//   }
-
-}
-
-/**
  * Helper function for permission to view unpublish group content.
  */
 function os_grant_unpublished_viewing_permission() {
   $group_content = og_get_all_group_content_bundle();
-
-  $modules = array();
-  foreach (og_get_permissions() as $name => $value) {
-    $modules[$name] = $value['module'];
-  }
 
   foreach (array_keys($group_content['node']) as $bundle) {
     $group_types = array('department', 'personal', 'project');
@@ -1817,25 +1792,10 @@ function os_grant_unpublished_viewing_permission() {
         if (!in_array($role, array('vsite admin', 'content editor'))) {
           continue;
         }
-
-        // Grant new permissions for the role.
-        $name = 'view any unpublished ' . $bundle . ' content';
-
-        // Prevent WSOD, if the permission name is wrong, and we can't find its module.
-        if (!empty($modules[$name])) {
-          db_merge('og_role_permission')
-          ->key(array(
-          'rid' => $rid,
-          'permission' => $name,
-          'module' => $modules[$name],
-          ))
-          ->execute();
-        }
+        og_role_grant_permissions($rid, array('view any unpublished ' . $bundle . ' content'));
       }
     }
   }
-
-  og_invalidate_cache();
 }
 
 /**
@@ -2130,4 +2090,60 @@ function os_context_default_contexts_alter(&$contexts){
   if (module_exists('olark') && isset($contexts['os_public'])) {
     $contexts['os_public']->reactions['olark_add'] = array('add' => 1);
   }
+}
+
+/**
+ * API function for copy a file from a URL and throw exception when needed.
+ *
+ * @param $url
+ *  The URL of the file.
+ * @param bool $exception
+ *  Determine if an exception need to be thrown when the copy of the file
+ *  failed. When set to false the reason for the failure will return as a text
+ *  in the returned array.
+ *
+ * @throws Exception
+ *  Throwing an error when the copy of the file failed and the $exception set to
+ *  TRUE.
+ * @return array
+ *  Return array of the file or error if occurred and the type of the return
+ *  data(file/text).
+ */
+function os_copy_file($url, $exception = FALSE) {
+  if (empty($url)) {
+    return os_file_copy_set_error(t('You need to pass a url of the file.'), $exception);
+  }
+
+  if (drupal_http_request($url)->code != 200) {
+    return os_file_copy_set_error(t("The file was not reachable."), $exception);
+  }
+
+  if (!is_writeable('public://')) {
+    return os_file_copy_set_error(t("The file directory is not wrietable. Please check her permission."), $exception);
+  }
+
+  if (!$file = system_retrieve_file($url, 'public://', TRUE)) {
+    return os_file_copy_set_error(t('An error occurred due unknown reason.'), $exception);
+  }
+
+  return array(
+    'type' => 'file',
+    'file' => $file,
+  );
+}
+
+/**
+ * Set error when trying to copy the file.
+ *
+ * @see os_copy_file().
+ */
+function os_file_copy_set_error($message, $exception) {
+  if ($exception) {
+    throw new Exception($message);
+  }
+
+  return array(
+    'type' => 'error',
+    'message' => $message,
+  );
 }

@@ -29,7 +29,12 @@ function os_presentations_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'presentation' => TRUE,
+      'presentation' => array(
+        'url' => 'browse/presentations',
+        'title' => t('Browse presentations'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'presentations',
+      ),
     ),
   );
 

@@ -32,8 +32,8 @@ function os_biocv_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'bio' => TRUE,
-      'cv' => TRUE,
+      'bio' => FALSE,
+      'cv' => FALSE,
     ),
   );
 

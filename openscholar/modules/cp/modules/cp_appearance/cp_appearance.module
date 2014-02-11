@@ -309,7 +309,9 @@ function theme_cp_appearance_theme_picker_form($variables) {
 
   // Adding the sub themes to the JS so we could know if the user selected a sub
   // theme.
-  drupal_add_js(array('subthemes' => array_keys($flavors)), 'setting');
+  if ($flavors) {
+    drupal_add_js(array('subthemes' => array_keys($flavors)), 'setting');
+  }
 
   // Builds each item containing a screenshot-option or section separators.
   $items = array();
@@ -848,7 +850,7 @@ function cp_appearance_manage_git_validate($form, $form_state) {
 
   // We pull, in case the user wants to reload a subtheme.
   try {
-    $git->checkout($branch, array('t' => TRUE));
+    cp_appearance_git_checkout($git, $branch);
   }
   catch (GitException $e) {
   }
@@ -930,11 +932,11 @@ function cp_appearance_pull_subtheme($form, &$form_state, $type) {
   $form_state['path'] = $info['path'];
 
   if (strpos($info['path'], 'zip') !== FALSE) {
-    _cp_appearance_pull_subtheme_zip($form, $info);
+    _cp_appearance_pull_subtheme_zip($form, $form_state, $info);
     $form_state['subtheme_method'] = 'zip';
   }
   else {
-    _cp_appearance_pull_subtheme_git($form, $info);
+    _cp_appearance_pull_subtheme_git($form, $form_state, $info);
     $form_state['subtheme_method'] = 'git';
   }
 
@@ -946,10 +948,12 @@ function cp_appearance_pull_subtheme($form, &$form_state, $type) {
  *
  * @param $form
  *  The form variable.
+ * @param $form_state
+ *  The form state variable.
  * @param $info
  *  The info of the subtheme.
  */
-function _cp_appearance_pull_subtheme_zip(&$form, $info) {
+function _cp_appearance_pull_subtheme_zip(&$form, $form_state, $info) {
   $form['file'] = array(
     '#title' => t('Theme'),
     '#type' => 'managed_file',
@@ -973,7 +977,7 @@ function _cp_appearance_pull_subtheme_zip(&$form, $info) {
 /**
  * Updating subtheme which added in GIT.
  */
-function _cp_appearance_pull_subtheme_git(&$form, $info) {
+function _cp_appearance_pull_subtheme_git(&$form, &$form_state, $info) {
   require_once libraries_get_path('git') . '/autoload.php';
 
   $wrapper = new GitWrapper();
@@ -1006,12 +1010,50 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
     $branches[$branch] = $branch;
   }
 
-  $form['branch'] = array(
+  $branch = !empty($form_state['values']['branch']) ? $form_state['values']['branch'] : NULL;
+
+  $form['branches']['branch'] = array(
     '#type' => 'select',
     '#title' => t('Branch'),
     '#options' => $branches,
     '#default_value' => $selected_branch,
     '#description' => t('Change the new branch or select the old one and update.'),
+    '#ajax' => array(
+      'callback' => 'cp_appearance_git_method_update_branch',
+      'wrapper' => 'checkboxes-div',
+    ),
+  );
+
+  $text = '';
+  if ($branch) {
+    try {
+      cp_appearance_git_checkout($git, $branch);
+    }
+    catch (GitException $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
+
+    // Pulling hte data from the git repository.
+    try {
+      $git->pull();
+    }
+    catch (GitException $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
+
+    $params = array(
+      '%branch' => $branch,
+    );
+
+    drupal_set_message(t('The branch changed to %branch.', $params));
+    $text = theme('status_messages');
+  }
+
+  $form['branches']['result'] = array(
+    '#prefix' => '<div id="checkboxes-div">',
+    '#suffix' => '</div>',
+    '#type' => 'item',
+    '#markup' => $text,
   );
 
   $form['actions'] = array(
@@ -1027,6 +1069,11 @@ function _cp_appearance_pull_subtheme_git(&$form, $info) {
   );
 
   $form['#attached']['css'][] = drupal_get_path('module', 'cp_appearance') . '/theme/cp_appearance.css';
+  $form['#attached']['js'][] = drupal_get_path('module', 'cp_appearance') . '/theme/cp_appearance_theme_picker.js';
+}
+
+function cp_appearance_git_method_update_branch($form, $form_state) {
+  return $form['branches']['result'];
 }
 
 /**
@@ -1053,7 +1100,7 @@ function cp_appearance_pull_subtheme_submit($form, $form_state) {
 
     // We didn't just updated - we change the branch. Checking out to that branch.
     try {
-      $git->checkout($branch);
+      cp_appearance_git_checkout($git, $branch);
     }
     catch (GitException $e) {
       drupal_set_message($e->getMessage(), 'error');
@@ -1072,6 +1119,22 @@ function cp_appearance_pull_subtheme_submit($form, $form_state) {
     if ($success) {
       drupal_set_message(t('The subtheme updated succesfully.'));
     }
+  }
+}
+
+/**
+ * Checkout out to branch.
+ * @param \GitWrapper\GitWorkingCopy $git
+ *  The git object.
+ * @param $branch
+ *  The name of the branch.
+ */
+function cp_appearance_git_checkout(\GitWrapper\GitWorkingCopy $git, $branch) {
+  if (strpos($branch, 'remotes') === 0) {
+    $git->checkout($branch, array('t' => TRUE));
+  }
+  else {
+    $git->checkout($branch);
   }
 }
 
@@ -1110,6 +1173,9 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
   unset($flavors[$form_state['values']['type']]);
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
     $vsite->controllers->variable->set('flavors', $flavors);
+  }
+  else {
+    variable_set('flavors', $flavors);
   }
 }
 
