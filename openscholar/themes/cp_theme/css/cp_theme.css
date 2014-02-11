@@ -603,6 +603,15 @@ form.node-form.overlay-processed .form-region-right .fieldset-wrapper {
      width: 89%;
 }
 
+
+.form-region-right .field-prefix {
+line-height: 15px;
+display: block;
+max-width: 85%;
+word-wrap: break-word;
+font-size: 12px;
+}
+
 .delete-subtheme a {
   background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -606px no-repeat;
   padding-left: 17px;
