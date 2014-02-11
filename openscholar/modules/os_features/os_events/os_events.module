@@ -245,7 +245,9 @@ function os_events_process_node(&$variables) {
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
 
     $registrations_type = !empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']);
-    if ($registrations_type && os_events_event_registration_reach_capacity($variables['node'])) {
+
+    // Show the signup link uf capacity isn't reached and no repeat rule is used.
+    if ($registrations_type && os_events_event_registration_reach_capacity($variables['node']) && !$variables['field_date'][0]['rrule'] ) {
       $register = os_events_generate_modal_register_link($variables['node']->nid);
     }
     else {
