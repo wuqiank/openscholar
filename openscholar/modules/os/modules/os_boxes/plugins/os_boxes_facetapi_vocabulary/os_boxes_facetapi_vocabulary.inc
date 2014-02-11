@@ -89,7 +89,8 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
   private function get_all_vocabularies() {
 
     ctools_include('taxonomy', 'os');
-    $taxonomy_vocabularies = os_get_vocabularies();
+    $bundle = $this->options['bundle'];
+    $taxonomy_vocabularies = os_get_vocabularies('node', $bundle);
     $vocabularies = array();
 
     foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
