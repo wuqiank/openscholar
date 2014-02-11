@@ -928,7 +928,9 @@ function os_search_solr_vocabulary_filter_box($bundle_name) {
   $box->plugin_key = 'os_boxes_facetapi_vocabulary';
   $box->title = t('Filter by taxonomy');
   $box->description = 'Vocabulary filter';
-  $box->options = array();
+  $box->options = array(
+    'bundle' => $bundle_name,
+  );
 
   return $box;
 }
