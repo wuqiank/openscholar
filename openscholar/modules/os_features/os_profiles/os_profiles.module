@@ -122,7 +122,7 @@ function os_profiles_init() {
 function os_profiles_menu() {
   $items = array();
 
-  $items['cp/people/syc-profiles'] = array(
+  $items['cp/people/sync-profiles'] = array(
     'title' => 'Sync',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_profiles_sync_profile'),
@@ -158,7 +158,7 @@ function os_profiles_menu() {
  */
 function os_profiles_admin_paths() {
   return array(
-    'cp/people/syc-profiles' => TRUE,
+    'cp/people/sync-profiles' => TRUE,
   );
 }
 
@@ -352,7 +352,7 @@ function os_profiles_field_attach_load($entity_type, $entities, $view_mode) {
  * Implements hook_os_add_new_links_alter().
  */
 function os_profiles_os_add_new_links_alter(&$links) {
-  // In order to display the syc button in the profile page and profiles node
+  // In order to display the sync button in the profile page and profiles node
   // pages we'll use context. The people context will be available in the node
   // pages and people page and this will help us by not using the menu_get_item
   // and menu_get_object functions.
@@ -376,7 +376,7 @@ function os_profiles_os_add_new_links_alter(&$links) {
 
   $links['sync'] = array(
     'title' => t('Sync'),
-    'href' => 'cp/people/syc-profiles',
+    'href' => 'cp/people/sync-profiles',
   );
 }
 
