@@ -24,20 +24,15 @@
  * @return array|bool
  *   An array of all available vocabulary objects, indexed by vid, or FALSE.
  */
-function os_get_vocabularies($entity_type = FALSE, $bundle = FALSE) {
-  if (!$entity_type || !$bundle) {
-    // Checks if this is a multi-tenant install
-    if (module_exists('vsite_vocab')) {
-      module_load_include('inc', 'vsite_vocab', 'includes/taxonomy');
-      return vsite_vocab_get_vocabularies();
-    }
-    else {
-      return taxonomy_get_vocabularies();
-    }
+function os_get_vocabularies(){
+
+  // Checks if this is a multi-tenant install
+  if (module_exists('vsite_vocab')) {
+    module_load_include('inc', 'vsite_vocab', 'includes/taxonomy');
+    return vsite_vocab_get_vocabularies();
   }
-  else {
-    return os_get_vocabularies_by_bundle($entity_type, $bundle);
-  }
+
+  return taxonomy_get_vocabularies();
 }
 
 /**
@@ -68,7 +63,6 @@ function os_get_vocabularies_by_bundle($entity_type, $bundle) {
 
   return taxonomy_vocabulary_load_multiple(array_keys($result));
 }
-
 
 /**
  * Creates a new drupal vocabulary
