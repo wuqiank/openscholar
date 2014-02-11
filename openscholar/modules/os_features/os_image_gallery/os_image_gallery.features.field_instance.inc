@@ -353,11 +353,14 @@ function os_image_gallery_field_default_field_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'module' => 'text',
+      'active' => 1,
+      'module' => 'os_wysiwyg',
       'settings' => array(
-        'rows' => 4,
+        'max_rows' => 10,
+        'rows' => 3,
+        'summary_rows' => 5,
       ),
-      'type' => 'text_textarea',
+      'type' => 'os_wysiwyg_expanding_textarea',
       'weight' => 0,
     ),
   );
