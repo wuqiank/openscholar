@@ -317,7 +317,7 @@ function os_publications_field_default_field_instances() {
         'progress_indicator' => 'throbber',
         'standard_upload' => 1,
         'upload_button_text' => 'Upload',
-        'upload_event' => 'automatic',
+        'upload_event' => 'auto',
       ),
       'type' => 'media_draggable_file',
       'weight' => 33,
