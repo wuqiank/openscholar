@@ -92,7 +92,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
   else {
     // If node is in teaser view mode, load a default image. If node is displayed
     // in "List of posts" widget or in full display mode, load a bigger default image.
-    if ($vars['view_mode'] == 'teaser') {
+    if (in_array($vars['view_mode'], array('teaser'))) {
       // Check if profile is in a widget.
       if (!empty($vars['sv_list'])) {
         // Use default image.
@@ -183,6 +183,10 @@ function hwpi_basetheme_process_node(&$vars) {
     elseif (!$vars['teaser'] && $vars['view_mode'] != 'sidebar_teaser') {
       $vars['title_prefix']['#suffix'] = '<h1 class="node-title">' . $vars['title'] . '</h1>';
       $vars['title'] = NULL;
+      
+      if ($vars['view_mode'] == 'slide_teaser') {
+        $vars['title_prefix']['#suffix'] = '<div class="toggle">' . $vars['title_prefix']['#suffix'] . '</div>';
+      }
     }
   }
 }
@@ -239,8 +243,8 @@ function hwpi_basetheme_node_view_alter(&$build) {
       $title_field[0] = array('#markup' => implode($glue, $titles));
     }
 
-    // We don't want the other fields on teasers.
-    if ($build['#view_mode'] == 'no_image_teaser' || $build['#view_mode'] == 'teaser') {
+    // We dont want the other fields on teasers
+    if (in_array($build['#view_mode'], array('teaser', 'slide_teaser','no_image_teaser'))) {
 
       //move title, website. body
       $build['pic_bio']['body']['#weight'] = 5;

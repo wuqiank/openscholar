@@ -205,6 +205,7 @@ function os_software_process_node(&$vars) {
       }
       break;
       
+    case 'slide_teaser':
     case 'teaser': 
       // Hides EVA fields "Recommended Release" and "Recent Releases" on /software.
       if (isset($vars['content']['os_software_releases_entity_view_1'])) {

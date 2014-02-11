@@ -112,3 +112,12 @@ function os_faq_preprocess_node(&$vars) {
     drupal_add_js(drupal_get_path('module', 'os').'/theme/os_toggle.js');
   }
 }
+
+/**
+ * Implements hook_os_entity_view_modes_alter
+ *
+ * Slide teaser is redundant with the default faq teaser so remove it
+ **/
+function os_faq_os_entity_view_modes_alter(&$info) {
+  $info['node']['faq'] = array_diff($info['node']['faq'], array('slide_teaser'));
+}
