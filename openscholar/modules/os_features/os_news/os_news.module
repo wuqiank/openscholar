@@ -28,6 +28,14 @@ function os_news_os_app_info() {
         'rss' => 'feed_importer',
       ),
     ),
+    'browse_pages' => array(
+      'news' => array(
+        'url' => 'browse/news',
+        'title' => t('Browse news'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'news',
+      ),
+    ),
   );
 
   return $apps;

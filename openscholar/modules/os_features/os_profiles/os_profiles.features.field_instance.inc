@@ -37,6 +37,15 @@ function os_profiles_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(
+          'trim_length' => 160,
+        ),
+        'type' => 'text_summary_or_trimmed',
+        'weight' => 5,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -107,6 +116,13 @@ function os_profiles_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 3,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -146,6 +162,70 @@ function os_profiles_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-person-field_destination'
+  $field_instances['node-person-field_destination_url'] = array(
+    'bundle' => 'person',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Holds the listeners sites.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 19,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'links' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'sidebar_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'title' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_destination_url',
+    'label' => 'Destination URL',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 1,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 43,
+    ),
+  );
+
   // Exported field_instance: 'node-person-field_email'
   $field_instances['node-person-field_email'] = array(
     'bundle' => 'person',
@@ -172,6 +252,13 @@ function os_profiles_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'no_image_teaser' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 2,
       ),
       'sidebar_teaser' => array(
         'label' => 'above',
@@ -237,6 +324,12 @@ function os_profiles_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 11,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -299,6 +392,12 @@ function os_profiles_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 12,
       ),
       'sidebar_teaser' => array(
         'label' => 'above',
@@ -363,6 +462,12 @@ function os_profiles_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 13,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -401,11 +506,76 @@ function os_profiles_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-person-field_origin_destination'
+  $field_instances['node-person-field_original_destination_url'] = array(
+    'bundle' => 'person',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 25,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'links' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'sidebar_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'title' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_original_destination_url',
+    'label' => 'Original destination URL',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'max_rows' => 10,
+        'rows' => 1,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 49,
+    ),
+  );
+
   // Exported field_instance: 'node-person-field_person_photo'
   $field_instances['node-person-field_person_photo'] = array(
     'bundle' => 'person',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Image should not be smaller than 220 x 220.',
     'display' => array(
       'default' => array(
         'label' => 'hidden',
@@ -432,6 +602,12 @@ function os_profiles_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 10,
       ),
       'sidebar_teaser' => array(
         'label' => 'hidden',
@@ -523,6 +699,13 @@ function os_profiles_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 1,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -589,6 +772,13 @@ function os_profiles_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
       'sidebar_teaser' => array(
         'label' => 'hidden',
         'module' => 'text',
@@ -653,6 +843,12 @@ function os_profiles_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 9,
       ),
       'sidebar_teaser' => array(
         'label' => 'above',
@@ -762,6 +958,12 @@ function os_profiles_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'no_image_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 6,
+      ),
       'sidebar_teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -814,6 +1016,70 @@ function os_profiles_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-person-field_uuid'
+  $field_instances['node-person-field_uuid'] = array(
+    'bundle' => 'person',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Holds an access token.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'links' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'sidebar_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'title' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_uuid',
+    'label' => 'UUID',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 44,
+    ),
+  );
+
   // Exported field_instance: 'node-person-field_website'
   $field_instances['node-person-field_website'] = array(
     'bundle' => 'person',
@@ -840,6 +1106,13 @@ function os_profiles_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'no_image_teaser' => array(
+        'label' => 'hidden',
+        'module' => 'link',
+        'settings' => array(),
+        'type' => 'link_default',
+        'weight' => 4,
       ),
       'sidebar_teaser' => array(
         'label' => 'above',
@@ -898,16 +1171,21 @@ function os_profiles_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Address');
   t('Attach Files');
+  t('Destination URL');
   t('Email');
   t('First Name');
+  t('Holds an access token.');
+  t('Holds the listeners sites.');
   t('If a value is entered here then links to this page will redirect to the entered URL.  This post will still appear in lists.  Leave this field blank to allow users to see this page.');
   t('Last Name');
   t('Middle Name or Initial');
+  t('Origin destination URL');
   t('Phone');
   t('Photo');
   t('Professional Titles/Affiliations');
   t('Redirect');
   t('Short bio');
+  t('UUID');
   t('Websites');
   t('e.g. Assistant Professor at Harvard University Faculty of Arts and Sciences');
 

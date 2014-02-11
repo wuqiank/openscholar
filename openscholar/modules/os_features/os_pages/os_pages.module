@@ -19,6 +19,14 @@ function os_pages_os_app_info() {
         'csv' => 'os_pages',
       ),
     ),
+    'browse_pages' => array(
+      'page' => array(
+        'url' => 'browse/pages',
+        'title' => t('Browse pages'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'pages',
+      ),
+    ),
   );
 
   return $apps;

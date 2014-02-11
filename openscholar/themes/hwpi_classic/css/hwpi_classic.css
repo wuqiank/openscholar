@@ -166,13 +166,15 @@ margin-left:6em;
 
 .sidebar .block,
 .front #content-column .block,
+#content-column .block.block-boxes-os_boxes_columns .block,
 .node-person .block-inner,
 .comment-wrapper {
 	border-top: 3px solid #4384C4;
 	margin-top:12px;
 }
 
-.block-boxes block-boxes-os_sv_list_box,
+#content-column .block.block-boxes-os_boxes_columns,
+.block-boxes-os_sv_list_box .block-inner,
 .block-boxes-os_boxes_manual_list, 
 .sidebar .block.section-nav,
 #content-column .block.section-nav  {
