@@ -2115,7 +2115,7 @@ function os_copy_file($url, $exception = FALSE) {
   }
 
   if (drupal_http_request($url)->code != 200) {
-    return os_file_copy_set_error(t("The file was not reachable. Please check that the URL don't fail when trying to access her via the web browser."), $exception);
+    return os_file_copy_set_error(t("The file was not reachable."), $exception);
   }
 
   if (is_writeable('public://')) {
