@@ -61,18 +61,20 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $block['title'] = $this->title;
 
     if (!empty($block['content'])) {
-      // Get the list of selected vocabularies
-      $selected = array();
-      foreach ($this->options['vocabularies'] as $vocabulary_name => $value) {
-        if ($value) {
-          $selected[$vocabulary_name] = $value;
+      if (!empty($this->options['vocabularies'])) {
+        // Get the list of selected vocabularies
+        $selected = array();
+        foreach ($this->options['vocabularies'] as $vocabulary_name => $value) {
+          if ($value) {
+            $selected[$vocabulary_name] = $value;
+          }
         }
-      }
-      // If no selection - show all. If there is selection - show only them.
-      if (count($selected) > 0) {
-        foreach (array_keys($block['content']['sm_og_vocabulary']) as $vocabulary_name) {
-          if (empty($selected[$vocabulary_name])) {
-            unset($block['content']['sm_og_vocabulary'][$vocabulary_name]);
+        // If no selection - show all. If there is selection - show only them.
+        if (count($selected) > 0) {
+          foreach (array_keys($block['content']['sm_og_vocabulary']) as $vocabulary_name) {
+            if (empty($selected[$vocabulary_name])) {
+              unset($block['content']['sm_og_vocabulary'][$vocabulary_name]);
+            }
           }
         }
       }
