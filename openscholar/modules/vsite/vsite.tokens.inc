@@ -39,7 +39,7 @@ function vsite_tokens($type, $tokens, array$data = array(), array$options = arra
     return $replacements;
   }
 
-  $group_node = FALSE;
+  $group_node = $vsite = FALSE;
 
   // Tries and get the vsite in one of three ways:
   // Method 1: The entity we are acting on is the vsite (group type)
@@ -70,14 +70,61 @@ function vsite_tokens($type, $tokens, array$data = array(), array$options = arra
     return $replacements;
   }
 
+  if (!isset($vsite->group) && isset($group_node->nid)) {
+    $vsite = vsite_get_vsite($group_node->nid)
+  }
+
   foreach ($tokens as $name => $original) {
     switch ($name) {
       case 'site-purl':
         $purl = ($sanitize) ? check_plain($group_node->purl) : $group_node->purl;
         $replacements[$original] = $purl;
         break;
+      case 'site-favicon-url':
+        $value = file_create_url(_vsite_tokens_site_favicon_uri());
+        $replacements[$original] = $value;
+        break;
+      case 'site-rel-author':
+        $value = '';
+        $replacements[$original] = $value;
+        break;
+      case 'site-rel-publisher':
+        $value = '';
+        $replacements[$original] = $value;
+        break;
+      case 'site-page-title':
+        $value = '';
+        $replacements[$original] = $value;
+        break;
+      case 'site-slogan':
+        $value = '';
+        $replacements[$original] = $value;
+        break;
     }
   }
 
   return $replacements;
+}
+
+/**
+ * Gets the custom favicon, theme favicon, or default favicon.
+ */
+function _vsite_tokens_site_favicon_uri() {
+  $uri = '';
+
+  $fid = variable_get('site_favicon_fid', '');
+  if (!empty($fid)) {
+    $uri = db_query('SELECT uri FROM {file_managed} WHERE fid = :fid', array(':fid' => $fid))->fetchColumn();
+  }
+
+  // If we aren't in a vsite, or if this vsite hasn't uploaded a custom favicon.
+  if (empty($uri)) {
+    $theme = variable_get('theme_default');
+    $uri = drupal_get_path('theme', $theme) . '/favicon.ico';
+    if (!file_exists($uri)) {
+      $uri = drupal_get_path('theme', 'os_basetheme') . '/favicon.ico';
+    }
+  }
+
+  return $uri;
 }

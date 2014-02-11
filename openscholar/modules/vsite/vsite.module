@@ -2325,27 +2325,15 @@ function vsite_preprocess_html(&$vars){
     // Set the new page 'head' title.
     $vars['head_title'] = implode(' | ', $title_parts);
 
-    // Exits if this vsite doesn't provide a custom favicon file.
-    $uri = FALSE;
-    $fid = variable_get('site_favicon_fid', '');
-    if (!empty($fid)) {
-      $uri = db_query('SELECT uri FROM {file_managed} WHERE fid = :fid', array(':fid' => $fid))->fetchColumn();
-    }
     // Attempts to add head link tags for author and publishes, if available.
     _vsite_add_html_head_rel_links();
   }
 
-  // If we aren't in a vsite, or if this vsite hasn't uploaded a custom favicon.
-  if (empty($uri)) {
-    $theme = variable_get('theme_default');
-    $uri = drupal_get_path('theme', $theme) . '/favicon.ico';
-    if (!file_exists($uri)) {
-      $uri = drupal_get_path('theme', 'os_basetheme') . '/favicon.ico';
-    }
-  }
+  // @FIME: use token instead!
+  $uri = _vsite_tokens_site_favicon_uri();
 
   // Returns if no valid favicon or no favicon found.
-  if (empty($uri) || !file_exists($uri)) {
+  if (!$uri) {
     return;
   }
 
