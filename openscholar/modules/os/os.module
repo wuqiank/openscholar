@@ -2118,7 +2118,7 @@ function os_copy_file($url, $exception = FALSE) {
     return os_file_copy_set_error(t("The file was not reachable."), $exception);
   }
 
-  if (is_writeable('public://')) {
+  if (!is_writeable('public://')) {
     return os_file_copy_set_error(t("The file directory is not wrietable. Please check her permission."), $exception);
   }
 
