@@ -78,6 +78,12 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
           }
         }
       }
+
+      if (!empty($block['content']['sm_og_vocabulary'])) {
+        // Sort by vocab's title.
+        ksort($block['content']['sm_og_vocabulary']);
+      }
+
       $block['content'] = render($block['content']);
     }
     return $block;
