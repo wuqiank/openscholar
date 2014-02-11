@@ -515,6 +515,19 @@ function os_profiles_sync_profile_validate($form, &$form_state) {
     // A JSON address was not found in the header.
     form_set_error('url', t('Make sure you have an updated OpenScholar installation.'));
   }
+
+  if (!empty($form_state['values']['autocomplete'])) {
+    preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
+    if (empty($matches[1])) {
+      $params = array(
+        '%label' => $form_state['values']['autocomplete'],
+      );
+      form_set_error('autocomplete', t("There isn't any node with the name %label", $params));
+    }
+    else {
+      $form_state['autocomplete_nid'] = $matches[1];
+    }
+  }
 }
 
 /**
@@ -561,9 +574,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
   }
   else {
     // Import a person node using the auto-complete field.
-    preg_match("/.+\((\d+)\)/", $form_state['values']['autocomplete'], $matches);
-    $nid = $matches[1];
-    $wrapper = entity_metadata_wrapper('node', $nid);
+    $wrapper = entity_metadata_wrapper('node', $form_state['autocomplete_nid']);
     foreach ($keys as $key) {
       if (isset($wrapper->{$key}) && $value = $wrapper->{$key}->value()) {
         $values[$key] = $value;
