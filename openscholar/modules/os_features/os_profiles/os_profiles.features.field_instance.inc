@@ -79,12 +79,13 @@ function os_profiles_field_default_field_instances() {
     ),
     'widget' => array(
       'active' => 1,
-      'module' => 'text',
+      'module' => 'os_wysiwyg',
       'settings' => array(
-        'rows' => 5,
+        'max_rows' => 10,
+        'rows' => 3,
         'summary_rows' => 5,
       ),
-      'type' => 'text_textarea_with_summary',
+      'type' => 'os_wysiwyg_expanding_textarea',
       'weight' => 8,
     ),
   );
