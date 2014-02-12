@@ -1162,7 +1162,7 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
   $info = $flavors[$form_state['values']['type']];
 
   // Remove the folder and set the redirect.
-  os_profiles_rrmdir($info['path']);
+  cp_appearance_rmdir($info['path']);
   $form_state['redirect'] = 'cp/appearance';
 
   // Set the title.
@@ -1180,18 +1180,32 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
 }
 
 /**
- * Delete folder recursively.
+ * Delete a folder containing files.
+ * @param $dir
+ *  The directory path.
  */
-function os_profiles_rrmdir($dir) {
-  foreach (glob($dir . '/*') as $file) {
-    if (is_dir($file)) {
-      os_profiles_rrmdir($file);
+function cp_appearance_rmdir($dir) {
+  try {
+    $it = new RecursiveDirectoryIterator($dir);
+    $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+    foreach($files as $file) {
+      if ($file->getFilename() === '.' || $file->getFilename() === '..') {
+        continue;
+      }
+
+      if ($file->isDir()) {
+        rmdir($file->getRealPath());
+      }
+      else {
+        unlink($file->getRealPath());
+      }
     }
-    else {
-      unlink($file);
-    }
+
+    rmdir($dir);
+  } catch (Exception $e) {
+    $params = array('@error' => $e->getMessage());
+    drupal_set_message('An error occurred: @error', $params, 'error');
   }
-  rmdir($dir);
 }
 
 /**
