@@ -32,6 +32,7 @@ class os_boxes_site_logo extends os_boxes_default {
       $height = $this->options['height'];
       $width = $this->options['width'];
       $ratio = 0;
+      $description = '';
       if (module_exists('vsite') && $vsite = spaces_get_space()) {
         $file = field_get_items('node', $vsite->group, 'field_site_logo');
         $file = $file[0];
@@ -46,12 +47,18 @@ class os_boxes_site_logo extends os_boxes_default {
           $ratio = explode('x', $instance['widget']['settings']['resolution']);
           $ratio = $ratio[0]/$ratio[1];
         }
+        $description = $instance['description'];
       }
       $allowed_file_types = 'gif png jpg jpeg';
       $form['file'] = array(
         '#type' => 'managed_file',
         '#title' => t('Site Logo'),
-        '#description' => t('Upload a photo and position the cropping tool over it if necessary.<br/>Allowed file types: <strong>' . $allowed_file_types . '</strong>'),
+        '#description' => t('Upload a photo and position the cropping tool over it if necessary.<br/>Allowed file types: <strong>@file_types</strong><br />@description',
+          array(
+            '@file_types' => $allowed_file_types,
+            '@description' => $description,
+          )
+        ),
         '#process' => array(
           '_os_boxes_site_logo_process',
         ),
