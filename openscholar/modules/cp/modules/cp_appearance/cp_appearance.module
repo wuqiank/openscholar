@@ -1162,7 +1162,7 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
   $info = $flavors[$form_state['values']['type']];
 
   // Remove the folder and set the redirect.
-  os_profiles_rrmdir($info['path']);
+  system("rm -rf " . $info['path']);
   $form_state['redirect'] = 'cp/appearance';
 
   // Set the title.
@@ -1177,21 +1177,6 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
   else {
     variable_set('flavors', $flavors);
   }
-}
-
-/**
- * Delete folder recursively.
- */
-function os_profiles_rrmdir($dir) {
-  foreach (glob($dir . '/*') as $file) {
-    if (is_dir($file)) {
-      os_profiles_rrmdir($file);
-    }
-    else {
-      unlink($file);
-    }
-  }
-  rmdir($dir);
 }
 
 /**
