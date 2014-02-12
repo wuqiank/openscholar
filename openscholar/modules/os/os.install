@@ -636,10 +636,13 @@ function os_update_7029() {
     'os_biocv',
     'os_blog',
     'os_booklets',
+    'os_classes',
     'os_events',
+    'os_faq',
     'os_image_gallery',
     'os_links',
     'os_news',
+    'os_pages',
     'os_presentations',
     'os_profiles',
     'os_publications',
@@ -656,4 +659,30 @@ function os_update_7029() {
   }
   $message .= t('Reverted metatag and field_instance config for modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
   return $message;
+}
+
+/**
+ * Make sure every content type's fields have been reverted
+ */
+function os_update_7030() {
+  $revert = array_fill_keys(array(
+    'os_biocv',
+    'os_blog',
+    'os_booklets',
+    'os_classes',
+    'os_events',
+    'os_faq',
+    'os_image_gallery',
+    'os_links',
+    'os_news',
+    'os_pages',
+    'os_presentations',
+    'os_profiles',
+    'os_publications',
+    'os_software'
+  ), array(
+    'field_instance'
+  ));
+
+  feature_revert($revert);
 }
