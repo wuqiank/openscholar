@@ -890,7 +890,7 @@ function os_search_solr_preprocess_search_results(&$variables) {
   $view_mode = !empty($solr_view_modes[$page_id]) ? $solr_view_modes[$page_id] : 'teaser';
 
   //Only alter 'search_results' and render node if it is a non-search view mode.
-  if(in_array($view_mode, array('search_result', 'search_index'))){
+  if(!in_array($view_mode, array('search_result', 'search_index'))){
 
 	  // Reset Search Results, we are going to completely override
 	  $variables['search_results'] = '';
