@@ -730,8 +730,6 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
     '#element_validate' => array('os_events_validate_mail'),
   );
 
-  $form['#submit'][] = 'os_events_set_event_default_mail';
-
   // Set the default time for a reminder to be a day before the event.
   $event_date = reset($wrapper->field_date->value());
   $reminder = empty($reminder_date) ? strtotime('-1 day', strtotime($event_date['value'])) : strtotime($reminder_date);
@@ -774,16 +772,6 @@ function os_events_validate_mail($element, $form_state, $form) {
   if (!valid_email_address($element['#value'])) {
     form_error($element, t('This is not a valid email address.'));
   }
-}
-
-/**
- * Submit handler; Set default email in event.
- */
-function os_events_set_event_default_mail($form, &$form_state) {
-  // Set the default email in the event.
-  $wrapper = entity_metadata_wrapper('node', $form_state['entity']['entity_id']);
-  $wrapper->field_default_email->set($form_state['values']['from']);
-  $wrapper->save();
 }
 
 /**
@@ -1026,10 +1014,8 @@ function os_events_mail_alter(&$message) {
   // Get event default email address.
   $wrapper = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
 
-  $default_email = $wrapper->field_default_email->value();
-
   // Set default email as the message's sender.
-  $message['headers']['From'] = !empty($default_email) ? $default_email : $wrapper->author->mail->value();
+  $message['headers']['From'] = $wrapper->author->mail->value();
 }
 
 /**
