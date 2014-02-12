@@ -266,8 +266,10 @@ function os_search_solr_apachesolr_index_node_status_callback($entity_id, $entit
   $group_wrapper = entity_metadata_wrapper('node', $gid);
 
   if (module_exists('vsite_access') && !empty($group_wrapper->{VSITE_ACCESS_FIELD}) && $group_wrapper->{VSITE_ACCESS_FIELD}->value()) {
-    // Private group, exclude it.
-    return;
+    // Private group, and not a private install, exclude it.
+    if (variable_get('file_default_scheme', 'public') != 'private') {
+      return;
+    }
   }
 
   $map = features_get_component_map('node');
