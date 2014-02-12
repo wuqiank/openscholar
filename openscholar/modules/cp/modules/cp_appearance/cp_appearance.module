@@ -1180,8 +1180,9 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
 }
 
 /**
- * Delete folder recursivly.
+ * Delete a folder containing files.
  * @param $dir
+ *  The directory path.
  */
 function cp_appearance_rmdir($dir) {
   try {
@@ -1191,15 +1192,19 @@ function cp_appearance_rmdir($dir) {
       if ($file->getFilename() === '.' || $file->getFilename() === '..') {
         continue;
       }
-      if ($file->isDir()){
+
+      if ($file->isDir()) {
         rmdir($file->getRealPath());
-      } else {
+      }
+      else {
         unlink($file->getRealPath());
       }
     }
+
     rmdir($dir);
   } catch (Exception $e) {
-    drupal_set_message($e->getMessage(), 'error');
+    $params = array('@error' => $e->getMessage());
+    drupal_set_message('An error occurred: @error', $params, 'error');
   }
 }
 
