@@ -692,8 +692,7 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
   // Hide the tokens list for sending messages to registrants.
   unset($form['token_tree']);
 
-  // Default value for 'from' field should be the event's default email if set,
-  // otherwise it should be the event author's email address.
+  // Default value of the From field should be the author of the event's e-mail
   $from_default_value = $wrapper->author->mail->value();
 
   $form['status']['#title'] = t('Enable registrations');
