@@ -715,7 +715,10 @@ function os_profiles_insert_image($node, $file, $dimensions) {
  *  Return an object with the values and the full JSON of the original node.
  */
 function os_profiles_get_origin_node_values($address, $fields) {
-  $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1))));
+  // When accessing the json format of the node multiple times we get cached
+  // data. This won't allow us to pull the updated data of the node. In order
+  // to get un-cached node we need to add the time stamp to the query string.
+  $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1, 'override_cache' => time()))));
   $data = drupal_json_decode($request->data);
 
   foreach ($fields as $key) {
