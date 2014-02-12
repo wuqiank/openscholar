@@ -715,7 +715,7 @@ function os_profiles_insert_image($node, $file, $dimensions) {
  *  Return an object with the values and the full JSON of the original node.
  */
 function os_profiles_get_origin_node_values($address, $fields) {
-  $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1))));
+  $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1, 'override_cache' => time()))));
   $data = drupal_json_decode($request->data);
 
   foreach ($fields as $key) {
