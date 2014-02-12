@@ -930,3 +930,14 @@ function os_search_solr_vocabulary_filter_box($bundle_name) {
 
   return $box;
 }
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * @param $theme_registry
+ */
+function os_search_solr_theme_registry_alter(&$theme_registry) {
+  $path = drupal_get_path('module', 'os_search_solr');
+  $theme_registry['search_results']['path'] = $path;
+  $theme_registry['search_results']['template'] = 'search-results';
+}
