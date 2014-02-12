@@ -9,7 +9,8 @@
       repeat.change(function() {
         if ($(this).is(':checked')) {
           signup.find('.description').text(Drupal.t('Only applicable to non repeated events.'));
-        } else {
+        }
+        else {
           signup.find('.description').text(Drupal.t('If checked, users will be able to signup for this event.'));
         }
       });
