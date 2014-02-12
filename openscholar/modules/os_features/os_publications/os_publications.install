@@ -1104,7 +1104,7 @@ function os_publications_update_7017() {
 /**
  * Add title field to publications.
  */
-function os_publications_update_7026(&$sandbox) {
+function os_publications_update_7018(&$sandbox) {
   if (!isset($sandbox['total'])) {
     $sandbox['progress'] = 0;
 
