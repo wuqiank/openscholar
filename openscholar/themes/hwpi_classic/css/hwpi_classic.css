@@ -26,6 +26,7 @@ body {
 margin-top: 12px;
 }
 
+.sidebar #block-os-search-db-site-search,
 #content-panels .block-boxes-os_slideshow_box .block-inner {
     margin-top: 0;
 }
@@ -173,6 +174,8 @@ margin-left:6em;
 	margin-top:12px;
 }
 
+
+.sidebar #block-os-search-db-site-search,
 #content-column .block.block-boxes-os_boxes_columns,
 .block-boxes-os_sv_list_box .block-inner,
 .block-boxes-os_boxes_manual_list, 

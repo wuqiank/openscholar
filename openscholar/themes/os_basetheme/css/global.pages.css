@@ -824,6 +824,13 @@ div.toggle {
 	cursor:pointer;
 }
 
+.sv-list-person.sv-list-view-slide_teaser .toggle h1.node-title {color: #215990;}
+
+.block-boxes-os_sv_list_box .sv-list-class.sv-list-view-slide_teaser .os-slider li {
+list-style: none !important;
+}
+
+
 .field-name-og-vocabulary a.toggle {
 	background:url('../images/scholarbase-sprite.png') -12px -194px no-repeat;
 	padding: 1px 0 3px 14px
