@@ -25,7 +25,13 @@ class sv_list_node_person  extends sv_list_plugin {
     }
     
     if ($options['sort_by'] == 'sort_alpha') {
-      $efq->order = array();
+      // remove title orderBy so we can put the field orderBy in front of it
+      foreach ($efq->order as $k => $sort) {
+        if ($sort['specifier'] == 'title') {
+          unset($efq->order[$k]);
+          break;
+        }
+      }
       $efq->fieldOrderBy('field_last_name', 'value', 'ASC');
       $efq->propertyOrderBy('title', 'ASC');
     }
