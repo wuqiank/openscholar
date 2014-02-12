@@ -1162,7 +1162,7 @@ function cp_appearance_delete_subtheme_submit($form, &$form_state) {
   $info = $flavors[$form_state['values']['type']];
 
   // Remove the folder and set the redirect.
-  system("rm -rf " . $info['path']);
+  system("rm -r " . $info['path']);
   $form_state['redirect'] = 'cp/appearance';
 
   // Set the title.
