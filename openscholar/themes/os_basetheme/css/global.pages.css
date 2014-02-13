@@ -110,9 +110,18 @@ div.messages {
 }
 
 /*** SOME BASE STLYES FOR THE COLUMNS WIDGET ***/
-.block-boxes-os_boxes_columns .panel-row .region .region-inner {padding-right:25px;}
 
-.block-boxes-os_boxes_columns .panel-row:last-child .region:last-child .region-inner {padding-right:0;}
+.block-boxes-os_boxes_columns .region .region-inner,
+.block-boxes-os_boxes_columns .four-4x25 .panel-row .region .region-inner,
+.block-boxes-os_boxes_columns .five-5x20 .panel-row .region .region-inner {
+	padding-right:25px;
+	}
+
+.block-boxes-os_boxes_columns .region:last-child .region-inner,
+.block-boxes-os_boxes_columns .four-4x25 .panel-row:last-child .region:last-child .region-inner,
+.block-boxes-os_boxes_columns .five-5x20 .panel-row:last-child .region:last-child .region-inner {
+	padding-right:0;
+	}
 
 
 /*** FRONTPAGE PANELS ***/
