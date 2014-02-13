@@ -30,7 +30,7 @@ function os_profiles_os_app_info() {
     'browse_pages' => array(
       'person' => array(
         'url' => 'browse/people',
-        'title' => t('Browse people'),
+        'title' => t('People'),
         'display_mode' => 'teaser',
         'menu_item' => 'people',
       ),
