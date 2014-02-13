@@ -882,14 +882,19 @@ a.rslides_nav {
 padding:0 20px;
 }
 
-.no-sidebars .block-boxes-os_boxes_columns .region .region-inner {
-	padding:0 20px 0 0;
+.no-sidebars .block-boxes-os_boxes_columns .region .region-inner,
+.no-sidebars .block-boxes-os_boxes_columns .four-4x25 .panel-row .region .region-inner,
+.no-sidebars .block-boxes-os_boxes_columns .five-5x20 .panel-row .region .region-inner {
+
+	padding:0 25px 0 0;
 }
 
-.no-sidebars .block-boxes-os_boxes_columns .region:last-child .region-inner {
-	
-padding:0 0 0 10px;
+.no-sidebars .block-boxes-os_boxes_columns .region:last-child .region-inner,
+.no-sidebars .block-boxes-os_boxes_columns .four-4x25 .panel-row:last-child .region:last-child .region-inner,
+.no-sidebars .block-boxes-os_boxes_columns .five-5x20 .panel-row:last-child .region:last-child .region-inner {
+	padding:0;
 }
+
 
 
 
