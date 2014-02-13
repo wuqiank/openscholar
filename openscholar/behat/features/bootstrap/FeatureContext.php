@@ -1422,6 +1422,30 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Then /^I should see the profile "([^"]*)" comes before "([^"]*)"$/
+   */
+  public function iShouldSeeTheProfileComesBefore($first, $second) {
+    $page = $this->getSession()->getPage()->getContent();
+
+    $pattern = '/<div class="view-content">[\s\S]*' . $first . '[\s\S]*' . $second . '[\s\S]*<\/div>/';
+    if (!preg_match($pattern, $page)) {
+      throw new Exception("The profile '$first' does not come before the profile '$second'.");
+    }
+  }
+
+  /**
+   * @Then /^I should see the profile "([^"]*)" comes before "([^"]*)" in the LOP widget$/
+   */
+  public function iShouldSeeTheProfileComesBeforeInWidget($first, $second) {
+    $page = $this->getSession()->getPage()->getContent();
+
+    $pattern = '/<div class="boxes-box-content">[\s\S]*' . $first . '[\s\S]*' . $second . '[\s\S]*<\/div>/';
+    if (!preg_match($pattern, $page)) {
+      throw new Exception("The profile '$first' does not come before the profile '$second'.");
+    }
+  }
+
+  /**
    * @Given /^I define "([^"]*)" domain to "([^"]*)"$/
    */
   public function iDefineDomainTo($vsite, $domain) {
