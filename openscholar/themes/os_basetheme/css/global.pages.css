@@ -110,9 +110,9 @@ div.messages {
 }
 
 /*** SOME BASE STLYES FOR THE COLUMNS WIDGET ***/
-.block-boxes-os_boxes_columns .region .region-inner {padding-right:25px;}
+.block-boxes-os_boxes_columns .panel-row .region .region-inner {padding-right:25px;}
 
-.block-boxes-os_boxes_columns .region:last-child .region-inner {padding-right:0;}
+.block-boxes-os_boxes_columns .panel-row:last-child .region:last-child .region-inner {padding-right:0;}
 
 
 /*** FRONTPAGE PANELS ***/
