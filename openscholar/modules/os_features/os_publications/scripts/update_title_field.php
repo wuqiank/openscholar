@@ -38,7 +38,7 @@ while ($i < $max) {
   // We found items to process.
   $ids = array_keys($results['node']);
   title_field_replacement_init('node', 'biblio', 'title', $ids);
-  $i = $i + 250;
+  $i += 250;
   $nid = end($ids);
 
   $params = array(
