@@ -146,6 +146,9 @@ class os_boxes_columns extends os_boxes_default {
 
     // add all the js and css we're gonna need
     $form['#attached'] = array(
+      'library' => array(
+        array('system', 'ui.sortable'),
+      ),
       'js' => array(
         drupal_get_path('module', 'os_boxes').'/plugins/os_boxes_columns/js/os_boxes_columns.form.js'
       ),
