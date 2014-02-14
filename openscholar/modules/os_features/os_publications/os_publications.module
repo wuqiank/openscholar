@@ -48,7 +48,7 @@ function os_publications_menu_alter(&$items) {
     'access callback' => 'spaces_access_feature',
     'access arguments' => array('view', 'os_publications'),
     'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
-    'menu_name' => 'primary-menu',
+    //'menu_name' => 'primary-menu',
   );
 
   $items['publications/export'] = array(
@@ -670,30 +670,30 @@ function os_publications_node_view_alter(&$build, $type) {
   if ($type != 'node' || $build['#bundle'] != 'biblio') {
     return;
   }
-    
+
   switch ($build['#view_mode'])  {
     case 'full':
       // Remove the publication image as it's called in theme_os_publications_tabular instead.
       if (isset($build['field_biblio_image'])) {
       	$build['field_biblio_image']['#access'] = FALSE;
       }
-      
+
       // Remove the Google Scholar link that appears at the bottom of full view publications.
       if (isset($build['links']['biblio_google_scholar'])) {
         unset($build['links']['biblio_google_scholar']);
       }
       break;
-    
+
     case 'slide_teaser':
       $build['teaser']['#markup'] = theme('biblio_style', array('node' => $build['#node'], 'base' => variable_get('biblio_base', 'biblio'), 'style_name' => biblio_get_style()));
       //FALLTHROUGH!  slide_teaser should run just like teaser, except we need to load up the markup from biblio_view().
-    case 'teaser':  
+    case 'teaser':
       // Alter the teaser to remove the external URL as the URL title and
       // replace it with either the biblio_url_title or "website".
       if (isset($build['teaser']['#markup'])) {
         $node = node_load($build['#node']->nid);
         $build['teaser']['#markup'] = _os_publications_biblio_entry_alter($build['teaser']['#markup'], $node);
-      } 
+      }
 
       // Add the abstract slider.
 	    _os_publications_attach_abstract($build, $build['#node'], 'teaser');
@@ -704,7 +704,7 @@ function os_publications_node_view_alter(&$build, $type) {
       $build['teaser']['#weight'] = 1;
       $build['links']['#access'] = FALSE;
       break;
-      
+
     default:
       $links = &$build['links'];
       foreach ($links as $k => $l) {
@@ -717,7 +717,7 @@ function os_publications_node_view_alter(&$build, $type) {
         }
       }
       break;
-    
+
   }
 }
 
