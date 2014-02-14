@@ -49,6 +49,7 @@ features[filter][] = title_filter
 features[image][] = book_cover
 features[image][] = book_cover_thumb
 features[metatag][] = node:biblio
+features[menu_links][] = primary-menu:publications
 features[user_permission][] = access biblio content
 features[user_permission][] = administer biblio
 features[user_permission][] = create biblio content
