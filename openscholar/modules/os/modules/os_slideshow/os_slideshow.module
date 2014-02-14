@@ -96,11 +96,9 @@ function os_slideshow_form_slideshow_slide_node_form_alter(&$form, &$state, $for
   unset($form['options']['#type']);
   unset($form['options']['#group']);
 
-  // Hide additional settings except publishing options.
-  foreach ($form as $name => &$item) {
-    if (is_array($item) && isset($item['#group']) && ($item['#group'] == 'additional_settings')) {
-      $item['#type'] = 'hidden';
-    }
+  //Hide additional settings that are no longer grouped as such
+  foreach (array('revision_information', 'author', 'comment_settings', 'path', 'metatags', 'actions_top') as $elem) {
+    $form[$elem]['#type'] = 'hidden'; 
   }
 
   // Hide title. it will be automatically generated later.
