@@ -123,7 +123,7 @@ function os_slideshow_form_slideshow_slide_node_form_alter(&$form, &$state, $for
  * Changes the imagefield_crop widget to use our custom ratio.
  */
 function os_slideshow_imagefield_crop_instance_alter(&$instance, $context) {
-  if (isset($context['form']) && $context['form']['#id'] == 'slideshow-slide-node-form') {
+  if (isset($context['form']) && strpos($context['form']['#id'], 'slideshow-slide-node-form') === 0) {
     $widget = $context['form']['widget']['#value'];
   }
   elseif (isset($context['entity']) && isset($context['entity']->widget)) {
