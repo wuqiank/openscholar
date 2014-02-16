@@ -86,7 +86,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     return;
   }
 
-  if (!empty($vars['field_person_photo'])) {
+  if (!empty($vars['field_person_photo'][$vars['language']])) {
     $vars['classes_array'][] = 'with-person-photo';
   }
   else {
@@ -644,8 +644,6 @@ function hwpi_basetheme_date_formatter_pre_view_alter(&$entity, $vars) {
   if (!$entity->view = views_get_current_view()) {
     return;
   }
-
-
 
   // Don't remove the field date when exporting the calendar. This the unique
   // identifier of Google calendar.
