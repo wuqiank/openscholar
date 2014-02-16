@@ -119,9 +119,17 @@ dl.bibliomultiselect .form-item {
   line-height: normal;
   text-align: left;
   font-family: inherit;
+<<<<<<< HEAD
   }
 
+=======
+}
+>>>>>>> SCHOLAR-3.x
 
+.biblio-title a p {
+  display: inline;
+}
+  
 .biblio-authors a {
   font-weight: normal;
   text-decoration: none;

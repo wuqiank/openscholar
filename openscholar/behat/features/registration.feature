@@ -9,7 +9,6 @@ Feature:
       And I set the event capacity to "1"
       And I fill in "Email" with "g@gmail.com"
       And I press "Signup"
-      And I am not logged in
      When I am logging in as "michelle"
       And I visit "john/event/halleys-comet"
       And I should not see "Sign up for Halley's Comet"
@@ -22,7 +21,6 @@ Feature:
       And I set the event capacity to "2"
       And I fill in "Email" with "g@gmail.com"
       And I press "Signup"
-      And I am not logged in
      When I am logging in as "michelle"
       And I visit "john/event/halleys-comet"
       And I should see "Sign up for Halley's Comet"
@@ -38,23 +36,23 @@ Feature:
      When I visit "john/calendar"
      Then I should see "My New Event"
 
-  @api
+  @api @wip
   Scenario: Test registering to event.
     Given I am logging in as "john"
-      And I visit "john/cp/users/add"
-      And I fill in "User" with "bill"
-      And I press "Add users"
-      And I am not logged in
+      And I make "bill" a member in vsite "john"
+      And I am logging in as "admin"
+      And I make registration to event without javascript available
      When I am logging in as "bill"
       And I visit "john/event/my-new-event"
-      And I fill in "Email" with "abc@gmail.com"
-      And I fill in "Full name" with "Abc Def"
-      And I fill in "Department" with "Hijklmnop"
+      And I fill in "Email" with "bill@example.com"
+      And I fill in "Full name" with "Bill Clinton"
+      And I fill in "Department" with "Astronomy"
       And I press "Signup"
-      And I am not logged in
      Then I am logging in as "john"
       And I visit "john/event/my-new-event"
       And I click "Manage Registrations"
-      And I should see "abc@gmail.com"
+      And I should see "bill@example.com"
+      And I am logging in as "admin"
+      And I make registration to event without javascript unavailable
 
 

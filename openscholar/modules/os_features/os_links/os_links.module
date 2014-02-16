@@ -28,7 +28,12 @@ function os_links_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'link' => TRUE,
+      'link' => array(
+        'url' => 'browse/links',
+        'title' => t('Links'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'links',
+      ),
     ),
   );
 

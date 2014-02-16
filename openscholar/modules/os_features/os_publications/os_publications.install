@@ -36,6 +36,29 @@ function os_publications_install() {
   variable_set('pathauto_biblio_pattern', 'publications/[biblio:title]');
   variable_set('biblio_default_style', 'os_publications');
 
+  if(module_exists('biblio_citeproc')){
+    //Remove Line indentation from citeproc styles
+    foreach (biblio_get_styles() as $name => $desc){
+      $csl = db_query('SELECT csl FROM {biblio_citeproc_styles} WHERE filename = :id', array(':id' => $name))->fetchObject();
+      if (isset($csl->csl)) {
+        $csl_file_contents = $csl->csl;
+        if($csl_file_contents = str_replace('<bibliography hanging-indent="true"', '<bibliography hanging-indent="false"', $csl_file_contents) && ($csl_file_contents != $csl->csl)){
+          biblio_citeproc_install_style($name, $csl_file_contents);
+        }
+      }
+    }
+
+    // Remove second biblio_secondary_title field mapping.
+    $field_map = biblio_get_map('field_map','csl');
+    if(isset($field_map['collection-title']) && isset($field_map['container-title'])) {
+      if($field_map['collection-title'] == 'biblio_secondary_title' && $field_map['container-title'] == 'biblio_secondary_title') {
+        $field_map['collection-title'] = '';
+        biblio_set_map('field_map', 'csl', $field_map);
+      }
+    }
+  }
+}
+
   // Hide the contributor field.
   // todo: Hide all the contributor in the biblio fields.
   $instances = field_info_instances('biblio', 'book');
@@ -1030,6 +1053,82 @@ function os_publications_update_7015() {
 }
 
 /**
+ * Revert fields to use new field widget
+ */
+function os_publications_update_7016() {
+  $revert = array('os_publications' => array('field_instance'));
+
+  features_revert($revert);
+
+  return t('Reverted field instances for os_publications module.');
+}
+
+/**
+ * Enable html_title and title modules.
+ */
+function os_publications_update_7017() {
+  module_enable(array('html_title'));
+  module_enable(array('title'));
+  features_revert_module('os_publications');
+}
+
+/**
+ * Add title field to publications.
+ */
+function os_publications_update_7026(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['progress'] = 0;
+
+    $query = new EntityFieldQuery();
+    $sandbox['total'] = $query
+      ->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', 'biblio')
+      ->count()
+      ->execute();
+  }
+
+  $batch = 250;
+  $last_publication = isset($sandbox['publication_id']) ? $sandbox['publication_id'] : 0;
+
+  $query = new EntityFieldQuery();
+  $results = $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'biblio')
+    ->propertyCondition('nid', $last_publication, '>=')
+    ->range(0, $batch)
+    ->execute();
+
+  if (!empty($results['node'])) {
+    // We found items to process.
+    $ids = array_keys($results['node']);
+    title_field_replacement_init('node', 'biblio', 'title', $ids);
+    $sandbox['publication_id'] = end($ids);
+
+    if (drupal_is_cli()) {
+      // Display message when running the update via drush.
+      $params = array(
+        '@start' => $last_publication,
+        '@end' => $sandbox['publication_id'],
+      );
+      drush_log(dt('Replaced title with field instance for publication number @start to @end', $params), 'success');
+    }
+  }
+
+  // Increase the progress.
+  $sandbox['progress'] += $batch;
+
+  if ($sandbox['progress'] > $sandbox['total']) {
+    // The total results amount is smaller then the amount we processed in a
+    // single batch. After a single batch we can set the finished to true.
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    // Save the last node, increase the node and check if the import finished.
+    $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
+  }
+}
+
+/**
  * Attaching fields to the biblio bundles.
  */
 function os_publications_update_7016() {
@@ -1063,7 +1162,7 @@ function os_publications_update_7016() {
 /**
  * Set the pathauto pattern for the biblio module.
  */
-function os_publications_update_7017() {
+function os_publications_update_7027() {
   variable_set('pathauto_biblio_pattern', 'publications/[biblio:title]');
   variable_set('biblio_default_style', 'os_publications');
 }
@@ -1071,6 +1170,6 @@ function os_publications_update_7017() {
 /**
  * Enable migrate and migrate extras modules.
  */
-function os_publications_update_7018() {
+function os_publications_update_7028() {
   module_enable(array('migrate, migrate_extras'));
 }

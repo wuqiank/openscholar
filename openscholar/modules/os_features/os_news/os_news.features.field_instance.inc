@@ -69,12 +69,14 @@ function os_news_field_default_field_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'module' => 'text',
+      'active' => 1,
+      'module' => 'os_wysiwyg',
       'settings' => array(
-        'rows' => 20,
+        'max_rows' => 10,
+        'rows' => 3,
         'summary_rows' => 5,
       ),
-      'type' => 'text_textarea_with_summary',
+      'type' => 'os_wysiwyg_expanding_textarea',
       'weight' => 5,
     ),
   );
@@ -187,7 +189,7 @@ function os_news_field_default_field_instances() {
   $field_instances['node-news-field_photo'] = array(
     'bundle' => 'news',
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Image should not be smaller than 250 x 250.',
     'display' => array(
       'default' => array(
         'label' => 'hidden',

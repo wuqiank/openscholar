@@ -32,7 +32,12 @@ function os_blog_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'blog' => TRUE,
+      'blog' => array(
+        'url' => 'browse/blogs',
+        'title' => t('Blog'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'blog',
+      ),
     ),
   );
 

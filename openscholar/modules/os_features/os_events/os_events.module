@@ -31,7 +31,12 @@ function os_events_os_app_info() {
       ),
     ),
     'browse_pages' => array(
-      'event' => TRUE,
+      'event' => array(
+        'url' => 'browse/events',
+        'title' => t('Events'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'events',
+      ),
     ),
   );
 
@@ -70,6 +75,32 @@ function os_events_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Check the capacity if the event reach it's capacity.
+ */
+function os_events_event_registration_reach_capacity($node) {
+  // Check how much registration exists for this event.
+  $query = new EntityFieldQuery();
+  $registrations_number = $query
+    ->entityCondition('entity_type', 'registration')
+    ->propertyCondition('entity_id', $node->nid)
+    ->propertyCondition('entity_type', 'node')
+    ->count()
+    ->execute();
+
+  // Get the settings of the registration for this event.
+  $settings = registration_entity_settings('node', $node->nid);
+
+  // When the capacity set to 0 the registration number is unlimited. When not,
+  // check if the registration number didn't pass the capacity number.
+  if ($settings['status'] && ($settings['capacity'] == 0 xor $registrations_number < $settings['capacity'])) {
+    return user_access('create event_signup_simple registration');
+  }
+  else {
+    return FALSE;
+  }
 }
 
 /**
@@ -206,8 +237,17 @@ function os_events_process_node(&$variables) {
     $subscribe = l(t('subscribe'), 'calendar/export.ics/' . $variables['node']->nid, $options);
     $subscribe = str_replace('http://', 'webcal://', $subscribe);
 
+    // Hiding the original registration link because we are using our own link
+    // with a ctools modal effect and because we placing the registration link
+    // in the export area.
+    hide($variables['content']['field_event_registration']);
+
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
-    if (!empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type'])) {
+
+    $registrations_type = !empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']);
+
+    // Show the signup link uf capacity isn't reached and no repeat rule is used.
+    if ($registrations_type && os_events_event_registration_reach_capacity($variables['node']) && !$variables['field_date'][0]['rrule'] ) {
       $register = os_events_generate_modal_register_link($variables['node']->nid);
     }
     else {
@@ -223,6 +263,12 @@ function os_events_process_node(&$variables) {
       '#markup' => theme('os_events_export_links', $params),
       '#weight' => 10,
     );
+  }
+  
+  //hide the repeat rule summary from sidebar_teaser
+  if ($variables['view_mode'] == 'sidebar_teaser' && $variables['content']['field_date']['#items']) {
+    $rule = theme_date_repeat_display(array('item' => array('rrule' => $variables['content']['field_date']['#items'][0]['rrule'])));
+    $variables['content']['field_date'][0]['#markup'] = str_replace($rule, '', $variables['content']['field_date'][0]['#markup'] );
   }
 }
 
@@ -258,7 +304,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
   );
   drupal_add_js($modal_style, 'setting');
 
-  return ctools_ajax_text_button(t('Sign up for this event'), 'os_events/js/registration/' . $nid, '', 'ctools-use-modal ctools-modal-events-modal-style register');
+  return ctools_ajax_text_button(t('Sign up for this event'), 'os_events/nojs/registration/' . $nid, '', 'ctools-use-modal ctools-modal-events-modal-style register use-ajax');
 }
 
 /**
@@ -272,6 +318,7 @@ function os_events_generate_modal_register_link($nid, $modal_settings = array())
 function os_events_events_register($js, $node) {
   ctools_include('modal');
   ctools_include('ajax');
+
   $registration_type = registration_get_entity_registration_type('node', $node);
   $registration = entity_get_controller('registration')->create(array(
     'entity_type' => 'node',
@@ -279,7 +326,24 @@ function os_events_events_register($js, $node) {
     'type' => $registration_type,
   ));
 
+  $registration->ajax = $js;
   $registration_form = drupal_get_form('registration_form', $registration);
+
+  if (!$js) {
+    return $registration_form;
+  }
+
+  if (!os_events_event_registration_reach_capacity($node)) {
+    drupal_set_message(t('The event has reached his maximum capacity of registrations. Sorry.'), 'error');
+    $commands = array();
+
+    // dismiss the window
+    $commands[] = ctools_modal_command_display(t('Error'), theme('status_messages'));
+
+    print ajax_render($commands);
+    drupal_exit();
+    return;
+  }
 
   $form_state = array(
     'title' => os_events_register_form_title('node', $node->nid),
@@ -289,6 +353,30 @@ function os_events_events_register($js, $node) {
 
   $output = ctools_modal_form_render($form_state, $registration_form);
   print ajax_render($output);
+  drupal_exit();
+}
+
+/**
+ * Submit handler; Dismissing the ctools modal window and display a message
+ * when the registration is completed.
+ */
+function os_events_modal_submit($form, &$form_state) {
+  if (!$form_state['registration']->ajax) {
+    // The AJAX is disabled. Don't invoke the ajax_render command.
+    return;
+  }
+
+  $commands = array();
+
+  // dismiss the window
+  $commands[] = ctools_modal_command_dismiss();
+  // Display messages.
+  $commands[] = ajax_command_before('#columns', theme('status_messages'));
+
+  // Clean any message.
+  drupal_get_messages();
+
+  print ajax_render($commands);
   drupal_exit();
 }
 
@@ -600,6 +688,13 @@ function os_events_preprocess_link(&$variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function os_events_form_registration_entity_settings_form_alter(&$form, $form_state) {
+  $wrapper = entity_metadata_wrapper('node', $form_state['entity']['entity_id']);
+  // Hide the tokens list for sending messages to registrants.
+  unset($form['token_tree']);
+
+  // Default value of the From field should be the author of the event's e-mail
+  $from_default_value = $wrapper->author->mail->value();
+
   $form['status']['#title'] = t('Enable registrations');
   $form['status']['#description'] = t('Users must register their attendance in advance.');
 
@@ -625,8 +720,19 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
     '#date_format' => $format,
   );
 
+  // Add 'from' field.
+  $form['from'] = array(
+    '#type' =>'textfield',
+    '#title' => t('From'),
+    '#required' => TRUE,
+    '#description' => t('Email address to be displayed as the message\'s sender.'),
+    '#default_value' => $from_default_value,
+    '#element_validate' => array('os_events_validate_mail'),
+  );
+
+  $form['#submit'][] = 'os_events_set_event_default_mail';
+
   // Set the default time for a reminder to be a day before the event.
-  $wrapper = entity_metadata_wrapper('node', $form_state['entity']['entity_id']);
   $event_date = reset($wrapper->field_date->value());
   $reminder = empty($reminder_date) ? strtotime('-1 day', strtotime($event_date['value'])) : strtotime($reminder_date);
   $form['reminder']['reminder_settings']['reminder_date'] = array(
@@ -662,6 +768,25 @@ You request to send a reminder for the event <a href='[node:url]'>[node:title]</
 }
 
 /**
+ * Element validate; Validate the email of the user.
+ */
+function os_events_validate_mail($element, $form_state, $form) {
+  if (!valid_email_address($element['#value'])) {
+    form_error($element, t('This is not a valid email address.'));
+  }
+}
+
+/**
+ * Submit handler; Set default email in event.
+ */
+function os_events_set_event_default_mail($form, &$form_state) {
+  // Set the default email in the event.
+  $wrapper = entity_metadata_wrapper('node', $form_state['entity']['entity_id']);
+  $wrapper->field_default_email->set($form_state['values']['from']);
+  $wrapper->save();
+}
+
+/**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function os_events_field_widget_registration_select_form_alter(&$element, &$form_state, $context) {
@@ -678,6 +803,17 @@ function os_events_field_widget_registration_select_form_alter(&$element, &$form
 
   $element['registration_type']['#title'] = t('Signup');
   $element['registration_type']['#description'] = t('If checked, users will be able to signup for this event.');
+
+  // Disable signup for repeated events.
+  $element['registration_type']['#states']['enabled'][':input[name="field_date[und][0][show_repeat_settings]"]'] = array('checked' => FALSE);
+
+  // Uncheck the signup checkbox for repeated events.
+  $element['registration_type']['#states']['checked'][':input[name="field_date[und][0][show_repeat_settings]"]'] = array('checked' => FALSE);
+
+  // Add JS to change button description,
+  $element['registration_type']['#attached']['js'] = array(
+    drupal_get_path('module', 'os_events') . '/js/os_events_signup_description.js'
+  );
 }
 
 /**
@@ -690,10 +826,9 @@ function os_events_menu_alter(&$items) {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
- * Hide the tokens list for sending messages to registrants
  */
 function os_events_form_registration_registrations_broadcast_form_alter(&$form, $form_state) {
+  // Hide the tokens list for sending messages to registrants.
   unset($form['token_tree']);
 }
 
@@ -730,25 +865,6 @@ function os_events_form_registration_form_alter(&$form, &$form_state) {
   unset($form['actions'], $form['field_full_name'], $form['field_department'], $form['anon_mail'], $form['user']);
 
   $form['#submit'][] = 'os_events_modal_submit';
-}
-
-/**
- * Submit handler; Dismissing the ctools modal window and display a message
- * when the registration is completed.
- */
-function os_events_modal_submit($form, $form_state) {
-  $commands = array();
-
-  // dismiss the window
-  $commands[] = ctools_modal_command_dismiss();
-  // Display messages.
-  $commands[] = ajax_command_before('#columns', theme('status_messages'));
-
-  // Clean any message.
-  drupal_get_messages();
-
-  print ajax_render($commands);
-  drupal_exit();
 }
 
 /**
@@ -879,6 +995,13 @@ function os_events_entity_insert($entity, $type) {
     '@user-name' => $wrapper->field_full_name->value(),
   );
 
+  // Pass the entity type and ID to give modules implementing
+  // hook_mail_alter() more context.
+  $params['context'] = array(
+    'entity_type' => 'node',
+    'entity_id' => $node->nid,
+  );
+
   drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, $params);
 }
 
@@ -890,6 +1013,23 @@ function os_events_mail($key, &$message, $params) {
   $message['body'] = array();
   $message['body'][] = t("Hello @user-name", $params);
   $message['body'][] = t("You have successfully registered for @title (@url).", $params);
+}
+
+/**
+ * Implements hook_mail_alter().
+ */
+function os_events_mail_alter(&$message) {
+  if (!in_array($message['id'], array('registration_broadcast', 'os_events_registration_confirmation'))) {
+    return;
+  }
+
+  // Get event default email address.
+  $wrapper = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
+
+  $default_email = $wrapper->field_default_email->value();
+
+  // Set default email as the message's sender.
+  $message['headers']['From'] = !empty($default_email) ? $default_email : $wrapper->author->mail->value();
 }
 
 /**

@@ -51,7 +51,12 @@ function os_publications_os_app_info() {
       'os_publications_issued' => array('page'),
     ),
     'browse_pages' => array(
-      'biblio' => TRUE,
+      'biblio' => array(
+        'url' => 'browse/publications',
+        'title' => t('Publications'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'publications',
+      ),
     ),
   );
 
@@ -66,9 +71,43 @@ function os_publications_os_add_new_links_alter(&$links) {
     return;
   }
 
+
   $links['add_publication'] = array(
     'title' => t('Biblio'),
     'href' => 'biblio/add',
+  );
+}
+
+
+/**
+ * Implememnts hook_menu_alter().
+ */
+function os_publications_menu_alter(&$items) {
+  $items['publications'] = array(
+    'title' => 'Publications',
+    'description' => 'Publications',
+    'page callback' => 'os_publications_overview',
+    'access callback' => 'spaces_access_feature',
+    'access arguments' => array('view', 'os_publications'),
+    'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
+    'menu_name' => 'primary-menu',
+  );
+
+  $items['publications/export'] = array(
+    'title' => '',
+    'page callback' => 'os_publications_export',
+    'access callback' => 'os_publications_export_access',
+    'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['publications/reset'] = array(
+    'title' => 'Reset OS Publications Defaults',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_publications_reset'),
+    'access arguments' => 'administer nodes',
+    'file' => drupal_get_path('module', 'os_publications'). '/os_publications.pages.inc',
+    'type' => MENU_CALLBACK,
   );
 }
 
@@ -101,11 +140,28 @@ function os_publications_theme() {
 }
 
 /**
+ * Adds process function to text_format to remove our filter format when necessary
+ */
+function os_publications_element_info_alter(&$info) {
+  $info['text_format']['#process'][] = 'os_publications_process_format';
+}
+
+/**
+ * Implementation of hook_form_user_profile_form_alter
+ * This hook will remove the "bibio" fieldset from the users profile form
+ */
+function os_publications_form_user_profile_form_alter(&$form, &$form_state) {
+  // check to make sure it's set
+  if (isset($form['biblio_fieldset'])) {
+    $form['biblio_fieldset']['#access'] = FALSE;
+  }
+}
+
+/**
  * Implements hook_migrate_api_alter().
  *
  * Replace BiblioMigrateEntries with OS own implementation that maintains the
  * group audience field.
- *
  */
 function os_publications_migrate_api_alter(&$info) {
   if (!db_table_exists('_biblio_1x')) {
@@ -254,6 +310,94 @@ function os_publications_biblio_fields_info() {
   );
 
   return $items;
+}
+
+/**
+ * Removes our title field format from fields we don't want it to be in
+ */
+function os_publications_process_format($element) {
+  if (isset($element['#field_name']) && $element['#field_name'] == 'title_field') {
+    $format = &$element['format']['format'];
+    unset($format['#options']['filtered_html']);
+    $element['#format'] = $format['#default_value'] = 'title_filter';
+  }
+  else {
+    unset($element['format']['format']['#options']['title_filter']);
+  }
+  return $element;
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function os_publications_preprocess_node(&$vars) {
+  if ($vars['type'] == 'biblio') {
+    $vars['display_submitted'] = false;
+    if ($vars['teaser']) {
+      $vars['title'] = false;
+    }
+  }
+}
+
+/**
+ * Removes the export links from the full view of the node
+ * Adds 'Abstract' link to toggle a sliding box with the full abstract
+ * Adds in the biblio_url to the external link.
+ */
+function os_publications_node_view_alter(&$build, $type) {
+  $spaces = spaces_get_space();
+  if ($type != 'node' || $build['#bundle'] != 'biblio') {
+    return;
+  }
+
+  switch ($build['#view_mode'])  {
+    case 'full':
+      // Remove the publication image as it's called in theme_os_publications_tabular instead.
+      if (isset($build['field_biblio_image'])) {
+      	$build['field_biblio_image']['#access'] = FALSE;
+      }
+
+      // Remove the Google Scholar link that appears at the bottom of full view publications.
+      if (isset($build['links']['biblio_google_scholar'])) {
+        unset($build['links']['biblio_google_scholar']);
+      }
+      break;
+
+    case 'slide_teaser':
+      $build['teaser']['#markup'] = theme('biblio_style', array('node' => $build['#node'], 'base' => variable_get('biblio_base', 'biblio'), 'style_name' => biblio_get_style()));
+      //FALLTHROUGH!  slide_teaser should run just like teaser, except we need to load up the markup from biblio_view().
+    case 'teaser':
+      // Alter the teaser to remove the external URL as the URL title and
+      // replace it with either the biblio_url_title or "website".
+      if (isset($build['teaser']['#markup'])) {
+        $node = node_load($build['#node']->nid);
+        $build['teaser']['#markup'] = _os_publications_biblio_entry_alter($build['teaser']['#markup'], $node);
+      }
+
+      // Add the abstract slider.
+	    _os_publications_attach_abstract($build, $build['#node'], 'teaser');
+	    // Add in notes.
+      if(isset($spaces) && is_object($spaces) && $spaces->controllers->variable->get('os_publications_note_in_teaser', 'space') == TRUE) {
+        _os_publications_attach_notes($build, $build['#node']);
+      }
+      $build['teaser']['#weight'] = 1;
+      $build['links']['#access'] = FALSE;
+      break;
+
+    default:
+      $links = &$build['links'];
+      foreach ($links as $k => $l) {
+        if (is_array($l) && isset($l['#links'])) {
+          foreach ($l['#links'] as $id => $arr) {
+            if (strpos($arr['href'], 'export') !== FALSE) {
+              unset($links[$k]['#links'][$id]);
+            }
+          }
+        }
+      }
+      break;
+
+  }
 }
 
 /**

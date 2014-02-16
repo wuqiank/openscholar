@@ -186,6 +186,10 @@ function os_basetheme_preprocess_node(&$vars) {
   if ($vars['type'] == 'person') {
     if (!$vars['teaser'] && $vars['view_mode'] != 'sidebar_teaser') {
       $vars['title_prefix']['#suffix'] = '<h1 class="node-title">' . $vars['title'] . '</h1>';
+      
+      if ($vars['view_mode'] == 'slide_teaser') {
+        $vars['title_prefix']['#suffix'] = '<div class="toggle">' . $vars['title_prefix']['#suffix'] . '</div>'; 
+      }
     }
   }
 }
@@ -234,4 +238,21 @@ function os_basetheme_preprocess_menu_tree(&$variables) {
     $variables['os_nice_menus'] = false;
   }
   $variables['tree'] = $variables['tree']['#children'];
+}
+
+/**
+ * Implements template_process_HOOK() for theme_pager_link().
+ */
+function os_basetheme_process_pager_link($variables) {
+  // Adds an HTML head link for rel='prev' or rel='next' for pager links.
+  module_load_include('inc', 'os', 'includes/pager');
+  _os_pager_add_html_head_link($variables);
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ * Set OS profiles preprocess to run before any other preprocess function.
+ */
+function os_basetheme_theme_registry_alter(&$theme_registry) {
+  array_unshift($theme_registry['image_formatter']['preprocess functions'], "os_profiles_preprocess_image_formatter");
 }

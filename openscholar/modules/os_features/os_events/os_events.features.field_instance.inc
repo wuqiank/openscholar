@@ -69,12 +69,14 @@ function os_events_field_default_field_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'module' => 'text',
+      'active' => 1,
+      'module' => 'os_wysiwyg',
       'settings' => array(
-        'rows' => 20,
+        'max_rows' => 10,
+        'rows' => 3,
         'summary_rows' => 5,
       ),
-      'type' => 'text_textarea_with_summary',
+      'type' => 'os_wysiwyg_expanding_textarea',
       'weight' => 3,
     ),
   );
@@ -259,8 +261,10 @@ function os_events_field_default_field_instances() {
       'default' => array(
         'label' => 'hidden',
         'module' => 'registration',
-        'settings' => array(),
-        'type' => 'registration_form',
+        'settings' => array(
+          'label' => 'Sign up for this event',
+        ),
+        'type' => 'registration_link',
         'weight' => 10,
       ),
       'links' => array(
@@ -501,6 +505,7 @@ function os_events_field_default_field_instances() {
   t('Attach Files');
   t('Body');
   t('Date');
+  t('Default Email');
   t('Department');
   t('Full name');
   t('Location');

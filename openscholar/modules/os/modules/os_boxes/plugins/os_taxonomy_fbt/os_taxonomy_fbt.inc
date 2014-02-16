@@ -244,7 +244,7 @@ class os_taxonomy_fbt extends os_boxes_default {
   public function cache_info() {}
 
   /**
-   * Get all the volcabularies id using the taxonomy terms.
+   * Get all the vocabularies id using the taxonomy terms.
    */
   private function get_all_vocabularies() {
 
