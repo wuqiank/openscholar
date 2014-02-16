@@ -107,32 +107,32 @@ class FeatureContext extends DrupalContext {
   /**
    * @Given /^I am on a "([^"]*)" page titled "([^"]*)"(?:, in the tab "([^"]*)"|)$/
    */
-  public function iAmOnAPageTitled($page_type, $title, $subpage = NULL) {
-    $table = 'node';
-    $id = 'nid';
-    $path = "$page_type/%";
-    $type = str_replace('-', '_', $page_type);
-
-    $path .= "/$subpage";
-
-    //TODO: The title and type should be properly escaped.
-    $query = "\"
-      SELECT $id AS identifier
-      FROM $table
-      WHERE title = '$title'
-      AND type = '$type'
-    \"";
-
-    $result = $this->getDriver()->drush('sql-query', array($query));
-    $id = trim(substr($result, strlen('identifier')));
-
-    if (!$id) {
-      throw new \Exception("No $page_type with title '$title' was found.");
-    }
-    $path = str_replace('%', $id, $path);
-
-    return new Given("I am at \"node/$id\"");
-  }
+//  public function iAmOnAPageTitled($page_type, $title, $subpage = NULL) {
+//    $table = 'node';
+//    $id = 'nid';
+//    $path = "$page_type/%";
+//    $type = str_replace('-', '_', $page_type);
+//
+//    $path .= "/$subpage";
+//
+//    //TODO: The title and type should be properly escaped.
+//    $query = "\"
+//      SELECT $id AS identifier
+//      FROM $table
+//      WHERE title = '$title'
+//      AND type = '$type'
+//    \"";
+//
+//    $result = $this->getDriver()->drush('sql-query', array($query));
+//    $id = trim(substr($result, strlen('identifier')));
+//
+//    if (!$id) {
+//      throw new \Exception("No $page_type with title '$title' was found.");
+//    }
+//    $path = str_replace('%', $id, $path);
+//
+//    return new Given("I am at \"node/$id\"");
+//  }
 
   /**
    * @Given /^I should see the "([^"]*)" table with the following <contents>:$/
@@ -198,7 +198,7 @@ class FeatureContext extends DrupalContext {
    * @When /^I clear the cache$/
    */
   public function iClearTheCache() {
-    $this->getDriver()->drush('cc all');
+    cache_clear_all();
   }
 
   /**
@@ -314,10 +314,8 @@ class FeatureContext extends DrupalContext {
    * @Then /^I should verify the node "([^"]*)" not exists$/
    */
   public function iShouldVerifyTheNodeNotExists($title) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$title'"));
-
-    $this->invoke_code('os_migrate_demo_delete_node', array("'$title'"));
-
+    $nid = os_migrate_demo_get_node_id($title);
+    os_migrate_demo_delete_node($title);
     $this->Visit('I visit "john/node/' . $nid . '"');
 
     return array(
@@ -339,8 +337,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^the widget "([^"]*)" is set in the "([^"]*)" page with the following <settings>:$/
    */
   public function theWidgetIsSetInThePageWithSettings($page, $widget, TableNode $table) {
-    $code = "os_migrate_demo_set_box_in_region({$this->nid}, '$page', '$widget');";
-    $this->box[] = $this->getDriver()->drush("php-eval \"{$code}\"");
+    $this->box[] = os_migrate_demo_set_box_in_region($this->nid, $page, $widget);
     $hash = $table->getRows();
 
     list($box, $delta, $context) = explode(",", $this->box[0]);
@@ -387,40 +384,36 @@ class FeatureContext extends DrupalContext {
    * @Given /^the widget "([^"]*)" is set in the "([^"]*)" page$/
    */
   public function theWidgetIsSetInThePage($page, $widget) {
-    $code = "os_migrate_demo_set_box_in_region({$this->nid}, '$page', '$widget');";
-    $this->box[] = $this->getDriver()->drush("php-eval \"{$code}\"");
+    os_migrate_demo_set_box_in_region($this->nid, $page, $widget);
   }
 
   /**
    * @When /^I assign the node "([^"]*)" to the term "([^"]*)"$/
    */
   public function iAssignTheNodeToTheTerm($node, $term) {
-    $this->invoke_code('os_migrate_demo_assign_node_to_term', array("'$node'","'$term'"));
+    os_migrate_demo_assign_node_to_term($node, $term);
   }
 
   /**
    * @Given /^I unassign the node "([^"]*)" from the term "([^"]*)"$/
    */
   public function iUnassignTheNodeFromTheTerm($node, $term) {
-    $this->invoke_code('os_migrate_demo_unassign_node_from_term', array("'$node'","'$term'"));
+    os_migrate_demo_unassign_node_from_term($node, $term);
   }
 
   /**
    * @Given /^I unassign the node "([^"]*)" with the type "([^"]*)" from the term "([^"]*)"$/
    */
   public function iUnassignTheNodeWithTheTypeFromTheTerm($node, $type, $term) {
-    $node = str_replace("'", "\'", $node);
-    $this->invoke_code('os_migrate_demo_unassign_node_from_term', array("'$node'","'$term'","'$type'"), TRUE);
+    os_migrate_demo_unassign_node_from_term($node, $term, $type);
   }
 
   /**
    * @Given /^I assign the node "([^"]*)" with the type "([^"]*)" to the term "([^"]*)"$/
    */
   public function iAssignTheNodeWithTheTypeToTheTerm($node, $type, $term) {
-    $code = "os_migrate_demo_assign_node_to_term('$node', '$term', '$type');";
-    $this->getDriver()->drush("php-eval \"{$code}\"");
+    os_migrate_demo_assign_node_to_term($node, $term, $type);
   }
-
 
   /**
    * Hide the boxes we added during the scenario.
@@ -436,15 +429,14 @@ class FeatureContext extends DrupalContext {
         foreach ($data as &$value) {
           $value = trim($value);
         }
-        $code = "os_migrate_demo_hide_box({$this->nid}, '{$data[0]}', '{$data[1]}', '{$data[2]}');";
-        $this->getDriver()->drush("php-eval \"{$code}\"");
+        os_migrate_demo_hide_box($this->nid, $data[0], $data[1], $data[2]);
       }
     }
 
     if (!empty($this->domains)) {
       // Remove domain we added to vsite.
       foreach ($this->domains as $domain) {
-        $this->invoke_code("os_migrate_demo_remove_vsite_domain", array("'{$domain}'"));
+        os_migrate_demo_remove_vsite_domain($domain);
       }
     }
   }
@@ -453,7 +445,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^cache is enabled for anonymous users$/
    */
   public function cacheIsEnabledForAnonymousUsers() {
-    $this->getDriver()->drush('vset cache 1');
+    variable_set('cache', 1);
   }
 
   /**
@@ -470,14 +462,14 @@ class FeatureContext extends DrupalContext {
    * @Given /^I create the term "([^"]*)" in vocabulary "([^"]*)"$/
    */
   public function iCreateTheTermInVocab($term_name, $vocab_name) {
-    $this->invoke_code('os_migrate_demo_create_term', array("'$term_name'","'$vocab_name'"));
+    os_migrate_demo_create_term($term_name, $vocab_name);
   }
 
   /**
    * @Given /^I delete the term "([^"]*)"$/
    */
   public function iDeleteTheTermInVocab($term_name) {
-    $this->invoke_code('os_migrate_demo_delete_term', array("'$term_name'"));
+    os_migrate_demo_delete_term($term_name);
   }
 
   /**
@@ -516,28 +508,6 @@ class FeatureContext extends DrupalContext {
    */
   public function iSleepFor($sec) {
     sleep($sec);
-  }
-
-  /**
-   * Invoking a php code with drush.
-   *
-   *  @param $function
-   *    The function name to invoke.
-   *  @param $arguments
-   *    Array contain the arguments for function.
-   *  @param $debug
-   *    Set as TRUE/FALSE to display the output the function print on the screen.
-   */
-  private function invoke_code($function, $arguments = NULL, $debug = FALSE) {
-    $code = !empty($arguments) ? "$function(" . implode(',', $arguments) . ");" : "$function();";
-
-    $output = $this->getDriver()->drush("php-eval \"{$code}\"");
-
-    if ($debug) {
-      print_r($output);
-    }
-
-    return $output;
   }
 
   /**
@@ -623,23 +593,21 @@ class FeatureContext extends DrupalContext {
    * @Given /^I execute vsite cron$/
    */
   public function iExecuteVsiteCron() {
-    $this->invoke_code('vsite_cron');
+    vsite_cron();
   }
 
   /**
    * @Given /^I set the term "([^"]*)" under the term "([^"]*)"$/
    */
   public function iSetTheTermUnderTheTerm($child, $parent) {
-    $function = 'os_migrate_demo_set_term_under_term';
-    $this->invoke_code($function, array("'$child'", "'$parent'"));
+    os_migrate_demo_set_term_under_term($child, $parent);
   }
 
   /**
    * @When /^I set the variable "([^"]*)" to "([^"]*)"$/
    */
   public function iSetTheVariableTo($variable, $value) {
-    $function = 'os_migrate_demo_variable_set';
-    $this->invoke_code($function, array($variable, "'$value'"));
+    os_migrate_demo_variable_set($variable, $value);
   }
 
   /**
@@ -659,8 +627,8 @@ class FeatureContext extends DrupalContext {
    */
   public function iSetCoursesToImport() {
     $metasteps = array();
-    $this->getDriver()->drush("php-eval \"drupal_flush_all_caches();\"");
-    $this->getDriver()->drush("cc all");
+    drupal_flush_all_caches();
+    cache_clear_all();
     $metasteps[] = new Step\When('I visit "admin"');
     $metasteps[] = new Step\When('I visit "admin/structure/feeds/course/settings/HarvardFetcher"');
     $metasteps[] = new Step\When('I check the box "Debug mode"');
@@ -677,16 +645,15 @@ class FeatureContext extends DrupalContext {
    * @When /^I enable harvard courses$/
    */
   public function iEnableHarvardCourses() {
-    $code = "os_migrate_demo_define_harvard_courses();";
-    $this->getDriver()->drush("php-eval \"{$code}\"");
+    //os_migrate_demo_define_harvard_courses();
+    module_enable(array('harvard_courses'));
   }
 
   /**
    * @Given /^I refresh courses$/
    */
   public function iRefreshCourses() {
-    $code = "os_migrate_demo_import_courses();";
-    $this->getDriver()->drush("php-eval \"{$code}\"");
+    os_migrate_demo_import_courses();
   }
 
   /**
@@ -706,8 +673,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^I invalidate cache$/
    */
   public function iInvalidateCache() {
-    $code = "cache_clear_all('*', 'cache_views_data', TRUE);";
-    $this->getDriver()->drush("php-eval \"{$code}\"");
+    cache_clear_all('*', 'cache_views_data', TRUE);
   }
 
   /**
@@ -746,16 +712,13 @@ class FeatureContext extends DrupalContext {
     }
     else {
       foreach ($rows as $row) {
-        $code = "os_migrate_demo_get_node_nid('$row[1]');";
-        $nid = $this->getDriver()->drush("php-eval \"{$code}\"");
-
+        $nid = os_migrate_demo_get_node_nid($row[1]);
 
         if ($row[2] == 'No') {
           $VisitUrl = 'node/' . $nid;
         }
         else {
-          $code = "print drupal_get_path_alias('node/{$nid}');";
-          $VisitUrl = $this->getDriver()->drush("php-eval \"{$code}\"");
+          $VisitUrl = print drupal_get_path_alias('node/'. $nid);
         }
 
         if (!empty($row[0])) {
@@ -823,8 +786,7 @@ class FeatureContext extends DrupalContext {
    * @Then /^I verify the "([^"]*)" term link redirect to the original page$/
    */
   public function iVerifyTheTermLinkRedirectToTheOriginalPage($term) {
-    $code = "os_migrate_demo_get_term_id('$term');";
-    $tid = $this->getDriver()->drush("php-eval \"{$code}\"");
+    $tid = os_migrate_demo_get_term_id($term);
 
     $page = $this->getSession()->getPage();
     $element = $page->find('xpath', "//a[contains(., '{$term}')]");
@@ -838,8 +800,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^I verify the "([^"]*)" term link doesn\'t redirect to the original page$/
    */
   public function iVerifyTheTermLinkDoesnTRedirectToTheOriginalPage($term) {
-    $code = "os_migrate_demo_get_term_id('$term');";
-    $tid = $this->getDriver()->drush("php-eval \"{$code}\"");
+    $tid = os_migrate_demo_get_term_id($term);
 
     $page = $this->getSession()->getPage();
     $element = $page->find('xpath', "//a[contains(., '{$term}')]");
@@ -933,7 +894,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^I give the user "([^"]*)" the role "([^"]*)" in the group "([^"]*)"$/
    */
   public function iGiveTheUserTheRoleInTheGroup($name, $role, $group) {
-    $uid = $this->invoke_code('os_migrate_demo_get_user_by_name', array("'{$name}'"));
+    $uid = os_migrate_demo_get_user_by_name($name);
 
     return array(
       new Step\When('I visit "' . $group . '/cp/users/add"'),
@@ -949,8 +910,8 @@ class FeatureContext extends DrupalContext {
    * @Given /^I give the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
    */
   public function iGiveTheRoleThePermissionInTheGroup($role, $group, $permission) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
-    $rid = $this->invoke_code('os_migrate_demo_get_role_by_name', array("'{$role}'", "'{$nid}'"));
+    $nid = os_migrate_demo_get_node_id($group);
+    $rid  = os_migrate_demo_get_role_by_name($role, $nid);
 
     return array(
       new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
@@ -963,8 +924,8 @@ class FeatureContext extends DrupalContext {
    * @Given /^I remove the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
    */
   public function iRemoveTheRoleThePermissionInTheGroup($role, $group, $permission) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
-    $rid = $this->invoke_code('os_migrate_demo_get_role_by_name', array("'{$role}'", "'{$nid}'"));
+    $nid = os_migrate_demo_get_node_id($group);
+    $rid = os_migrate_demo_get_role_by_name($role, $nid);
 
     return array(
       new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
@@ -977,7 +938,8 @@ class FeatureContext extends DrupalContext {
    * @Then /^I should verify that the user "([^"]*)" has a role of "([^"]*)" in the group "([^"]*)"$/
    */
   public function iShouldVerifyThatTheUserHasRole($name, $role, $group) {
-    $user_has_role = $this->invoke_code('os_migrate_demo_check_user_role_in_group', array("'{$name}'", "'{$role}'","'{$group}'"));
+    $user_has_role = os_migrate_demo_check_user_role_in_group($name, $role, $group);
+
     if ($user_has_role == 0) {
       throw new Exception("The user {$name} is not a member in the group {$group}");
     }
@@ -1009,24 +971,25 @@ class FeatureContext extends DrupalContext {
     }
     $radiobutton->selectOption($value, FALSE);
     $option = $radiobutton->getValue();
-    $this->invoke_code('os_migrate_demo_vsite_set_variable', array("'{$vsite}'", "'{$name}'", "'{$option}'"));
+    os_migrate_demo_vsite_set_variable($vsite, $name, $option);
+
+    node_laod(1);
   }
 
   /**
    * @When /^I visit the original page for the term "([^"]*)"$/
    */
   public function iVisitTheOriginalPageForTheTerm($term) {
-    $code = "os_migrate_demo_get_term_id('$term');";
-    $tid = $this->getDriver()->drush("php-eval \"{$code}\"");
+    $tid = os_migrate_demo_get_term_id($term);
     $this->getSession()->visit($this->locatePath('taxonomy/term/' . $tid));
   }
 
   /**
    * @Given /^I reindex the search$/
    */
-  public function iReindexTheSearch() {
-    $this->getDriver()->drush("search-index");
-  }
+//  public function iReindexTheSearch() {
+//    $this->getDriver()->drush("search-index");
+//  }
 
   /**
    * @Given /^I wait for page actions to complete$/
@@ -1107,7 +1070,7 @@ class FeatureContext extends DrupalContext {
    */
   private function eventRegistrationChangeStatus($title) {
     $title = str_replace("'", "\'", $title);
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+    $nid = os_migrate_demo_get_node_id($title);
     return array(
       new Step\When('I visit "node/' . $nid . '/edit"'),
       new Step\When('I check the box "Signup"'),
@@ -1121,9 +1084,8 @@ class FeatureContext extends DrupalContext {
   function noBoxesDisplayOutsideTheSiteContext() {
     // Runs a test of loading all existing boxes and checking if they have output.
     // @todo ideally we would actually create a box of each kind and test each.
-    $code = 'include_once("profiles/openscholar/modules/os/modules/os_boxes/tests/os_boxes.behat.inc");';
-    $code .= '_os_boxes_test_load_all_boxes_outside_vsite_context();';
-    $error = $this->getDriver()->drush("php-eval \"{$code}\"");
+    include_once("profiles/openscholar/modules/os/modules/os_boxes/tests/os_boxes.behat.inc");
+    $error = _os_boxes_test_load_all_boxes_outside_vsite_context();
     if ($error) {
       throw new Exception(sprintf("At least one box returned output outside of a vsite: %s", $key));
     }
@@ -1134,9 +1096,8 @@ class FeatureContext extends DrupalContext {
    */
   public function iEditTheNode($title) {
     $title = str_replace("'", "\'", $title);
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
-
-    $purl = $this->invoke_code('os_migrate_demo_get_node_vsite_purl', array("'$nid'"));
+    $nid = os_migrate_demo_get_node_id($title);
+    $purl = os_migrate_demo_get_node_vsite_purl($nid);
     $purl = !empty($purl) ? $purl . '/' : '';
 
     return array(
@@ -1149,7 +1110,7 @@ class FeatureContext extends DrupalContext {
    */
   public function iEditTheNodeOfTypeNamedUsingContextualLink($type, $title) {
     $title = str_replace("'", "\'", $title);
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+    $nid = os_migrate_demo_get_node_id($title);
     return array(
       new Step\When('I visit "node/' . $nid . '/edit?destination=' . $type . '"'),
     );
@@ -1160,7 +1121,7 @@ class FeatureContext extends DrupalContext {
    */
   public function iDeleteTheNodeOfTypeNamedUsingContextualLink($type, $title) {
     $title = str_replace("'", "\'", $title);
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+    $nid = os_migrate_demo_get_node_id($title);
     return array(
       new Step\When('I visit "node/' . $nid . '/delete?destination=' . $type . '"'),
       new Step\When('I press "Delete"'),
@@ -1183,21 +1144,14 @@ class FeatureContext extends DrupalContext {
    * @Given /^I am adding the subtheme "([^"]*)" in "([^"]*)"$/
    */
   public function iAmAddingTheSubthemeIn($subtheme, $vsite) {
-    $this->invoke_code('os_migrate_demo_add_subtheme', array("'{$subtheme}'", "'{$vsite}'"));
-  }
-
-  /**
-   * @When /^I defined the "([^"]*)" as the theme of "([^"]*)"$/
-   */
-  public function iDefinedTheAsTheThemeOf($subtheme, $vsite) {
-    $this->invoke_code('os_migrate_demo_define_subtheme', array("'{$subtheme}'", "'{$vsite}'"));
+    os_migrate_demo_add_subtheme($subtheme, $vsite);
   }
 
   /**
    * @Given /^I define the subtheme "([^"]*)" of the theme "([^"]*)" as the theme of "([^"]*)"$/
    */
   public function iDefineTheSubthemeOfTheThemeAsTheThemeOf($subtheme, $theme, $vsite) {
-    $this->invoke_code('os_migrate_demo_define_subtheme', array("'{$theme}'", "'{$subtheme}'", "'{$vsite}'"));
+    os_migrate_demo_define_subtheme($theme, $subtheme, $vsite);
   }
 
   /**
@@ -1240,16 +1194,16 @@ class FeatureContext extends DrupalContext {
    * @Given /^I import feed items for "([^"]*)"$/
    */
   public function iImportFeedItemsFor($vsite) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$vsite'"));
-    $this->invoke_code('os_migrate_demo_import_feed_items', array("'" . $this->locatePath('os-reader/' . $vsite) . "'", $nid));
+    $nid = os_migrate_demo_get_node_id($vsite);
+    os_migrate_demo_import_feed_items("'" . $this->locatePath('os-reader/' . $vsite) . "'", $nid);
   }
 
   /**
    * @Given /^I import "([^"]*)" feed items for "([^"]*)"$/
    */
   public function iImportVsiteFeedItemsForVsite($vsite_origin, $vsite_target) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$vsite_target'"));
-    $this->invoke_code('os_migrate_demo_import_feed_items', array("'" . $this->locatePath('os-reader/' . $vsite_origin) . "'", $nid));
+    $nid = os_migrate_demo_get_node_id($vsite_target);
+    os_migrate_demo_import_feed_items("'" . $this->locatePath('os-reader/' . $vsite_origin) . "'", $nid);
   }
 
   /**
@@ -1305,7 +1259,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^I display watchdog$/
    */
   public function iDisplayWatchdog() {
-    $this->invoke_code('os_migrate_demo_display_watchdogs', NULL, TRUE);
+    os_migrate_demo_display_watchdogs(NULL, TRUE);
   }
 
   /**
@@ -1314,7 +1268,7 @@ class FeatureContext extends DrupalContext {
   public function iLoginAsIn($username, $site) {
     $title = str_replace("'", "\'", $site);
 
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+    $nid = os_migrate_demo_get_node_id($title);
     try {
       $password = $this->users[$username];
     } catch (Exception $e) {
@@ -1346,15 +1300,15 @@ class FeatureContext extends DrupalContext {
    * @Given /^I import the blog for "([^"]*)"$/
    */
   public function iImportTheBlogFor($vsite) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$vsite'"));
-    $this->invoke_code('os_migrate_demo_import_feed_items', array("'" . $this->locatePath('os-reader/' . $vsite . '_blog') . "'", $nid, "blog"), TRUE);
+    $nid = os_migrate_demo_get_node_id($vsite);
+    os_migrate_demo_import_feed_items("'" . $this->locatePath('os-reader/' . $vsite . '_blog') . "'", $nid, 'blog');
   }
 
   /**
    * @Given /^I bind the content type "([^"]*)" with "([^"]*)"$/
    */
   public function iBindTheContentTypeWithIn($bundle, $vocabulary) {
-    $this->invoke_code("os_migrate_demo_bind_content_to_vocab", array("'{$bundle}'", "'{$vocabulary}'"), TRUE);
+    os_migrate_demo_bind_content_to_vocab($bundle, $vocabulary);
   }
 
   /**
@@ -1375,9 +1329,8 @@ class FeatureContext extends DrupalContext {
    * @When /^I edit the term "([^"]*)"$/
    */
   public function iEditTheTerm($name) {
-    $tid = $this->invoke_code('os_migrate_demo_get_term_id', array("'$name'"));
-
-    $purl = $this->invoke_code('os_migrate_demo_get_term_vsite_purl', array("'$tid'"));
+    $tid = os_migrate_demo_get_term_id($name);
+    $purl = os_migrate_demo_get_term_vsite_purl($tid);
     $purl = !empty($purl) ? $purl . '/' : '';
 
     return array(
@@ -1389,8 +1342,8 @@ class FeatureContext extends DrupalContext {
    * @Then /^I verify the alias of node "([^"]*)" is "([^"]*)"$/
    */
   public function iVerifyTheAliasOfNodeIs($title, $alias) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$title'"));
-    $actual_alias = $this->invoke_code('os_migrate_demo_get_node_alias', array("'$nid'"));
+    $nid = os_migrate_demo_get_node_id($title);
+    $actual_alias = os_migrate_demo_get_node_alias($nid);
 
     if ($actual_alias != $alias) {
       throw new Exception("The alias of the node '$title' should be '$alias', but is '$actual_alias' instead.");
@@ -1401,8 +1354,8 @@ class FeatureContext extends DrupalContext {
    * @Then /^I verify the alias of term "([^"]*)" is "([^"]*)"$/
    */
   public function iVerifyTheAliasOfTermIs($name, $alias) {
-    $tid = $this->invoke_code('os_migrate_demo_get_term_id', array("'$name'"));
-    $actual_alias = $this->invoke_code('os_migrate_demo_get_term_alias', array("'$tid'"));
+    $tid = os_migrate_demo_get_term_id($name);
+    $actual_alias = os_migrate_demo_get_term_alias($tid);
 
     if ($actual_alias != $alias) {
       throw new Exception("The alias of the term '$name' should be '$alias', but is '$actual_alias' instead.");
@@ -1449,8 +1402,8 @@ class FeatureContext extends DrupalContext {
    * @Given /^I make the node "([^"]*)" sticky$/
    */
   public function iMakeTheNodeSticky($title) {
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$title'"));
-    $this->invoke_code('os_migrate_demo_make_node_sticky', array("'$nid'"));
+    $nid = os_migrate_demo_get_node_id($title);
+    os_migrate_demo_make_node_sticky($nid);
   }
 
   /**
@@ -1494,9 +1447,9 @@ class FeatureContext extends DrupalContext {
    */
   public function iUpdateTheNodeFieldTo($title, $field, $value) {
     $title = str_replace("'", "\'", $title);
-    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+    $nid = os_migrate_demo_get_node_id($title);
 
-    $purl = $this->invoke_code('os_migrate_demo_get_node_vsite_purl', array("'$nid'"));
+    $purl = os_migrate_demo_get_node_vsite_purl($nid);
     $purl = !empty($purl) ? $purl . '/' : '';
 
     return array(
@@ -1521,13 +1474,13 @@ class FeatureContext extends DrupalContext {
    * @Given /^I make registration to event without javascript available$/
    */
   public function iMakeRegistrationToEventWithoutJavascriptAvailable() {
-    $this->invoke_code('os_migrate_demo_event_registration_form');
+    os_migrate_demo_event_registration_form();
   }
 
   /**
    * @Given /^I make registration to event without javascript unavailable$/
    */
   public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
-    $this->invoke_code('os_migrate_demo_event_registration_link');
+    os_migrate_demo_event_registration_link();
   }
 }

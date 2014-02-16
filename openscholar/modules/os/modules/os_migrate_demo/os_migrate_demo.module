@@ -416,7 +416,7 @@ function os_migrate_demo_get_term_id($term) {
     ->entityCondition('entity_type', 'taxonomy_term')
     ->propertyCondition('name', $term)
     ->execute();
-  print(reset($result['taxonomy_term'])->tid);
+  return reset($result['taxonomy_term'])->tid;
 }
 
 function os_migrate_demo_get_term_vsite_purl($tid) {
@@ -429,20 +429,19 @@ function os_migrate_demo_get_term_vsite_purl($tid) {
 
   if (empty($relation)) {
     // Vocabulary is not related to a group.
-    print('');
-    return;
+    return '';
   }
 
   // Get vsite.
   $vsite = node_load($relation->gid);
 
-  print($vsite->purl);
+  return $vsite->purl;
 }
 
 /**
  * Get the node ID.
  */
-function os_migrate_demo_get_node_id($title, $return = FALSE) {
+function os_migrate_demo_get_node_id($title) {
   $query = new entityFieldQuery();
   $result = $query
     ->entityCondition('entity_type', 'node')
@@ -451,12 +450,7 @@ function os_migrate_demo_get_node_id($title, $return = FALSE) {
 
   $nid = reset($result['node'])->nid;
 
-  if ($return) {
-    return $nid;
-  }
-  else {
-    print($nid);
-  }
+  return $nid;
 }
 
 /**
@@ -472,16 +466,16 @@ function os_migrate_demo_check_user_role_in_group($name, $role, $group) {
   $user = user_load_by_name($name);
 
   if (!og_is_member('node', $gid, 'user', $user)) {
-     print(0);
+     return 0;
   }
 
   $user_roles = og_get_user_roles('node', $gid, $user->uid);
 
   if (!in_array($role, $user_roles)) {
-    print(1);
+    return 1;
   }
 
-  print(2);
+  return 2;
 }
 
 /**
@@ -489,7 +483,7 @@ function os_migrate_demo_check_user_role_in_group($name, $role, $group) {
  */
 function os_migrate_demo_get_user_by_name($name) {
   $user = user_load_by_name($name);
-  print($user->uid);
+  return $user->uid;
 }
 
 /**
@@ -501,7 +495,7 @@ function os_migrate_demo_get_user_by_name($name) {
 function os_migrate_demo_get_role_by_name($name, $gid) {
   $roles = og_roles('node', NULL, $gid);
   $id = array_search($name, $roles);
-  print($id);
+  return $id;
 }
 
 /**
@@ -544,7 +538,7 @@ function os_migrate_demo_get_node_alias($nid) {
     ->execute()
     ->fetchAssoc();
 
-  print($result['alias']);
+  return $result['alias'];
 }
 
 /**
@@ -555,12 +549,11 @@ function os_migrate_demo_get_node_vsite_purl($nid) {
 
   if (empty($wrapper->{OG_AUDIENCE_FIELD})) {
     // Not group content.
-    print('');
-    return;
+    return '';
   }
   $vsite = $wrapper->{OG_AUDIENCE_FIELD}->get(0)->value();
 
-  print($vsite->purl);
+  return $vsite->purl;
 }
 
 /**
@@ -573,7 +566,7 @@ function os_migrate_demo_get_term_alias($tid) {
     ->execute()
     ->fetchAssoc();
 
-  print($result['alias']);
+  return $result['alias'];
 }
 
 /**
@@ -707,7 +700,7 @@ function os_migrate_demo_display_watchdogs() {
     $string[] = format_string($result->message, unserialize($result->variables));
   }
 
-  print implode("\n", $string);
+  return implode("\n", $string);
 }
 
 /**
@@ -789,8 +782,6 @@ function os_migrate_demo_bind_content_to_vocab($bundle, $vocabulary) {
  */
 function os_migrate_demo_remove_vsite_domain($vsite) {
   $id = os_migrate_demo_get_node_id($vsite, TRUE);
-
-  print_r($vsite);
 
   db_delete('spaces_overrides')
     ->condition('id', $id)
