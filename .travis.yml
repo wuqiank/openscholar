@@ -9,6 +9,9 @@ mysql:
   encoding: utf8
 
 before_script:
+  # Install Drush
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - composer global require drush/drush:6.*
   # Install apache
   - sudo apt-get update
   - sudo apt-get install apache2
@@ -23,8 +26,6 @@ before_script:
   - sudo a2ensite lincoln
   - sudo service apache2 reload
   - "mysql -e 'create database drupal;'"
-  - pear channel-discover pear.drush.org
-  - pear install drush/drush
   - phpenv rehash
   - bash scripts/setup
   - bash scripts/build
