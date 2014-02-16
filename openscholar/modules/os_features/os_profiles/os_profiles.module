@@ -664,9 +664,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
 
   $node = node_load($nid);
 
-  if ($file) {
-    os_profiles_insert_image($node, $file, $photo_dimension);
-  }
+  os_profiles_insert_image($node, $file, $photo_dimension);
 
   $params = array(
     '@title' => $node->title,
@@ -688,15 +686,22 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  *  The image field crop settings.
  */
 function os_profiles_insert_image($node, $file, $dimensions) {
-  $node->field_person_photo[$node->language][0] = array(
-    'fid' => $file->fid,
-    'display' => 1,
-    'description' => '',
-    'cropbox_x' => $dimensions['cropbox_x'],
-    'cropbox_y' => $dimensions['cropbox_y'],
-    'cropbox_height' => $dimensions['cropbox_height'],
-    'cropbox_width' => $dimensions['cropbox_width'],
-  );
+  if (!$file) {
+    $value = NULL;
+  }
+  else {
+    $value = array(
+      'fid' => $file->fid,
+      'display' => 1,
+      'description' => '',
+      'cropbox_x' => $dimensions['cropbox_x'],
+      'cropbox_y' => $dimensions['cropbox_y'],
+      'cropbox_height' => $dimensions['cropbox_height'],
+      'cropbox_width' => $dimensions['cropbox_width'],
+    );
+  }
+
+  $node->field_person_photo[$node->language][0] = $value;
 
   node_save($node);
 }
@@ -719,12 +724,21 @@ function os_profiles_get_origin_node_values($address, $fields) {
   $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1, 'override_cache' => time()))));
   $data = drupal_json_decode($request->data);
 
-  foreach ($fields as $key) {
-    if (empty($data[$key])) {
-      continue;
+  foreach ($fields as $field) {
+    $info = field_info_field($field);
+    if (empty($data[$field])) {
+      if ($info['type'] == 'imagefield_crop') {
+        $value = NULL;
+      }
+      else {
+        $value = $info['cardinality'] == 1 ? NULL : array(NULL);
+      }
+    }
+    else {
+      $value = $data[$field];
     }
 
-    $values[$key] = $data[$key];
+    $values[$field] = $value;
   }
 
   return (object) array(

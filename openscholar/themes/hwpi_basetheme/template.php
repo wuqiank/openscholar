@@ -130,7 +130,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
       $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => $image);
 
       // If 'body' is empty make sure image is displayed.
-      if (empty($vars['body'])) {
+      if (empty($vars['body'][$vars['language']])) {
         $vars['content']['pic_bio']['#access'] = TRUE;
       }
     }
