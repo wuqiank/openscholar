@@ -43,6 +43,10 @@ function vsite_vocab_update_7001() {
  */
 function _vsite_vocab_files_add_vocab_field() {
   $bundles = og_get_all_group_content_bundle();
+  if (empty($bundles['file'])) {
+    return;
+  }
+
   $og_field = og_fields_info(OG_VOCAB_FIELD);
   $og_field['instance']['display']['default']['label'] = 'hidden';
   $og_field['instance']['display']['default']['settings']['concatenate'] = TRUE;

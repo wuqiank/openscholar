@@ -30,7 +30,7 @@ class sv_list_node_event extends sv_list_plugin  {
    */
   public function sort_event($options, $efq) {
     $efq->fieldOrderBy('field_date', 'value');
-    $efq->fieldCondition('field_date', 'value', date('Y-m-d'), '>=');
+    $efq->fieldCondition('field_date', 'value2', date('Y-m-d'), '>=');
   }
   
   /**
@@ -47,6 +47,7 @@ class sv_list_node_event extends sv_list_plugin  {
     //split repeated event into many nodes - one for each instance of event
     //key them by timestamp for easy sorting.
     $exploded = array();
+    $now = strtotime(date('Y-m-d'));
     foreach ($entities as $entity) {
       foreach ($entity->field_date[LANGUAGE_NONE] as $delta => $date) {
         $time_index = strtotime($date['value']);
@@ -54,10 +55,12 @@ class sv_list_node_event extends sv_list_plugin  {
           $time_index += 1; //don't clobber events that start at same time.
         }
         
-        $new = clone $entity;
-        $new->field_date[LANGUAGE_NONE][0] = $date;
-        $new->date_id = implode('.', array('date', $new->nid, 'field_date', $delta));   
-        $exploded[$time_index] = $new;
+        if (max(strtotime($date['value'] . ' ' . $date['timezone']), strtotime($date['value2'] . ' ' . $date['timezone'])) >= $now) {
+          $new = clone $entity;
+          $new->field_date[LANGUAGE_NONE][0] = $date;
+          $new->date_id = implode('.', array('date', $new->nid, 'field_date', $delta));   
+          $exploded[$time_index] = $new;
+        }
       }
     }
     

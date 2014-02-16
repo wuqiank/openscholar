@@ -9,6 +9,9 @@ mysql:
   encoding: utf8
 
 before_script:
+  # Install Drush
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - composer global require drush/drush:6.*
   # Install apache
   - sudo apt-get update
   - sudo apt-get install apache2
@@ -23,8 +26,6 @@ before_script:
   - sudo a2ensite lincoln
   - sudo service apache2 reload
   - "mysql -e 'create database drupal;'"
-  - pear channel-discover pear.drush.org
-  - pear install drush/drush
   - phpenv rehash
   - bash scripts/setup
   - bash scripts/build
@@ -58,9 +59,6 @@ before_script:
   - drush en os_search_solr -y
   - drush solr-mark-all
   - drush solr-index
-
-  # Make sure emails are not sent.
-  - php -r "print json_encode(array('default-system' => 'DevelMailLog', 'mimemail' => 'MimeMailSystem'));" | drush vset --format=json mail_system -
 
   # Copy Behat configuration file.
   - cd profiles/openscholar/behat

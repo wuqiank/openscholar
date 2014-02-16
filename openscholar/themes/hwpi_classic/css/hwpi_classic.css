@@ -26,6 +26,7 @@ body {
 margin-top: 12px;
 }
 
+.sidebar #block-os-search-db-site-search,
 #content-panels .block-boxes-os_slideshow_box .block-inner {
     margin-top: 0;
 }
@@ -63,6 +64,13 @@ margin-top: 12px;
 .section-nav .expanded.menu-depth-2 > a:hover {
 	background-color: #293352 !important;
 }
+
+
+.block-boxes-os_taxonomy_fbt.navigation a {
+	font-size: 16px;
+	font-family:georgia;
+
+	}
 
 
 
@@ -159,13 +167,17 @@ margin-left:6em;
 
 .sidebar .block,
 .front #content-column .block,
+#content-column .block.block-boxes-os_boxes_columns .block,
 .node-person .block-inner,
 .comment-wrapper {
 	border-top: 3px solid #4384C4;
 	margin-top:12px;
 }
 
-.block-boxes block-boxes-os_sv_list_box,
+
+.sidebar #block-os-search-db-site-search,
+#content-column .block.block-boxes-os_boxes_columns,
+.block-boxes-os_sv_list_box .block-inner,
 .block-boxes-os_boxes_manual_list, 
 .sidebar .block.section-nav,
 #content-column .block.section-nav  {

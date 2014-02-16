@@ -31,6 +31,14 @@ function os_blog_os_app_info() {
         'rss' => 'blog_import',
       ),
     ),
+    'browse_pages' => array(
+      'blog' => array(
+        'url' => 'browse/blogs',
+        'title' => t('Blog'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'blog',
+      ),
+    ),
   );
 
   return $apps;

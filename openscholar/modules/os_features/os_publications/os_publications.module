@@ -47,6 +47,14 @@ function os_publications_os_app_info() {
         'csv' => 'os_publication',
       ),
     ),
+    'browse_pages' => array(
+      'biblio' => array(
+        'url' => 'browse/publications',
+        'title' => t('Publications'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'publications',
+      ),
+    ),
   );
 
   return $apps;
@@ -99,7 +107,6 @@ function os_publications_theme() {
  *
  * Replace BiblioMigrateEntries with OS own implementation that maintains the
  * group audience field.
- *
  */
 function os_publications_migrate_api_alter(&$info) {
   if (!db_table_exists('_biblio_1x')) {

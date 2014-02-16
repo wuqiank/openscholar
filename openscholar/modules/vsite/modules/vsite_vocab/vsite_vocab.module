@@ -47,6 +47,13 @@ function vsite_vocab_admin_paths() {
 }
 
 /**
+ * Implements hook_entity_info_alter().
+ */
+function vsite_vocab_entity_info_alter(&$info) {
+  $info['og_vocab']['redirect'] = FALSE;
+}
+
+/**
  * Implements hook_menu_alter().
  *
  * Adding custom paths to the vocabulary actions.
@@ -151,6 +158,10 @@ function vsite_vocab_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {
     'file' => array_diff_key(os_files_get_bundles(), array('html' => 0, 'undefined' => 0)),
     'biblio' => $biblio_types,
   );
+
+  if (isset($all_bundles['file']['html'])) {
+    $all_bundles['file']['html'] = t('Embedded Media');
+  }
 
   // Loop through all of the content types and build their checkboxe's.
   $form['bundles'] = array();
