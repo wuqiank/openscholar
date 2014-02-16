@@ -354,12 +354,12 @@ function vsite_vocab_form_taxonomy_form_vocabulary_submit(&$form, &$form_state) 
       if (empty($og_vocab)) {
         $og_vocab = og_vocab_create_og_vocab($vid, $entity_type, $bundle);
       }
-  
+
       if ((!isset($values['bundles'][$bundle]) || !($values['bundles'][$bundle])) && empty($og_vocab->is_new)) {
         $og_vocab->delete();
         continue;
       }
-  
+
       if (isset($values['bundles'][$bundle]) && $values['bundles'][$bundle]) {
         $og_vocab->settings['required'] = $values['required'];
         $og_vocab->settings['cardinality'] = $values['cardinality'];

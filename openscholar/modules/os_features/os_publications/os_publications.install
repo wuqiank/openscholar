@@ -44,6 +44,7 @@ function os_publications_install() {
   field_update_instance($instances['contributor_field_collection']);
 }
 
+
 // Implements hook_update_N().
 function os_publications_update_7001() {
   // Insert the biblio_url_title into the biblio_fields table.
@@ -1103,5 +1104,51 @@ function os_publications_update_7026(&$sandbox) {
   else {
     // Save the last node, increase the node and check if the import finished.
     $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
+  }
+}
+
+// @todo: Add "American chemical society.csl" and "American chemical society with titles.csl"
+
+/**
+ * Set the pathauto pattern for the biblio module.
+ */
+function os_publications_update_7027() {
+  variable_set('pathauto_biblio_pattern', 'publications/[biblio:title]');
+  variable_set('biblio_default_style', 'os_publications');
+}
+
+/**
+ * Enable migrate and migrate extras modules.
+ */
+function os_publications_update_7028() {
+  module_enable(array('migrate, migrate_extras'));
+}
+
+/**
+ * Attaching fields to the biblio bundles.
+ */
+function os_publications_update_7029() {
+  // Attaching OG audience fields to the Biblio bundles.
+  $types = biblio_get_types_info();
+  foreach (array_keys($types) as $type) {
+    $og_field = og_fields_info(OG_AUDIENCE_FIELD);
+    $og_field['instance']['display'] = array(
+      'default' => array(
+        'type' => 'hidden'
+      ),
+      'teaser' => array(
+        'type' => 'hidden'
+      )
+    );
+    // Enable Entity reference prepopulate.
+    $og_field['instance']['settings']['behaviors']['prepopulate'] = array(
+      'status' => TRUE,
+      'action' => 'hide',
+      'fallback' => 'hide',
+      'skip_perm' => FALSE,
+      'og_context' => TRUE,
+      'action_on_edit' => TRUE
+    );
+    og_create_field(OG_AUDIENCE_FIELD, 'biblio', $type, $og_field);
   }
 }

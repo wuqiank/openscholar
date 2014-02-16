@@ -39,7 +39,7 @@ function vsite_vocab_update_7001() {
 }
 
 /**
- * Add og_vocab instance to file bundles.
+ * Add OG vocab instance to file bundles.
  */
 function _vsite_vocab_files_add_vocab_field() {
   $bundles = og_get_all_group_content_bundle();

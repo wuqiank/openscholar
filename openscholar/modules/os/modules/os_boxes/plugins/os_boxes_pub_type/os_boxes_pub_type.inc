@@ -27,17 +27,17 @@ class os_boxes_pub_type extends os_boxes_default {
    * Implementation of boxes_content::options_form().
    */
   public function options_form(&$form_state){
-    $rows = db_select('biblio_types', 'bt')
-            ->fields('bt', array('tid', 'name'))
-            ->condition('tid', 0, '>')
-            ->condition('visible', 1)
+    $rows = db_select('biblio_type', 'bt')
+            ->fields('bt', array('name'))
             ->execute();
     $options = array('all' => 'Select All');
     $value = $this->options['whitelist'];
-    $all = in_array('all', $value) && $value['all'] === 'all';
-    foreach ($rows as $r) {
-      $options[$r->tid] = $r->name;
-      if ($all) $value[$r->tid] = $r->tid;
+    $all = in_array('all', $value) && isset($value['all']) && $value['all'] === 'all';
+    foreach ($rows as $key => $r) {
+      $options[$r->name] = $r->name;
+      if ($all) {
+        $value[$r->name] = $r->name;
+      }
     }
 
     $form['whitelist'] = array(
@@ -62,6 +62,7 @@ class os_boxes_pub_type extends os_boxes_default {
     //drupal_add_js(drupal_get_path('module', 'os_boxes').'/theme/js/selectAll.js');
 
     $form += parent::options_form($form_state);
+
     return $form;
   }
 
@@ -87,30 +88,23 @@ class os_boxes_pub_type extends os_boxes_default {
               'operator' => FALSE,
               'label' => '',
             ),
-            'id' => 'tid',
-            'table' => 'biblio_types',
-            'field' => 'tid',
+            'id' => 'type',
+            'table' => 'biblio_type',
+            'field' => 'type',
             'override' => array(
               'button' => 'Use default',
             ),
             'relationship' => 'none',
           );
-          $view->set_item('block', 'filter', 'tid', $filter);
+          $view->set_item('block', 'filter', 'type', $filter);
         }
-
-  	//Set the display num in the view (the count)
-  	$arguments = $view->display_handler->get_option('arguments');
-  	$arguments['name']['summary_options']['count'] = ($this->options['display_num'])?1:0;
-  	$view->display_handler->override_option('arguments', $arguments);
 
         //Tie this view to this box (this tells the view to call this box's view alter)
         $view->dom_id = "boxes-".$this->delta;
 
-        $output = $view->execute_display('block');
-        $view->destroy();
-        $block['content'] = $output['content'];
+        $view->set_display($display_id);
+        $block['content'] = $view->preview();
       }
-      $view->destroy();
     }
 
     return $block;

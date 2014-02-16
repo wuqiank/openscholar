@@ -219,6 +219,15 @@ function os_publications_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: 'use text format title_filter'.
+  $permissions['use text format title_filter'] = array(
+    'name' => 'use text format title_filter',
+    'roles' => array(
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'filter',
+  );
+
   // Exported permission: 'view full text'.
   $permissions['view full text'] = array(
     'name' => 'view full text',

@@ -104,13 +104,13 @@ class os_sv_list extends os_boxes_default {
         ),
       );
     }
-        
+
     $form['content']['grid_columns'] = array(
       '#type' => 'select',
       '#title' => 'Columns',
       '#default_value' => $this->options['grid_columns'],
       '#options' => drupal_map_assoc(range(2,5)),
-      // #states is inadequate.  see javascript for show/hide rules 
+      // #states is inadequate.  see javascript for show/hide rules
     );
 
     $form['content']['display'] = array(
@@ -280,18 +280,18 @@ class os_sv_list extends os_boxes_default {
     if ($this->options['layout'] != 'List' && method_exists($this, $layout_func)) {
       $this->$layout_func($render);
     }
-    
+
     //now render to html.
-    $content = drupal_render($render);   
-    $delta = $this->delta;   
+    $content = drupal_render($render);
+    $delta = $this->delta;
     $class = strtolower(implode(' ', array(
-      $this->plugin_key, 
-      'sv-list-'.$this->options['content_type'], 
-      'sv-list-view-'.$this->options['display'], 
+      $this->plugin_key,
+      'sv-list-'.$this->options['content_type'],
+      'sv-list-view-'.$this->options['display'],
       'sv-list-layout-' . $this->options['layout'],
       'sv-grid-' . $this->options['grid_columns'],
     )));
-    
+
     $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
     return $block;
   }
@@ -407,8 +407,7 @@ class os_sv_list extends os_boxes_default {
     }
     return $modes;
   }
-  
-    
+
   protected function _display_options() {
     $defaults = array(  //Display modes will be shown in this order.  If no order is provided, it'll be determined by how the hooks load them.
       'node' => array('title', 'teaser', 'full'),
@@ -508,15 +507,15 @@ class os_sv_list extends os_boxes_default {
       '#attributes' => array(),
     );
   }
-  
+
   /**
    * @function layout_grid
-   * 
-   * Switches to grid layout.  
+   *
+   * Switches to grid layout.
    */
   function layout_grid(&$render) {
     switch ($this->options['content_type']) {
-    
+
       case 'image':
         foreach (element_children($render) as $id) {
           if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
@@ -528,31 +527,31 @@ class os_sv_list extends os_boxes_default {
               '#width' => 320,
               '#height' => 200,
             );
-    
+
             $link = array(
               '#theme' => 'link',
               '#text' => render($img),
               '#path' => 'file/' . $render[$id]['#file']->fid,
               '#options' => array('attributes' => array(), 'html' => TRUE),
             );
-            
+
 
            array_unshift($render[$id]['file'], $link);
            if ($this->options['display'] == 'os_files_thumbnail') {
              unset($render[$id]['file']['file-info']);
            }
-            
+
           } else {
             $render[$id]['file']['file']['#style_name'] = 'os_landscape_320_200';
           }
         }
         break;
-    
+
       case 'video':
         foreach (element_children($render) as $id) {
           if (!isset($render[$id]['file']['video_thumb'])) {
             array_unshift($render[$id]['file'], _os_files_video_thumb($render[$id]['#file']));
-    
+
             if ($this->options['display'] == 'os_files_thumbnail') {
               unset($render[$id]['file']['file-info']);
             }
@@ -560,5 +559,5 @@ class os_sv_list extends os_boxes_default {
         }
         break;
     }
-  }  
+  }
 }

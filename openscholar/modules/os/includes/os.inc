@@ -194,6 +194,10 @@ function os_get_app_path($app_name = NULL) {
     }
   }
 
+  // @todo: Move to app info.
+  // Add the publications app path.
+  $apps += array('publications' => 'publications');
+
   return ($apps) ? $apps : FALSE;
 }
 

@@ -40,6 +40,7 @@ features[field_instance][] = node-biblio-title_field
 features[filter][] = title_filter
 features[image][] = book_cover
 features[image][] = book_cover_thumb
+features[box][] = os_publications_recent
 features[metatag][] = node:biblio
 features[user_permission][] = access biblio content
 features[user_permission][] = administer biblio

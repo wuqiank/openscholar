@@ -146,9 +146,7 @@ function os_sv_list_query_random_alter($query) {
  * Implements hook_query_TAG_alter
  */
 function os_sv_list_query_sv_list_biblio_alter(&$query) {
-  $query->join('biblio', 'b', 'b.nid = ogm.etid');
-  $query->orderBy('b.biblio_year', 'DESC'); 
-  $query->orderBy('node.created', 'DESC');
+  $query->join('biblio', 'b', 'b.bid = ogm.etid');
 }
 
 /**
