@@ -57,7 +57,6 @@ function os_publications_install() {
       }
     }
   }
-}
 
   // Hide the contributor field.
   // todo: Hide all the contributor in the biblio fields.
@@ -65,6 +64,7 @@ function os_publications_install() {
   $instances['contributor_field_collection']['display']['default']['type'] = 'hidden';
   field_update_instance($instances['contributor_field_collection']);
 }
+
 
 // Implements hook_update_N().
 function os_publications_update_7001() {
