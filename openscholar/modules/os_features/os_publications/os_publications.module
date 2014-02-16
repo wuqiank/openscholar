@@ -659,18 +659,11 @@ function os_publications_preprocess_node(&$variables) {
   if ($variables['teaser']) {
     $variables['title'] = FALSE;
   }
-  os_publications_handle_slide_teaser_title($variables);
-}
 
-/**
- * Publication title in slide teaser view mode can have several HTML tags.
- * Using original title with only allowed tags for the title.
- *
- * @param $variables
- */
-function os_publications_handle_slide_teaser_title(&$variables) {
+  // Publication title in slide teaser view mode can have several HTML tags.
+  // Using original title with only allowed tags for the title.
   if ($variables['view_mode'] != 'slide_teaser') {
-    // Not the right view mode
+    // Not the right view mode.
     return;
   }
   // Make sure we render the HTMLed output from the title field.
