@@ -651,13 +651,31 @@ function os_publications_process_format($element) {
 /**
  * Implements hook_preprocess_node().
  */
-function os_publications_preprocess_node(&$vars) {
-  if ($vars['type'] == 'biblio') {
-    $vars['display_submitted'] = false;
-    if ($vars['teaser']) {
-      $vars['title'] = false;
-    }
+function os_publications_preprocess_node(&$variables) {
+  if ($variables['type'] != 'biblio') {
+    return;
   }
+  $variables['display_submitted'] = FALSE;
+  if ($variables['teaser']) {
+    $variables['title'] = FALSE;
+  }
+  os_publications_handle_slide_teaser_title($variables);
+}
+
+/**
+ * Publication title in slide teaser view mode can have several HTML tags.
+ * Using original title with only allowed tags for the title.
+ *
+ * @param $variables
+ */
+function os_publications_handle_slide_teaser_title(&$variables) {
+  if ($variables['view_mode'] != 'slide_teaser') {
+    // Not the right view mode
+    return;
+  }
+  // Make sure we render the HTMLed output from the title field.
+  $allowed_html_elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+  $variables['title'] = filter_xss($variables['title_original'], $allowed_html_elements);
 }
 
 /**
