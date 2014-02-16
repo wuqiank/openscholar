@@ -663,7 +663,7 @@ function os_publications_preprocess_node(&$variables) {
   // Publication title in slide teaser view mode can have several HTML tags.
   // Using original title with only allowed tags for the title.
   if ($variables['view_mode'] != 'slide_teaser') {
-    // Not the right view mode.
+    // Not "Slide Teaser" view mode.
     return;
   }
   // Make sure we render the HTMLed output from the title field.
