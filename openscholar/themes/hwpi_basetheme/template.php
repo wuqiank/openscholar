@@ -86,7 +86,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     return;
   }
 
-  if (!empty($vars['field_person_photo'][$vars['language']])) {
+  if (!empty($vars['node']->field_person_photo)) {
     $vars['classes_array'][] = 'with-person-photo';
   }
   else {

@@ -690,6 +690,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  */
 function os_profiles_insert_image($node, $file, $dimensions) {
   if (!$file) {
+    // The file is empty. Truncating the file field.
     unset($node->field_person_photo[$node->language][0]);
   }
   else {
@@ -703,6 +704,7 @@ function os_profiles_insert_image($node, $file, $dimensions) {
       'cropbox_width' => $dimensions['cropbox_width'],
     );
   }
+
   node_save($node);
 }
 
@@ -723,16 +725,15 @@ function os_profiles_get_origin_node_values($address, $fields) {
   // to get un-cached node we need to add the time stamp to the query string.
   $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1, 'override_cache' => time()))));
   $data = drupal_json_decode($request->data);
+  $values = array();
 
   foreach ($fields as $field) {
     $info = field_info_field($field);
     if (empty($data[$field])) {
-      if ($info['type'] == 'imagefield_crop') {
-        $value = NULL;
-      }
-      else {
-        $value = $info['cardinality'] == 1 ? NULL : array(NULL);
-      }
+      // The field value in the original node is empty. Entity metadata wrapper
+      // need NULL to delete the field. Multiple cardinality field need array
+      // and because the field empty we need to pass array(NULL).
+      $value = $info['cardinality'] == 1 ? NULL : array(NULL);
     }
     else {
       $value = $data[$field];
