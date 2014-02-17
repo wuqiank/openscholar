@@ -45,7 +45,7 @@ function cp_appearance_requirements() {
 /**
  * Move subtheme sites to folder with the vsite name.
  */
-function cp_appearance_update_7006(&$sandbox) {
+function cp_appearance_update_7000(&$sandbox) {
   $base_query = new EntityFieldQuery();
   $base_query
     ->entityCondition('entity_type', 'node')
@@ -60,11 +60,11 @@ function cp_appearance_update_7006(&$sandbox) {
       ->count()
       ->execute();
   }
-  $batch = 2;
+  $batch = 25;
 
   $nid = isset($sandbox['nid']) ? $sandbox['nid'] : 0;
 
-  // Get only the feed items which not yet imported.
+  // Get the node IDs we need to process.
   $query = clone $base_query;
   $results = $query
     ->propertyCondition('nid', $nid, '>')
@@ -94,7 +94,69 @@ function cp_appearance_update_7006(&$sandbox) {
     $sandbox['#finished'] = 1;
   }
   else {
-    // Save the last node, increase the node and check if the import finished.
+    // Calculate the progress percentage.
     $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
   }
+}
+
+/**
+ * Move the subthemes to a folder with the vsite name.
+ *
+ * @param $nid
+ *  The vsite ID.
+ */
+function cp_appearance_move_subtheme($nid) {
+  $files_folder = variable_get('file_public_path', 'sites/default/files');
+  $vsite = vsite_get_vsite($nid);
+  $flavors = $vsite->controllers->variable->get('flavors');
+
+  // Move the files of the subtheme to the a folder with the name of the vsite.
+  foreach ($flavors as &$flavor) {
+    if (strpos($flavor['path'], 'zip') !== FALSE) {
+      continue;
+    }
+
+    $new_path = str_replace($files_folder . '/subtheme', $files_folder . '/' . $vsite->og->purl . '/subtheme', $flavor['path']);
+
+    if (!file_exists($new_path)) {
+      $inside_path = str_replace($files_folder, '', $flavor['path']);
+      // The new path does not exist, create it.
+      drupal_mkdir("public://" . $vsite->og->purl . $inside_path, 0777, TRUE);
+    }
+
+    // Moving the subtheme.
+    _cp_appearance_move_subtheme($flavor['path'], $new_path);
+
+    $flavor['path'] = $new_path;
+  }
+
+  $vsite->controllers->variable->set('flavors', $flavors);
+}
+
+/**
+ * Helper function; Move the subtheme folder to a new folder.
+ *
+ * @param $dir
+ *  The old directory path.
+ * @param $new_dir
+ *  The new directory path.
+ */
+function _cp_appearance_move_subtheme($dir, $new_dir) {
+  $it = new RecursiveDirectoryIterator($dir);
+  $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+  foreach($files as $file) {
+    if ($file->getFilename() === '.' || $file->getFilename() === '..' || $file->isDir()) {
+      continue;
+    }
+
+    $new_path = str_replace($dir, $new_dir, $file->getRealPath());
+
+    // Due to permission issues there could be some error from the rename
+    // function but the subtheme is copied to the new location so we can discard
+    // the errors.
+    @rename($file->getRealPath(), $new_path);
+  }
+
+  // Delete the original folder.
+  cp_appearance_rmdir($dir);
 }
