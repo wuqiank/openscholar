@@ -55,14 +55,14 @@
 
 						<?php if ($is_front || $use_content_regions): ?>
 							<?php print render($title_prefix); ?>
-                            <a name="<?php echo $skip_link; ?>"></a>
+              <a name="<?php echo $skip_link; ?>"></a>
 							<?php if (!$is_front && $title): ?>
 								<header id="main-content-header">
 									<a name="<?php echo $skip_link; ?>"></a>
-      									<h1 id="page-title"<?php print $attributes; ?>>
-      									        <?php print $title; ?>
-      									</h1>
-      								</header>
+                    <h1 id="page-title"<?php print $attributes; ?>>
+                      <?php print $title; ?>
+                    </h1>
+                </header>
 							<?php endif; ?>
 							<?php print render($title_suffix); ?>
 
@@ -74,7 +74,6 @@
 								): ?>
 								<!--front panel regions beg-->
 								<div id="content-panels" class="at-panel gpanel panel-display content clearfix">
-                  <?php if (!empty($page['content']['metatags'])) render($page['content']['metatags']); ?>
 									<?php print render($page['content_top']); ?>
 									<?php print render($page['content_first']); ?>
 									<?php print render($page['content_second']); ?>
@@ -147,7 +146,7 @@
 			$page['footer_third'] ||
 			$page['footer_bottom']
 			): ?>
-	  
+
 			<div class="at-panel gpanel panel-display footer clearfix">
 				<?php print render($page['footer_top']); ?>
 				<?php print render($page['footer_first']); ?>
@@ -155,12 +154,12 @@
 				<?php print render($page['footer_third']); ?>
 				<?php print render($page['footer_bottom']); ?>
 			</div>
-		
+
 		<!--footer region end-->
   <?php endif; ?>
   <div id="powerby-login">
   	<?php if (isset($login_link)) {
-    print render($login_link); 
+    print render($login_link);
   } ?>
   	<div id="powered-by"><a href="http://theopenscholar.org">OpenScholar</a></div>
     </div>
