@@ -1209,6 +1209,60 @@ function cp_appearance_rmdir($dir) {
 }
 
 /**
+ * Move the subthemes to a folder with the vsite name.
+ *
+ * @param $vid
+ *  The vsite ID.
+ */
+function cp_appearance_move_subtheme($vid) {
+  $files_folder = variable_get('file_public_path', 'sites/default/files');
+  $vsite = vsite_get_vsite($vid);
+  $flavors = $vsite->controllers->variable->get('flavors');
+
+  // Move the files of the subtheme to the a folder with the name of the vsite.
+  foreach ($flavors as &$flavor) {
+    $new_path = str_replace($files_folder . '/subtheme', $files_folder . '/' . $vsite->og->vsite . '/subtheme', $flavor['path']);
+
+    if (!file_exists($new_path)) {
+      $inside_path = str_replace($files_folder, '', $flavor['path']);
+      // The new path not exists. Create her.
+      drupal_mkdir("public://" . $vsite->og->vsite . $inside_path, 0777, TRUE);
+    }
+
+    // Moving the subtheme.
+    _cp_appearance_move_subtheme($flavor['path'], $new_path);
+
+    $flavor['path'] = $new_path;
+  }
+
+  $vsite->controllers->variable->set('flavors', $flavors);
+}
+
+/**
+ * Helper function; Move the subtheme folder to a new folder.
+ *
+ * @param $dir
+ *  The old directory path.
+ * @param $new_dir
+ *  The new directory path.
+ */
+function _cp_appearance_move_subtheme($dir, $new_dir) {
+  $it = new RecursiveDirectoryIterator($dir);
+  $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+  foreach($files as $file) {
+    if ($file->getFilename() === '.' || $file->getFilename() === '..' || $file->isDir()) {
+      continue;
+    }
+
+    $new_path = str_replace($dir, $new_dir, $file->getRealPath());
+    @rename($file->getRealPath(), $new_path);
+  }
+
+  // Delete the original folder.
+  cp_appearance_rmdir($dir);
+}
+
+/**
  * Implements hook_form_FORM_ID_alter() for os_settings_form.
  */
 function cp_appearance_form_os_settings_form_alter(&$form, &$form_state, $form_id) {

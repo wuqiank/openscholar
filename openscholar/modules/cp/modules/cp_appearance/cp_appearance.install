@@ -41,3 +41,60 @@ function cp_appearance_requirements() {
   }
 }
  */
+
+/**
+ * Move subtheme sites to folder with the vsite name.
+ */
+function cp_appearance_update_7006(&$sandbox) {
+  $base_query = new EntityFieldQuery();
+  $base_query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('type', array('department', 'personal', 'project'), 'IN');
+
+  if (!isset($sandbox['total'])) {
+    // count all the importers.
+    $sandbox['progress'] = 0;
+
+    $count_query = clone $base_query;
+    $sandbox['total'] = $count_query
+      ->count()
+      ->execute();
+  }
+  $batch = 2;
+
+  $nid = isset($sandbox['nid']) ? $sandbox['nid'] : 0;
+
+  // Get only the feed items which not yet imported.
+  $query = clone $base_query;
+  $results = $query
+    ->propertyCondition('nid', $nid, '>')
+    ->range(0, $batch)
+    ->execute();
+
+  if (empty($results['node'])) {
+    return;
+  }
+
+  $nids = array_keys($results['node']);
+
+  foreach ($nids as $nid) {
+    cp_appearance_move_subtheme($nid);
+    if (drupal_is_cli()) {
+      drush_log(dt('Moving ' . $nid), 'success');
+    }
+  }
+
+  // Increase the progress.
+  $sandbox['progress'] += $batch;
+  $sandbox['nid'] = $nid;
+
+  if ($sandbox['progress'] > $sandbox['total']) {
+    // The total results amount is smaller then the amount we processed in a
+    // single batch. After a single batch we can set the finished to true.
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    // Save the last node, increase the node and check if the import finished.
+    $sandbox['#finished'] = ($sandbox['progress'] / $sandbox['total']);
+  }
+}
