@@ -74,6 +74,7 @@
 								): ?>
 								<!--front panel regions beg-->
 								<div id="content-panels" class="at-panel gpanel panel-display content clearfix">
+                  <?php if (!empty($page['content']['metatags'])) render($page['content']['metatags']); ?>
 									<?php print render($page['content_top']); ?>
 									<?php print render($page['content_first']); ?>
 									<?php print render($page['content_second']); ?>
