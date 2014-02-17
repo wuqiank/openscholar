@@ -1,3 +1,4 @@
+
 <!--FLEXIBLE ADMIN HEADER FOR USE BY SELECT GROUPS USING OS-->
 <?php if ($branding_header = render($page['branding_header'])): ?>
 	<div id="branding_header">
