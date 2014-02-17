@@ -26,5 +26,6 @@ default:
     Behat\MinkExtension\Extension:
       base_url:  BASE_URL
     Drupal\DrupalExtension\Extension:
-      drush:
-        alias: DRUSH_ALIAS
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "/home/travis/build/openscholar/openscholar/www"

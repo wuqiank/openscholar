@@ -973,7 +973,7 @@ class FeatureContext extends DrupalContext {
     $option = $radiobutton->getValue();
     os_migrate_demo_vsite_set_variable($vsite, $name, $option);
 
-    node_laod(1);
+    node_load(1);
   }
 
   /**
@@ -1195,7 +1195,7 @@ class FeatureContext extends DrupalContext {
    */
   public function iImportFeedItemsFor($vsite) {
     $nid = os_migrate_demo_get_node_id($vsite);
-    os_migrate_demo_import_feed_items("'" . $this->locatePath('os-reader/' . $vsite) . "'", $nid);
+    os_migrate_demo_import_feed_items($this->locatePath('os-reader/' . $vsite), $nid);
   }
 
   /**
@@ -1203,7 +1203,7 @@ class FeatureContext extends DrupalContext {
    */
   public function iImportVsiteFeedItemsForVsite($vsite_origin, $vsite_target) {
     $nid = os_migrate_demo_get_node_id($vsite_target);
-    os_migrate_demo_import_feed_items("'" . $this->locatePath('os-reader/' . $vsite_origin) . "'", $nid);
+    os_migrate_demo_import_feed_items($this->locatePath('os-reader/' . $vsite_origin), $nid);
   }
 
   /**
@@ -1378,7 +1378,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^I define "([^"]*)" domain to "([^"]*)"$/
    */
   public function iDefineDomainTo($vsite, $domain) {
-    $this->domains[] = $vsite;
+    $this->domains[] = ($vsite == 'lincoln') ? 'Abraham' : $vsite;
 
     return array(
       new Step\When('I visit "' . $vsite . '/cp/settings"'),
