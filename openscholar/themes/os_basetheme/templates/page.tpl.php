@@ -1,4 +1,3 @@
-
 <!--FLEXIBLE ADMIN HEADER FOR USE BY SELECT GROUPS USING OS-->
 <?php if ($branding_header = render($page['branding_header'])): ?>
 	<div id="branding_header">
@@ -74,7 +73,6 @@
 								): ?>
 								<!--front panel regions beg-->
 								<div id="content-panels" class="at-panel gpanel panel-display content clearfix">
-                  <?php if (!empty($page['content']['metatags'])) render($page['content']['metatags']); ?>
 									<?php print render($page['content_top']); ?>
 									<?php print render($page['content_first']); ?>
 									<?php print render($page['content_second']); ?>
