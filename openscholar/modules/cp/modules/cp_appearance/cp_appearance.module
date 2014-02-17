@@ -732,7 +732,9 @@ function cp_appearance_manage_git($form, &$form_state, $type) {
     $wrapper = new GitWrapper();
     $wrapper->setPrivateKey('.');
 
-    $path = variable_get('file_public_path', conf_path() . '/files') . '/subtheme/' . $repository_address;
+    $vsite = vsite_get_vsite();
+
+    $path = variable_get('file_public_path', conf_path() . '/files') . '/' . $vsite->og->purl .'/subtheme/' . $repository_address;
 
     // @todo: Remove the github hardcoding.
     $path = str_replace(array('http://', 'https://', '.git', 'git@github.com:'), '', $path);
