@@ -654,7 +654,7 @@ function os_pages_make_subpage(&$node, $parent_id) {
  * Also, if the context is active (i.e. it exists), tell the template to use the content regions
  */
 function os_pages_preprocess_page(&$page) {
-  if ($node = menu_get_object()) {
+  if (!$node = menu_get_object()) {
     return;
   }
 
