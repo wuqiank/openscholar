@@ -153,6 +153,13 @@ ul.nice-menu-down li ul li ul {
     background: url('../../hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat #6a1319;
 }
 
+
+
+#menu-bar ul.nice-menu .menuparent ul a.active,
+#menu-bar ul.nice-menu .menuparent ul a.active:hover {
+    background: none;
+}
+
 #menu-bar ul.nice-menu ul .menuparent.over > a,
 #menu-bar ul.nice-menu ul .menuparent a:hover,
 #menu-bar ul.nice-menu ul .menuparent a.active {
