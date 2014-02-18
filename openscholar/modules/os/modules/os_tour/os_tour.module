@@ -231,7 +231,7 @@ function _os_tour_help() {
     $path = drupal_get_path('module', 'os_tour');
     $tour_info = array(
       'id' => 'os-tour-cp-build-layout',
-      'title' => 'Take a tour',
+      'title' => t('Take a tour'),
       'attached' => array(
         'css' => array(
           "$path/theme/os_tour.cp_build_layout.css",
@@ -250,7 +250,7 @@ function _os_tour_help() {
       $path = drupal_get_path('module', 'os_tour');
       $tour_info = array(
         'id' => 'os-tour-home',
-        'title' => 'Take a tour',
+        'title' => t('Take a tour'),
         'attached' => array(
           'css' => array(
             "$path/theme/os_tour.home.css",
@@ -261,6 +261,40 @@ function _os_tour_help() {
         ),
       );
     }
+  }
+
+  // Provides tour for "cp/users*".
+  if (arg(0) == 'cp' && arg(1) == 'users') {
+    $path = drupal_get_path('module', 'os_tour');
+    $tour_info = array(
+      'id' => 'os-tour-cp-users',
+      'title' => t('Take a tour'),
+      'attached' => array(
+        'css' => array(
+          "$path/theme/os_tour.cp_users.css",
+        ),
+        'js' => array(
+          "$path/theme/os_tour.cp_users.js",
+        ),
+      ),
+    );
+  }
+
+  // Provides tour for "node/add/page".
+  if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'page') {
+    $path = drupal_get_path('module', 'os_tour');
+    $tour_info = array(
+      'id' => 'os-tour-node-add-page',
+      'title' => t('Take a tour'),
+      'attached' => array(
+        'css' => array(
+          "$path/theme/os_tour.node_add_page.css",
+        ),
+        'js' => array(
+          "$path/theme/os_tour.node_add_page.js",
+        ),
+      ),
+    );
   }
 
   return $tour_info;

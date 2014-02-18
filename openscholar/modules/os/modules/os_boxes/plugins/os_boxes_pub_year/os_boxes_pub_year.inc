@@ -52,11 +52,6 @@ class os_boxes_pub_year extends os_boxes_default {
         //Tie this view to this box (this tells the view to call this box's view alter)
         $view->dom_id = "boxes-".$this->delta;
 
-        //Set the display num in the view (the count)
-        $arguments = $view->display_handler->get_option('arguments');
-        $arguments['biblio_year']['summary_options']['count'] = ($this->options['display_num'])?1:0;
-        $view->display_handler->override_option('arguments', $arguments);
-
         $output = $view->execute_display($display_id);
         $block['content'] = $output['content'];
       }

@@ -103,10 +103,13 @@ class os_taxonomy_fbt extends os_boxes_default {
       '#description' => t('The post types that will included in the count. Determine for me will filter the content on the "current page".'),
     );
 
+    // Add "Publications" to the possible post types.
+    $options = os_get_bundles(array(1,2)) + array("publications" => "Publications");
+    ksort($options);
     $form['bundles'] = array(
       '#type' => 'select',
       '#title' => t('Select Post types'),
-      '#options' => os_get_bundles(array(1,2)),
+      '#options' => $options,
       '#description' => t('The post types that will be included in the count'),
       '#multiple' => TRUE,
       '#size' => count(os_get_bundles(array(1,2))) / 2,
@@ -191,6 +194,7 @@ class os_taxonomy_fbt extends os_boxes_default {
     }
     ctools_include('layout', 'os');
 
+    $menu = menu_get_item();
     if ($this->options['behavior'] == '--all--') {
       $this->options['bundles'] = array();
     }
@@ -201,7 +205,6 @@ class os_taxonomy_fbt extends os_boxes_default {
         // 2. If the widget defined as a "Determine for me" set the bundles
         //    whcih related to the app.
         $paths = os_get_app_path();
-        $menu = menu_get_item();
 
         $this->options['bundles'] = array();
         if ($menu['map'][0] == 'node') {
@@ -229,7 +232,8 @@ class os_taxonomy_fbt extends os_boxes_default {
     $block['content'] = theme('os_taxonomy_vocabulary_item_list', array(
       'vid' => $this->options['vocabulary'],
       'options' => $this->options,
-    ));
+      'original_path' => $menu['path'],
+  ));
 
     return $block;
   }
@@ -240,7 +244,7 @@ class os_taxonomy_fbt extends os_boxes_default {
   public function cache_info() {}
 
   /**
-   * Get all the volcabularies id using the taxonomy terms.
+   * Get all the vocabularies id using the taxonomy terms.
    */
   private function get_all_vocabularies() {
 

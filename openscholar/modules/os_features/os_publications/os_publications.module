@@ -47,6 +47,17 @@ function os_publications_os_app_info() {
         'csv' => 'os_publication',
       ),
     ),
+    'views tabs' => array(
+      'os_publications_issued' => array('page'),
+    ),
+    'browse_pages' => array(
+      'biblio' => array(
+        'url' => 'browse/publications',
+        'title' => t('Publications'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'publications',
+      ),
+    ),
   );
 
   return $apps;
@@ -99,7 +110,6 @@ function os_publications_theme() {
  *
  * Replace BiblioMigrateEntries with OS own implementation that maintains the
  * group audience field.
- *
  */
 function os_publications_migrate_api_alter(&$info) {
   if (!db_table_exists('_biblio_1x')) {
@@ -254,9 +264,25 @@ function os_publications_biblio_fields_info() {
  * Implements hook_views_query_alter().
  */
 function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
+  $item = menu_get_item();
+
+  // Show only the publications that belong to the current vsite.
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $group_key = key($query->where);
+    $query->add_table('og_membership');
+    $query->add_where($group_key, 'og_membership_biblio.gid', $vsite->id, '=');
+  }
+
   if ($view->name != 'os_publications_issued') {
     return;
   }
+
+  // Change the query when filtering by publication type.
+  if ($item['original_map'][0] == 'publications' && isset($item['original_map'][1]) && $item['original_map'][1] == 'type' && !empty($item['original_map'][2])) {
+    $group_key = key($query->where);
+    $query->add_where($group_key, 'biblio.type', array($item['original_map'][2]), 'IN');
+  }
+
 
   // Get the settings of OS publication in variables.
   $order_field = variable_get('biblio_sort', 'biblio_year');
@@ -347,8 +373,11 @@ function os_publications_biblio_fields_info_alter(&$fields) {
  */
 function os_publications_field_extra_fields_alter(&$info) {
   $biblio_info = entity_get_info('biblio');
+  if (empty($biblio_info['bundles'])) {
+    return;
+  }
   foreach (array_keys($biblio_info['bundles']) as $bundle) {
-    $info['biblio'][$bundle]['display'] = array(
+    $biblio_info['biblio'][$bundle]['display'] = array(
       'biblio_get_text' => array(
         'weight' => 10,
         'label' => t('Rendered text'),
@@ -398,3 +427,4 @@ function os_publications_get_bundles() {
   }
   return $bundles;
 }
+

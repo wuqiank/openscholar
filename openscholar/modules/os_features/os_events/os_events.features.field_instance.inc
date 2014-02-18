@@ -22,7 +22,7 @@ function os_events_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 0,
+        'weight' => 2,
       ),
       'ical' => array(
         'label' => 'hidden',
@@ -69,12 +69,14 @@ function os_events_field_default_field_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'module' => 'text',
+      'active' => 1,
+      'module' => 'os_wysiwyg',
       'settings' => array(
-        'rows' => 20,
+        'max_rows' => 10,
+        'rows' => 3,
         'summary_rows' => 5,
       ),
-      'type' => 'text_textarea_with_summary',
+      'type' => 'os_wysiwyg_expanding_textarea',
       'weight' => 3,
     ),
   );
@@ -86,7 +88,7 @@ function os_events_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'date',
         'settings' => array(
           'format_type' => 'long',
@@ -97,7 +99,7 @@ function os_events_field_default_field_instances() {
           'show_repeat_rule' => 'show',
         ),
         'type' => 'date_default',
-        'weight' => 1,
+        'weight' => 0,
       ),
       'ical' => array(
         'label' => 'above',
@@ -191,11 +193,11 @@ function os_events_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 6,
+        'weight' => 1,
       ),
       'ical' => array(
         'label' => 'above',
@@ -259,8 +261,10 @@ function os_events_field_default_field_instances() {
       'default' => array(
         'label' => 'hidden',
         'module' => 'registration',
-        'settings' => array(),
-        'type' => 'registration_form',
+        'settings' => array(
+          'label' => 'Sign up for this event',
+        ),
+        'type' => 'registration_link',
         'weight' => 10,
       ),
       'links' => array(
@@ -334,7 +338,7 @@ function os_events_field_default_field_instances() {
         'module' => 'os_files',
         'settings' => array(),
         'type' => 'os_files_image_list',
-        'weight' => 2,
+        'weight' => 3,
       ),
       'ical' => array(
         'label' => 'hidden',
@@ -428,11 +432,82 @@ function os_events_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'registration-event_signup_simple-field_department'
+  $field_instances['registration-event_signup_simple-field_department'] = array(
+    'bundle' => 'event_signup_simple',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 1,
+      ),
+    ),
+    'entity_type' => 'registration',
+    'field_name' => 'field_department',
+    'label' => 'Department',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 2,
+    ),
+  );
+
+  // Exported field_instance: 'registration-event_signup_simple-field_full_name'
+  $field_instances['registration-event_signup_simple-field_full_name'] = array(
+    'bundle' => 'event_signup_simple',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'registration',
+    'field_name' => 'field_full_name',
+    'label' => 'Full name',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 1,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Attach Files');
   t('Body');
   t('Date');
+  t('Default Email');
+  t('Department');
+  t('Full name');
   t('Location');
   t('Registration');
 

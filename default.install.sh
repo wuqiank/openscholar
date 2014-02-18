@@ -7,7 +7,7 @@ MYSQL_HOST="localhost"
 MYSQL_DB_NAME="openscholar"
 
 # Modify the URL below to match your OpenScholar base domain URL.
-BASE_DOMAIN_URL="http://localhost/openscholar"
+BASE_DOMAIN_URL="http://localhost/openscholar/www"
 
 # Modify the login details below to be the desired login details for the Administrator account.
 ADMIN_USERNAME="admin"
@@ -27,6 +27,7 @@ drush vset purl_base_domain $BASE_DOMAIN_URL
 
 # These commands migrates dummy content and is used for development and testing. Comment out both lines if you wish to have a clean OpenScholar installation.
 drush en -y os_migrate_demo
+drush migrate-register
 drush mi --all --user=1
 
 # This command does the login for you when the build script is done. It will open a new tab in your default browser and login to your project as the Administrator. Comment out this line if you do not want the login to happen automatically.

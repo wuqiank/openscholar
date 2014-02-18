@@ -128,5 +128,115 @@ function os_publications_user_default_permissions() {
     'module' => 'biblio',
   );
 
+  // Exported permission: 'show filter tab'.
+  $permissions['show filter tab'] = array(
+    'name' => 'show filter tab',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
+      'manager' => 'manager',
+      'vsite admin' => 'vsite admin',
+      'vsite user' => 'vsite user',
+    ),
+    'module' => 'biblio',
+  );
+
+  // Exported permission: 'show sort links'.
+  $permissions['show sort links'] = array(
+    'name' => 'show sort links',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
+      'manager' => 'manager',
+      'vsite admin' => 'vsite admin',
+      'vsite user' => 'vsite user',
+    ),
+    'module' => 'biblio',
+  );
+
+    // Exported permission: create biblio content.
+  $permissions['create biblio content'] = array(
+    'name' => 'create biblio content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'manager' => 'manager',
+      'vsite admin' => 'vsite admin',
+      'vsite user' => 'vsite user',
+      'content editor' => 'content editor',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: delete biblios.
+  $permissions['delete biblio entries'] = array(
+    'name' => 'delete biblio entries',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: delete own biblio content.
+  $permissions['delete own biblio entries'] = array(
+    'name' => 'delete own biblio entries',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'manager' => 'manager',
+      'vsite admin' => 'vsite admin',
+      'vsite user' => 'vsite user',
+      'content editor' => 'content editor',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: edit all biblio entries.
+  $permissions['edit all biblio entries'] = array(
+    'name' => 'edit all biblio entries',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'content editor' => 'content editor',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: edit own biblio entries.
+  $permissions['edit own biblio entries'] = array(
+    'name' => 'edit own biblio entries',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'manager' => 'manager',
+      'vsite admin' => 'vsite admin',
+      'vsite user' => 'vsite user',
+      'content editor' => 'content editor',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'use text format title_filter'.
+  $permissions['use text format title_filter'] = array(
+    'name' => 'use text format title_filter',
+    'roles' => array(
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'filter',
+  );
+
+  // Exported permission: 'view full text'.
+  $permissions['view full text'] = array(
+    'name' => 'view full text',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
+      'content editor' => 'content editor',
+      'manager' => 'manager',
+      'vsite admin' => 'vsite admin',
+      'vsite user' => 'vsite user',
+    ),
+    'module' => 'biblio',
+  );
+
   return $permissions;
 }
