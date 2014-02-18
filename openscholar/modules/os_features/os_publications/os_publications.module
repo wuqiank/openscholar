@@ -264,6 +264,10 @@ function os_publications_biblio_fields_info() {
  * Implements hook_views_query_alter().
  */
 function os_publications_views_query_alter(&$view, views_plugin_query_default &$query) {
+  if ($view->name != 'os_publications_issued') {
+    return;
+  }
+
   $item = menu_get_item();
 
   // Show only the publications that belong to the current vsite.
@@ -271,10 +275,6 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
     $group_key = key($query->where);
     $query->add_table('og_membership');
     $query->add_where($group_key, 'og_membership_biblio.gid', $vsite->id, '=');
-  }
-
-  if ($view->name != 'os_publications_issued') {
-    return;
   }
 
   // Change the query when filtering by publication type.
