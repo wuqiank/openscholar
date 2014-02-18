@@ -125,38 +125,10 @@ function cp_appearance_move_subtheme($nid) {
     }
 
     // Moving the subtheme.
-    _cp_appearance_move_subtheme($flavor['path'], $new_path);
+    cp_appearance_move_folder($flavor['path'], $new_path);
 
     $flavor['path'] = $new_path;
   }
 
   $vsite->controllers->variable->set('flavors', $flavors);
-}
-
-/**
- * Helper function; Move the subtheme folder to a new folder.
- *
- * @param $dir
- *  The old directory path.
- * @param $new_dir
- *  The new directory path.
- */
-function _cp_appearance_move_subtheme($dir, $new_dir) {
-  $it = new RecursiveDirectoryIterator($dir);
-  $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-  foreach($files as $file) {
-    if ($file->getFilename() === '.' || $file->getFilename() === '..' || $file->isDir()) {
-      continue;
-    }
-
-    $new_path = str_replace($dir, $new_dir, $file->getRealPath());
-
-    // Due to permission issues there could be some error from the rename
-    // function but the subtheme is copied to the new location so we can discard
-    // the errors.
-    @rename($file->getRealPath(), $new_path);
-  }
-
-  // Delete the original folder.
-  cp_appearance_rmdir($dir);
 }
