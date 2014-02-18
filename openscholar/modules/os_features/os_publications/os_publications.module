@@ -377,7 +377,7 @@ function os_publications_field_extra_fields_alter(&$info) {
     return;
   }
   foreach (array_keys($biblio_info['bundles']) as $bundle) {
-    $biblio_info['biblio'][$bundle]['display'] = array(
+    $info['biblio'][$bundle]['display'] = array(
       'biblio_get_text' => array(
         'weight' => 10,
         'label' => t('Rendered text'),
