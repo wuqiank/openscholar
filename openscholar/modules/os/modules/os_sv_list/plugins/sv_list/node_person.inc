@@ -25,15 +25,22 @@ class sv_list_node_person  extends sv_list_plugin {
     }
     
     if ($options['sort_by'] == 'sort_alpha') {
-      // remove title orderBy so we can put the field orderBy in front of it
-      foreach ($efq->order as $k => $sort) {
+      // store the existing sorts in temporary vars
+      $temp = $efq->order;
+      $efq->order = array();
+      // the field sort is complicated, so it's best to let Drupal worry about constructing it
+      $efq->fieldOrderBy('field_last_name', 'value', 'ASC');
+      $fsort = $efq->order;
+
+      // find the title sort, drop the field sort in front of it
+      foreach ($temp as $k => $sort) {
         if ($sort['specifier'] == 'title') {
-          unset($efq->order[$k]);
+          array_splice($temp, $k, 0, $fsort);
           break;
         }
       }
-      $efq->fieldOrderBy('field_last_name', 'value', 'ASC');
-      $efq->propertyOrderBy('title', 'ASC');
+
+      $efq->order = $temp;
     }
   }
 }
