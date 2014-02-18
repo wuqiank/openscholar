@@ -2,7 +2,7 @@ Feature:
   Testing the search widget.
 
   @api
-  Scenario: Search for a book witht the search widget.
+  Scenario: Search for a book with the search widget.
      Given the widget "Search" is set in the "Publications" page
        And I reindex the search
        And I visit "john/publications"

@@ -6,7 +6,7 @@ Feature:
     Given I visit "john"
      When I click "Publications"
       And I click "The Little Prince"
-     Then I should see "The Little Prince (Book)"
+     Then I should see "The Little Prince"
 
   @api
   Scenario: Test the Publication tab allows caching of anonymous user
@@ -16,7 +16,7 @@ Feature:
       And I visit "john/publications"
      Then response header "x-drupal-cache" should be "HIT"
 
-  @api @foo
+  @api
   Scenario: Test the Authors field in Publication form
     Given I am logging in as "john"
      When I edit the publication "The Little Prince" in the vsite "john"
@@ -27,9 +27,9 @@ Feature:
   Scenario: Verify publications are sorted by the creation date of the node.
     Given I am logging in as "john"
      When I visit "john/publications"
-     Then I should see the publication "Goblet of Fire" comes before "Prisoner of Azkaban"
-      And I should see the publication "Prisoner of Azkaban" comes before "Chamber of Secrets"
-      And I should see the publication "Chamber of Secrets" comes before "Philosophers Stone"
+     Then I should see the publication "Goblet Of Fire" comes before "Prisoner Of Azkaban"
+      And I should see the publication "Prisoner Of Azkaban" comes before "Chamber Of Secrets"
+      And I should see the publication "Chamber Of Secrets" comes before "Philosophers Stone"
 
   @api
   Scenario: Verify sticky publications appear first on each section.

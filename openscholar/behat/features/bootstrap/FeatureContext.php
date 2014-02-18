@@ -1429,7 +1429,7 @@ class FeatureContext extends DrupalContext {
   public function iShouldSeeThePublicationComesBefore($first, $second) {
     $page = $this->getSession()->getPage()->getContent();
 
-    $pattern = '/<div class="biblio-category-section">[\s\S]*' . $first . '[\s\S]*' . $second . '[\s\S]*<\/div><div class="biblio-category-section">/';
+    $pattern = '/<div class="item-list">[\s\S]*' . $first . '[\s\S]*' . $second . '[\s\S]*<\/ul><\/div>/';
     if (!preg_match($pattern, $page)) {
       throw new Exception("The publication '$first' does not come before the publication '$second'.");
     }

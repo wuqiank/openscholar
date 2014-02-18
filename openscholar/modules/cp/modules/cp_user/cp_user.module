@@ -273,6 +273,10 @@ function cp_user_og_ui_admin_permissions($variables) {
     }
   }
 
+  // Add os_publications og related permissions.
+  $publications_permissions = array_fill_keys(array_keys(os_publications_og_permission()), 'os_publications');
+  $allowed_permissions = array_merge($allowed_permissions, $publications_permissions);
+
   ksort($allowed_permissions);
 
   $rows_per_category = array();

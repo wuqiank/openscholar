@@ -286,7 +286,7 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
 
   // Get the settings of OS publication in variables.
   $order_field = variable_get('biblio_sort', 'biblio_year');
-  $order_type = variable_get('biblio_order', 'ASC');
+  $order_type = variable_get('biblio_order', 'DESC');
   $filter_types = variable_get('os_publications_filter_publication_types', array_keys(biblio_types()));
 
   // Backward compatibility with the old OS publication field order settings.
@@ -312,10 +312,15 @@ function os_publications_views_query_alter(&$view, views_plugin_query_default &$
     $field = $table . '.' . $field;
   }
 
+  // Order results according to user settings and descending bid.
   $query->orderby = array(
     array(
       'field' => $field,
       'direction' => $order_type,
+    ),
+    array(
+      'field' => 'biblio.bid',
+      'direction' => 'DESC',
     )
   );
 
@@ -428,3 +433,52 @@ function os_publications_get_bundles() {
   return $bundles;
 }
 
+/**
+ * Implements hook_og_permission()
+ */
+function os_publications_og_permission() {
+  return array(
+    'create biblio content' => array(
+      'title' => t('Create Publication content'),
+      'os_override' => TRUE,
+      'default roles' => array(
+        'vsite user',
+        'content editor',
+        'vsite admin',
+      ),
+    ),
+    'edit own biblio content' => array(
+      'title' => t('Edit own Publication content'),
+      'os_override' => TRUE,
+      'default role' => array(
+        'vsite user',
+        'content editor',
+        'vsite admin',
+      ),
+    ),
+    'edit biblio content' => array(
+      'title' => t('Edit any Publication content'),
+      'os_override' => TRUE,
+      'default role' => array(
+        'content editor',
+        'vsite admin',
+      ),
+    ),
+    'delete own biblio content' => array(
+      'title' => t('Delete own Publication content'),
+      'os_override' => TRUE,
+      'default role' => array(
+        'vsite user',
+        'content editor',
+        'vsite admin',
+      ),
+    ),
+    'delete biblio content' => array(
+      'title' => t('Delete any Publication content'),
+      'os_override' => TRUE,
+      'default role' => array(
+        'vsite admin',
+      ),
+    ),
+  );
+}
