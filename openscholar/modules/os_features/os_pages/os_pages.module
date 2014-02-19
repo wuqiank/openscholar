@@ -665,12 +665,9 @@ function os_pages_preprocess_page(&$page) {
   if (context_isset('context', 'os_pages-page-'.$node->nid)) {
     $page['use_content_regions'] = TRUE;
 
-   if (!empty($page['content']['metatags'])) {
-     // Since we use the content regions we go ahead and render the metatags.
-     // What actually happens is that those meta tags will be attached to the
-     // $head variable that is printed in html.tpl.php
-     render($page['content']['metatags']);
-   }
+    // Since we use the content regions we need to make sure the metatags are
+    // included as-well.
+    $page['page']['content_top']['metatags'] = $page['page']['content']['metatags'];
   }
 
   $links = &$page['title_suffix']['controls']['section_links']['#links'];
