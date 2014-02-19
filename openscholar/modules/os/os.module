@@ -523,6 +523,14 @@ function os_module_implements_alter(&$implementations, $hook) {
     unset($implementations['os']);
     $implementations['os'] = FALSE;
   }
+
+  // Make the os implementation of menu_alter last so os_pinserver_auth won't
+  // override the "/user" page callback.
+  if ($hook != 'menu_alter') {
+    return;
+  }
+  unset($implementations['os']);
+  $implementations['os'] = FALSE;
 }
 
 /**
