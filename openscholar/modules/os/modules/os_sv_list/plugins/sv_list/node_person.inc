@@ -32,7 +32,8 @@ class sv_list_node_person  extends sv_list_plugin {
       $efq->fieldOrderBy('field_last_name', 'value', 'ASC');
       $fsort = $efq->order;
 
-      // find the title sort, drop the field sort in front of it
+      // find the title sort, drop the field sort in front of it, title is (first + last) so this will
+      // enforce sort by last name then sort by title.
       foreach ($temp as $k => $sort) {
         if ($sort['specifier'] == 'title') {
           array_splice($temp, $k, 0, $fsort);
