@@ -2,7 +2,10 @@
  * Adds behavior to self-hiding wysiwyg widget
  */
 (function ($) {
-  
+
+  localStorage.osWysiwygExpandableTextarea = localStorage.osWysiwygExpandableTextarea || JSON.stringify({});
+  var settings = JSON.parse(localStorage.osWysiwygExpandableTextarea);
+
   function wysiwyg_expand(e) {
     var parent;
     if (typeof e == 'undefined') { //wtf IE
@@ -27,15 +30,14 @@
     }
     var editor = parent.find('.mceEditor table.mceLayout'),
       dim = parent.find('[data-maxrows]'),
-      height = dim.attr('data-user-height')?dim.attr('data-user-height'):(parseInt(dim.attr('data-maxrows')) * 25);
+      height = (parseInt(dim.attr('data-maxrows')) * 25);
 
-    if (!dim.attr('data-user-height')) {
-      dim.attr('data-user-height', height);
+    if (typeof settings[editor.attr('id')] != 'undefined') {
+      height = settings[editor.attr('id')].height;
     }
 
     editor.removeClass('os-wysiwyg-collapsed');
     parent.find('.wysiwyg-toggle-wrapper').show();
-    //editor.stop().animate({height: height+'px'}, 600);
     $('iframe', editor).stop().animate({height: height+'px'}, 600);
     editor.children('tbody').children('tr.mceFirst, tr.mceLast').animate({opacity: 1.0}, 600);
   }
@@ -49,21 +51,16 @@
     $('.mceEditor table.mceLayout').not('.os-wysiwyg-collapsed').each(function () {
       var editor = $(this),
         parent = editor.parents('.form-item'),
-        dim = parent.find('[data-minrows]'),
-        height = (parseInt(dim.attr('data-minrows')) * 20),
         iframe = $('iframe', editor);
 
-      if (!iframe.is(':animated') && dim.attr('data-user-height')) {
-        dim.attr('data-user-height', iframe.height());
-      }
+      settings[this.id] = {
+        height: iframe.height()
+      };
+      localStorage.osWysiwygExpandableTextarea = JSON.stringify(settings);
 
-      if (this.id == target_id) {
-        return;
-      }
-
-      editor.css('height', '').stop()//.animate({height: height+'px'}, 600)
+      editor.css('height', '')
         .addClass('os-wysiwyg-collapsed');
-      $('iframe', editor).stop().animate({height: height+'px'}, 600);
+
       parent.find('.wysiwyg-toggle-wrapper').hide();
     })
   }
@@ -88,7 +85,20 @@
         // use mouseup because it fires before click, and can't be prevented by other scripts' click handlers
         $('body').mouseup(wysiwyg_minimize);
 
-        wysiwyg_minimize();
+        $('.mceEditor table.mceLayout').not('.os-wysiwyg-collapsed').each(function () {
+          var editor = $(this),
+            parent = editor.parents('.form-item'),
+            dim = parent.find('[data-minrows]'),
+            height = (parseInt(dim.attr('data-minrows')) * 20),
+            iframe = $('iframe', editor);
+
+
+          editor.css('height', '')
+            .addClass('os-wysiwyg-collapsed');
+          $('iframe', editor).css({height: height+'px'});
+          parent.find('.wysiwyg-toggle-wrapper').hide();
+        });
+
         $('.os-wysiwyg-expandable ~ .wysiwyg-toggle-wrapper a').click(toggleHandlers);
       }
       else {
