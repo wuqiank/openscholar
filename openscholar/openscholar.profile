@@ -23,7 +23,7 @@ function openscholar_install_tasks($install_state) {
   $tasks['openscholar_vsite_modules_batch'] = array(
     'display_name' => t('Install supplemental modules'),
     'type' => 'batch',
-    'run' => variable_get('os_profile_type', FALSE == 'vsite' || variable_get('os_profile_flavor', FALSE) == 'development') ? INSTALL_TASK_RUN_IF_NOT_COMPLETED : INSTALL_TASK_SKIP
+    'run' => INSTALL_TASK_RUN_IF_NOT_COMPLETED,
   );
 
   // Migrating content if needed.
@@ -150,7 +150,7 @@ function openscholar_flavor_form_submit($form, &$form_state) {
  * Form submit handler when selecting an installation type
  */
 function openscholar_install_type_submit($form, &$form_state) {
-  if(in_array($form_state['input']['os_profile_type'], array('vsite','single-tenant'))){
+  if(in_array($form_state['input']['os_profile_type'], array('vsite', 'novsite'))) {
     variable_set('os_profile_type', $form_state['input']['os_profile_type']);
   }
 }
@@ -160,12 +160,10 @@ function openscholar_vsite_modules_batch(&$install_state){
   $modules = array();
   $profile = drupal_get_profile();
 
-  if(variable_get('os_profile_type', false) == 'vsite'){
-    $data = file_get_contents("profiles/$profile/$profile.vsite.inc");
-    $info = drupal_parse_info_format($data);
-    if(is_array($info['dependencies'])){
-      $modules = array_merge($modules,$info['dependencies']);
-    }
+  $data = file_get_contents("profiles/$profile/$profile.vsite.inc");
+  $info = drupal_parse_info_format($data);
+  if(is_array($info['dependencies'])){
+    $modules = array_merge($modules,$info['dependencies']);
   }
 
   if(variable_get('os_profile_flavor', false) == 'development'){
