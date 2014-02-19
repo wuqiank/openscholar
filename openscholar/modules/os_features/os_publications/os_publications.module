@@ -658,13 +658,15 @@ function os_publications_preprocess_node(&$variables) {
   $variables['display_submitted'] = FALSE;
   if ($variables['teaser']) {
     $variables['title'] = FALSE;
+  } else {
+    // We use the existance of ['teaser'] here because biblio does not use
+    // fields, if it did the title field would always be hidden.
+    // Publication title can have several HTML tags.
+    // Using original title with only allowed tags for the title.
+    // Make sure we render the HTMLed output from the title field.
+    $allowed_html_elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+    $variables['title'] = filter_xss($variables['title_original'], $allowed_html_elements);
   }
-
-  // Publication title can have several HTML tags.
-  // Using original title with only allowed tags for the title.
-  // Make sure we render the HTMLed output from the title field.
-  $allowed_html_elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
-  $variables['title'] = filter_xss($variables['title_original'], $allowed_html_elements);
 }
 
 /**
@@ -677,30 +679,30 @@ function os_publications_node_view_alter(&$build, $type) {
   if ($type != 'node' || $build['#bundle'] != 'biblio') {
     return;
   }
-    
+
   switch ($build['#view_mode'])  {
     case 'full':
       // Remove the publication image as it's called in theme_os_publications_tabular instead.
       if (isset($build['field_biblio_image'])) {
       	$build['field_biblio_image']['#access'] = FALSE;
       }
-      
+
       // Remove the Google Scholar link that appears at the bottom of full view publications.
       if (isset($build['links']['biblio_google_scholar'])) {
         unset($build['links']['biblio_google_scholar']);
       }
       break;
-    
+
     case 'slide_teaser':
       $build['teaser']['#markup'] = theme('biblio_style', array('node' => $build['#node'], 'base' => variable_get('biblio_base', 'biblio'), 'style_name' => biblio_get_style()));
       //FALLTHROUGH!  slide_teaser should run just like teaser, except we need to load up the markup from biblio_view().
-    case 'teaser':  
+    case 'teaser':
       // Alter the teaser to remove the external URL as the URL title and
       // replace it with either the biblio_url_title or "website".
       if (isset($build['teaser']['#markup'])) {
         $node = node_load($build['#node']->nid);
         $build['teaser']['#markup'] = _os_publications_biblio_entry_alter($build['teaser']['#markup'], $node);
-      } 
+      }
 
       // Add the abstract slider.
 	    _os_publications_attach_abstract($build, $build['#node'], 'teaser');
@@ -711,7 +713,7 @@ function os_publications_node_view_alter(&$build, $type) {
       $build['teaser']['#weight'] = 1;
       $build['links']['#access'] = FALSE;
       break;
-      
+
     default:
       $links = &$build['links'];
       foreach ($links as $k => $l) {
@@ -724,7 +726,7 @@ function os_publications_node_view_alter(&$build, $type) {
         }
       }
       break;
-    
+
   }
 }
 
