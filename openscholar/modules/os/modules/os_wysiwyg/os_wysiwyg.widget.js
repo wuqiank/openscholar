@@ -26,12 +26,17 @@
       parent = $(e.currentTarget).parents('.form-item');
     }
     var editor = parent.find('.mceEditor table.mceLayout'),
-      height = (parseInt(parent.find('[data-maxrows]').attr('data-maxrows')) * 25);
+      dim = parent.find('[data-maxrows]'),
+      height = dim.attr('data-user-height')?dim.attr('data-user-height'):(parseInt(dim.attr('data-maxrows')) * 25);
+
+    if (!dim.attr('data-user-height')) {
+      dim.attr('data-user-height', height);
+    }
 
     editor.removeClass('os-wysiwyg-collapsed');
     parent.find('.wysiwyg-toggle-wrapper').show();
-    editor.stop().animate({height: height+'px'}, 600);
-    $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
+    //editor.stop().animate({height: height+'px'}, 600);
+    $('iframe', editor).stop().animate({height: height+'px'}, 600);
     editor.children('tbody').children('tr.mceFirst, tr.mceLast').animate({opacity: 1.0}, 600);
   }
 
@@ -44,23 +49,21 @@
     $('.mceEditor table.mceLayout').not('.os-wysiwyg-collapsed').each(function () {
       var editor = $(this),
         parent = editor.parents('.form-item'),
-        height = (parseInt(parent.find('[data-minrows]').attr('data-minrows')) * 20);
+        dim = parent.find('[data-minrows]'),
+        height = (parseInt(dim.attr('data-minrows')) * 20),
+        iframe = $('iframe', editor);
+
+      if (!iframe.is(':animated') && dim.attr('data-user-height')) {
+        dim.attr('data-user-height', iframe.height());
+      }
 
       if (this.id == target_id) {
         return;
       }
 
-      // when a scrollable area is resized, it calculates the new scroll position with the following formula:
-      // document.body.scrollTop = min(document.body.scrollTop, document.body.scrollHeight - window.innerHeight)
-      // if the old scroll position was higher than the new maximum, it gets set to maximum
-      // otherwise, nothing happens
-      // we need to get the difference between old scroll position and new, subtract it from the height the wysiwyg tags,
-      // and then subtract that from the new position
-
-
-      editor.stop().animate({height: height+'px'}, 600)
+      editor.css('height', '').stop()//.animate({height: height+'px'}, 600)
         .addClass('os-wysiwyg-collapsed');
-      $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
+      $('iframe', editor).stop().animate({height: height+'px'}, 600);
       parent.find('.wysiwyg-toggle-wrapper').hide();
     })
   }
