@@ -24,6 +24,14 @@ function os_publications_os_app_info() {
         'csv' => 'os_publication',
       ),
     ),
+    'browse_pages' => array(
+      'biblio' => array(
+        'url' => 'browse/publications',
+        'title' => t('Publications'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'publications',
+      ),
+    ),
   );
 
   return $apps;
@@ -35,11 +43,12 @@ function os_publications_os_app_info() {
 function os_publications_menu_alter(&$items) {
   $items['publications'] = array(
     'title' => 'Publications',
+    'description' => 'Publications',
     'page callback' => 'os_publications_overview',
     'access callback' => 'spaces_access_feature',
     'access arguments' => array('view', 'os_publications'),
     'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
-    'menu_name' => 'primary',
+    'menu_name' => 'primary-menu',
   );
 
   $items['publications/export'] = array(
@@ -92,6 +101,13 @@ function os_publications_vsite_og_node_type_info() {
   return array(
     'biblio' => 'group content',
   );
+}
+
+/**
+ * Adds process function to text_format to remove our filter format when necessary
+ */
+function os_publications_element_info_alter(&$info) {
+  $info['text_format']['#process'][] = 'os_publications_process_format';
 }
 
 /**
@@ -618,6 +634,21 @@ function _os_publications_attach_abstract(&$entry, $node, $markup_element) {
 }
 
 /**
+ * Removes our title field format from fields we don't want it to be in
+ */
+function os_publications_process_format($element) {
+  if (isset($element['#field_name']) && $element['#field_name'] == 'title_field') {
+    $format = &$element['format']['format'];
+    unset($format['#options']['filtered_html']);
+    $element['#format'] = $format['#default_value'] = 'title_filter';
+  }
+  else {
+    unset($element['format']['format']['#options']['title_filter']);
+  }
+  return $element;
+}
+
+/**
  * Implements hook_preprocess_node().
  */
 function os_publications_preprocess_node(&$vars) {
@@ -636,24 +667,33 @@ function os_publications_preprocess_node(&$vars) {
  */
 function os_publications_node_view_alter(&$build, $type) {
   $spaces = spaces_get_space();
-  if ($type == 'node' && $build['#bundle'] == 'biblio') {
-    if($build['#view_mode'] == 'full') {
+  if ($type != 'node' || $build['#bundle'] != 'biblio') {
+    return;
+  }
+    
+  switch ($build['#view_mode'])  {
+    case 'full':
       // Remove the publication image as it's called in theme_os_publications_tabular instead.
-      if(isset($build['field_biblio_image'])) {
+      if (isset($build['field_biblio_image'])) {
       	$build['field_biblio_image']['#access'] = FALSE;
       }
+      
       // Remove the Google Scholar link that appears at the bottom of full view publications.
-      if(isset($build['links']['biblio_google_scholar'])) {
+      if (isset($build['links']['biblio_google_scholar'])) {
         unset($build['links']['biblio_google_scholar']);
       }
-    }
-    if ($build['#view_mode'] == 'teaser') {
+      break;
+    
+    case 'slide_teaser':
+      $build['teaser']['#markup'] = theme('biblio_style', array('node' => $build['#node'], 'base' => variable_get('biblio_base', 'biblio'), 'style_name' => biblio_get_style()));
+      //FALLTHROUGH!  slide_teaser should run just like teaser, except we need to load up the markup from biblio_view().
+    case 'teaser':  
       // Alter the teaser to remove the external URL as the URL title and
       // replace it with either the biblio_url_title or "website".
       if (isset($build['teaser']['#markup'])) {
         $node = node_load($build['#node']->nid);
         $build['teaser']['#markup'] = _os_publications_biblio_entry_alter($build['teaser']['#markup'], $node);
-      }
+      } 
 
       // Add the abstract slider.
 	    _os_publications_attach_abstract($build, $build['#node'], 'teaser');
@@ -663,8 +703,9 @@ function os_publications_node_view_alter(&$build, $type) {
       }
       $build['teaser']['#weight'] = 1;
       $build['links']['#access'] = FALSE;
-    }
-    else {
+      break;
+      
+    default:
       $links = &$build['links'];
       foreach ($links as $k => $l) {
         if (is_array($l) && isset($l['#links'])) {
@@ -675,7 +716,8 @@ function os_publications_node_view_alter(&$build, $type) {
           }
         }
       }
-    }
+      break;
+    
   }
 }
 

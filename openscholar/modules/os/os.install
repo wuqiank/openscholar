@@ -551,3 +551,109 @@ function os_update_7026() {
   );
   features_revert($revert);
 }
+
+/**
+ * Installs modules new to 3.11
+ */
+function os_update_7027($ctx) {
+  $modules = array(
+    'nodeformcols',
+    'media_draggable',
+  );
+
+  module_enable($modules);
+
+  return t('Enabled new modules: @modules', array('@modules' => implode(', ', $modules)));
+}
+
+/**
+ * Revert variables of the app features
+ */
+function os_update_7028($ctx) {
+  $revert = array(
+    'os_biocv' => array(
+      'variable',
+    ),
+    'os_blog' => array(
+      'variable',
+    ),
+    'os_booklets' => array(
+      'variable',
+    ),
+    'os_classes' => array(
+      'variable',
+    ),
+    'os_events' => array(
+      'variable',
+    ),
+    'os_faq' => array(
+      'variable',
+    ),
+    'os_image_gallery' => array(
+      'variable',
+    ),
+    'os_links' => array(
+      'variable',
+    ),
+    'os_news' => array(
+      'variable',
+    ),
+    'os_pages' => array(
+      'variable',
+    ),
+    'os_presentations' => array(
+      'variable',
+    ),
+    'os_profiles' => array(
+      'variable',
+    ),
+    'os_publications' => array(
+      'variable',
+    ),
+    'os_software' => array(
+      'variable',
+    ),
+  );
+
+  features_revert($revert);
+}
+
+/**
+ * Enables metatag modules and reverts metatag config components.
+ */
+function os_update_7029() {
+  $modules = array(
+    'metatag',
+    'metatag_opengraph',
+    'metatag_twitter_cards',
+  );
+  module_enable($modules);
+  $message = t('Enabled new modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
+
+  $modules = array(
+    'os',
+    'vsite',
+    'os_biocv',
+    'os_blog',
+    'os_booklets',
+    'os_events',
+    'os_image_gallery',
+    'os_links',
+    'os_news',
+    'os_presentations',
+    'os_profiles',
+    'os_publications',
+    'os_software',
+  );
+  foreach ($modules as $module) {
+    $revert = array(
+      $module => array(
+        'metatag',
+        'field_instance'
+      ),
+    );
+    features_revert($revert);
+  }
+  $message .= t('Reverted metatag and field_instance config for modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
+  return $message;
+}

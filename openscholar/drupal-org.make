@@ -10,7 +10,7 @@ projects[advanced_help][version] = 1.0
 projects[advanced_help][patch][] = "http://drupal.org/files/advanced_help-removing_help_popup_theme_css-1803488-1.patch"
 
 projects[apachesolr][subdir] = "contrib"
-projects[apachesolr][version] = 1.1
+projects[apachesolr][version] = 1.6
 
 projects[apachesolr_attachments][subdir] = "contrib"
 projects[apachesolr_attachments][version] = 1.2
@@ -50,6 +50,7 @@ projects[ctools][download][branch] = 7.x-1.x
 projects[ctools][download][revision] = be2607142ce97d093acce9417833640680330efe
 projects[ctools][patch][] = "http://drupal.org/files/1707810-ctools-fields-mock-field-7.patch"
 projects[ctools][patch][] = "http://drupal.org/files/ctools-plugin_extension-1623044-1.patch"
+projects[ctools][patch][] = "https://drupal.org/files/issues/2147905-allow-alter-with-more-context-1.patch"
 
 projects[date][subdir] = "contrib"
 projects[date][version] = 2.6
@@ -67,6 +68,10 @@ projects[diff][version] = 3.2
 projects[disqus][subdir] = "contrib"
 projects[disqus][version] = 1.9
 projects[disqus][patch][] = "http://drupal.org/files/comment_sources-disqus-2120703-1.patch"
+
+projects[dragndrop_upload][subdir] = "contrib"
+projects[dragndrop_upload][version] = 1.0-alpha1
+projects[dragndrop_upload][patch][] = "http://drupalcode.org/project/dragndrop_upload.git/patch/164d2dd7526c297b544f5f367e48f5106f6bca5e"
 
 projects[dyntextfield][subdir] = "contrib"
 projects[dyntextfield][type] = module
@@ -114,8 +119,7 @@ projects[fb_social][download][revision] = cd73e9b
 projects[fb_social][patch][] = "http://drupal.org/files/comment_sources-fb_social-2120709-1.patch"
 
 projects[features][subdir] = "contrib"
-projects[features][version] = 1.0
-; projects[features][revision] = "c0b054d"
+projects[features][version] = 2.0
 
 projects[feeds][subdir] = "contrib"
 projects[feeds][version] = 2.0-alpha7
@@ -164,6 +168,9 @@ projects[hierarchical_taxonomy][download][url] = "http://git.drupal.org/project/
 projects[hierarchical_taxonomy][download][branch] = 7.x-1.x
 projects[hierarchical_taxonomy][download][revision] = 5bbe344
 projects[hierarchical_taxonomy][patch][] = "http://drupal.org/files/2034713-hs-comaprse-name-2.patch"
+
+projects[html_title][subdir] = "contrib"
+projects[html_title][version] = 1.1
 
 projects[imagefield_crop][subdir] = "contrib"
 ;projects[imagefield_crop][version] = 2.0
@@ -225,6 +232,9 @@ projects[media_gallery][patch][] = "http://drupal.org/files/media_gallery-lightb
 projects[message][subdir] = "contrib"
 projects[message][version] = 1.8
 
+projects[metatag][subdir] = "contrib"
+projects[metatag][version] = 1.0-beta9
+
 projects[module_filter][subdir] = "contrib"
 projects[module_filter][version] = 1.7
 
@@ -248,6 +258,9 @@ projects[nice_menus][patch][] = "http://drupal.org/files/translate-menu-item-105
 projects[nice_menus][patch][] = "https://raw.github.com/openscholar/openscholar/b0cb4b6b2ee8d0e162c0a35527ca8d4dcbfc490b/patches/nice_menus.fatal_localized_options.patch"
 projects[nice_menus][subdir] = "contrib"
 projects[nice_menus][version] = 2.1
+
+projects[nodeformcols][subdir] = "contrib"
+projects[nodeformcols][version] = 1.0
 
 projects[nodeorder][subdir] = "contrib"
 projects[nodeorder][version] = 1.1
@@ -277,6 +290,7 @@ projects[og_views][version] = 1.0
 
 projects[og_vocab][subdir] = "contrib"
 projects[og_vocab][version] = 1.2
+projects[og_vocab][patch][] = "https://drupal.org/files/issues/og-vocab-reset-to-alpahbetical-2174907-4.patch"
 
 projects[olark][subdir] = "contrib"
 projects[olark][version] = 1.0-beta1
@@ -296,7 +310,7 @@ projects[pinserver][subdir] = "contrib"
 projects[pinserver][type] = module
 projects[pinserver][download][type] = git
 projects[pinserver][download][url] = "git://github.com/openscholar/pinserver.git"
-projects[pinserver][download][tag] = 7.x-3.4.6
+projects[pinserver][download][tag] = 7.x-3.4.7
 
 projects[purl][subdir] = "contrib"
 ;: projects[purl][version] = 1.0-beta1+11-dev
@@ -310,6 +324,7 @@ projects[purl][patch][] = "http://drupal.org/files/issues/purl-integrate_redirec
 
 projects[registration][subdir] = "contrib"
 projects[registration][version] = 1.1
+projects[registration][patch][] = "https://drupal.org/files/issues/2183509-registration-broadcast-context-1.patch"
 
 projects[respondjs][subdir] = "contrib"
 projects[respondjs][version] = 1.1
@@ -353,6 +368,9 @@ projects[stringoverrides][subdir] = "contrib"
 projects[strongarm][subdir] = "contrib"
 projects[strongarm][version] = 2.0-rc1
 
+projects[title][subdir] = "contrib"
+projects[title][version] = 1.0-alpha7
+
 projects[token][subdir] = "contrib"
 projects[token][version] = 1.4
 
@@ -369,6 +387,7 @@ projects[views][download][type] = git
 projects[views][download][branch] = 7.x-3.x
 projects[views][download][revision] = 7173513
 projects[views][patch][] = "https://drupal.org/files/issues/views-jquery_dialog-2125261-1.patch"
+projects[views][patch][] = "https://drupal.org/files/views-1885668-2.patch"
 
 projects[views_bulk_operations][subdir] = "contrib"
 projects[views_bulk_operations][version] = 3.0

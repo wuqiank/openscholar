@@ -25,7 +25,7 @@ class os_sv_list extends os_boxes_default {
       'content_type' => 'all',
       'display' => 'teaser',
       'layout' => 'list',
-      'grid_size' => 3,
+      'grid_columns' => 3,
       'more' => FALSE,
       'more_text' => t('More'),
       'more_link' => '',
@@ -36,17 +36,23 @@ class os_sv_list extends os_boxes_default {
     );
 
     //get options from plugins
+    if (empty($this->entity_type) && get_class($this) == 'os_sv_list_file') {
+      $this->entity_type = 'file';
+    } elseif (empty($this->entity_type) && get_class($this) == 'os_sv_list_box') {
+      $this->entity_type = 'node';
+    }
+    
     if (empty($this->plugins)) {
       $this->_set_plugins($this->entity_type);
     }
     
     foreach ($this->plugins as $plugin) {
       if (method_exists($plugin['instance'], 'options_defaults')) {
-        $options += $plugin['instance']->options_defaults();
+        $defaults = $plugin['instance']->options_defaults();
+        $options += ($defaults) ? $defaults : array();
       }
     }
     
-  
     return $options;
   }
   
@@ -80,6 +86,31 @@ class os_sv_list extends os_boxes_default {
           array('type' => 'setting', 'data' => array('entity_view_modes' => $this->entity_view_modes())),
         ),
       ),
+    );
+
+    $view_modes = $this->entity_view_modes();
+    if (array_filter($view_modes['grid'])) {
+      $form['content']['layout'] = array(
+        '#type' => 'select',
+        '#title' => 'Layout',
+        '#default_value' => $this->options['layout'],
+        '#options' => drupal_map_assoc(array('List', 'Grid'), 't'),
+        '#states' => array(
+          // multiple conditions SHOULD work in states, but aren't.  instead make several equivalent conditions with different meaningless junk in the keys
+          'invisible' => array_reduce(array_keys(array_filter($view_modes['grid'])), function($ret, $bundle) {
+            $ret[':input[name="content_type"],' . count($ret)] = array('!value' => $bundle);
+            return $ret;
+          }, array()),
+        ),
+      );
+    }
+        
+    $form['content']['grid_columns'] = array(
+      '#type' => 'select',
+      '#title' => 'Columns',
+      '#default_value' => $this->options['grid_columns'],
+      '#options' => drupal_map_assoc(range(2,5)),
+      // #states is inadequate.  see javascript for show/hide rules 
     );
     
     $form['content']['display'] = array(
@@ -231,20 +262,37 @@ class os_sv_list extends os_boxes_default {
     
     //give plguins a chance to alter the entities after loading but before rendering.  see events.
     $entities = entity_load($this->entity_type, $ids);
-    $entites = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
+    $entities = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
     $this->_plugins_invoke('entities_alter', $entities);
     if (empty($entities)) {
       return $block;
     }
     
-    //let a plugin do the rendering.  if they don't, use the default.
-    $render = $this->_plugins_invoke('render', $entities);
-    $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
+    if ($this->options['display'] == 'title') {
+      $render = $this->display_title($entities); 
+    } else {
+      //let a plugin do the rendering.  if they don't, use the default.
+      $render = $this->_plugins_invoke('render', $entities);
+      $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
+    }
+    
+    
+    $layout_func = 'layout_' . $this->options['layout'];    
+    if ($this->options['layout'] != 'List' && method_exists($this, $layout_func)) {
+      $this->$layout_func($render);
+    }
     
     //now render to html.
     $content = drupal_render($render);   
     $delta = $this->delta;   
-    $class = implode(' ', array($this->plugin_key, 'sv-list-'.$this->options['content_type'], 'sv-list-view-'.$this->options['display']));
+    $class = strtolower(implode(' ', array(
+      $this->plugin_key, 
+      'sv-list-'.$this->options['content_type'], 
+      'sv-list-view-'.$this->options['display'], 
+      'sv-list-layout-' . $this->options['layout'],
+      'sv-grid-' . $this->options['grid_columns'],
+    )));
+    
     $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
     return $block;
   }
@@ -345,11 +393,22 @@ class os_sv_list extends os_boxes_default {
    * available to all content types.
    */
   private function entity_view_modes() {
-    $modes = os_entity_view_modes($this->entity_type);
-    $all = array_reduce($modes, 'array_intersect', current($modes)); //starting with an empty array means we'll get an empty back.
-    $modes['all'] = array_values($all);  
+    $modes = array();
+    $modes['list'] = os_entity_view_modes($this->entity_type);
+    $all = array_reduce($modes['list'], 'array_intersect', current($modes['list'])); //starting with an empty array means we'll get an empty back.
+    $modes['list']['all'] = array_values($all);
+
+    if ($this->entity_type == 'file') {
+      $modes['grid'] = array(
+        'image' => array('os_files_title', 'os_files_thumbnail', 'teaser'),
+        'video' => array('os_files_title', 'os_files_thumbnail', 'teaser'),
+      ) + array_fill_keys(array('html', 'audio', 'executable', 'document', 'undefined', 'all'), array());
+    } else {
+      $modes['grid'] = array_fill_keys(array_keys(os_get_bundles(TRUE)), array());
+    }
     return $modes;
   }
+  
     
   protected function _display_options() {
     $defaults = array(  //Display modes will be shown in this order.  If no order is provided, it'll be determined by how the hooks load them.
@@ -403,38 +462,8 @@ class os_sv_list extends os_boxes_default {
    * Returns hash of sort options and their labels
    */
   protected function _sort_options() {
-    
-//     $type_sorts = array();
-//     $sorts = array();
-//     foreach ($this->_plugins_invoke('register_sorts') as $plugin => $sort) {
-//       $info = $this->plugins[$plugin];
-//       $sorts += $sort;
-//       $types = ($info['entity_type']) ? $info['entity_type'] : array('all');
-//       $bundles = ($info['bundle']) ? $info['bundle'] : array('all');
-      
-//       foreach ($types as $type) {          
-//         foreach ($bundles as $bundle) {
-//           $type_sorts[$type][$bundle] = (!isset($type_sorts[$type][$bundle])) ? $sort : array_merge($type_sorts[$type][$bundle], $sort); 
-//         } 
-//       }
-      
-//     }
-    $sorts = array_reduce($this->_plugins_invoke('register_sorts'), 'array_merge', array());
-    
+    $sorts = array_reduce($this->_plugins_invoke('register_sorts'), 'array_merge', array());    
     return $sorts;
-//     return array(
-//       // Content type sensitive sorts.  // in the future get these from sv render plugins
-//       'sort_event' => t('Event Date'),
-//       'sort_presentation' => t('Recently Presented'),
-//       'sort_biblio' => t('Year of Publication'),
-//       'sort_news' => t('News Date'),
-    
-//       // Standard sorts,
-//       'sort_newest' => t('Newest Post'),
-//       'sort_oldest' => t('Oldest Post'),
-//       'sort_alpha' => t('Alphabetical'),
-//       'sort_random' => t('Random'),
-//     );
   }
   
   /**
@@ -457,4 +486,80 @@ class os_sv_list extends os_boxes_default {
     $efq->addTag('random');
   }
   
+  /**
+   * @function display_title
+   *
+   * Just show each entity's title.
+   */
+  function display_title($entities) {
+    $info = entity_get_info($this->entity_type);
+    $id = $info['entity keys']['id'];
+    $label = $info['entity keys']['label'];
+    $type = $this->entity_type;
+    
+    $items = array_map(function($e) use ($id, $label, $type) {
+      return l($e->{$label}, $type . '/' . $e->{$id}, array('html' => TRUE));
+    }, $entities);
+    
+    return array(
+      '#theme' => 'item_list',
+      '#items' => $items,
+      '#title' => '',
+      '#type' => 'ul',
+      '#attributes' => array(),
+    );
+  }
+  
+  /**
+   * @function layout_grid
+   * 
+   * Switches to grid layout.  
+   */
+  function layout_grid(&$render) {
+    switch ($this->options['content_type']) {
+    
+      case 'image':
+        foreach (element_children($render) as $id) {
+          if (in_array($this->options['display'], array('os_files_thumbnail', 'os_files_title'))) {
+            $img = array(
+              '#theme' => 'image_style',
+              '#style_name' => 'os_landscape_320_200',
+              '#attributes' => array(),
+              '#path' => $render[$id]['#file']->uri,
+              '#width' => 320,
+              '#height' => 200,
+            );
+    
+            $link = array(
+              '#theme' => 'link',
+              '#text' => render($img),
+              '#path' => 'file/' . $render[$id]['#file']->fid,
+              '#options' => array('attributes' => array(), 'html' => TRUE),
+            );
+            
+
+           array_unshift($render[$id]['file'], $link);
+           if ($this->options['display'] == 'os_files_thumbnail') {
+             unset($render[$id]['file']['file-info']);
+           }
+            
+          } else {
+            $render[$id]['file']['file']['#style_name'] = 'os_landscape_320_200';
+          }
+        }
+        break;
+    
+      case 'video':
+        foreach (element_children($render) as $id) {
+          if (!isset($render[$id]['file']['video_thumb'])) {
+            array_unshift($render[$id]['file'], _os_files_video_thumb($render[$id]['#file']));
+    
+            if ($this->options['display'] == 'os_files_thumbnail') {
+              unset($render[$id]['file']['file-info']);
+            }
+          }
+        }
+        break;
+    }
+  }  
 }
