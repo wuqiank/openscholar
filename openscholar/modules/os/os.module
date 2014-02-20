@@ -1700,7 +1700,7 @@ function os_os_entity_view_modes_alter(&$info) {
 function os_app_info($app_name = NULL) {
   $info = &drupal_static(__FUNCTION__, array());
 
-  if (empty($info)) {
+  if (TRUE || empty($info)) {
     foreach (module_implements('os_app_info') as $module) {
       if ($apps = module_invoke($module, 'os_app_info')) {
         foreach ($apps as $key => $app) {
