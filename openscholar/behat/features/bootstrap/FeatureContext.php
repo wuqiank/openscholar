@@ -875,6 +875,19 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I should see the meta tag "([^"]*)" with value "([^"]*)"$/
+   */
+  public function iShouldSeeTheMetaTag($tag, $value) {
+    $page = $this->getSession()->getPage();
+    if (!$text = $page->find('xpath', "//meta[@name='{$tag}']/@content")) {
+      throw new Exception("The meta tag {$tag} does not exist");
+    }
+    if ($text->getText() != $value) {
+      throw new Exception("The meta tag {$tag} value is not {$value}");
+    }
+  }
+
+  /**
    * @Given /^I should see the text "([^"]*)" under "([^"]*)"$/
    */
   public function iShouldSeeTheTextUnder($text, $container) {
@@ -1141,6 +1154,18 @@ class FeatureContext extends DrupalContext {
 
     return array(
       new Step\When('I visit "' . $purl . 'node/' . $nid . '/edit"'),
+    );
+  }
+
+  /**
+   * @When /^I edit the page meta data of "([^"]*)" in "([^"]*)"$/
+   */
+  public function iEditTheMetaTags($title, $group) {
+    $title = str_replace("'", "\'", $title);
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+
+    return array(
+      new Step\When('I visit "' . $group . '/os/pages/' . $nid . '/meta"'),
     );
   }
 

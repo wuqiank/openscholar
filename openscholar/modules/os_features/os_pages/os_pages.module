@@ -654,51 +654,59 @@ function os_pages_make_subpage(&$node, $parent_id) {
  * Also, if the context is active (i.e. it exists), tell the template to use the content regions
  */
 function os_pages_preprocess_page(&$page) {
-  $node = menu_get_object('node');
-
-  if ($node && isset($node->nid) && $node->type == 'page') {
-    if (context_isset('context', 'os_pages-page-'.$node->nid)) {
-      $page['use_content_regions'] = true;
-    }
-
-    $links = &$page['title_suffix']['controls']['section_links']['#links'];
-
-    $section_links = array();
-    $ctxs = array_keys(context_active_contexts());
-    if (isset($node->book['bid'])) {
-      $section = array_diff($ctxs, array('os_pages-page-'.$node->nid));
-
-      $section_links['section-header'] = array(
-        'title' => t('This Section'),
-      );
-      $section_links['section-layout'] = array(
-        'title' => t('Layout'),
-        'href' => 'cp/build/layout/'.implode('/', $section),
-        'query' => drupal_get_destination(),
-      );
-      $section_links['page-header'] = array(
-        'title' => t('This Page'),
-      );
-    }
-
-    $section_links['page-layout'] = array(
-      'title' => t('Layout'),
-      'href' => 'cp/build/layout/'.implode('/', $ctxs),
-      'query' => drupal_get_destination(),
-    );
-    $section_links['page-edit'] = array(
-      'title' => t('Edit'),
-      'href' => 'os/pages/'.$node->nid.'/meta',
-      'query' => drupal_get_destination(),
-    );
-    $section_links['page-delete'] = array(
-      'title' => t('Delete'),
-      'href' => 'node/'.$node->nid.'/delete'
-    );
-
-    $links = $section_links;
+  if (!$node = menu_get_object()) {
+    return;
   }
 
+  if ($node->type != 'page') {
+    return;
+  }
+
+  if (context_isset('context', 'os_pages-page-'.$node->nid)) {
+    $page['use_content_regions'] = TRUE;
+
+    // Since we use the content regions we need to make sure the metatags are
+    // included as-well.
+    $page['page']['content_top']['metatags'] = $page['page']['content']['metatags'];
+  }
+
+  $links = &$page['title_suffix']['controls']['section_links']['#links'];
+
+  $section_links = array();
+  $ctxs = array_keys(context_active_contexts());
+
+  if (isset($node->book['bid'])) {
+    $section = array_diff($ctxs, array('os_pages-page-'.$node->nid));
+
+    $section_links['section-header'] = array(
+      'title' => t('This Section'),
+    );
+    $section_links['section-layout'] = array(
+      'title' => t('Layout'),
+      'href' => 'cp/build/layout/'.implode('/', $section),
+      'query' => drupal_get_destination(),
+    );
+    $section_links['page-header'] = array(
+      'title' => t('This Page'),
+    );
+  }
+
+  $section_links['page-layout'] = array(
+    'title' => t('Layout'),
+    'href' => 'cp/build/layout/'.implode('/', $ctxs),
+    'query' => drupal_get_destination(),
+  );
+  $section_links['page-edit'] = array(
+    'title' => t('Edit'),
+    'href' => 'os/pages/'.$node->nid.'/meta',
+    'query' => drupal_get_destination(),
+  );
+  $section_links['page-delete'] = array(
+    'title' => t('Delete'),
+    'href' => 'node/'.$node->nid.'/delete'
+  );
+
+  $links = $section_links;
 }
 
 /**
