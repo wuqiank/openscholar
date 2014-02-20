@@ -83,18 +83,17 @@ abstract class os_boxes_default extends boxes_box {
     $block['delta'] = $this->delta;
     $block['content'] = '';
     if (!empty($this->options['make_embeddable']) && $this->isAnonVisible()) {
-      $block['embed_link'] = true;
+      $block['embed_link'] = TRUE;
     }
     return $block;
   }
 
   /**
-   * Determines if the site the box is on is accessible to anons
+   * Determines if the site the box is on is accessible to anons.
    */
   private function isAnonVisible() {
-    $user = user_load(0);
     if ($space = spaces_get_space()) {
-     return (!module_exists('og_access')
+     return (!module_exists('vsite_access')
        || $space->group->{OG_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'] == VSITE_ACCESS_PUBLIC
        || $space->group->{OG_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'] == VSITE_ACCESS_UNINDEXED);
     }
