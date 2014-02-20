@@ -140,7 +140,7 @@
       $('.cp-layout-widget', this).each(function () {
         ids.push(this.id);
       })
-      $('.region_storage[data-region_id="'+rid+'"').val(ids.join('|'));
+      $('.region_storage[data-region_id="'+rid+'"]').val(ids.join('|'));
     })
   }
 
