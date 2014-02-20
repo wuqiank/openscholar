@@ -12,7 +12,8 @@ class os_boxes_search_mlt extends os_boxes_default {
    */
   public function options_defaults() {
     $options = parent::options_defaults();
-
+    $options['results_number'] = 5;
+    $options['type'] = 'all';
     return $options;
   }
 
@@ -21,6 +22,23 @@ class os_boxes_search_mlt extends os_boxes_default {
    */
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
+    $this->options = ($this->options) ? array_merge($this->options_defaults(), $this->options) : $this->options_defaults();
+
+    $form['results_number'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Results number'),
+      '#description' => t('Define hoe much results should the block display.'),
+      '#default_value' => $this->options['results_number'],
+    );
+
+    $form['type'] = array(
+      '#type' => 'select',
+      '#title' => t('Node types'),
+      '#description' => t('Select which node types to display'),
+      '#options' => $content_types = array('all' => t('All')) + os_get_bundles(array(1)),
+      '#default_value' => $this->options['type'],
+    );
+
     return $form;
   }
 
