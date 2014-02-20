@@ -308,6 +308,10 @@ function os_profiles_field_access($op, $field, $entity_type, $entity, $account) 
   if (!empty($entity) && $field['field_name'] == 'field_url' && $entity_type == 'node' && $entity->type == 'person' && $op == 'edit') {
     return user_access('bypass redirection', $account);
   }
+
+  if (!empty($entity) && $field['field_name'] == 'field_upload' && $entity_type == 'node' && $entity->type == 'person' && in_array($op, array('edit', 'create'))) {
+    return FALSE;
+  }
   return TRUE;
 }
 

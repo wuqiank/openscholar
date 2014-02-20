@@ -834,11 +834,10 @@ function os_profiles_field_default_field_instances() {
         'weight' => 15,
       ),
       'full' => array(
-        'label' => 'hidden',
-        'module' => 'os_files',
+        'label' => 'above',
         'settings' => array(),
-        'type' => 'os_files_image_list',
-        'weight' => 8,
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'links' => array(
         'label' => 'above',
