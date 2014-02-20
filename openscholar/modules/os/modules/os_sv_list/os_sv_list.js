@@ -51,6 +51,10 @@
               var hide = ($.inArray(this_display, Drupal.settings.entity_view_modes[this_layout][content_type]) == -1)
               $(this).attr('hidden', hide).attr('disabled', hide);
             }
+            else {
+              var hide = ($.inArray(this_display, Drupal.settings.entity_view_modes['list'][content_type]) == -1)
+              $(this).attr('hidden', hide);
+            }
           });
           
           //uncheck if selected option is no longer valid.
