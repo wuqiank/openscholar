@@ -266,8 +266,10 @@ function os_search_solr_apachesolr_index_node_status_callback($entity_id, $entit
   $group_wrapper = entity_metadata_wrapper('node', $gid);
 
   if (module_exists('vsite_access') && !empty($group_wrapper->{VSITE_ACCESS_FIELD}) && $group_wrapper->{VSITE_ACCESS_FIELD}->value()) {
-    // Private group, exclude it.
-    return;
+    // Private group, and not a private install, exclude it.
+    if (variable_get('file_default_scheme', 'public') != 'private') {
+      return;
+    }
   }
 
   $map = features_get_component_map('node');
@@ -934,6 +936,28 @@ function os_search_solr_vocabulary_filter_box($bundle_name) {
   );
 
   return $box;
+}
+
+/**
+ * Implements hook os_layout_get_alter()
+ */
+function os_search_solr_os_layout_get_alter($context_name, &$blocks){
+
+  //Only allow the facet browse contexts, to use facet boxes
+  if (strpos($context_name, "browse_") === 0) {
+    $context = context_load($context_name);
+    if($context && $context->export_module == "os_search_solr"){
+      return;
+    }
+  }
+
+  // Remove default boxes added by this module.
+  foreach ($blocks as $key => $block) {
+    if(strpos($key, "boxes-vocabulary_filter") === 0 && $block['plugin'] == 'os_boxes_facetapi_vocabulary') {
+      // Remove facet blocks that do not belong here
+      unset($blocks[$key]);
+    }
+  }
 }
 
 /**

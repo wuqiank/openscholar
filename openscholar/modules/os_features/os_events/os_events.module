@@ -737,6 +737,7 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
     '#element_validate' => array('os_events_validate_mail'),
   );
 
+
   array_unshift($form['#submit'], 'os_events_from_submit');
 
   // Set the default time for a reminder to be a day before the event.
@@ -813,9 +814,6 @@ function os_events_field_widget_registration_select_form_alter(&$element, &$form
 
   // Disable signup for repeated events.
   $element['registration_type']['#states']['enabled'][':input[name="field_date[und][0][show_repeat_settings]"]'] = array('checked' => FALSE);
-
-  // Uncheck the signup checkbox for repeated events.
-  $element['registration_type']['#states']['checked'][':input[name="field_date[und][0][show_repeat_settings]"]'] = array('checked' => FALSE);
 
   // Add JS to change button description,
   $element['registration_type']['#attached']['js'] = array(
@@ -1021,7 +1019,6 @@ function os_events_mail($key, &$message, $params) {
   $message['body'][] = t("Hello @user-name", $params);
   $message['body'][] = t("You have successfully registered for @title (@url).", $params);
 }
-
 
 /**
  * Implements hook_form_FORM_ID_alter().

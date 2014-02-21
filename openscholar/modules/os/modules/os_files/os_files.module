@@ -446,6 +446,9 @@ function os_files_redirect_after_delete_file($form, &$form_state) {
 function os_files_save_file_usage($form, &$form_state) {
   // Get all the usage of the files.
   $file = $form_state['file'];
+  if (!is_object($file)) {
+    return;
+  }
   $usage = file_usage_list($file);
 
   // Get all the nodes the file is relate to.
@@ -461,10 +464,13 @@ function os_files_save_file_usage($form, &$form_state) {
     // The imagefield crop save the usage of the file in a different way in the
     // schema of the usage file. We need to get the file object which the field
     // crop is referencing to and pass the file object to the bath API.
-    $file = file_load(reset(array_keys($usage[$key]['file'])));
-    $form_state['file'] = $file;
-    $usage = file_usage_list($file);
-    $usage_nids = array_keys($usage['file']['node']);
+    $fids = array_keys($usage[$key]['file']);
+    $fid = reset($fids);
+    if ($file = file_load($fid)) {
+      $form_state['file'] = $file;
+      $usage = file_usage_list($file);
+      $usage_nids = array_keys($usage['file']['node']);
+    }
   }
   else {
     $usage_nids = array_keys($usage[$key]['node']);
@@ -1116,6 +1122,9 @@ function os_files_imagefield_crop_process($element, $form_state, $form) {
 function os_files_preprocess_media_views_view_media_browser(&$vars) {
   $usage = array();
   foreach ($vars['rows'] as $file) {
+    if (!is_object($file)) {
+      continue;
+    }
     // gets a list of files that use this file
     $u = file_usage_list($file);
     if (isset($u['imagefield_crop']['file'])) {

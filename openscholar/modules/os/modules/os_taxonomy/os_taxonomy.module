@@ -1201,6 +1201,7 @@ function os_taxonomy_count_attached_nodes_query_object($tid, $node_bundles = arr
     ->fields('t');
 
   $query->join('node', 'n', 't.nid = n.nid');
+  $query->condition('n.status', '1', '=');
   if (!empty($node_bundles)) {
     $query->condition('n.type', $node_bundles, 'IN');
   }
@@ -1226,10 +1227,20 @@ function os_taxonomy_count_attached_entities_query_object($tid, $bundles = array
   $entities = _os_taxonomy_bundle_entities($bundles);
   if (empty($bundles) || in_array('file', $entities)) {
     $query->leftJoin('file_managed', 'fm', '(ogv.entity_type = :file AND ogv.entity_id = fm.fid)', array(':file' => 'file'));
+
+    $file_published = db_or();
+    $file_published->isNull('fm.fid');
+    $file_published->condition('fm.status', '1', '=');
+    $query->condition($file_published);
   }
 
   if (empty($bundles) || in_array('node', $entities)) {
     $query->leftJoin('node', 'n', '(ogv.entity_id = n.nid AND ogv.entity_type = :node)', array(':node' => 'node'));
+
+    $node_published = db_or();
+    $node_published->isNull('n.nid');
+    $node_published->condition('n.status', '1', '=');
+    $query->condition($node_published);
   }
 
   if (!empty($bundles)) {
@@ -1598,7 +1609,7 @@ function os_taxonomy_taxonomy_vocabulary_insert($vocabulary) {
   // Skip processing if the user has disabled pathauto for the term.
   if (!isset($vocabulary->path['pathauto']) || !empty($vocabulary->path['pathauto'])) {
     // Skip processing if the term has no pattern.
-    if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $term->vocabulary_machine_name)) {
+    if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $vocabulary->machine_name)) {
       module_load_include('inc', 'pathauto');
       $uri = entity_uri('taxonomy_vocabulary', $vocabulary);
       $langcode = !empty($langcode) ? $langcode : LANGUAGE_NONE;
