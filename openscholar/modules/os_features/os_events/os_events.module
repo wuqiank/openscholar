@@ -1022,25 +1022,6 @@ function os_events_mail($key, &$message, $params) {
   $message['body'][] = t("You have successfully registered for @title (@url).", $params);
 }
 
-/**
- * Implements hook_mail_alter().
- */
-function os_events_mail_alter(&$message) {
-  if (!in_array($message['id'], array('registration_broadcast', 'os_events_registration_confirmation'))) {
-    return;
-  }
-
-  // Get event default email address.
-  $entity_type = $message['params']['context']['entity_type'];
-  $entity_id = $message['params']['context']['entity_id'];
-  $wrapper = entity_metadata_wrapper($entity_type, $entity_id);
-  $settings = registration_entity_settings($entity_type, $entity_id);
-
-  $default_email = $wrapper->field_default_email->value();
-
-  // Set default email as the message's sender.
-  $message['headers']['From'] = !empty($default_email) ? $default_email : $wrapper->author->mail->value();
-}
 
 /**
  * Implements hook_form_FORM_ID_alter().
