@@ -688,12 +688,19 @@ function os_events_preprocess_link(&$variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function os_events_form_registration_entity_settings_form_alter(&$form, $form_state) {
-  $wrapper = entity_metadata_wrapper('node', $form_state['entity']['entity_id']);
+  extract($form_state['entity']);
+  $wrapper = entity_metadata_wrapper($entity_type, $entity_id);
   // Hide the tokens list for sending messages to registrants.
   unset($form['token_tree']);
 
   // Default value of the From field should be the author of the event's e-mail
-  $from_default_value = $wrapper->author->mail->value();
+  $reg = registration_entity_settings($entity_type, $entity_id);
+  if ($reg['settings']['from_address'] == 'admin@example.com') {  // e-mail comes from the field_instance export
+    $from_default_value = $wrapper->author->mail->value();
+  }
+  else {
+    $from_default_value = $reg['settings']['from_address'];
+  }
 
   $form['status']['#title'] = t('Enable registrations');
   $form['status']['#description'] = t('Users must register their attendance in advance.');
