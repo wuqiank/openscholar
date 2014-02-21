@@ -954,9 +954,15 @@ border-top:1px solid #ccc;
     color: #333;
 }
 
+
 .accordion .ui-widget-content {
      color: inherit;
 }
+
+.accordion .ui-widget-content a {
+     color: #215990;
+}
+
 
 .ui-widget-content {
      color: inherit;
