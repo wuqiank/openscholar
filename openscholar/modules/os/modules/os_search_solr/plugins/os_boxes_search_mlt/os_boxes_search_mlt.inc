@@ -1,7 +1,6 @@
 <?php
 /**
- * @author RoySegall
- * @category boxes
+ * @file os_boxes_search_mlt.inc
  *
  * Display content similar to the current node the user watching.
  */
@@ -55,12 +54,13 @@ class os_boxes_search_mlt extends os_boxes_default {
     $object = menu_get_object();
 
     if (empty($object->nid)) {
-      drupal_set_message(t("You need to be in a node page in order to see 'More like this' nodes."), 'error');
       return array('delta' => $this->delta);
     }
 
     // @see apachesolr_search_block_view().
-    $delta = 'mlt-001';
+    $mlt_blocks = array_keys(apachesolr_search_load_all_mlt_blocks());
+
+    $delta = reset($mlt_blocks);
     $block = apachesolr_search_mlt_block_load($delta);
 
     if (in_array('all', $this->options['mlt_type_filters'])) {
@@ -79,7 +79,7 @@ class os_boxes_search_mlt extends os_boxes_default {
       $docs = apachesolr_search_mlt_suggestions($block, apachesolr_document_id($object->nid), $solr, $context);
 
       if (empty($docs)) {
-        return array();
+        return array('delta' => $this->delta);
       }
 
       $block['title'] = $this->description;
