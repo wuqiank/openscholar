@@ -307,16 +307,5 @@ function _os_boxes_boxes_plugins() {
     ),
   );
 
-  $info['os_boxes_search_mlt'] = array(
-    'title' => t('More like this'),
-    'tags' => array('Content'),
-    'handler' => array(
-      'class' => 'os_boxes_search_mlt',
-      'file' => 'os_boxes_search_mlt.inc',
-      'path' => $path . '/os_boxes_search_mlt',
-      'parent' => 'os_boxes_default',
-    ),
-  );
-
   return $info;
 }
