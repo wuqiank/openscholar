@@ -3,6 +3,27 @@
 include_once ('os_search_solr.features.inc');
 
 /**
+ * Implements hook_boxes_plugins().
+ */
+function os_search_solr_boxes_plugins() {
+  $plugins = array();
+
+  //load the base class for node and file lists
+  $plugins['os_boxes_search_mlt'] = array(
+    'title' => t('More like this'),
+    'tags' => array('Content'),
+    'handler' => array(
+      'class' => 'os_boxes_search_mlt',
+      'file' => 'os_boxes_search_mlt.inc',
+      'path' => drupal_get_path('module', 'os_search_solr') . '/plugins/os_boxes_search_mlt',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+
+  return $plugins;
+}
+
+/**
  * Implements hook_block_info().
  */
 function os_search_solr_block_info() {
