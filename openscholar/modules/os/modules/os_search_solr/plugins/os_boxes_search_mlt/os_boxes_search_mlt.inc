@@ -45,6 +45,8 @@ class os_boxes_search_mlt extends os_boxes_default {
 
   /**
    * Implements boxes_content::render().
+   *
+   * @see apachesolr_search_block_view()
    */
   public function render() {
     if (module_exists('vsite') && !vsite_get_vsite()) {
@@ -57,7 +59,6 @@ class os_boxes_search_mlt extends os_boxes_default {
       return array('delta' => $this->delta);
     }
 
-    // @see apachesolr_search_block_view().
     $mlt_blocks = array_keys(apachesolr_search_load_all_mlt_blocks());
 
     $delta = reset($mlt_blocks);
