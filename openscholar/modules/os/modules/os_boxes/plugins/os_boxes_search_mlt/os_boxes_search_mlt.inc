@@ -12,8 +12,8 @@ class os_boxes_search_mlt extends os_boxes_default {
    */
   public function options_defaults() {
     $options = parent::options_defaults();
-    $options['results_number'] = 5;
-    $options['type'] = 'all';
+    $options['num_results'] = 5;
+    $options['mlt_type_filters'] = array();
     return $options;
   }
 
@@ -24,19 +24,21 @@ class os_boxes_search_mlt extends os_boxes_default {
     $form = parent::options_form($form_state);
     $this->options = ($this->options) ? array_merge($this->options_defaults(), $this->options) : $this->options_defaults();
 
-    $form['results_number'] = array(
+    $form['num_results'] = array(
       '#type' => 'textfield',
       '#title' => t('Results number'),
       '#description' => t('Define hoe much results should the block display.'),
-      '#default_value' => $this->options['results_number'],
+      '#default_value' => $this->options['num_results'],
     );
 
-    $form['type'] = array(
+    $form['mlt_type_filters'] = array(
       '#type' => 'select',
       '#title' => t('Node types'),
       '#description' => t('Select which node types to display'),
-      '#options' => $content_types = array('all' => t('All')) + os_get_bundles(array(1)),
-      '#default_value' => $this->options['type'],
+      '#options' => array('all' => t('All')) + os_get_bundles(array(OS_PUBLIC_APP)),
+      '#default_value' => $this->options['mlt_type_filters'],
+      '#multiple' => TRUE,
+      '#size' => 10,
     );
 
     return $form;
@@ -47,18 +49,27 @@ class os_boxes_search_mlt extends os_boxes_default {
    */
   public function render() {
     if (module_exists('vsite') && !vsite_get_vsite()) {
-      return;
+      return array('delta' => $this->delta);
     }
+
     $object = menu_get_object();
 
     if (empty($object->nid)) {
       drupal_set_message(t("You need to be in a node page in order to see 'More like this' nodes."), 'error');
-      return;
+      return array('delta' => $this->delta);
     }
 
     // @see apachesolr_search_block_view().
     $delta = 'mlt-001';
     $block = apachesolr_search_mlt_block_load($delta);
+
+    if (in_array('all', $this->options['mlt_type_filters'])) {
+      // The user select all the bundles. Set as an empty string.
+      $this->options['mlt_type_filters'] = '';
+    }
+
+    // Adding the settings of the widget.
+    $block = array_merge($block, $this->options);
     $env_id = (!empty($block['mlt_env_id'])) ? $block['mlt_env_id'] : '';
 
     try {
