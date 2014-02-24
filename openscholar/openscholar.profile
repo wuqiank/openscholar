@@ -315,11 +315,6 @@ function openscholar_install_finished(&$install_state) {
     $output .= '<p>'. st('<a href="@url">Visit your new site</a> or <a href="@settings" class="overlay-exclude">change Openscholar settings</a>.', array('@url' => url(''), '@settings' => url('admin/config/openscholar', array('query' => array('destination' => ''))))) . '</p>';
   }
 
-  // Flush all caches to ensure that any full bootstraps during the installer
-  // do not leave stale cached data, and that any content types or other items
-  // registered by the install profile are registered correctly.
-  drupal_flush_all_caches();
-
   // Remember the profile which was used.
   variable_set('install_profile', drupal_get_profile());
 
