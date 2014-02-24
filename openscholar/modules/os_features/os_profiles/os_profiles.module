@@ -44,6 +44,9 @@ function os_profiles_os_app_info() {
  * Implements hook_init().
  */
 function os_profiles_init() {
+  //NO RESTWS
+  return;
+
   if (!($uuid = variable_get('os_profiles_nodes_uuid'))) {
     // Return if no UUID is set that is, no profile nodes need to be updated.
     return;
@@ -555,6 +558,9 @@ function os_profiles_profiles_fields() {
  * Submit handler; Importing person profile from external source.
  */
 function os_profiles_sync_profile_submit($form, $form_state) {
+  //No RESTWS
+  return;
+
   global $base_url, $user;
   $keys = os_profiles_profiles_fields();
   $values = $data = array();
