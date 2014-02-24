@@ -77,7 +77,7 @@ function os_sv_list_update_7002() {
         $new[$row->id] = "$row->id";
       }
       
-      if (isset($query_scope['subsites']) && $query_scope['subsites']) {
+      if (isset($query_scope['subsites']) && $query_scope['subsites'] && $subsites) {
         $new += array_combine($subsites, array_map('strval', $subsites));
       }
       

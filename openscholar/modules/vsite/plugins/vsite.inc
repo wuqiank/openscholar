@@ -51,9 +51,9 @@ class vsite extends space_og {
    */
   function activate() {
 
-    //Check if the current user has access to activate this space.
-    if(!$this->access_space()){
-      module_invoke_all('vsite_access_denied',$this);
+    // Check if the current user has access to activate this space.
+    if (!$this->access_space()) {
+      module_invoke_all('vsite_access_denied', $this);
       drupal_access_denied();
       drupal_exit();
     }
@@ -478,6 +478,12 @@ class vsite extends space_og {
    * Overrides access_space().
    */
   function access_space($account = NULL) {
+    if (user_access('subscribe as support team', $account)) {
+      // "Support team" should always have access to the space. This allows
+      // showing them the toolbar, even when the VSite is private, and they
+      // are still not members.
+      return TRUE;
+    }
     return parent::access_space($account) && node_access('view', $this->group, $account);
   }
 

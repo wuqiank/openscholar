@@ -6,6 +6,10 @@
       var repeat = $('#edit-field-date-und-0-show-repeat-settings');
       var signup = $('#field-event-registration-add-more-wrapper');
 
+      if (repeat.is(':checked')) {
+        signup.find('.description').text(Drupal.t('Only applicable to non repeated events.'));
+      }
+      
       repeat.change(function() {
         if ($(this).is(':checked')) {
           signup.find('.description').text(Drupal.t('Only applicable to non repeated events.'));
