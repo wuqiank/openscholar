@@ -113,9 +113,10 @@ function os_menu_alter(&$items) {
   $items['user/register']['page arguments'] = array('register');
   $items['user/password']['page callback'] = 'os_in_readonly_mode';
   $items['user/password']['page arguments'] = array('password');
+  // Keep the original access callback for site/register because users need
+  // permissions to create VSites.
   $items['site/register']['page callback'] = 'os_in_readonly_mode';
-  $items['site/register']['access callback'] = TRUE;
-  $items['user/register']['page arguments'] = array('site_register');
+  $items['site/register']['page arguments'] = array('site_register');
 
   // Check if Pinserver should take over registration menu entries.
   if (variable_get('os_pinserver_registration', FALSE)){
