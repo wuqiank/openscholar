@@ -7,7 +7,7 @@
 class os_boxes_search_mlt extends os_boxes_default {
 
   /**
-   * Implementation of boxes_content::options_defaults().
+   * Implements of boxes_content::options_defaults().
    */
   public function options_defaults() {
     $options = parent::options_defaults();
@@ -21,7 +21,7 @@ class os_boxes_search_mlt extends os_boxes_default {
   }
 
   /**
-   * Implementation of boxes_content::options_form().
+   * Implements of boxes_content::options_form().
    */
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
@@ -40,7 +40,7 @@ class os_boxes_search_mlt extends os_boxes_default {
       '#options' => array(
         'label' => t('Title'),
         'content' => t('The full content  of the posts(body)'),
-        'taxonomy_names' => t('Taxonomy terms'),
+        'og_vocabulary' => t('Taxonomy terms'),
       ),
       '#default_value' => $this->options['mlt_fl'],
       '#required' => TRUE,
@@ -76,13 +76,13 @@ class os_boxes_search_mlt extends os_boxes_default {
       return array('delta' => $this->delta);
     }
 
-    $object = menu_get_object();
+    $node = menu_get_object();
 
-    if (empty($object->nid)) {
+    if (empty($node->nid)) {
       return array('delta' => $this->delta);
     }
 
-    return $this->apacheSolrQuery($object->nid);
+    return $this->apacheSolrQuery($node->nid);
   }
 
   /**

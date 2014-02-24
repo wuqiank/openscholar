@@ -8,7 +8,6 @@ include_once ('os_search_solr.features.inc');
 function os_search_solr_boxes_plugins() {
   $plugins = array();
 
-  //load the base class for node and file lists
   $plugins['os_boxes_search_mlt'] = array(
     'title' => t('More like this'),
     'tags' => array('Content'),
