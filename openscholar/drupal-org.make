@@ -92,10 +92,7 @@ projects[entityreference][version] = 1.1
 projects[entityreference][patch][] = "http://drupal.org/files/1802916-er-show-identifier-14.patch"
 
 projects[entityreference_prepopulate][subdir] = "contrib"
-; projects[entityreference_prepopulate][version] = 1.3
-projects[entityreference_prepopulate][download][type] = git
-projects[entityreference_prepopulate][download][revision] = e2c2811
-projects[entityreference_prepopulate][patch][] = "http://drupal.org/files/2007746-er-hide-access-5.patch"
+projects[entityreference_prepopulate][version] = 1.5
 
 projects[elysia_cron][subdir] = "contrib"
 projects[elysia_cron][version] = 2.1
