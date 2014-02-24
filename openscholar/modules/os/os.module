@@ -106,19 +106,21 @@ function os_menu_alter(&$items) {
   // Use custom callbacks for these menu items that will display a message
   // if site is in read-only mode. Access callbacks are altered to TRUE to get
   // to the page callback which will check the default access callback.
-  $items['user/login']['page callback'] = 'os_in_read_mode_login';
-  $items['user/register']['page callback'] = 'os_in_read_mode_register';
+  $items['user/login']['page callback'] = 'os_in_readonly_mode';
+  $items['user/login']['page arguments'] = array('login');
+  $items['user/register']['page callback'] = 'os_in_readonly_mode';
   $items['user/register']['access callback'] = TRUE;
-  $items['user/password']['page callback'] = 'os_in_read_mode_password';
+  $items['user/register']['page arguments'] = array('register');
+  $items['user/password']['page callback'] = 'os_in_readonly_mode';
+  $items['user/password']['page arguments'] = array('password');
+  $items['site/register']['page callback'] = 'os_in_readonly_mode';
+  $items['site/register']['access callback'] = TRUE;
+  $items['user/register']['page arguments'] = array('site_register');
 
   // Check if Pinserver should take over registration menu entries.
   if (variable_get('os_pinserver_registration', FALSE)){
     $items['site/register']['page callback'] = 'os_in_read_mode_site_register_pinserver';
   }
-  else {
-    $items['site/register']['page callback'] = 'os_in_read_mode_site_register';
-  }
-  $items['site/register']['access callback'] = TRUE;
 
   // Displays 404 Not Found instead of default /node page.
   if (isset($items['node'])) {
@@ -134,45 +136,52 @@ function os_menu_alter(&$items) {
   );
 }
 
-/**
- * Page callback for user/login.
- */
-function os_in_read_mode_login() {
+function os_in_readonly_mode($page) {
+  // Callback data for each page.
+  switch ($page) {
+    case 'login':
+      // Callback data for user/login.
+      $drupal_default_form = 'user_login';
+      $custom_callback_variable = 'os_readonly_login_callback';
+      break;
+
+    case 'register':
+      // Callback data for user/register.
+      $drupal_default_form = 'user_register_form';
+      $custom_callback_variable = 'os_readonly_register_callback';
+      break;
+
+    case 'password':
+      // Callback data for user/password.
+      $drupal_default_form = 'user_pass';
+      $custom_callback_variable = 'os_readonly_password_callback';
+      break;
+
+    case 'site_register':
+      // Callback data for site/register.
+      $drupal_default_form = 'vsite_register_form';
+      $custom_callback_variable = 'os_readonly_site_register_callback';
+      break;
+  }
+
   if (variable_get('os_readonly_mode', FALSE)) {
+    // Read-only mode is active.
     return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
   }
 
   if (user_is_anonymous()) {
-    return drupal_get_form('user_login');
+    // Get custom callback function from variable.
+    $function = variable_get($custom_callback_variable, NULL);
+    if ($function) {
+      // Use the custom function.
+      return call_user_func($function);
+    }
+
+    // Use Drupal's default form.
+    return drupal_get_form($drupal_default_form);
   }
 
   drupal_access_denied();
-}
-
-/**
- * Page callback for user/register.
- */
-function os_in_read_mode_register() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  if (user_register_access()) {
-    return drupal_get_form('user_register_form');
-  }
-
-  drupal_access_denied();
-}
-
-/**
- * Page callback for user/password.
- */
-function os_in_read_mode_password() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  return drupal_get_form('user_pass');
 }
 
 /**
@@ -188,19 +197,6 @@ function os_in_read_mode_site_register_pinserver() {
   }
 
   return drupal_get_form('vsite_register_form');
-}
-
-/**
- * Page callback for site/register.
- */
-function os_in_read_mode_site_register() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  if (vsite_vsite_exists_access()) {
-    return drupal_get_form('vsite_register_form');
-  }
 }
 
 /**
