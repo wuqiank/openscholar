@@ -72,7 +72,9 @@
 
       $('.field-widget-media-draggable-file .file-list-single').once('media-draggable', setupRowHandlers);
 
-      if (typeof settings.mediaDraggable != 'undefined' && $(ctx).prop('tagName') == 'FORM') {
+      if (typeof settings.mediaDraggable != 'undefined'
+          && typeof settings.mediaDraggable.newFile != 'undefined'
+          && $(ctx).prop('tagName') == 'FORM') {
         addRow(settings.mediaDraggable.newFile);
         settings.mediaDraggable.newFile = false;
       }

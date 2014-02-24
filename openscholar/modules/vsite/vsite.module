@@ -96,6 +96,23 @@ function vsite_cron() {
 }
 
 /**
+ * Implements hook_og_membership_presave().
+ *
+ * Set the membership of "support team" to active.
+ */
+function vsite_og_membership_presave(OgMembership $og_membership) {
+  if (!empty($og_membership->id)) {
+    return;
+  }
+
+  if ($og_membership->type != 'support_expire') {
+    return;
+  }
+
+  $og_membership->state = OG_STATE_ACTIVE;
+}
+
+/**
  * Implements hook_og_membership_insert().
  *
  */
