@@ -11,9 +11,12 @@ class os_boxes_search_mlt extends os_boxes_default {
    */
   public function options_defaults() {
     $options = parent::options_defaults();
+
     $options['num_results'] = 5;
     $options['mlt_type_filters'] = array();
     $options['results_from_vsite'] = TRUE;
+    $options['mlt_fl'] = array('label');
+
     return $options;
   }
 
@@ -31,6 +34,18 @@ class os_boxes_search_mlt extends os_boxes_default {
       '#default_value' => $this->options['num_results'],
     );
 
+    $form['mlt_fl'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Fields for finding relate content'),
+      '#options' => array(
+        'label' => t('Title'),
+        'content' => t('The full content  of the posts(body)'),
+        'taxonomy_names' => t('Taxonomy terms'),
+      ),
+      '#default_value' => $this->options['mlt_fl'],
+      '#required' => TRUE,
+    );
+
     $form['mlt_type_filters'] = array(
       '#type' => 'select',
       '#title' => t('Node types'),
@@ -39,6 +54,7 @@ class os_boxes_search_mlt extends os_boxes_default {
       '#default_value' => $this->options['mlt_type_filters'],
       '#multiple' => TRUE,
       '#size' => 10,
+      '#required' => TRUE,
     );
 
     $form['results_from_vsite'] = array(
@@ -175,10 +191,6 @@ class os_boxes_search_mlt extends os_boxes_default {
         // @todo - fix the settings form to take a comma-delimited set of filters.
         $query->addFilter('', $custom_filters);
       }
-
-      // This hook allows modules to modify the query object.
-      // todo: Check if we need to query alter.
-//      drupal_alter('apachesolr_query', $query);
 
       if (!variable_get('os_search_solr_query_multisites', FALSE)) {
         // Limit searches to just this OpenScholar install in shared indexes.
