@@ -1006,6 +1006,7 @@ function os_events_entity_insert($entity, $type) {
     );
 
     drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, $params);
+    return;
   }
   elseif ($type == 'node') {
     list(,,$bundle) = entity_extract_ids($type, $entity);
@@ -1021,10 +1022,7 @@ function os_events_entity_insert($entity, $type) {
  */
 function os_events_entity_update($entity, $type) {
   if ($type == 'node') {
-    list(,,$bundle) = entity_extract_ids($type, $entity);
-    if ($bundle == 'event') {
-      _os_events_registration_settings($type, $entity);
-    }
+    _os_events_registration_settings($type, $entity);
   }
 }
 
