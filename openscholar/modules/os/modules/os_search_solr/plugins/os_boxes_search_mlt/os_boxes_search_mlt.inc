@@ -14,7 +14,7 @@ class os_boxes_search_mlt extends os_boxes_default {
 
     $options['num_results'] = 5;
     $options['mlt_type_filters'] = array();
-    $options['results_from_vsite'] = TRUE;
+    $options['results_from_type'] = TRUE;
     $options['mlt_fl'] = array('label');
 
     return $options;
@@ -36,14 +36,20 @@ class os_boxes_search_mlt extends os_boxes_default {
 
     $form['mlt_fl'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Fields for finding relate content'),
+      '#title' => t('Fields for finding related content'),
       '#options' => array(
         'label' => t('Title'),
         'content' => t('The full content  of the posts(body)'),
-        'og_vocabulary' => t('Taxonomy terms'),
+        'taxonomy_names' => t('Taxonomy names'),
       ),
       '#default_value' => $this->options['mlt_fl'],
       '#required' => TRUE,
+    );
+
+    $form['results_from_type'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Related posts must be of the same type as the post being viewed.'),
+      '#default_value' => $this->options['results_from_type'],
     );
 
     $form['mlt_type_filters'] = array(
@@ -55,12 +61,11 @@ class os_boxes_search_mlt extends os_boxes_default {
       '#multiple' => TRUE,
       '#size' => 10,
       '#required' => TRUE,
-    );
-
-    $form['results_from_vsite'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Related posts must be of the same type as the post being viewed.'),
-      '#default_value' => $this->options['results_from_vsite'],
+      '#states' => array(
+        'visible' => array(
+          ':input[name="results_from_type"]' => array('checked' => FALSE),
+        ),
+      ),
     );
 
     return $form;
@@ -78,11 +83,11 @@ class os_boxes_search_mlt extends os_boxes_default {
 
     $node = menu_get_object();
 
-    if (empty($node->nid)) {
+    if (empty($node)) {
       return array('delta' => $this->delta);
     }
 
-    return $this->apacheSolrQuery($node->nid);
+    return $this->apacheSolrQuery($node);
   }
 
   /**
@@ -92,12 +97,12 @@ class os_boxes_search_mlt extends os_boxes_default {
    * the query the database for the delta of the plugin and load the settings
    * which is an overkill for the process.
    *
-   * @pram $nid
-   *  The node ID.
+   * @pram $node
+   *  The node object.
    *
    * @see apachesolr_search_block_view().
    */
-  private function apacheSolrQuery($nid) {
+  private function apacheSolrQuery($node) {
     // Get the delta of the MLT blocks.
     $mlt_blocks = array_keys(apachesolr_search_load_all_mlt_blocks());
     $delta = reset($mlt_blocks);
@@ -105,7 +110,10 @@ class os_boxes_search_mlt extends os_boxes_default {
     // Load the block with the first delta.
     $block = apachesolr_search_mlt_block_load($delta);
 
-    if (in_array('all', $this->options['mlt_type_filters'])) {
+    if ($this->options['results_from_type']) {
+      $this->options['mlt_type_filters'] = array($node->type);
+    }
+    elseif (in_array('all', $this->options['mlt_type_filters'])) {
       // The user select all the bundles. Set as an empty string.
       $this->options['mlt_type_filters'] = '';
     }
@@ -118,7 +126,7 @@ class os_boxes_search_mlt extends os_boxes_default {
       $solr = apachesolr_get_solr($env_id);
       $context['search_type'] = 'apachesolr_search_mlt';
       $context['block_id'] = $delta;
-      $docs = $this->ApacheSolrSuggestions($block, apachesolr_document_id($nid), $solr, $context);
+      $docs = $this->ApacheSolrSuggestions($block, apachesolr_document_id($node->nid), $solr, $context);
 
       if (empty($docs)) {
         return array('delta' => $this->delta);
@@ -197,9 +205,8 @@ class os_boxes_search_mlt extends os_boxes_default {
         $query->addFilter('hash', apachesolr_site_hash());
       }
 
-      // Display only results from the same vsite.
-      if ($this->options['results_from_vsite'] && module_exists('vsite') && ($vsite = spaces_get_space())) {
-        $query->addFilter("sm_og_group_ref", $vsite->group_type.":".$vsite->id);
+      if (module_exists('vsite') && ($vsite = spaces_get_space())) {
+        $query->addFilter("sm_og_group_ref", $vsite->group_type . ":" . $vsite->id);
       }
 
       $response = $query->search();
