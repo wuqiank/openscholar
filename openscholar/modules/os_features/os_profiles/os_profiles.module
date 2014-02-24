@@ -167,7 +167,7 @@ function os_profiles_admin_paths() {
  */
 function os_profiles_os_entity_view_modes() {
   return array('node' => array(
-    'person' => array('sidebar_teaser'),
+    'person' => array('sidebar_teaser', 'no_image_teaser'),
   ));
 }
 
