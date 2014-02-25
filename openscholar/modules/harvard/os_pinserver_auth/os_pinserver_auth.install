@@ -4,15 +4,14 @@
  * Implementation of hook_install().
  */
 function os_pinserver_auth_install(){
-  //set module weight
+  // Set module weight.
   db_query("UPDATE {system} SET weight = 80 WHERE name = 'os_pinserver_auth'");
   cache_clear_all('strongarm', 'cache');
 
-  if (os_pinserver_auth_register_access()) {
-    // Modify user/register and site/register callbacks to use pinserver auth.
-    variable_set('os_readonly_register_callback', 'os_pinserver_auth_vsite_register_form_page');
-    variable_set('os_readonly_site_register_callback', 'os_pinserver_auth_vsite_register_form_page');
-  }
+  // Pinserver should take over registration.
+  variable_set('os_pinserver_registration', TRUE);
+  variable_set('os_readonly_register_callback', 'os_pinserver_auth_vsite_register_form_page');
+  variable_set('os_readonly_site_register_callback', 'os_pinserver_auth_vsite_register_form_page');
 }
 
 /**
@@ -38,9 +37,8 @@ function os_pinserver_auth_update_7001() {
  * Set the needed variables to modify page callbacks.
  */
 function os_pinserver_auth_update_7002() {
-  if (os_pinserver_auth_register_access()) {
-    // Modify user/register and site/register callbacks to use pinserver auth.
-    variable_set('os_readonly_register_callback', 'os_pinserver_auth_vsite_register_form_page');
-    variable_set('os_readonly_site_register_callback', 'os_pinserver_auth_vsite_register_form_page');
-  }
+  // Pinserver should take over registration.
+  variable_set('os_pinserver_registration', TRUE);
+  variable_set('os_readonly_register_callback', 'os_pinserver_auth_vsite_register_form_page');
+  variable_set('os_readonly_site_register_callback', 'os_pinserver_auth_vsite_register_form_page');
 }
