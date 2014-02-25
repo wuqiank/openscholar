@@ -118,11 +118,6 @@ function os_menu_alter(&$items) {
   $items['site/register']['page callback'] = 'os_in_readonly_mode';
   $items['site/register']['page arguments'] = array('site_register');
 
-  // Check if Pinserver should take over registration menu entries.
-  if (variable_get('os_pinserver_registration', FALSE)){
-    $items['site/register']['page callback'] = 'os_in_read_mode_site_register_pinserver';
-  }
-
   // Displays 404 Not Found instead of default /node page.
   if (isset($items['node'])) {
     unset($items['node']);
@@ -183,21 +178,6 @@ function os_in_readonly_mode($page) {
   }
 
   drupal_access_denied();
-}
-
-/**
- * Page callback for site/register, pinserver authentication.
- */
-function os_in_read_mode_site_register_pinserver() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  if (module_exists('os_pinserver_auth') && os_pinserver_auth_register_access()) {
-    return os_pinserver_auth_vsite_register_form_page();
-  }
-
-  return drupal_get_form('vsite_register_form');
 }
 
 /**
