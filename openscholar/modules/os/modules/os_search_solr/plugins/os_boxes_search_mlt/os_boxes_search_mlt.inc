@@ -37,6 +37,7 @@ class os_boxes_search_mlt extends os_boxes_default {
     $form['mlt_fl'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Fields for finding related content'),
+      '#description' => t('Choose the fields to be used in calculating similarity.'),
       '#options' => array(
         'label' => t('Title'),
         'content' => t('The full content  of the posts(body)'),
