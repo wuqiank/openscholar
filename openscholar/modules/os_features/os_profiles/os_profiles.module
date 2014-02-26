@@ -44,12 +44,16 @@ function os_profiles_os_app_info() {
  * Implements hook_init().
  */
 function os_profiles_init() {
-  if (!($uuid = variable_get('os_profiles_nodes_uuid'))) {
+  if (variable_get('os_profiles_nodes_sync_lock', FALSE)) {
+    // We are already inside a sync job.
+    return;
+  }
+  if (!$uuid = variable_get('os_profiles_nodes_uuid')) {
     // Return if no UUID is set that is, no profile nodes need to be updated.
     return;
   }
 
-  if (!($time = variable_get('os_profiles_nodes_uuid_time'))) {
+  if (!$time = variable_get('os_profiles_nodes_uuid_time')) {
     // Return if no time for the update of the profiles has been set.
     return;
   }
@@ -80,6 +84,9 @@ function os_profiles_init() {
   if (empty($results['node'])) {
     return;
   }
+
+  // Lock syncing.
+  variable_get('os_profiles_nodes_sync_lock', TRUE);
 
   $nids = array_keys($results['node']);
   $nodes = node_load_multiple($nids);
@@ -117,6 +124,7 @@ function os_profiles_init() {
   // was set.
   variable_del('os_profiles_nodes_uuid');
   variable_del('os_profiles_nodes_uuid_time');
+  variable_del('os_profiles_nodes_sync_lock');
 }
 
 /**
