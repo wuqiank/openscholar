@@ -583,7 +583,7 @@ function os_events_url_outbound_alter(&$path, &$options, $original_path) {
   $data = explode('/', $original_path);
   $path = $data[0];
 
-  $format = array('year' => 'Y', 'month' => 'Y-m', 'week' => 'Y-\W', 'day' => 'Y-m-d');
+  $format = array('year' => 'Y', 'month' => 'Y-m', 'week' => 'Y-\WW-1', 'day' => 'Y-m-d');
   $date_format = new DateTime;
 
   if (isset($_GET[$data[1]])) {
@@ -597,12 +597,7 @@ function os_events_url_outbound_alter(&$path, &$options, $original_path) {
     $date_format->setTimestamp($time);
   }
 
-  if ($data[1] == 'week') {
-    $date = date_format($date_format, $format[$data[1]]) . date_week(date_format($date_format, 'Y-m-d'));
-  }
-  else {
-    $date = date_format($date_format, $format[$data[1]]);
-  }
+  $date = date_format($date_format, $format[$data[1]]);
 
   $type = $data[1];
 
