@@ -836,3 +836,7 @@ function os_migrate_demo_vsite_set_variable($vsite, $name, $value) {
   $vsite = vsite_get_vsite(reset($nid));
   $vsite->controllers->variable->set($name, $value);
 }
+
+function os_migrate_demo_set_read_only($value) {
+  variable_set('os_readonly_mode', $value);
+}

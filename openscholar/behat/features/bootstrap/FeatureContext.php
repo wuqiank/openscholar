@@ -1530,4 +1530,36 @@ class FeatureContext extends DrupalContext {
   public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
     $this->invoke_code('os_migrate_demo_event_registration_link');
   }
+
+  /**
+   * @When /^I enable read-only mode$/
+   */
+  public function iEnableReadOnlyMode() {
+    $this->invoke_code('os_migrate_demo_set_read_only', array(TRUE));
+  }
+
+  /**
+   * @Then /^I disable read-only mode$/
+   */
+  public function iDisableReadOnlyMode() {
+    $this->invoke_code('os_migrate_demo_set_read_only', array(FALSE));
+  }
+
+  /**
+   * @Then /^I enable pinserver$/
+   */
+  public function iEnablePinserver() {
+    $this->invoke_code('module_enable', array('array(pinserver)'));
+    $this->invoke_code('module_enable', array('array(pinserver_authenticate)'));
+    $this->invoke_code('module_enable', array('array(os_pinserver_auth)'));
+  }
+
+  /**
+   * @Then /^I disable pinserver$/
+   */
+  public function iDisablePinserver() {
+    $this->invoke_code('module_disable', array('array(pinserver)'));
+    $this->invoke_code('module_disable', array('array(pinserver_authenticate)'));
+    $this->invoke_code('module_disable', array('array(os_pinserver_auth)'));
+  }
 }
