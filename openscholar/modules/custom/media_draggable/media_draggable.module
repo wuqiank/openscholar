@@ -52,6 +52,9 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
   $field_settings = $instance['settings'];
   $widget_settings = $instance['widget']['settings'];
 
+  ctools_include('modal');
+  ctools_modal_add_js();
+
   $element += array(
     '#field' => $field,
     '#instance' => $instance,
