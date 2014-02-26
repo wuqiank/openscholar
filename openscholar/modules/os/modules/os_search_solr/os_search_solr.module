@@ -1005,7 +1005,6 @@ function os_search_solr_apachesolr_field_mappings_alter(&$mappings, $entity) {
  * when the entity reference field is referencing to taxonomy terms.
  */
 function os_search_solr_entityreference_indexing_callback($entity, $field_name, $index_key, $field_info) {
-  dpm('a');
   $fields = array();
   if (!empty($entity->{$field_name}) && array_key_exists(LANGUAGE_NONE, $entity->$field_name)) {
 
