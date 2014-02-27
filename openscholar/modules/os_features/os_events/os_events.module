@@ -587,8 +587,8 @@ function os_events_url_outbound_alter(&$path, &$options, $original_path) {
   // The string consists of three parts delimited by dashes "-",
   // The first part "Y" stands for the year in 4 digits,
   // The second part "\WW" is actually "\W" and "W", meaning the first W is
-  // escaped and would be written as "W" and the second "W" is not escaped and
-  // stands for the number of the week,
+  // escaped and would be written as "W" and the second W is not escaped and
+  // thus stands for the number of the week,
   // The third part "1" stands for the day of the week, starting from Monday.
   // So the result of "Y-\WW-1" is for example "2014-W05-1", which strtotime()
   // interprets as: Monday of the 5th week of 2014.
