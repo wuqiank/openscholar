@@ -1042,3 +1042,12 @@ function os_search_solr_entityreference_indexing_callback($entity, $field_name, 
 
   return $fields;
 }
+
+/**
+ * Validate handler for the "More like this" block.
+ */
+function os_search_solr_more_like_this_bundles_element_validate($element, &$form_state) {
+  if (!$form_state['values']['results_from_type'] && empty($element['#value'])) {
+    form_error($element, t('You must select at least one node type when leaving the related posts checkbox un-checked.'));
+  }
+}

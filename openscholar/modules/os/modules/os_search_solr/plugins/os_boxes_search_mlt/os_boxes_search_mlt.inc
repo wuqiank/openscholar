@@ -57,11 +57,11 @@ class os_boxes_search_mlt extends os_boxes_default {
       '#type' => 'select',
       '#title' => t('Node types'),
       '#description' => t('Select which node types to display'),
+      '#element_validate' => array('os_search_solr_more_like_this_bundles_element_validate'),
       '#options' => array('all' => t('All')) + os_get_bundles(array(OS_PUBLIC_APP)),
       '#default_value' => $this->options['mlt_type_filters'],
       '#multiple' => TRUE,
       '#size' => 10,
-      '#required' => TRUE,
       '#states' => array(
         'visible' => array(
           ':input[name="results_from_type"]' => array('checked' => FALSE),
