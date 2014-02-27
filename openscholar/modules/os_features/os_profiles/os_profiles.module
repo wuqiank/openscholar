@@ -100,7 +100,13 @@ function os_profiles_init() {
     // it for later.
     $person_photo = $data->values['field_person_photo'];
     unset($data->values['field_person_photo']);
-    $handler->update($node->nid, $data->values);
+    try {
+      $handler->update($node->nid, $data->values);
+    }
+    catch (RestWSException $e) {
+      // TODO: watchdog message
+      return;
+    }
 
     // We need to replace the field ID in the field with the new file ID we got.
     if ($person_photo) {
