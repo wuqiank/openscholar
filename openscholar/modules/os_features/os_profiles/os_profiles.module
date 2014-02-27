@@ -44,86 +44,84 @@ function os_profiles_os_app_info() {
  * Implements hook_init().
  */
 function os_profiles_init() {
-  if (lock_acquire('os_profile_sync')) {
-
-    if (!$uuid = variable_get('os_profiles_nodes_uuid')) {
-      // Return if no UUID is set that is, no profile nodes need to be updated.
-      return;
-    }
-
-    if (!$time = variable_get('os_profiles_nodes_uuid_time')) {
-      // Return if no time for the update of the profiles has been set.
-      return;
-    }
-
-    if (isset($_GET['REST_CALL'])) {
-      // If profiles that need to be updated are on the same installation return
-      // in order to avoid a loop of recurring calls to itself.
-      return;
-    }
-
-    // When the original node and the destination node are on the same
-    // installation and the original has been updated the updating of the
-    // destination node will be accomplished instantly. We need to wait
-    // approximately 5 seconds so a normal end user that updates a profile that
-    // was copied won't think the update of the node is slow.
-    if ($time + 5 >= time()) {
-      return;
-    }
-
-    // Load the nodes that need to be updated.
-    $query = new EntityFieldQuery();
-    $results = $query
-      ->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', 'person')
-      ->fieldCondition('field_uuid', 'value', $uuid)
-      ->execute();
-
-    if (empty($results['node'])) {
-      return;
-    }
-
-    // Lock syncing.
-    variable_get('os_profiles_nodes_sync_lock', TRUE);
-
-    $nids = array_keys($results['node']);
-    $nodes = node_load_multiple($nids);
-    $fields = os_profiles_profiles_fields();
-    $handler = restws_resource_controller('node');
-
-    foreach ($nodes as $node) {
-      if (empty($node->field_original_destination_url)) {
-        continue;
-      }
-
-      $data = os_profiles_get_origin_node_values($node->field_original_destination_url[LANGUAGE_NONE][0]['value'], $fields);
-
-      // The field person is an array. Remove him for the update method but keep
-      // it for later.
-      $person_photo = $data->values['field_person_photo'];
-      unset($data->values['field_person_photo']);
-      $handler->update($node->nid, $data->values);
-
-      // We need to replace the field ID in the field with the new file ID we got.
-      $file = NULL;
-      if ($person_photo) {
-        $file_info = os_profiles_get_origin_node_values($person_photo['file']['uri'] . '.json', array('url'));
-        $copy_file = os_copy_file($file_info->values['url'], TRUE);
-
-        if ($copy_file['type'] == 'file') {
-          $file = $copy_file['file'];
-        }
-      }
-
-      os_profiles_insert_image($node, $file, $data->data['person_photo_dimension']);
-    }
-
-    // Delete the UUID that needs to be updated and the time in which the UUID
-    // was set.
-    variable_del('os_profiles_nodes_uuid');
-    variable_del('os_profiles_nodes_uuid_time');
-    lock_release('os_profile_sync');
+  if (!$uuid = variable_get('os_profiles_nodes_uuid')) {
+    // Return if no UUID is set that is, no profile nodes need to be updated.
+    return;
   }
+
+  if (!$time = variable_get('os_profiles_nodes_uuid_time')) {
+    // Return if no time for the update of the profiles has been set.
+    return;
+  }
+
+  if (isset($_GET['REST_CALL'])) {
+    // If profiles that need to be updated are on the same installation return
+    // in order to avoid a loop of recurring calls to itself.
+    return;
+  }
+
+  // When the original node and the destination node are on the same
+  // installation and the original has been updated the updating of the
+  // destination node will be accomplished instantly. We need to wait
+  // approximately 5 seconds so a normal end user that updates a profile that
+  // was copied won't think the update of the node is slow.
+  if ($time + 5 >= time()) {
+    return;
+  }
+
+  // Load the nodes that need to be updated.
+  $query = new EntityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'person')
+    ->fieldCondition('field_uuid', 'value', $uuid)
+    ->execute();
+
+  if (empty($result['node'])) {
+    return;
+  }
+
+  if (!lock_acquire('os_profile_sync')) {
+    return;
+  }
+
+  $nids = array_keys($result['node']);
+  $nodes = node_load_multiple($nids);
+  $fields = os_profiles_profiles_fields();
+  $handler = restws_resource_controller('node');
+
+  foreach ($nodes as $node) {
+    if (empty($node->field_original_destination_url)) {
+      continue;
+    }
+
+    $data = os_profiles_get_origin_node_values($node->field_original_destination_url[LANGUAGE_NONE][0]['value'], $fields);
+
+    // The field person is an array. Remove him for the update method but keep
+    // it for later.
+    $person_photo = $data->values['field_person_photo'];
+    unset($data->values['field_person_photo']);
+    $handler->update($node->nid, $data->values);
+
+    // We need to replace the field ID in the field with the new file ID we got.
+    $file = NULL;
+    if ($person_photo) {
+      $file_info = os_profiles_get_origin_node_values($person_photo['file']['uri'] . '.json', array('url'));
+      $copy_file = os_copy_file($file_info->values['url'], TRUE);
+
+      if ($copy_file['type'] == 'file') {
+        $file = $copy_file['file'];
+      }
+    }
+
+    os_profiles_insert_image($node, $file, $data->data['person_photo_dimension']);
+  }
+
+  // Delete the UUID that needs to be updated and the time in which the UUID
+  // was set. Also release the lock.
+  variable_del('os_profiles_nodes_uuid');
+  variable_del('os_profiles_nodes_uuid_time');
+  lock_release('os_profile_sync');
 }
 
 /**
