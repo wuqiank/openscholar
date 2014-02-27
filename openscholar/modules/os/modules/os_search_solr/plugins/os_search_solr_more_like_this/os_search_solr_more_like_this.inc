@@ -4,7 +4,7 @@
  *
  * Display content similar to the current node the user watching.
  */
-class os_solr_search_more_like_this extends os_boxes_default {
+class os_search_solr_more_like_this extends os_boxes_default {
 
   /**
    * Implements of boxes_content::options_defaults().

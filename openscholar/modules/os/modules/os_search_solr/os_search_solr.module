@@ -8,13 +8,13 @@ include_once ('os_search_solr.features.inc');
 function os_search_solr_boxes_plugins() {
   $plugins = array();
 
-  $plugins['os_solr_search_more_like_this'] = array(
+  $plugins['os_search_solr_more_like_this'] = array(
     'title' => t('More like this'),
     'tags' => array('Content'),
     'handler' => array(
-      'class' => 'os_solr_search_more_like_this',
-      'file' => 'os_solr_search_more_like_this.inc',
-      'path' => drupal_get_path('module', 'os_search_solr') . '/plugins/os_solr_search_more_like_this',
+      'class' => 'os_search_solr_more_like_this',
+      'file' => 'os_search_solr_more_like_this.inc',
+      'path' => drupal_get_path('module', 'os_search_solr') . '/plugins/os_search_solr_more_like_this',
       'parent' => 'os_boxes_default',
     ),
   );
@@ -999,10 +999,12 @@ function os_search_solr_apachesolr_field_mappings_alter(&$mappings, $entity) {
 }
 
 /**
- * OS search solr indexing for the entity reference. The "more like this" block
- * functionallity for terms is possible because the term reference indexing
- * function indexed the terms names. We need to index the label of the entity
- * when the entity reference field is referencing to taxonomy terms.
+ * OS search solr indexing for the entity reference field. The "more like this"
+ * block functionallity for terms is possible because the term reference
+ * indexing function indexed the terms names. We need to index the label of the
+ * entity when the entity reference field is referencing to taxonomy terms.
+ *
+ * @see https://drupal.org/node/2206633
  */
 function os_search_solr_entityreference_indexing_callback($entity, $field_name, $index_key, $field_info) {
   $fields = array();
