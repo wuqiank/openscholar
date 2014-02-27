@@ -47,3 +47,17 @@ Feature:
       And I sleep for "10"
       And I visit "john/people/hillary-diane-rodham-clinton"
      Then I should not see "White house"
+
+  @api
+  Scenario: Test changing the owner of a VSite.
+    Given I am logging in as "admin"
+    And I give the user "john" the role "vsite admin" in the group "obama"
+    And I am logging in as "john"
+    And I edit the membership of "michelle" in vsite "obama"
+    And I check the box "Set as site manager"
+    And I press "Save"
+    And I verify that "michelle" is the owner of vsite "obama"
+    And I edit the membership of "john" in vsite "obama"
+    And I check the box "Set as site manager"
+    And I press "Save"
+    And I verify that "john" is the owner of vsite "obama"
