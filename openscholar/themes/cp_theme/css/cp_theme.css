@@ -628,3 +628,6 @@ font-size: 11px;
   padding: 15px 7px 8px 22px;
 }
 
+form#cp-user-edit-membership-form .form-item-group-manager {
+  margin: 15px 0 0;
+}

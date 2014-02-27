@@ -234,6 +234,11 @@ function cp_user_edit_membership_form($form_state, $user_load) {
     '#options' => _cp_user_list_roles('options', $space->group->type, $space->group->nid),
     '#default_value' => _cp_user_get_role($user->uid, $space->group->nid),
   );
+  $form['edit_membership']['group_manager'] = array(
+    '#type' => 'checkbox',
+    // Theme the checkbox label to look like the radio options.
+    '#title' => _cp_user_role_option(t('Set as site manager'), t('Make <em>@name</em> the site owner.', array('@name' => $name))),
+  );
 
   // Builds and returns a confirmation form.
   $question = t('Editing members for site <em>@site</em>', array('@name' => $name, '@site' => $site));
@@ -251,10 +256,19 @@ function cp_user_edit_membership_form_submit($form, &$form_state) {
   // Accesses values from the form.
   $bundle = $form_state['values']['bundle'];
   $new_role = $form_state['values']['edit_role'];
+  $group_manager = $form_state['values']['group_manager'];
   $gid = $form_state['values']['gid'];
   $uid = $form_state['values']['uid'];
+
   // Grants the new role and revokes other roles.
   _cp_user_set_role($uid, $gid, $new_role, $bundle);
+
+  if ($group_manager) {
+    // Set VSite manager.
+    $node = node_load($gid);
+    $node->uid = $uid;
+    node_save($node);
+  }
 
   // Set the message and redirect back to the cp/users page
   $user = $form_state['values']['user_name'];
