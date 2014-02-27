@@ -1,10 +1,10 @@
 <?php
 /**
- * @file os_boxes_search_mlt.inc
+ * @file os_solr_search_more_like_this.inc
  *
  * Display content similar to the current node the user watching.
  */
-class os_boxes_search_mlt extends os_boxes_default {
+class os_solr_search_more_like_this extends os_boxes_default {
 
   /**
    * Implements of boxes_content::options_defaults().

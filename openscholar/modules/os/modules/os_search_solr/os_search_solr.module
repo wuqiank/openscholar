@@ -8,13 +8,13 @@ include_once ('os_search_solr.features.inc');
 function os_search_solr_boxes_plugins() {
   $plugins = array();
 
-  $plugins['os_boxes_search_mlt'] = array(
+  $plugins['os_solr_search_more_like_this'] = array(
     'title' => t('More like this'),
     'tags' => array('Content'),
     'handler' => array(
-      'class' => 'os_boxes_search_mlt',
-      'file' => 'os_boxes_search_mlt.inc',
-      'path' => drupal_get_path('module', 'os_search_solr') . '/plugins/os_boxes_search_mlt',
+      'class' => 'os_solr_search_more_like_this',
+      'file' => 'os_solr_search_more_like_this.inc',
+      'path' => drupal_get_path('module', 'os_search_solr') . '/plugins/os_solr_search_more_like_this',
       'parent' => 'os_boxes_default',
     ),
   );
