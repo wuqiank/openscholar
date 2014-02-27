@@ -118,7 +118,7 @@ class os_boxes_columns extends os_boxes_default {
 
     $regions = array();
     $temp = $this->options['widgets'];
-    if (isset($form_state['input']) && !$form_state['submitted']) {
+    if (!empty($form_state['input']) && !$form_state['submitted']) {
       $temp = $form_state['input']['widgets'];
     }
     foreach ($temp as $region => $widgets) {
