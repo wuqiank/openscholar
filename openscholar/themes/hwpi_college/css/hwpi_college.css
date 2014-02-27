@@ -250,6 +250,22 @@ margin-top:-2px;
     font-weight: normal;
 }
 
+
+#content-column .field-name-body h2 {
+	font-size: 25px;
+	padding-bottom: 0;
+}
+
+#content-column .field-name-body h3 {
+	font-size: 22px;
+}
+
+#content-column .field-name-body h4 {
+	font-size: 19px;
+}
+
+
+
 .boxes-box-content, .boxes-box-content p {
     font-family: arial,sans-serif !important;
     font-size: 0.95em;
@@ -316,7 +332,7 @@ h1#page-title {
 .page-node h1#page-title{
     color: #1E1E1E;
     font-family: georgia,serif;
-    font-size: 1.6em;
+    font-size: 1.75em;
     font-weight: normal;
     padding: 0.35em 0;
 }
