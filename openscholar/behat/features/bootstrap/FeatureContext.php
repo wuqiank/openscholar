@@ -476,8 +476,6 @@ class FeatureContext extends DrupalContext {
     }
     else if ($status == "disabled") {
       $this->getDriver()->drush('vset cache 0');
-      // Clear cache after disabling.
-      $this->getDriver()->drush('cc all');
     }
   }
 
