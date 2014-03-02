@@ -60,7 +60,11 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $block['subject'] = $this->title;
     $block['title'] = $this->title;
 
-    if (!empty($block['content'])) {
+    if (empty($block['content'])) {
+      // Block content must be defined, even if it is empty, to avoid errors.
+      $block['content'] = '';
+    }
+    else {
       if (!empty($this->options['vocabularies'])) {
         // Get the list of selected vocabularies
         $selected = array();
@@ -100,8 +104,10 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', $bundle);
     $vocabularies = array();
 
-    foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
-      $vocabularies[$taxonomy_vocabulary->machine_name] = $taxonomy_vocabulary->name;
+    if ($taxonomy_vocabularies) {
+      foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
+        $vocabularies[$taxonomy_vocabulary->machine_name] = $taxonomy_vocabulary->name;
+      }
     }
 
     return $vocabularies;
