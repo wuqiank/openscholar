@@ -468,10 +468,17 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^cache is enabled for anonymous users$/
+   * @Given /^cache is "([^"]*)" for anonymous users$/
    */
-  public function cacheIsEnabledForAnonymousUsers() {
-    $this->getDriver()->drush('vset cache 1');
+  public function cacheIsForAnonymousUsers($status) {
+    if ($status == "enabled") {
+      $this->getDriver()->drush('vset cache 1');
+    }
+    else if ($status == "disabled") {
+      $this->getDriver()->drush('vset cache 0');
+      // Clear cache after disabling.
+      $this->getDriver()->drush('cc all');
+    }
   }
 
   /**
