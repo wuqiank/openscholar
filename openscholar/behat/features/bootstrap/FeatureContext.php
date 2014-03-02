@@ -385,7 +385,7 @@ class FeatureContext extends DrupalContext {
           }
           break;
         case 'checkbox':
-          $metasteps[] = new Step\When('I '. $form_elements[1] . ' the box "' . $form_elements[0] . '"');
+          $metasteps[] = new Step\When('I ' . $form_elements[1] . ' the box "' . $form_elements[0] . '"');
           break;
         case 'textfield':
           $metasteps[] = new Step\When('I fill in "' . $form_elements[0] . '" with "1"');
