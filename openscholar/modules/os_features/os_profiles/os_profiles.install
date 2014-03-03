@@ -23,3 +23,21 @@ if (module_exists('field_redirection')) {
 function os_profiles_update_7002() {
   features_revert(array('os_profiles' => array('field_instance')));
 }
+
+/**
+ * Remove the "file_upload" field but keep the existing files.
+ */
+function os_profiles_update_7003() {
+  $instance = field_info_instance('node', 'field_upload', 'person');
+  
+  // Mark the field instance for deletion.
+  db_update('field_config_instance')
+    ->fields(array('deleted' => 1))
+    ->condition('field_name', $instance['field_name'])
+    ->condition('entity_type', $instance['entity_type'])
+    ->condition('bundle', $instance['bundle'])
+    ->execute();
+
+  // Clear the cache.
+  field_cache_clear();
+}
