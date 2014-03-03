@@ -29,6 +29,7 @@ function vsite_preset_update_7000() {
       'hwp_event_conference' => 'hwp_event_conference',
     ),
   );
+  module_load_include('inc', 'os', 'includes/update');
   $message .= _os_update_strongarm($variables);
   return $message;
 }
