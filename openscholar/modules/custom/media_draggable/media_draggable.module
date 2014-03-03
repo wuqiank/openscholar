@@ -248,6 +248,11 @@ function media_draggable_dnd_pre_render($element) {
   if (!empty($element['#value']['fid'])) {
     $file = $element['#file'];
 
+    if (!$file->status) {
+      $file->status = 1;
+      file_save($file);
+    }
+
     module_load_include('inc', 'media', 'includes/media.browser');
     media_browser_build_media_item($file);
 
