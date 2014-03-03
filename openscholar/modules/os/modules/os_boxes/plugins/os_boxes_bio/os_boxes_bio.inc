@@ -79,8 +79,9 @@ class os_boxes_bio extends os_boxes_default {
     $view_mode = ($this->options['teaser'] == 'teaser') ? 'teaser' : 'full';
     $node = node_load($nid);
     $node->show_title = $this->options['show_title'];
+    $render = node_view($node, $view_mode);
 
-    $content = render(node_view($node, $view_mode));
+    $content = render($render);
     return $content;
   }
   /**
