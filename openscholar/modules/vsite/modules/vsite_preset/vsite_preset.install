@@ -16,18 +16,23 @@ function vsite_preset_update_7000() {
   );
   features_revert($revert);
   $message = t('Reverted module vsite_preset: spaces_presets component.<br/>');
+
+  // Finds the current value of `os_enabled_spaces_presets` and adds new preset.
+  $name = 'os_enabled_spaces_presets';
+  $default = array(
+    'os_department' => 'os_department',
+    'os_department_minimal' => 'os_department_minimal',
+    'os_scholar' => 'os_scholar',
+    'os_project' => 'os_project',
+    'hwp_administrative' => 'hwp_administrative',
+    'hwp_lab_research_group' => 'hwp_lab_research_group',
+    'hwp_project' => 'hwp_project',
+    'hwp_personal' => 'hwp_personal',
+  );
+  $presets = variable_get($name, $default);
+  $presets['hwp_event_conference'] = 'hwp_event_conference';
   $variables = array(
-    'os_enabled_spaces_presets' => array(
-      'os_department' => 'os_department',
-      'os_department_minimal' => 'os_department_minimal',
-      'os_scholar' => 'os_scholar',
-      'os_project' => 'os_project',
-      'hwp_administrative' => 'hwp_administrative',
-      'hwp_lab_research_group' => 'hwp_lab_research_group',
-      'hwp_project' => 'hwp_project',
-      'hwp_personal' => 'hwp_personal',
-      'hwp_event_conference' => 'hwp_event_conference',
-    ),
+    $name => $presets,
   );
   module_load_include('inc', 'os', 'includes/update');
   $message .= _os_update_strongarm($variables);
