@@ -1549,17 +1549,13 @@ class FeatureContext extends DrupalContext {
    * @Then /^I enable pinserver$/
    */
   public function iEnablePinserver() {
-    $this->invoke_code('module_enable', array('array(pinserver)'));
-    $this->invoke_code('module_enable', array('array(pinserver_authenticate)'));
-    $this->invoke_code('module_enable', array('array(os_pinserver_auth)'));
+    $this->invoke_code('module_enable', array('array(\'pinserver\', \'pinserver_authenticate\', \'os_pinserver_auth\')'));
   }
 
   /**
    * @Then /^I disable pinserver$/
    */
   public function iDisablePinserver() {
-    $this->invoke_code('module_disable', array('array(pinserver)'));
-    $this->invoke_code('module_disable', array('array(pinserver_authenticate)'));
-    $this->invoke_code('module_disable', array('array(os_pinserver_auth)'));
+    $this->invoke_code('module_disable', array('array(\'pinserver\', \'pinserver_authenticate\', \'os_pinserver_auth\')'));
   }
 }
