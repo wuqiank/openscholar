@@ -111,18 +111,49 @@ div.messages {
 
 /*** SOME BASE STLYES FOR THE COLUMNS WIDGET ***/
 
-.block-boxes-os_boxes_columns .region .region-inner,
+.block-boxes-os_boxes_columns .region .region-inner {
+	padding:0 10px;
+	}
+	
+.block-boxes-os_boxes_columns .region:first-child .region-inner {
+	padding:0 20px 0 0;
+	}	
+	
+.block-boxes-os_boxes_columns .region:last-child .region-inner {
+	padding:0 0 0 20px;
+	}
+
+/* TWO COL OPTIONS */		
+.block-boxes-os_boxes_columns .two-33-66 .region:first-child .region-inner,
+.block-boxes-os_boxes_columns .two-66-33 .region:first-child .region-inner,
+.block-boxes-os_boxes_columns .two-50 .region:first-child .region-inner {
+	padding:0 15px 0 0;
+	}	
+
+.block-boxes-os_boxes_columns .two-66-33 .region:last-child .region-inner,
+.block-boxes-os_boxes_columns .two-33-66 .region:last-child .region-inner,
+.block-boxes-os_boxes_columns .two-50 .region:last-child .region-inner {
+	padding:0 0 0 15px;
+	}
+
+/*** SOME BASE STLYES FOR THE COLUMNS WIDGET 4 AND 5 COL OPTION 
+
 .block-boxes-os_boxes_columns .four-4x25 .panel-row .region .region-inner,
 .block-boxes-os_boxes_columns .five-5x20 .panel-row .region .region-inner {
-	padding-right:25px;
+	padding:0 18px;
 	}
 
-.block-boxes-os_boxes_columns .region:last-child .region-inner,
+	
+.block-boxes-os_boxes_columns .four-4x25 .panel-row:first-child .region:first-child .region-inner,
+.block-boxes-os_boxes_columns .five-5x20 .panel-row:first-child .region:first-child .region-inner {
+	padding:0 10px 0 0;
+	}	
+	
 .block-boxes-os_boxes_columns .four-4x25 .panel-row:last-child .region:last-child .region-inner,
 .block-boxes-os_boxes_columns .five-5x20 .panel-row:last-child .region:last-child .region-inner {
-	padding-right:0;
-	}
-
+	padding:0 0 0 10px;
+	}	
+***/
 
 /*** FRONTPAGE PANELS ***/
 
