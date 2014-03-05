@@ -243,7 +243,7 @@ function cp_user_edit_membership_form($form_state, $user_load) {
     '#type' => 'checkbox',
     // Theme the checkbox label to look like the radio options.
     '#title' => _cp_user_role_option(t('Set as site manager'), t('Make <em>@name</em> the site owner.', array('@name' => $name))),
-    '#default_value' => $space->group->uid == $group_user->uid ? TRUE : FALSE,
+    '#default_value' => $space->group->uid == $user->uid,
     '#access' => in_array('support team', $user->roles) || $space->group->uid == $user->uid,
   );
 
@@ -279,15 +279,18 @@ function cp_user_edit_membership_form_submit($form, &$form_state) {
       vsite_role_grant($node->uid, 'vsite admin', $gid);
     }
 
-    // Set VSite manager, give the role "vsite admin" and remove any other roles.
+    // Set VSite manager.
     $node->uid = $uid;
     node_save($node);
 
+    // Remove any other user roles.
     $new_owner_roles = og_get_user_roles('node', $gid, $uid, FALSE);
     foreach ($new_owner_roles as $role) {
       vsite_role_revoke($uid, $role, $gid);
     }
-    vsite_role_grant($uid, 'vsite admin', $gid);
+
+    // Give the new manager the "vsite admin" role.
+    _cp_user_set_role($uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
   }
 
   // Set the message and redirect back to the cp/users page

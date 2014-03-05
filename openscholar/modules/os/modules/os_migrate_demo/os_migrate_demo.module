@@ -488,11 +488,10 @@ function os_migrate_demo_check_user_role_in_group($name, $role, $group) {
  * Get a user id by name.
  *
  * @param $name
- *    The user's name
+ *    The user's name.
  * @param $return
- *    If is TRUE return the uid.
- *    If is FALSE the uid is printed.
- *    Defaults to FALSE.
+ *    If set to TRUE the uid is returned.
+ *    If set to FALSE the uid is printed. Defaults to FALSE.
  */
 function os_migrate_demo_get_user_by_name($name, $return = FALSE) {
   $user = user_load_by_name($name);
