@@ -948,15 +948,13 @@ function os_search_solr_os_layout_get_alter($context_name, &$blocks){
     }
   }
 
-  /*
-    // Remove default boxes added by this module.
-    foreach ($blocks as $key => $block) {
-      if(strpos($key, "boxes-vocabulary_filter") === 0 && $block['plugin'] == 'os_boxes_facetapi_vocabulary') {
-        // Remove facet blocks that do not belong here
-        unset($blocks[$key]);
-      }
+  // Remove default boxes added by this module.
+  foreach ($blocks as $key => $block) {
+    if(strpos($key, "boxes-vocabulary_filter") === 0 && !empty($block['plugin']) && $block['plugin'] == 'os_boxes_facetapi_vocabulary') {
+      // Remove facet blocks that do not belong here
+      unset($blocks[$key]);
     }
-  */
+  }
 }
 
 /**
