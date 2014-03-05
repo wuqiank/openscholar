@@ -80,3 +80,9 @@ Feature:
       And I import "john" feed items for "obama"
      When I visit "obama/cp/os-importer/news/manage"
      Then I should see "JFK was murdered"
+
+  @api
+  Scenario: Verify a feed item can be imported only once to the site.
+    Given I am logging in as "admin"
+     When I re import feed item "John news importer"
+     Then I verify the node "JFK was murdered" exists only "1" time for "john"
