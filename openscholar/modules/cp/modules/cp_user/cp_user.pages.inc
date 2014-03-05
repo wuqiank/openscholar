@@ -273,23 +273,14 @@ function cp_user_edit_membership_form_submit($form, &$form_state) {
   if ($group_manager) {
     $node = node_load($gid);
 
-    // Make sure previous owner remains admin.
-    $prev_owner_roles = og_get_user_roles('node', $gid, $node->$uid, FALSE);
-    if (!in_array('vsite admin', $prev_owner_roles)) {
-      vsite_role_grant($node->uid, 'vsite admin', $gid);
-    }
+    // Make sure previous owner remains "vsite admin".
+    _cp_user_set_role($node->uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
 
     // Set VSite manager.
     $node->uid = $uid;
     node_save($node);
 
-    // Remove any other user roles.
-    $new_owner_roles = og_get_user_roles('node', $gid, $uid, FALSE);
-    foreach ($new_owner_roles as $role) {
-      vsite_role_revoke($uid, $role, $gid);
-    }
-
-    // Give the new manager the "vsite admin" role.
+    // Give the new manager the "vsite admin" role and revoke other roles.
     _cp_user_set_role($uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
   }
 
