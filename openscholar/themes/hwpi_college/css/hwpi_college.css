@@ -245,21 +245,26 @@ margin-top:-2px;
 
 #page-title,
 #content-column h3,
-#content-column h4 {
+#content-column h4,
+#tinymce h2,
+#tinymce h3,
+#tinymce h4 {
     font-family: georgia,sans-serif;
     font-weight: normal;
 }
 
-
+#tinymce h2,
 #content-column .field-name-body h2 {
 	font-size: 25px;
 	padding-bottom: 0;
 }
 
+#tinymce h3,
 #content-column .field-name-body h3 {
 	font-size: 22px;
 }
 
+#tinymce h4,
 #content-column .field-name-body h4 {
 	font-size: 19px;
 }
