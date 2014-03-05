@@ -1567,9 +1567,9 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Then /^I verify the node "([^"]*)" exists only "([^"]*)" time for "([^"]*)"$/
+   * @Then /^I verify the feed item "([^"]*)" exists only "([^"]*)" time for "([^"]*)"$/
    */
-  public function iVerifyTheNodeExistsOnlyTimeFor($node, $time, $vsite) {
+  public function iVerifyTheFeedItemeExistsOnlyTimeFor($node, $time, $vsite) {
     $count = $this->invoke_code('os_migrate_demo_count_node_instances', array("'$node'", "'$vsite'"));
 
     if ($count != $time) {

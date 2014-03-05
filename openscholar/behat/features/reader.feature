@@ -85,4 +85,4 @@ Feature:
   Scenario: Verify a feed item can be imported only once to the site.
     Given I am logging in as "admin"
      When I re import feed item "John news importer"
-     Then I verify the node "JFK was murdered" exists only "1" time for "john"
+     Then I verify the feed item "JFK was murdered" exists only "1" time for "john"

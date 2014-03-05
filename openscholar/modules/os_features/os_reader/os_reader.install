@@ -261,9 +261,9 @@ function _os_reader_update_7003($feed_items, &$unique, &$feed_item_id) {
 }
 
 /**
- * Support Entity cache module.
+ * Integrate between the Entity cache module to OS reader module.
  */
-function os_reader_update_7004(&$sandbox) {
+function os_reader_update_7004() {
   if (!module_exists('entitycache')) {
     return;
   }
