@@ -131,7 +131,6 @@ function os_menu_alter(&$items) {
     'access user autocomplete',
   );
 }
-
 function os_in_readonly_mode($page) {
   // Callback data for each page.
   switch ($page) {
@@ -160,7 +159,9 @@ function os_in_readonly_mode($page) {
       break;
   }
 
-  if (variable_get('os_readonly_mode', FALSE)) {
+  global $user;
+
+  if (variable_get('os_readonly_mode', FALSE) && $user->uid != 1) {
     // Read-only mode is active.
     return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
   }
@@ -177,8 +178,13 @@ function os_in_readonly_mode($page) {
     return drupal_get_form($drupal_default_form);
   }
 
+  if ($user->uid == 1) {
+    return drupal_get_form($drupal_default_form);
+  }
+
   drupal_access_denied();
 }
+
 
 /**
  * Implements hook_entity_info_alter().
