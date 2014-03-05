@@ -206,16 +206,16 @@ function cp_user_edit_membership_form($form_state, $user_load) {
   if (!isset($user_load['build_info']['args'][0]->uid)) {
     return;
   }
-  $user = $user_load['build_info']['args'][0];
+  $group_user = $user_load['build_info']['args'][0];
 
   // Prepares replacement value text for the modal form.
-  $name = _cp_user_get_full_name($user);
+  $name = _cp_user_get_full_name($group_user);
   $site = $space->group->title;
 
   // Form sets.
   $form['gid'] = array('#type' => 'value', '#value' => $space->group->nid);
   $form['bundle'] = array('#type' => 'value', '#value' => $space->group->type);
-  $form['uid'] = array('#type' => 'value', '#value' => $user->uid);
+  $form['uid'] = array('#type' => 'value', '#value' => $group_user->uid);
   $form['user_name'] = array('#type' => 'value', '#value' => $name);
   $form['site_name'] = array('#type' => 'value', '#value' => $site);
   $form['title'] = array(
@@ -232,13 +232,19 @@ function cp_user_edit_membership_form($form_state, $user_load) {
     '#type' => 'radios',
     // Each option is themed and includes a description.
     '#options' => _cp_user_list_roles('options', $space->group->type, $space->group->nid),
-    '#default_value' => _cp_user_get_role($user->uid, $space->group->nid),
+    '#default_value' => _cp_user_get_role($group_user->uid, $space->group->nid),
   );
+
+  // Show the option to change site owner only for the current owner or
+  // a support team member.
+  global $user;
+
   $form['edit_membership']['group_manager'] = array(
     '#type' => 'checkbox',
     // Theme the checkbox label to look like the radio options.
     '#title' => _cp_user_role_option(t('Set as site manager'), t('Make <em>@name</em> the site owner.', array('@name' => $name))),
-    '#default_value' => $space->group->uid == $user->uid ? 1 : 0,
+    '#default_value' => $space->group->uid == $group_user->uid ? TRUE : FALSE,
+    '#access' => in_array('support team', $user->roles) || $space->group->uid == $user->uid,
   );
 
   // Builds and returns a confirmation form.
@@ -265,10 +271,23 @@ function cp_user_edit_membership_form_submit($form, &$form_state) {
   _cp_user_set_role($uid, $gid, $new_role, $bundle);
 
   if ($group_manager) {
-    // Set VSite manager.
     $node = node_load($gid);
+
+    // Make sure previous owner remains admin.
+    $prev_owner_roles = og_get_user_roles('node', $gid, $node->$uid, FALSE);
+    if (!in_array('vsite admin', $prev_owner_roles)) {
+      vsite_role_grant($node->uid, 'vsite admin', $gid);
+    }
+
+    // Set VSite manager, give the role "vsite admin" and remove any other roles.
     $node->uid = $uid;
     node_save($node);
+
+    $new_owner_roles = og_get_user_roles('node', $gid, $uid, FALSE);
+    foreach ($new_owner_roles as $role) {
+      vsite_role_revoke($uid, $role, $gid);
+    }
+    vsite_role_grant($uid, 'vsite admin', $gid);
   }
 
   // Set the message and redirect back to the cp/users page
