@@ -52,6 +52,7 @@ class OsFeedReaderFetcher extends FeedsProcessor {
       'importer_nid' => $entity->feeds_item->feed_nid,
       'importer_type' => $node->type == 'blog_import' ? 'blog' : 'news',
     );
+
     os_reader_feed_item_create($values)->save();
   }
 

@@ -77,6 +77,19 @@ function os_reader_install() {
   // Turn comments off by default.
   variable_set('comment_feed', COMMENT_NODE_CLOSED);
   variable_set('comment_feed_item', COMMENT_NODE_CLOSED);
+
+  $og_field = og_fields_info(OG_AUDIENCE_FIELD);
+
+  // Enable Entity reference pre-populate.
+  $og_field['instance']['settings']['behaviors']['prepopulate'] = array(
+    'status' => TRUE,
+    'action' => 'hide',
+    'fallback' => 'hide',
+    'skip_perm' => FALSE,
+    'og_context' => TRUE,
+    'action_on_edit' => TRUE
+  );
+  og_create_field(OG_AUDIENCE_FIELD, 'os_feed_item', 'feed_item', $og_field);
 }
 
 /**
@@ -103,7 +116,7 @@ function os_reader_update_7001() {
  */
 function os_reader_update_7002() {
   $og_field = og_fields_info(OG_AUDIENCE_FIELD);
-  // Enable Entity reference prepopulate.
+  // Enable Entity reference pre-populate.
   $og_field['instance']['settings']['behaviors']['prepopulate'] = array(
     'status' => TRUE,
     'action' => 'hide',
@@ -238,4 +251,11 @@ function _os_reader_update_7003($feed_items, &$unique, &$feed_item_id) {
         ->execute();
     }
   }
+}
+
+/**
+ * Delete duplicate feed items.
+ */
+function os_reader_update_7005(&$sandbox) {
+  os_reader_update_7003($sandbox);
 }
