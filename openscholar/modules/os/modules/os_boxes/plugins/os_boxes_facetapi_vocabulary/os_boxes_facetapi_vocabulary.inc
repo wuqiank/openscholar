@@ -1,8 +1,6 @@
 <?php
 class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
-  public $bundle;
-
   /**
    * Create a new box.
    */
@@ -101,7 +99,6 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    */
   private function get_bundle_vocabularies() {
 
-   //ctools_include('taxonomy', 'os');
     $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', str_replace("vocabulary_filter_", "", $this->delta));
 
     $vocabularies = array();
