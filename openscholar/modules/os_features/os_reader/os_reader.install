@@ -256,6 +256,6 @@ function _os_reader_update_7003($feed_items, &$unique, &$feed_item_id) {
 /**
  * Delete duplicate feed items.
  */
-function os_reader_update_7005(&$sandbox) {
+function os_reader_update_7004(&$sandbox) {
   os_reader_update_7003($sandbox);
 }
