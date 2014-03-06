@@ -4,57 +4,6 @@
 /**
  * Implements hook_help().
  */
-function os_help_help($path, $arg) {
-  $item = menu_get_item();
-  // Display the help icon only for allowed pages.
-  if (!$item['access']) {
-    return;
-  }
-
-  switch ($path) {
-    case 'cp/build':
-    case 'cp/build/apps':
-      $topic = 'Apps';
-      break;
-    case 'cp/build/layout':
-      $topic = 'Customizing-Your-Site-Layout';
-      break;
-    case 'cp/appearance':
-    case 'cp/appearance/theme':
-      $topic = 'Theme-Selection';
-      break;
-    case 'cp/build/menu':
-      $topic = 'Menus';
-      break;
-    case 'cp/build/taxonomy':
-      $topic = 'Categorizing-Your-Content---Taxonomy';
-      break;
-    case 'cp/settings/site_info/%':
-      $topic = 'Site-Information';
-      break;
-    case 'cp/content':
-      $topic = 'Managing-Your-Content';
-      break;
-    case 'cp/content/files':
-      $topic = 'Managing-Files-and-Images';
-      break;
-    case 'cp/users':
-      $topic = 'Managing-Your-Users';
-      break;
-    case 'cp/news':
-      $topic = 'Getting-Project-News';
-      break;
-    case 'cp/support':
-      $topic = 'Getting-Support';
-      break;
-  }
-  if (isset($topic)) {
-    return theme('advanced_help_topic', array(
-      'module' => 'os_help',
-      'topic' => $topic,
-    ));
-  }
-}
 
 /**
  * Implements hook_process_HOOK for page.tpl.php.
