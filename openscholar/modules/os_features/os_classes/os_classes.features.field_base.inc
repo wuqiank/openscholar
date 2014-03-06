@@ -128,6 +128,7 @@ function os_classes_field_default_field_bases() {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
+        'Winter' => 'Winter',
         'Fall' => 'Fall',
         'Spring' => 'Spring',
         'Summer' => 'Summer',
