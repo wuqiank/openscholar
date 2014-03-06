@@ -1088,6 +1088,12 @@ span[style*="float: right;"] .file-os-files-medium {
   margin-left: 1em;
 }
 
+
+.block-boxes-os_sv_list_box h3 a {
+	font-weight:normal;
+	font-size:initial;
+	}
+
 /**
 LIST OF POSTS - PERSON TEASER IN SIDEBAR
  */
