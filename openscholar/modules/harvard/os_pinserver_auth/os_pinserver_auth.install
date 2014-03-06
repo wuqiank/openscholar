@@ -15,17 +15,7 @@ function os_pinserver_auth_install(){
 }
 
 /**
- * Implementation of hook_uninstall().
- */
-function os_pinserver_auth_uninstall(){
-  // Pinserver should not take over registration.
-  variable_del('os_pinserver_registration');
-  variable_del('os_readonly_register_callback');
-  variable_del('os_readonly_site_register_callback');
-}
-
-/**
- * Implementation of hook_disable().
+ * Implements hook_disable().
  */
 function os_pinserver_auth_disable(){
   // Pinserver should not take over registration.
