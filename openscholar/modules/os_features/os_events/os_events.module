@@ -199,6 +199,40 @@ function os_events_default_registration_type() {
   return $items;
 }
 
+function os_events_date_formatter_pre_view_alter(&$entity, $vars) {
+  if ($entity->type != 'event') {
+    return;
+  }
+
+  // Only display the start time for this particular instance of a repeat event.
+  if (!$entity->view = views_get_current_view()) {
+    return;
+  }
+
+  // Don't remove the field date when exporting the calendar. This the unique
+  // identifier of Google calendar.
+  if ($entity->view->plugin_name == 'date_ical') {
+    return;
+  }
+
+  if (isset($entity->view) && isset($entity->view->row_index) && isset($entity->view->result[$entity->view->row_index])) {
+    dpm($entity->view);
+    $result = $entity->view->result[$entity->view->row_index];
+    $field = 'field_data_field_date_field_date_value';
+    $delta = -1;
+    foreach ($entity->field_date[LANGUAGE_NONE] as $d => $r) {
+      if ($r['value'] == $result->$field) {
+        $delta = $d;
+        break;
+      }
+    }
+    $entity->date_id = 'node.'.$entity->nid.'.field_date.'.$delta;
+  }
+  else {
+    $entity->active_date = $vars['items'][0];
+  }
+}
+
 /**
  * Implements hook_process_node().
  */
