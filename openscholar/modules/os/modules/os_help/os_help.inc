@@ -111,3 +111,39 @@ function os_help_get_variables_from_id($type, $id) {
 
   return $variables;
 }
+
+/**
+ * Returns the HTML content for the given article.
+ */
+function os_help_get_article($article_id) {
+  $articles = &drupal_static(__FUNCTION__, array());
+
+  if (!isset($articles[$article_id])) {
+    $cid = "os_help:{$article_id}";
+    if (($cache = cache_get($cid)) && !empty($cache->data)) {
+      $articles[$article_id] = $cache->data;
+    }
+    else {
+      $filename = drupal_get_path('module', 'os_help') . '/os_help.articles.ini';
+      $data = file_get_contents($filename);
+      $info = drupal_parse_info_format($data);
+      if (!isset($info[$article_id]) || !isset($info[$article_id]['url'])) {
+        $info[$article_id] = '<p>' . t('No help article found.') . '</p>';
+      }
+      else {
+        $article = os_help_get_article_from_url($info[$article_id]['url']);
+        $articles[$article_id] = $article;
+        cache_set($cid, $article);
+      }
+    }
+  }
+
+  return $articles[$article_id];
+}
+
+/**
+ *
+ */
+function os_help_get_article_from_url() {
+  
+}
