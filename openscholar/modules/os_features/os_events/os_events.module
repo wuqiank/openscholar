@@ -215,20 +215,25 @@ function os_events_date_formatter_pre_view_alter(&$entity, $vars) {
     return;
   }
 
-  if (isset($entity->view) && isset($entity->view->row_index) && isset($entity->view->result[$entity->view->row_index])) {
-    dpm($entity->view);
-    $result = $entity->view->result[$entity->view->row_index];
+  if (!isset($entity->date_id) && isset($entity->view) && isset($entity->view->row_index) && isset($entity->view->result[$entity->view->row_index])) {
+    $view = $entity->view;
+    $result = $view->result[$view->row_index];
     $field = 'field_data_field_date_field_date_value';
     $delta = -1;
-    foreach ($entity->field_date[LANGUAGE_NONE] as $d => $r) {
-      if ($r['value'] == $result->$field) {
-        $delta = $d;
-        break;
+    if (isset($result->field_data_field_date_delta)) {
+      $delta = $result->field_data_field_date_delta;
+    }
+    else {
+      foreach ($entity->field_date[LANGUAGE_NONE] as $d => $r) {
+        if ($r['value'] == $result->$field) {
+          $delta = $d;
+          break;
+        }
       }
     }
     $entity->date_id = 'node.'.$entity->nid.'.field_date.'.$delta;
   }
-  else {
+  elseif (!isset($entity->date_id)) {
     $entity->active_date = $vars['items'][0];
   }
 }
