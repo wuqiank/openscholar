@@ -932,6 +932,9 @@ function os_form_node_form_alter(&$form, $form_state) {
   }
 
   $form['actions_top'] = $form['actions'];
+
+  // Hiding the original actions element.
+  hide($form['actions']);
 }
 
 
