@@ -937,7 +937,6 @@ function os_form_node_form_alter(&$form, $form_state) {
   hide($form['actions']);
 }
 
-
 /**
  * Page argument; passed to drupal_get_form in os_menu().
  */
