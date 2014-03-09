@@ -98,7 +98,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
         // Use default image.
         $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
         $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-        $vars['content']['field_person_photo'][0] = array('#markup' => $image);
+        $vars['content']['field_person_photo'][0] = variable_get('os_profiles_disable_default_image', FALSE) ? '' : array('#markup' => $image);
       }
       // Profile is not in a widget. Check if default image is disabled. If it is, print an empty div.
       elseif (variable_get('os_profiles_disable_default_image', FALSE)) {
