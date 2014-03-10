@@ -117,6 +117,13 @@ function os_publications_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'diff_show_preview_changes_node_biblio';
+  $strongarm->value = 0;
+  $export['diff_show_preview_changes_node_biblio'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'menu_options_biblio';
   $strongarm->value = array(
     0 => 'primary-menu',
