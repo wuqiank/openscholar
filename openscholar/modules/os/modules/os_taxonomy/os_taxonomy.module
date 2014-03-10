@@ -628,6 +628,8 @@ function os_taxonomy_preprocess_page(&$page) {
   }
 
   if (!empty($active['tid'])) {
+    $ctxs = array_keys(context_active_contexts());
+
     $section_links['page-header'] = array(
       'title' => t('This Term'),
     );
