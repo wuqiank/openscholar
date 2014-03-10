@@ -1034,8 +1034,13 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
 
   // Form element for uploading a default image.
   $allowed_file_types = 'gif png jpg jpeg';
+  global $language;
+
   $form['file'] = array(
     '#type' => 'managed_file',
+    '#field_parents' => array(),
+    '#field_name' => array(),
+    '#language' => $language->language,
     '#title' => t('Default image'),
     '#field_prefix' => '<div class="">',
     '#field_suffix' => '</div>' . $image,
