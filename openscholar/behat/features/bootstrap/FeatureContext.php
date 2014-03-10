@@ -983,7 +983,7 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^I remove the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
+   * @Given /^I remove from the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
    */
   public function iRemoveTheRoleThePermissionInTheGroup($role, $group, $permission) {
     $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
@@ -991,7 +991,7 @@ class FeatureContext extends DrupalContext {
 
     return array(
       new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
-      new Step\When('I uncheck the box "' . $permission . '"'),
+      new Step\When('I uncheck the box "edit-' . $rid . '-' . $permission . '"'),
       new Step\When('I press "Save permissions"'),
     );
   }
