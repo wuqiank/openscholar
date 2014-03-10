@@ -971,17 +971,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     '#weight' => -99,
   );
 
-  // todo: see if we need to use only those view modes or the view modes the
-  // user turned on.
-//  $profile_styles = array(
-//    'title' => t('Name only'),
-//    'teaser' => t('Teaser'),
-//    'sidebar_teaser' => t('Name, image, and professional title'),
-//    'no_image_teaser' => t('No image teaser'),
-//  );
-
   $entity_info = entity_get_info('node');
-
   foreach ($entity_info['view modes'] as $name => $info) {
     if (!$info['custom settings']) {
       // Display only display modes the user turned on.
