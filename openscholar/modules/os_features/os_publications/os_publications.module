@@ -408,6 +408,12 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['biblio_tabs']['biblio_full_text']['body'] = $form['body'];
   unset($form['body']);
 
+  unset($form['biblio_tabs']['#type']);
+  foreach (element_children($form['biblio_tabs']) as $k => $t) {
+    unset($form['biblio_tabs'][$k]['#group']);
+  }
+
+
   // Take certain vtabs out of biblio vtabs and into the main form.
   // The vtabs we are pulling may contain fields we either want outside of vtabs
   // or don't want at all.
