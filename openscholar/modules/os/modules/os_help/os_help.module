@@ -35,5 +35,4 @@ function os_help_form_spaces_features_form_alter(&$form, &$form_state, $form_id)
       }
     }
   }
-  $form = $form;
 }
