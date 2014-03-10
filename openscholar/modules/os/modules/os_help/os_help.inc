@@ -6,6 +6,13 @@
  */
 
 /**
+ * The mode for popup icon links to behave when clicked.
+ *
+ * @todo Expose setting for sitewide admins?
+ */
+define('OS_HELP_ICON_LINK_MODE', 'new_tab');
+
+/**
  * Returns a docs URL for the given path or form element key.
  *
  * @param bool $is_path
@@ -101,12 +108,20 @@ function os_help_get_variables_from_id($type, $id) {
           'class' => array(
             'os-help-link',
           ),
-          'onclick' => "var w=window.open(this.href, 'os_help_link', 'width=480,height=600,scrollbars,resizable'); w.focus(); return false;",
           'title' => $links[$id]['title'],
         ),
         'html' => TRUE,
       ),
     );
+    $mode = OS_HELP_ICON_LINK_MODE;
+    switch ($mode) {
+      case 'popup':
+        $variables['options']['attributes']['onclick'] = 'var w=window.open(this.href, \'os_help_link\', \'width=480,height=600,scrollbars,resizable\'); w.focus(); return false;';
+        break;
+      case 'new_tab':
+        $variables['options']['attributes']['target'] = '_blank';
+        break;
+    }
   }
 
   return $variables;
