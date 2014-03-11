@@ -20,8 +20,7 @@
 /*Primary menu*/
 
 .responive-menu-container {
-	position: fixed;
-	top: 0;
+	position: absolute;
 	right: 0;
 	z-index: 2000;
 	}
@@ -34,21 +33,18 @@
 #menu-bar #block-os-primary-menu.opened{
 	display: block;
     padding: 0;
-	position: fixed;
+	position: absolute;
 	top: 38px;
 	width: 305px !important;
 	right: 0;
     z-index: 2000;
 }
 
-.region-header-third #block-os-secondary-menu.opened, 
-.region-header-third .os-custom-menu.opened {
-
-}
-
 .region-header-third #block-os-secondary-menu.opened,
 .region-header-third .os-custom-menu.opened {
     background-color: #2A527A;
+    top: -151px;
+	right: -15px;
 }
 
 #menu-bar #block-os-primary-menu ul:after {
@@ -135,9 +131,9 @@ background: none !important;
     background-color: #1E1E1E;
     display: block;
     padding: 12px 0;
-    position: static;
-    width: 95% !important;
-    margin: 0 15px;
+    position: absolute;
+    width: 305px !important;
+ 
 }
 
 
