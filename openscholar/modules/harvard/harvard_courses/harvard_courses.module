@@ -123,36 +123,17 @@ function harvard_courses_courses_filter() {
     return;
   }
 
-  /*
-   * SELECT DISTINCT field_data_field_term.field_term_value
-FROM
-og_membership ogm
-INNER JOIN node node ON node.nid = ogm.etid
-INNER JOIN field_data_field_term ON field_data_field_term.entity_id=node.nid AND field_data_field_term.entity_type="node"
-WHERE  (ogm.gid = 2516) AND (node.type = "harvard_course") AND (ogm.entity_type = "node")
-
-  $query = new entityFieldQuery();
-  $result = $query
-    ->entityCondition('entity_type', 'node')
-    ->propertyCondition('type', 'harvard_course')
-    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $space->id)
-    ->execute();
-
-  if (empty($result['node'])) {
-    return;
-  }
-   */
   if ($vsite = spaces_get_space()) {
-    $q = db_select('og_membership', 'ogm')
+    $query = db_select('og_membership', 'ogm')
       ->fields('f', array('field_term_value'))
       ->distinct();
-      $q->join('node', 'n', 'ogm.etid = n.nid');
-      $q->join('field_data_field_term', 'f', 'f.entity_id = n.nid AND f.entity_type =\'node\'');
-      $q->condition('ogm.gid', $vsite->id);
-      $q->condition('n.type', 'harvard_course');
-      $q->condition('ogm.entity_type', 'node');
+      $query->join('node', 'n', 'ogm.etid = n.nid');
+      $query->join('field_data_field_term', 'f', 'f.entity_id = n.nid AND f.entity_type =\'node\'');
+      $query->condition('ogm.gid', $vsite->id);
+      $query->condition('n.type', 'harvard_course');
+      $query->condition('ogm.entity_type', 'node');
 
-    foreach ($q->execute() as $result) {
+    foreach ($query->execute() as $result) {
       $text = check_plain($result->field_term_value);
       $query_params = array(
         'term' => $text,
@@ -160,16 +141,6 @@ WHERE  (ogm.gid = 2516) AND (node.type = "harvard_course") AND (ogm.entity_type 
       $semester[$text] = l($text, 'courses', array('query' => $query_params));
     }
   }
-
-  /*
-  if ($vsite = spaces_get_space()) {
-    $q->join('og_membership', 'ogm', 'ogm.etid = b.bid AND ogm.entity_type =\'node\'');
-    $q->condition('gid', $vsite->id);
-
-  $nodes = node_load_multiple(array_keys($result['node']));
-  $semester = array();
-  */
-
 
   return theme('item_list', array('title' => t('Filter by semester'), 'items' => $semester));
 }
