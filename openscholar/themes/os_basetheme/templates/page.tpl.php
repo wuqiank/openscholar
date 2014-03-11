@@ -40,7 +40,6 @@
 		  <?php print $menu_bar; ?>
 		  <!--main menu region end-->
 		<?php endif; ?>
-    <?php if ($breadcrumb): print $breadcrumb; endif; ?>
 
     <?php if($help = render($page['help'])): ?>
 		  <!--help region beg-->
@@ -49,6 +48,7 @@
 		<?php endif; ?>
 
 		<div id="columns" class="clearfix">
+      <?php if ($breadcrumb): print $breadcrumb; endif; ?>
 			<div class="hg-container">
 				<div id="content-column" role="main">
 					<div class="content-inner">
