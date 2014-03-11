@@ -786,13 +786,13 @@ function os_pages_add_subpage_form($form, &$form_state, $node) {
  * If the selected page is already in a section, moves it to its new parent
  */
 function os_pages_add_subpage_submit($form, &$form_state) {
-  dpm($form_state);
   $nid = $form_state['values']['add-page'];
   $node = node_load($nid);
   $parent = $form_state['node'];
 
   os_pages_make_subpage($node, $parent->nid);
   node_save($node);
+  overlay_close_dialog();
 }
 
 /**
