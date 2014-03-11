@@ -248,6 +248,10 @@ function media_draggable_dnd_pre_render($element) {
   if (!empty($element['#value']['fid'])) {
     $file = $element['#file'];
 
+    // files added through dragging are never given the Permanent status
+    // without it, they could be deleted during a cron
+    // Since we always want files users upload to be permanent, we set the
+    // status to 1 when the user uploads them.
     if (!$file->status) {
       $file->status = 1;
       file_save($file);
