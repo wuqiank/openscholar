@@ -32,8 +32,8 @@
                 function alias_preview_scroll() {
                     // Brings the user to the custom alias field with proper settings checked.
                     $('.form-item-title .description a').click(function () {
-                        $('html, body', context).animate({ scrollTop: $('.vertical-tabs').offset().top });
-                        $('.vertical-tab-button a:contains("URL path settings")', context).click();
+                        $('html, body', context).animate({ scrollTop: $('#edit-actions-top').offset().top });
+                        $('#edit-path .fieldset-title', context).click();
                         $('#edit-path-pathauto').click().attr('checked', false).attr('value', 0);
                         $('.form-item-path-alias').removeClass('form-disabled');
                         $('#edit-path-alias').removeAttr("disabled").focus().select();
