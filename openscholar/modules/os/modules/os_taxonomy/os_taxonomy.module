@@ -1613,7 +1613,7 @@ function os_taxonomy_taxonomy_vocabulary_insert($vocabulary) {
       module_load_include('inc', 'pathauto');
       $uri = entity_uri('taxonomy_vocabulary', $vocabulary);
       $langcode = !empty($langcode) ? $langcode : LANGUAGE_NONE;
-      pathauto_create_alias('taxonomy_vocabulary', 'update', $uri['path'], array('vocabulary' => $vocabulary), $vocabulary->vocabulary_machine_name, $langcode);
+      pathauto_create_alias('taxonomy_vocabulary', 'update', $uri['path'], array('vocabulary' => $vocabulary), $vocabulary->machine_name, $langcode);
       return;
     }
   }
