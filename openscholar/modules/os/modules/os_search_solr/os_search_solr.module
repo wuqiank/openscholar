@@ -918,7 +918,7 @@ function os_search_solr_default_box_alter(&$items) {
 }
 
 /**
- * Utility function to create vucabulary filter box.
+ * Utility function to create vocabulary filter box.
  *
  * @return stdClass
  *   Vocabulary filter box object.
@@ -931,10 +931,7 @@ function os_search_solr_vocabulary_filter_box($bundle_name) {
   $box->plugin_key = 'os_boxes_facetapi_vocabulary';
   $box->title = t('Filter by taxonomy');
   $box->description = 'Vocabulary filter';
-  $box->options = array(
-    'bundle' => $bundle_name,
-  );
-
+  
   return $box;
 }
 
@@ -942,8 +939,7 @@ function os_search_solr_vocabulary_filter_box($bundle_name) {
  * Implements hook os_layout_get_alter()
  */
 function os_search_solr_os_layout_get_alter($context_name, &$blocks){
-
-  //Only allow the facet browse contexts, to use facet boxes
+  // Only allow the facet browse contexts, to use facet boxes.
   if (strpos($context_name, "browse_") === 0) {
     $context = context_load($context_name);
     if($context && $context->export_module == "os_search_solr"){
@@ -953,7 +949,7 @@ function os_search_solr_os_layout_get_alter($context_name, &$blocks){
 
   // Remove default boxes added by this module.
   foreach ($blocks as $key => $block) {
-    if(strpos($key, "boxes-vocabulary_filter") === 0 && $block['plugin'] == 'os_boxes_facetapi_vocabulary') {
+    if(strpos($key, "boxes-vocabulary_filter") === 0 && !empty($block['plugin']) && $block['plugin'] == 'os_boxes_facetapi_vocabulary') {
       // Remove facet blocks that do not belong here
       unset($blocks[$key]);
     }
