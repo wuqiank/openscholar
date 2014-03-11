@@ -721,9 +721,13 @@ function os_pages_os_add_new_links_alter(&$links) {
   if (node_is_page($node) && $node->type == 'page') {
     if ((user_access('add content to books') || user_access('administer book outlines')) && node_access('create', 'page') && (!isset($node->book['depth']) || $node->book['depth'] < MENU_MAX_DEPTH)) {
       $links['book_add_child'] = array(
-        'title' => t('Subpage'),
+        'title' => t('Page'),
         'href' => 'node/add/page',
         'query' => isset($node->book['mlid']) ? array('parent' => $node->book['mlid'], 'destination' => 'node/' . $node->nid) : array('parent_node' => $node->nid, 'destination' => 'node/' . $node->nid),
+      );
+      $links['book_move_child'] = array(
+        'title' => t('Existing Page to Section'),
+        'href' => 'os/pages/'.$node->nid.'/subpage'
       );
     }
   }
@@ -741,7 +745,7 @@ function os_pages_edit_form($node, $mode) {
  * Page callback for 'os/pages/%node/subpage.
  * Allows user to add a subpage to this page
  */
-function os_pages_add_subpage_form(&$form_state, $node) {
+function os_pages_add_subpage_form($form, &$form_state, $node) {
   $form_state['node'] = $node;
   include_once (drupal_get_path('module', 'vsite') . '/includes/nodeautocomplete.inc');
   $form['add-page'] = array(
@@ -781,7 +785,8 @@ function os_pages_add_subpage_form(&$form_state, $node) {
  * Turns the given node into a section, if it isn't already
  * If the selected page is already in a section, moves it to its new parent
  */
-function os_pages_add_subpage_submit(&$form_state) {
+function os_pages_add_subpage_submit($form, &$form_state) {
+  dpm($form_state);
   $nid = $form_state['values']['add-page'];
   $node = node_load($nid);
   $parent = $form_state['node'];
