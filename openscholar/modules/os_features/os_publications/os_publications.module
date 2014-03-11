@@ -490,6 +490,16 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     '#collapsed' => TRUE,
   );
 
+  foreach (array('field_biblio_extra' => 12, 'field_biblio_image' => 11, 'og_vocabulary' => 9) as $field => $weight) {
+    if (isset($form[$field])) {
+      $form['publication_extras'][$field] = $form[$field];
+      $form['publication_extras'][$field]['#weight'] = $weight;
+      unset($form[$field]);
+    }
+  }
+
+  $form['publication_extras']['biblio_tabs'][5]['#weight'] = 1;
+
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
 
