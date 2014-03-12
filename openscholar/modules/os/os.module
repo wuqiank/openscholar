@@ -934,7 +934,6 @@ function os_form_node_form_alter(&$form, $form_state) {
   $form['actions_top'] = $form['actions'];
 }
 
-
 /**
  * Page argument; passed to drupal_get_form in os_menu().
  */
