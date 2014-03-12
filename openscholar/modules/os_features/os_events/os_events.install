@@ -101,3 +101,11 @@ function os_events_update_7005() {
 function os_events_update_7006() {
   features_revert(array('os_events' => array('field_instance')));
 }
+
+/**
+ * Remove calendar_add_colorbox variable since we decided not to use colorbox.
+ */
+function os_events_update_7007() {
+  variable_del('calendar_add_colorbox');
+}
+
