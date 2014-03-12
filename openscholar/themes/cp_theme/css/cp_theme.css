@@ -448,7 +448,40 @@ body.page-cp.page-cp-account #messages {
 .tabledrag-toggle-weight-wrapper {
   display: none;
 }
-	
+
+#edit-biblio-authors table,
+table#edit-biblio-contributors,
+table#edit-biblio-contributors tr.odd,
+table#edit-biblio-contributors tr.even {
+	border:none;
+}
+
+
+#edit-biblio-authors tablet td,
+table#edit-biblio-contributors td {
+	padding: 8px 2px;
+}
+
+
+#edit-biblio-authors #edit-add-more {
+cursor: pointer;
+padding: 0;
+margin-bottom: 1em;
+margin-right: 1em;
+color: #0074BD;
+text-align: center;
+font-weight: normal;
+font-size: 1em;
+font-family: "Lucida Grande", Verdana, sans-serif;
+border: none;
+border-bottom: none;
+border-left-color: transparent;
+border-right-color: transparent;
+background: none;
+-moz-border-radius: 0;
+-webkit-border-radius: 0;
+border-radius: 0;
+}
 	
 	
 /**	 QUICK TAB CREATION **/	
