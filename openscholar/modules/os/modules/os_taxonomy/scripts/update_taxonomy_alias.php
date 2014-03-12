@@ -11,10 +11,12 @@ foreach ($results as $result) {
   $purl = os_taxonomy_vsite_path(end($info));
 
   if (!$purl) {
+    // The vsite the vocab relate to don't have a purl. Return.
     continue;
   }
 
   if (strpos($result->alias, $purl) !== FALSE) {
+    // The term already have the purl at the start of the alias. Return.
     continue;
   }
 
@@ -29,6 +31,7 @@ foreach ($results as $result) {
     '@new-alias' => $alias,
   );
 
+  // Update the alias and display a nice message.
   drush_log(dt('The alias @alias has been updated to @new-alias', $params), 'success');
   path_save($new_path);
 }
@@ -47,6 +50,8 @@ function os_taxonomy_vsite_path($tid) {
   $purls = &drupal_static(__FUNCTION__, array());
 
   if (in_array($term->vid, $purls)) {
+    // We already found purl for this vocab. Return the purl from the static
+    // cache.
     return $purls[$term->vid];
   }
 
