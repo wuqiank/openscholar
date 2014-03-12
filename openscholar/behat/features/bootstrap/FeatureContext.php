@@ -1573,4 +1573,27 @@ class FeatureContext extends DrupalContext {
   public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
     $this->invoke_code('os_migrate_demo_event_registration_link');
   }
+
+  /**
+   * @Given /^I re import feed item "([^"]*)"$/
+   */
+  public function iReImportFeedItem($node) {
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$node'"));
+
+    return array(
+      new Step\When('I visit "node/' . $nid . '/import"'),
+      new Step\When('I press "Import"'),
+    );
+  }
+
+  /**
+   * @Then /^I verify the feed item "([^"]*)" exists only "([^"]*)" time for "([^"]*)"$/
+   */
+  public function iVerifyTheFeedItemeExistsOnlyTimeFor($node, $time, $vsite) {
+    $count = $this->invoke_code('os_migrate_demo_count_node_instances', array("'$node'", "'$vsite'"));
+
+    if ($count != $time) {
+      throw new Exception(sprintf('The feed items has been imported %s times.', $count));
+    }
+  }
 }
