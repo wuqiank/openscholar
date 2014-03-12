@@ -6,7 +6,6 @@ $results = db_select('url_alias', 'u')
   ->execute()
   ->fetchAllAssoc('pid');
 
-
 foreach ($results as $result) {
   $info = explode('/', $result->source);
   $purl = os_taxonomy_vsite_path(end($info));
