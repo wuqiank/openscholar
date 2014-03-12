@@ -452,14 +452,13 @@ function os_search_solr_mark_entity_by_bundles($vsite_id, $bundles = array(), $l
     return;
   }
 
-  foreach ($result['node'] as $nid => $object) {
-    // The object returned by EFQ has nid / vid / type whcich is good enough for
-    // entity_extract_ids() so we can pass that as the node object.
-    apachesolr_entity_update($object, 'node');
+  $nodes = node_load_multiple(array_keys($result['node']));
+  foreach ($nodes as $node) {
+    apachesolr_entity_update($node, 'node');
+    // Set last processed node ID.
+    $values[$vsite_id]['last_nid'] = $node->nid;
   }
 
-  // Set last processed node ID.
-  $values[$vsite_id]['last_nid'] = $nid;
   variable_set('os_search_solr_reindex_by_bundles', $values);
 }
 
