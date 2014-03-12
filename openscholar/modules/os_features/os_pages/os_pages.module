@@ -352,9 +352,9 @@ function os_pages_form_node_form_alter(&$form, &$form_state) {
 
   // Adds a custom fieldset for the right-hand column to hold meta description.
   $path = drupal_get_path('module', 'os_pages');
-  $form['os_advanced'] = array(
+  $form['os_seo'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Advanced options'),
+    '#title' => t('SEO'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     '#group' => 'additional_settings',
