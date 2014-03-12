@@ -25,7 +25,11 @@ function harvard_courses_views_default_views() {
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'spaces_feature';
   $handler->display->display_options['access']['spaces_feature'] = 'harvard_courses';
-  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'time_per_gorup';
+  $handler->display->display_options['cache']['results_lifespan'] = '3600';
+  $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
+  $handler->display->display_options['cache']['output_lifespan'] = '3600';
+  $handler->display->display_options['cache']['output_lifespan_custom'] = '0';
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'full';
@@ -34,7 +38,8 @@ function harvard_courses_views_default_views() {
   $handler->display->display_options['pager']['options']['id'] = '0';
   $handler->display->display_options['pager']['options']['quantity'] = '5';
   $handler->display->display_options['style_plugin'] = 'default';
-  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['row_plugin'] = 'entity';
+  $handler->display->display_options['row_options']['view_mode'] = 'teaser';
   /* Relationship: OG membership: OG membership from Node */
   $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'node';
@@ -51,14 +56,20 @@ function harvard_courses_views_default_views() {
   $handler->display->display_options['fields']['field_faculty_description']['id'] = 'field_faculty_description';
   $handler->display->display_options['fields']['field_faculty_description']['table'] = 'field_data_field_faculty_description';
   $handler->display->display_options['fields']['field_faculty_description']['field'] = 'field_faculty_description';
+  $handler->display->display_options['fields']['field_faculty_description']['element_type'] = 'div';
+  $handler->display->display_options['fields']['field_faculty_description']['element_class'] = 'field-item';
+  $handler->display->display_options['fields']['field_faculty_description']['element_label_type'] = 'h2';
+  $handler->display->display_options['fields']['field_faculty_description']['element_label_class'] = 'field-label';
   /* Field: Content: Meeting time */
   $handler->display->display_options['fields']['field_meetings']['id'] = 'field_meetings';
   $handler->display->display_options['fields']['field_meetings']['table'] = 'field_data_field_meetings';
   $handler->display->display_options['fields']['field_meetings']['field'] = 'field_meetings';
+  $handler->display->display_options['fields']['field_meetings']['element_label_type'] = 'h2';
   /* Field: Content: Semester */
   $handler->display->display_options['fields']['field_calendar_period']['id'] = 'field_calendar_period';
   $handler->display->display_options['fields']['field_calendar_period']['table'] = 'field_data_field_calendar_period';
   $handler->display->display_options['fields']['field_calendar_period']['field'] = 'field_calendar_period';
+  $handler->display->display_options['fields']['field_calendar_period']['element_label_type'] = 'h2';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -116,6 +127,7 @@ function harvard_courses_views_default_views() {
   $handler->display->display_options['menu']['weight'] = '0';
   $handler->display->display_options['menu']['name'] = 'primary-menu';
   $handler->display->display_options['menu']['context'] = 0;
+
 
   $export['harvard_courses'] = $view;
 
