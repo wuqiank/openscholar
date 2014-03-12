@@ -101,15 +101,19 @@ class os_boxes_booktoc extends os_boxes_default {
       }
     }
 
-    drupal_add_js(array(
-      'os_books' => array(
-        'settings' => array(
-          'toc_type' => isset($this->options['toc_type'])?$this->options['toc_type']:'full',
+    $toc_type = $this->options['toc_type'];
+    if (variable_get('os_books_swap_enabled', FALSE)) {
+      drupal_add_js(array(
+        'os_books' => array(
+          'settings' => array(
+            'toc_type' => isset($this->options['toc_type'])?$this->options['toc_type']:'full',
+          ),
         ),
-      ),
-    ), 'setting');
+      ), 'setting');
+      $toc_type = 'full';
+    }
 
-    $block = os_books_build_toc($book_nid, 'full') + $block;
+    $block = os_books_build_toc($book_nid, $toc_type) + $block;
 
     if ($this->options['as_nav']) {
       $this->options['additional_classes'] = 'navigation';
