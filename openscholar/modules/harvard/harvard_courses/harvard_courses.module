@@ -119,7 +119,7 @@ function  harvard_courses_block_view($delta) {
  * Return links for filter the harvard courses.
  */
 function harvard_courses_courses_filter() {
-  if (!$vsite = spaces_get_space()) {
+  if (!$vsite = vsite_get_vsite()) {
     return;
   }
 
