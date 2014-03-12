@@ -1113,7 +1113,7 @@ function os_publications_update_7018() {
  * Reverting publications user permission.
  */
 function os_publications_update_7019() {
-  $revert = array('os_publications' => array('field_instance'));
+  $revert = array('os_publications' => array('user_permission'));
 
   features_revert($revert);
 }
