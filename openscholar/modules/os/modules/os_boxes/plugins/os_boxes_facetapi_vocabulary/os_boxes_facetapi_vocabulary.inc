@@ -98,7 +98,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * current bundle.
    */
   private function get_bundle_vocabularies() {
-    if ($this->options['bundle']) {
+    if (!$this->options['bundle']) {
       // When loading the box for the first time, the bundle key is empty.
       return;
     }
