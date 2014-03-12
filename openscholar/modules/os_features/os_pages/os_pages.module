@@ -798,7 +798,8 @@ function os_pages_add_subpage_submit($form, &$form_state) {
 
   os_pages_make_subpage($node, $parent->nid);
   node_save($node);
-  overlay_close_dialog();
+
+  $form_state['redirect'] = 'node/'.$parent->nid;
 }
 
 /**
