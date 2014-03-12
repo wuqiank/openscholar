@@ -1146,13 +1146,6 @@ function os_files_preprocess_media_views_view_media_browser(&$vars) {
 }
 
 /**
- * Removes imagefield crop derivative from cp/content/files
- */
-function os_files_preprocess_views_view_table__cp_files(&$vars) {
-  dpm($vars);
-}
-
-/**
  * Used in #element_validate
  * Replaces file_managed_file_validate
  *
