@@ -8,6 +8,10 @@
 #branding_footer, #branding_header {
     width: 100%;
 }
+
+#header-container .gpanel .region.region-header-third {
+    position:static !important;
+} 
   
 .region-header-third ul.nice-menu {
     float: left!important;
@@ -28,6 +32,8 @@
 #menu-bar #block-os-primary-menu{
 		display:none;
 }
+
+.region-header-third #block-os-search-solr-site-search.opened,
 .region-header-third #block-os-secondary-menu.opened, 
 .region-header-third .os-custom-menu.opened,
 #menu-bar #block-os-primary-menu.opened{
@@ -40,11 +46,14 @@
     z-index: 2000;
 }
 
+#search-block-form .container-inline .form-item .form-text {
+    width: 90% !important;
+}
+
 .region-header-third #block-os-secondary-menu.opened,
 .region-header-third .os-custom-menu.opened {
     background-color: #2A527A;
-    top: -151px;
-	right: -15px;
+ 
 }
 
 #menu-bar #block-os-primary-menu ul:after {
@@ -280,9 +289,7 @@ ul.primary li a {
     min-height: 20px;
 }
 	
-.region-header-third #block-os-search-solr-site-search.opened {
-    top: 65px!important;
-}
+
 .region-header-third {
     margin-left: 15px!important;
     width: 100%!important;
@@ -292,10 +299,8 @@ ul.primary li a {
 
 /*--------------------------------------------------------*/
 @media (max-width:400px){
-	
-#search-block-form .container-inline .form-item .form-text {
-    width: 75% !important;
-}
+
+
 
 
 }
