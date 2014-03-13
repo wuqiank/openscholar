@@ -1489,6 +1489,21 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Then /^I should verify the next week calendar is displayed correctly$/
+   */
+  public function iShouldVerifyNextWeekDisplayed() {
+    $str_next_sunday_date = date('F-j-Y', strtotime('next Sunday'));
+    $parts = explode('-', $str_next_sunday_date);
+    $week_header = 'Week of ' . $parts[0] . ' ' . $parts[1] . ', ' . $parts[2];
+    $page = $this->getSession()->getPage();
+    $element = $page->find('xpath', "//h3[.='$week_header']");
+
+    if (!$element) {
+      throw new Exception("The weekly calendar for the '$week_header' is not displayed correctly");
+    }
+  }
+
+  /**
    * @Then /^I should not see the button "([^"]*)"$/
    */
   public function iShouldNotSeeTheButton($button) {
