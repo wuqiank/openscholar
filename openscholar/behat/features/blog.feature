@@ -27,8 +27,3 @@ Feature:
       And I import the feed item "NASA"
      Then I should see the feed item "NASA" was imported
       And I should see "NASA stands National Aeronautics and Space Administration."
-
-  @api
-  Scenario: Test that site-wise blog is disabled
-      Given I go to "blog"
-       Then I should get a "403" HTTP response

@@ -44,6 +44,18 @@ function os_events_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'views-os_events-block_1' => array(
+          'module' => 'views',
+          'delta' => 'os_events-block_1',
+          'region' => 'sidebar_second',
+          'weight' => '-10',
+        ),
+        'views-os_events-block_2' => array(
+          'module' => 'views',
+          'delta' => 'os_events-block_2',
+          'region' => 'sidebar_second',
+          'weight' => '-10',
+        ),
       ),
     ),
   );
