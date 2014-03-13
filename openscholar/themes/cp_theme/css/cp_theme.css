@@ -450,16 +450,20 @@ body.page-cp.page-cp-account #messages {
 }
 
 #edit-biblio-authors table,
+#edit-biblio-authors table tr,
+#edit-biblio-authors table,
 table#edit-biblio-contributors,
 table#edit-biblio-contributors tr.odd,
 table#edit-biblio-contributors tr.even {
 	border:none;
+	background:#FFF;
+	margin:0;
 }
 
 
-#edit-biblio-authors tablet td,
+#edit-biblio-authors table td,
 table#edit-biblio-contributors td {
-	padding: 8px 2px;
+	padding: 8px 0;
 }
 
 
@@ -468,13 +472,14 @@ cursor: pointer;
 padding: 0;
 margin-bottom: 1em;
 margin-right: 1em;
+margin-left: 2.99em;
 color: #0074BD;
 text-align: center;
 font-weight: normal;
 font-size: 1em;
 font-family: "Lucida Grande", Verdana, sans-serif;
 border: none;
-border-bottom: none;
+border-bottom: 1px solid #0074BD;
 border-left-color: transparent;
 border-right-color: transparent;
 background: none;
@@ -482,6 +487,35 @@ background: none;
 -webkit-border-radius: 0;
 border-radius: 0;
 }
+
+.node-biblio-form .form-item-biblio-section,
+.node-biblio-form .form-item-biblio-number-of-volumes,
+.node-biblio-form .form-item-biblio-number,
+.node-biblio-form .form-item-biblio-date,
+.node-biblio-form .form-item-biblio-edition,
+.node-biblio-form .form-item-biblio-volume,
+.node-biblio-form .form-item-biblio-issue,
+.node-biblio-form .form-item-biblio-pages {
+	display:inline-block;
+	margin-right:15px;
+	vertical-align: top;
+}
+
+.node-biblio-form .form-item-biblio-section input.form-text,
+.node-biblio-form .form-item-biblio-number-of-volumes input.form-text,
+.node-biblio-form .form-item-biblio-number input.form-text,
+.node-biblio-form .form-item-biblio-date input.form-text,
+.node-biblio-form .form-item-biblio-edition input.form-text,
+.node-biblio-form .form-item-biblio-volume input.form-text,
+.node-biblio-form .form-item-biblio-issue input.form-text,
+.node-biblio-form .form-item-biblio-pages input.form-text {
+	width:100px;
+}
+
+#edit-biblio-year {
+	width:140px;
+}
+
 	
 	
 /**	 QUICK TAB CREATION **/	
@@ -594,12 +628,18 @@ form.node-form.overlay-processed .form-region-right fieldset legend {
      background: none repeat scroll 0% 0% #F1F1F1;
 }
 
-form.node-form.overlay-processed .form-region-right .fieldset-legend span.summary {
+form.node-form.overlay-processed .fieldset-legend span.summary {
      color: #777;
      display: block;
      font-size: 0.8em;
      margin-left: 0px;
 }
+
+form.node-form.overlay-processed .form-region-main .fieldset-legend span.summary {
+	display: inline;
+     }
+
+
 
 
 html.js .form-region-right  fieldset.collapsible .fieldset-legend,
