@@ -438,7 +438,7 @@ html.js .page-cp-build-layout div.ctools-dropdown div.ctools-dropdown-container 
   color: #494949;
 }
 
-.page-cp-build-layout div.ctools-dropdown div.ctools-dropdown-container ul li a.help {
+.page-cp-build-layout div.ctools-dropdown div.ctools-dropdown-container ul li a.os-help-link {
   float:right;
   display:inline;
   width:10%;

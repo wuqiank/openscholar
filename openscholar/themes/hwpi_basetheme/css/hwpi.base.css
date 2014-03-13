@@ -613,9 +613,10 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 
 .node-type-person .node-person .block {
   display: inline-block;
-  width: 50%;
+  width: 45%;
   vertical-align: top;
   margin-bottom: 15px;
+  margin-right: 30px;
   padding-top: 15px;
 }
 
@@ -632,15 +633,6 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   display: inline;
   padding-right: 10px;
 }
-
-#content .node-person .node-content > .block.even .block-inner {
-  margin-left: 30px;
-}
-
-#content .node-person .node-content > .block.odd .block-inner {
-  margin-right: 30px;
-}
-
 
 
 .node-teaser.node-person header h1 {

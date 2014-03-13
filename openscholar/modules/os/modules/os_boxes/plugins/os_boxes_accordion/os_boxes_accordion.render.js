@@ -5,7 +5,7 @@
   Drupal.behaviors.osBoxesAccordion = {
     attach: function (ctx) {
       $.each(Drupal.settings.os_boxes.accordion, function (delta, data) {
-        var $elem = $('#block-boxes-'+delta+' .accordion').accordion({
+        var $elem = $('#block-boxes-'+delta+' .accordion', ctx).accordion({
           collapsible: true,
           heightStyle: 'content',
           active: data.active

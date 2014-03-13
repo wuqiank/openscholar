@@ -978,6 +978,11 @@ function os_files_media_token_to_markup_alter(&$element, $tag_info, $settings){
       $file['#attributes']['class'][] = $class;
     }
   }
+
+  if (isset($element['content']['#type']) && isset($settings['attributes']['style'])) {
+    $element['content']['#attributes']['style'] = $settings['attributes']['style'];
+  }
+  
   // hide the description field when embedding
   // no one wants it here
   if (!empty($element['content']['media_description'])) {

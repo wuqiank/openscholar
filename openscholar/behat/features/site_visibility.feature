@@ -14,6 +14,14 @@ Feature:
     | "einstein/blog/mileva-marić"    | "Yesterday I met Mileva, what a nice girl :)."      |
 
   @api
+  Scenario: Testing public vsite can be viewed by anonymous users.
+    Given I am logging in as "john"
+     When I change privacy of the site "obama" to "Public on the web. "
+      And I click "Log out"
+      And I visit "obama"
+     Then I should get a "200" HTTP response
+
+  @api
   Scenario: Testing private vsite cannot be seen by anonymous users.
     Given I am logging in as "john"
      When I change privacy of the site "obama" to "Invite only during site creation. "
@@ -48,7 +56,7 @@ Feature:
      Then I should see "Support obama"
 
   @api
-  Scenario: Testing public vsite can be viewed by anonymous users.
+  Scenario: Testing reverting vsite to public can be viewed by anonymous users.
     Given I am logging in as "john"
      When I change privacy of the site "obama" to "Public on the web. "
       And I click "Log out"
