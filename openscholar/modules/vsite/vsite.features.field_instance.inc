@@ -774,7 +774,7 @@ function vsite_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_meta_description',
-    'label' => 'Site description',
+    'label' => 'Meta description',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1420,7 +1420,7 @@ function vsite_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_meta_description',
-    'label' => 'Site description',
+    'label' => 'Meta description',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1938,6 +1938,7 @@ function vsite_field_default_field_instances() {
   t('Domain(s) entered here will be available to your subsites.');
   t('Group');
   t('Group Homepage Path');
+  t('Meta description');
   t('Organization');
   t('Site Address');
   t('Site Description');
