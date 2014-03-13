@@ -449,6 +449,8 @@ body.page-cp.page-cp-account #messages {
   display: none;
 }
 
+table#field-biblio-extra-values,
+table#field-biblio-extra-values th,
 #edit-biblio-authors table,
 #edit-biblio-authors table tr,
 #edit-biblio-authors table,
@@ -460,13 +462,13 @@ table#edit-biblio-contributors tr.even {
 	margin:0;
 }
 
-
+table#field-biblio-extra-values td,
 #edit-biblio-authors table td,
 table#edit-biblio-contributors td {
 	padding: 8px 0;
 }
 
-
+.node-biblio-form #edit-field-biblio-extra input.form-submit,
 #edit-biblio-authors #edit-add-more {
 cursor: pointer;
 padding: 0;
@@ -512,11 +514,46 @@ border-radius: 0;
 	width:100px;
 }
 
+
+#edit-biblio-abst-e-value {
+	height:100px;
+}
+
+
+.form-item-biblio-year {margin-top:10px;}
+
 #edit-biblio-year {
 	width:140px;
 }
 
-	
+html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper .fieldset-legend {
+background: none;
+padding-left: 0;
+}
+
+table#field-biblio-extra-values tr,
+table#field-biblio-extra-values th,
+html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper fieldset {
+background-color: #FFF;
+border:none;
+}
+
+
+#edit-publication-extras {
+background-color: #FFF;
+}
+
+html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper {
+padding-left:15px;
+}
+
+
+html.js fieldset.collapsible#edit-publication-extras .form-wrapper .fieldset-wrapper {
+padding-left:0;
+}
+
+#edit-field-biblio-extra .description {margin-left:35px;}
+
 	
 /**	 QUICK TAB CREATION **/	
 	
@@ -572,7 +609,7 @@ form.node-form fieldset {
 fieldset#edit-biblio-authors {
 	background-color: transparent;
 	border: 0 none;
-  padding: 1.5em 0 0;
+  padding: 0;
   margin: 0;
 }
 
