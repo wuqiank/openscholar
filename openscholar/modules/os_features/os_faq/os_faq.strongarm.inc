@@ -155,7 +155,7 @@ function os_faq_strongarm() {
     ),
     'path' => array(
       'region' => 'right',
-      'weight' => '3',
+      'weight' => '2',
       'has_required' => FALSE,
       'title' => 'URL path settings',
       'collapsed' => 1,
@@ -178,7 +178,7 @@ function os_faq_strongarm() {
     ),
     'os_menu' => array(
       'region' => 'right',
-      'weight' => '2',
+      'weight' => '3',
       'has_required' => FALSE,
       'title' => 'Menu settings',
       'collapsed' => 1,
