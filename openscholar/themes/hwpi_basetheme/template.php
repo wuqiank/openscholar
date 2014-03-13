@@ -93,10 +93,18 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     // If node is in teaser view mode, load a default image. If node is
     // displayed in "List of posts" widget or in full display mode, load a
     // bigger default image.
-    if (in_array($vars['view_mode'], array('teaser', 'sidebar_teaser', 'full')) || (!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box'])) {
+    if (in_array($vars['view_mode'], array('teaser', 'sidebar_teaser', 'full'))) {
       // Profile is not in a widget. Check if default image is disabled. If
       // it is, print an empty div.
-      $vars['content']['field_person_photo'][0] = array('#markup' => hwpi_basetheme_profile_default_image());
+
+      if ($vars['view_mode'] == 'sidebar_teaser') {
+        $key = &$vars['content']['pic_bio'];
+      }
+      else {
+        $key = &$vars['content'];
+      }
+
+      $key['field_person_photo'][0] = array('#markup' => hwpi_basetheme_profile_default_image());
       $vars['content']['pic_bio']['#access'] = TRUE;
     }
   }
