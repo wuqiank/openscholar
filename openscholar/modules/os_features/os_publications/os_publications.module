@@ -396,6 +396,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       $form['biblio_authors']['biblio_contributors'][$k]['auth_category']['#type'] = 'hidden';
     }
   }
+  unset($form['biblio_authors']['#title'], $form['biblio_authors']['#description']);
 
   // We're coming from biblio's ajax callback. It requires the form structure for authors be unchanged.
   if (isset($form_state['values']['op']) && $form_state['values']['op'] == t('Add author')) {
@@ -483,7 +484,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   // Hide the rest of the vtabs behind a collapsible fieldset.
   $form['publication_extras'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Publication Extras',
+    '#title' => 'Publication Details',
     '#weight' => 20,
     'biblio_tabs' => $form['biblio_tabs'],
     '#collapsible' => TRUE,
@@ -499,6 +500,13 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   }
 
   $form['publication_extras']['biblio_tabs'][5]['#weight'] = 1;
+
+  foreach (element_children($form['publication_extras']['biblio_tabs']) as $k) {
+    $elem = &$form['publication_extras']['biblio_tabs'][$k];
+    if ($elem['#type'] == 'fieldset') {
+      $elem['#collapsible'] = FALSE;
+    }
+  }
 
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
