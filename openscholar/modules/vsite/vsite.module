@@ -3075,7 +3075,7 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
         '#default_value' => $vsite->group->title,
         '#description' => t('Your site\'s official title, as displayed in your Site info widget, in search results, and in browser tabs.'),
       ),
-      'vsite_meta_description' => array(
+      'field_meta_description' => array(
         '#type' => 'textarea',
         '#rows' => 2,
         '#title' => t('Meta description'),
@@ -3134,7 +3134,7 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
     'vsite_head_link_rel_publisher' => array('type' => 'variable'),
     'vsite_head_link_rel_author' => array('type' => 'variable'),
     'vsite_title' => array('type' => 'property', 'property' => 'title'),
-    'field_meta_description' => array('type' => 'property', 'index' => 'value', 'use_set' => TRUE),
+    'field_meta_description' => array('type' => 'property', 'use_set' => TRUE),
   );
   $modified = FALSE;
   $vsite = vsite_get_vsite();
@@ -3151,9 +3151,6 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
       case 'property':
         if (isset($form_state['values'][$name])) {
           $value = $form_state['values'][$name];
-          if (isset($info['index'])) {
-            $value = array($info['index'] => $value);
-          }
           $property = isset($info['property']) ? $info['property'] : $name;
           if (isset($info['use_set'])) {
             $wrapper->{$property}->set($value);
@@ -3161,7 +3158,6 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
           else {
             $wrapper->{$property} = $value;
           }
-
           $modified = TRUE;
         }
         break;
