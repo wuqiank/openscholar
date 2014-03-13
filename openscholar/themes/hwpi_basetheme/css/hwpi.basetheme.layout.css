@@ -240,7 +240,9 @@
     width: 50%;
   }
 
-  .front .content-left.content-right.content-bottom #content-panels .region {
+  .front .content-left.content-right.content-bottom #content-panels .region-content-first,
+  .front .content-left.content-right.content-bottom #content-panels .region-content-second,
+  .front .content-left.content-right.content-bottom #content-panels .region-content-bottom {
     width: 33.333333%;
   }
   
