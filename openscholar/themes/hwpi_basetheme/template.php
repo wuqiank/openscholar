@@ -90,85 +90,44 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     $vars['classes_array'][] = 'with-person-photo';
   }
   else {
-    // If node is in teaser view mode, load a default image. If node is displayed
-    // in "List of posts" widget or in full display mode, load a bigger default image.
-    if (in_array($vars['view_mode'], array('teaser'))) {
-      // Check if profile is in a widget.
-      if (!empty($vars['sv_list'])) {
-        // Use default image.
-        $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-        $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-        $vars['content']['field_person_photo'][0] = variable_get('os_profiles_disable_default_image', FALSE) ? '' : array('#markup' => $image);
-      }
-      // Profile is not in a widget. Check if default image is disabled. If it is, print an empty div.
-      elseif (variable_get('os_profiles_disable_default_image', FALSE)) {
-        $vars['content']['field_person_photo'][0] = array('#markup' => '<div class="no-default-image"></div>');
-      }
-      else {
-        if ($custom_default_image = variable_get('os_profiles_default_image_file', 0)) {
-          // Use custom default image.
-          $image_file = file_load($custom_default_image);
-          $path = $image_file->uri;
-          $options = array(
-            'path' => $path,
-            'style_name' => 'profile_thumbnail',
-          );
-          $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
-        }
-        else {
-          // Use default image.
-          $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-          $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-        }
-        $vars['content']['field_person_photo'][0] = array('#markup' => $image);
-      }
-    }
-    elseif ((!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box']) || $vars['view_mode'] == 'full') {
-      $path = variable_get('os_person_default_image_big', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image-big.png');
-      $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-
-      // Big image.
-      $vars['content']['pic_bio']['field_person_photo'][0] = variable_get('os_profiles_disable_default_image', FALSE) ? '' : array('#markup' => $image);
-
-      // If 'body' is empty make sure image is displayed.
-      if (empty($vars['body'][$vars['language']])) {
-        $vars['content']['pic_bio']['#access'] = TRUE;
-      }
-    }
-    elseif ($vars['view_mode'] == 'sidebar_teaser') {
-      // Check if profile is in a widget.
-      // Make sure image will be displayed.
-      if (!empty($vars['sv_list'])) {
-        // Use default image.
-        $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-        $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-        $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => $image);
-      }
-      // Profile is not in a widget. Check if default image is disabled. If it is, print an empty div.
-      elseif (variable_get('os_profiles_disable_default_image', FALSE)) {
-        $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => '<div class="no-default-image"></div>');
-      }
-      else {
-        if ($custom_default_image = variable_get('os_profiles_default_image_file', 0)) {
-          // Use custom default image.
-          $image_file = file_load($custom_default_image);
-          $path = $image_file->uri;
-          $options = array(
-            'path' => $path,
-            'style_name' => 'profile_thumbnail',
-          );
-          $image = '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
-        }
-        else {
-          // Use default image.
-          $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
-          $image = '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
-        }
-        $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => $image);
-      }
+    // If node is in teaser view mode, load a default image. If node is
+    // displayed in "List of posts" widget or in full display mode, load a
+    // bigger default image.
+    if (in_array($vars['view_mode'], array('teaser', 'sidebar_teaser', 'full')) || (!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box'])) {
+      // Profile is not in a widget. Check if default image is disabled. If
+      // it is, print an empty div.
+      $vars['content']['field_person_photo'][0] = array('#markup' => hwpi_basetheme_profile_default_image());
       $vars['content']['pic_bio']['#access'] = TRUE;
     }
   }
+}
+
+/**
+ * Helper function; Return the markup of the profile image by the next logic:
+ * When there is no profile picture the node display the uploaded image.
+ * When there is no uploaded image display the default image.
+ */
+function hwpi_basetheme_profile_default_image() {
+
+  if (variable_get('os_profiles_disable_default_image', FALSE)) {
+    return '<div class="no-default-image"></div>';
+  }
+
+  if ($custom_default_image = variable_get('os_profiles_default_image_file', 0)) {
+    // Use custom default image.
+    $image_file = file_load($custom_default_image);
+    $path = $image_file->uri;
+    $options = array(
+      'path' => $path,
+      'style_name' => 'profile_thumbnail',
+    );
+
+    return '<div class="field-name-field-person-photo">' . theme('image_style',  $options) . '</div>';
+  }
+
+  // Use default image.
+  $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+  return '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
 }
 
 /**
