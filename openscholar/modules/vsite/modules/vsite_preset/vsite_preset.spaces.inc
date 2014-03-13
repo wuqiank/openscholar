@@ -532,6 +532,22 @@ function vsite_preset_spaces_presets() {
       'os_front:reaction:block' => array(
         'blocks' => array(),
       ),
+      'events_events:reaction:block' => array(
+        'blocks' => array(
+          'views-os_events-block_1' => array(
+            'module' => 'views',
+            'delta' => 'os_events-block_1',
+            'region' => 'sidebar_second',
+            'weight' => '-10',
+          ),
+          'views-os_events-block_2' => array(
+            'module' => 'views',
+            'delta' => 'os_events-block_2',
+            'region' => 'sidebar_second',
+            'weight' => '-10',
+          ),
+        )
+      ),
     ),
   );
 
