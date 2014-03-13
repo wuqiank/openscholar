@@ -286,6 +286,7 @@ class os_sv_list extends os_boxes_default {
     $content = drupal_render($render);   
     $delta = $this->delta;   
     $class = strtolower(implode(' ', array(
+      'os-sv-list',
       $this->plugin_key, 
       'sv-list-'.$this->options['content_type'], 
       'sv-list-view-'.$this->options['display'], 
