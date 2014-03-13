@@ -1753,6 +1753,11 @@ function vsite_preprocess_page(&$vars) {
   global $user;
   $item = menu_get_item();
 
+  // Moves vsite metatags to the content_top region so they aren't unset later.
+  if (drupal_is_front_page() && $vsite = vsite_get_vsite()) {
+    $vars['page']['content_top']['metatags'] = $vars['page']['content']['metatags'];
+  }
+
   // Only make the change to the local menu tab in the /user page.
   // Add in the "Add full name" link only on the /user page.
   if(isset($item) && (strpos($item['path'], 'user') === 0)) {
