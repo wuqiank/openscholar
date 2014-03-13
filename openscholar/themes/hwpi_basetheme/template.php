@@ -90,23 +90,23 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     $vars['classes_array'][] = 'with-person-photo';
   }
   else {
-    // If node is in teaser view mode, load a default image. If node is
-    // displayed in "List of posts" widget or in full display mode, load a
-    // bigger default image.
-    if (in_array($vars['view_mode'], array('teaser', 'sidebar_teaser', 'full'))) {
-      if ($vars['view_mode'] == 'sidebar_teaser') {
-        $key = &$vars['content']['pic_bio'];
-      }
-      else {
-        $key = &$vars['content'];
-      }
+    if (!in_array($vars['view_mode'], array('teaser', 'sidebar_teaser', 'full'))) {
+      return;
+    }
 
-      // Set up the size of the picture.
-      $size = (!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box']) || $vars['view_mode'] == 'full' ? 'big' : 'small';
-
-      $key['field_person_photo'][0] = array('#markup' => hwpi_basetheme_profile_default_image($size));
+    if ($vars['view_mode'] == 'sidebar_teaser') {
+      // On sidebar tease view mode the content in $vars['content']['pic_bio'].
+      $key = &$vars['content']['pic_bio'];
       $vars['content']['pic_bio']['#access'] = TRUE;
     }
+    else {
+      $key = &$vars['content'];
+    }
+
+    // Set up the size of the picture.
+    $size = (!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box']) || $vars['view_mode'] == 'full' ? 'big' : 'small';
+
+    $key['field_person_photo'][0] = array('#markup' => hwpi_basetheme_profile_default_image($size));
   }
 }
 
