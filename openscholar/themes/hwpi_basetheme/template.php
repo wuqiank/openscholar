@@ -94,9 +94,6 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     // displayed in "List of posts" widget or in full display mode, load a
     // bigger default image.
     if (in_array($vars['view_mode'], array('teaser', 'sidebar_teaser', 'full'))) {
-      // Profile is not in a widget. Check if default image is disabled. If
-      // it is, print an empty div.
-
       if ($vars['view_mode'] == 'sidebar_teaser') {
         $key = &$vars['content']['pic_bio'];
       }
@@ -104,7 +101,10 @@ function hwpi_basetheme_preprocess_node(&$vars) {
         $key = &$vars['content'];
       }
 
-      $key['field_person_photo'][0] = array('#markup' => hwpi_basetheme_profile_default_image());
+      // Set up the size of the picture.
+      $size = (!empty($vars['os_sv_list_box']) && $vars['os_sv_list_box']) || $vars['view_mode'] == 'full' ? 'big' : 'small';
+
+      $key['field_person_photo'][0] = array('#markup' => hwpi_basetheme_profile_default_image($size));
       $vars['content']['pic_bio']['#access'] = TRUE;
     }
   }
@@ -114,8 +114,14 @@ function hwpi_basetheme_preprocess_node(&$vars) {
  * Helper function; Return the markup of the profile image by the next logic:
  * When there is no profile picture the node display the uploaded image.
  * When there is no uploaded image display the default image.
+ *
+ * @param string $size
+ *  Determine the size of the profile picture. Optional values: small or big.
+ *
+ * @return string
+ *  The markup of the image.
  */
-function hwpi_basetheme_profile_default_image() {
+function hwpi_basetheme_profile_default_image($size = 'small') {
 
   if (variable_get('os_profiles_disable_default_image', FALSE)) {
     return '<div class="no-default-image"></div>';
@@ -134,7 +140,8 @@ function hwpi_basetheme_profile_default_image() {
   }
 
   // Use default image.
-  $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/person-default-image.png');
+  $image = $size == 'small' ? 'person-default-image.png' : 'person-default-image-big.png';
+  $path = variable_get('os_person_default_image', drupal_get_path('theme', 'hwpi_basetheme') . '/images/' . $image);
   return '<div class="field-name-field-person-photo">' . theme('image',  array('path' => $path)) . '</div>';
 }
 
