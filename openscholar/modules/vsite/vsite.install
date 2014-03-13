@@ -607,5 +607,6 @@ function vsite_update_7020() {
  * Revert field instance exports for meta description to vsite group bundles.
  */
 function vsite_update_7021() {
-  features_revert(array('vsite' => array('field_instance')));
+  features_revert(array('vsite' => array('field_instance', 'metatag')));
+  return t('Meta description fields should now appear on vsite node edit forms.');
 }
