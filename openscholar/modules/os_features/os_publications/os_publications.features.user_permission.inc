@@ -123,7 +123,6 @@ function os_publications_user_default_permissions() {
     'name' => 'show export links',
     'roles' => array(
       'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
       'authenticated user' => 'authenticated user',
       'manager' => 'manager',
       'vsite admin' => 'vsite admin',
@@ -158,6 +157,15 @@ function os_publications_user_default_permissions() {
       'vsite user' => 'vsite user',
     ),
     'module' => 'biblio',
+  );
+
+  // Exported permission: 'use text format title_filter'.
+  $permissions['use text format title_filter'] = array(
+    'name' => 'use text format title_filter',
+    'roles' => array(
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'filter',
   );
 
   // Exported permission: 'view full text'.

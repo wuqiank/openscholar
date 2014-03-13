@@ -23,6 +23,32 @@ function cp_content_menu() {
 }
 
 /**
+ * Implements hook_view_pre_render().
+ *
+ * This function strip the HTML tags from a publication title. Only allowed
+ * tags are left.
+ *
+ * @param $view
+ *    The view to alter its output.
+ */
+function cp_content_views_pre_render(&$view) {
+  if ($view->name != 'cp_content') {
+    return;
+  }
+
+  if (empty($view->result)) {
+    return;
+  }
+
+  foreach ($view->result as $item) {
+    if ($item->node_type != 'biblio') {
+      continue;
+    }
+    $item->node_title = filter_xss($item->node_title, variable_get('html_title_allowed_elements', array('em', 'sub', 'sup')));
+  }
+}
+
+/**
  * Same as _node_add_access but just for os bundles
  * @return boolean
  */
@@ -91,6 +117,11 @@ function cp_content_views_default_views_alter(&$views) {
  * we need to remove entities that don't belong to the current vsite.
  */
 function cp_content_batch_alter(&$batch) {
+  if (!isset($batch['sets'][0]['finished'])) {
+    // Batch process didn't finish properly.
+    return;
+  }
+
   if ($batch['sets'][0]['finished'] != '_views_bulk_operations_execute_finished') {
     // Not a VBO action we need to alter.
     return;

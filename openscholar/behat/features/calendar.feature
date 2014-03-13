@@ -2,6 +2,12 @@ Feature: Testing OpenScholar calendar page.
 
   @api
   Scenario: Test the Calendar tab
+    Given I visit "john"
+     When I click "Calendar"
+     Then I should see "Testing event"
+
+  @api
+  Scenario: Test the Calendar tab with month events
     Given I visit "john/calendar?month=2013-05&type=month"
      Then I should see "John F. Kennedy birthday"
 
@@ -37,4 +43,4 @@ Feature: Testing OpenScholar calendar page.
   Scenario: Testing the events export in iCal format.
     Given I visit "john/calendar/export.ics"
      Then I look for ".field_date.0@"
-    
+

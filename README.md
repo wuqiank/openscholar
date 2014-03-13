@@ -19,7 +19,7 @@ For developers, see the [glossary](https://github.com/openscholar/openscholar/wi
 
 * [Issues (Github)](https://github.com/openscholar/openscholar/issues)
 * IRC: freenode#openscholar
-* [@scholar_harvard](http://twitter.com/scholar_harvard)
+* [@OpenScholarApp](http://twitter.com/OpenScholarApp)
 
 ## Tutorials
 

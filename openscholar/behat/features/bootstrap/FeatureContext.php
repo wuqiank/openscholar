@@ -85,6 +85,7 @@ class FeatureContext extends DrupalContext {
       // We are using a cli, log in with meta step.
 
       return array(
+        new Step\When('I am not logged in'),
         new Step\When('I visit "/user"'),
         new Step\When('I fill in "Username" with "' . $username . '"'),
         new Step\When('I fill in "Password" with "' . $password . '"'),
@@ -310,6 +311,24 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @When /^I change privacy of the site "([^"]*)" to "([^"]*)"$/
+   */
+  public function iChangePrivacyTo($vsite, $visibility) {
+
+    $privacy_level = array(
+      'Public on the web. ' => 0,
+      'Anyone with the link. ' => 2,
+      'Invite only during site creation. ' => 1,
+    );
+
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/settings"'),
+      new Step\When('I select the radio button named "vsite_private" with value "' . $privacy_level[$visibility] . '"'),
+      new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
    * @Then /^I should verify the node "([^"]*)" not exists$/
    */
   public function iShouldVerifyTheNodeNotExists($title) {
@@ -449,10 +468,15 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^cache is enabled for anonymous users$/
+   * @Given /^cache is "([^"]*)" for anonymous users$/
    */
-  public function cacheIsEnabledForAnonymousUsers() {
-    $this->getDriver()->drush('vset cache 1');
+  public function cacheIsForAnonymousUsers($status) {
+    if ($status == "enabled") {
+      $this->getDriver()->drush('vset cache 1');
+    }
+    else if ($status == "disabled") {
+      $this->getDriver()->drush('vset cache 0');
+    }
   }
 
   /**
@@ -959,6 +983,20 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I remove the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
+   */
+  public function iRemoveTheRoleThePermissionInTheGroup($role, $group, $permission) {
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
+    $rid = $this->invoke_code('os_migrate_demo_get_role_by_name', array("'{$role}'", "'{$nid}'"));
+
+    return array(
+      new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
+      new Step\When('I uncheck the box "' . $permission . '"'),
+      new Step\When('I press "Save permissions"'),
+    );
+  }
+  
+  /**
    * @Then /^I should verify that the user "([^"]*)" has a role of "([^"]*)" in the group "([^"]*)"$/
    */
   public function iShouldVerifyThatTheUserHasRole($name, $role, $group) {
@@ -981,6 +1019,20 @@ class FeatureContext extends DrupalContext {
       throw new Exception("A radio button with the name {$name} and value {$value} was not found on the page");
     }
     $radiobutton->selectOption($value, FALSE);
+  }
+
+  /**
+   * @When /^I choose the radio button named "([^"]*)" with value "([^"]*)" for the vsite "([^"]*)"$/
+   */
+  public function iSelectRadioNamedWithValueForVsite($name, $value, $vsite) {
+    $page = $this->getSession()->getPage();
+    $radiobutton = $page->find('xpath', "//*[@name='{$name}'][@value='{$value}']");
+    if (!$radiobutton) {
+      throw new Exception("A radio button with the name {$name} and value {$value} was not found on the page");
+    }
+    $radiobutton->selectOption($value, FALSE);
+    $option = $radiobutton->getValue();
+    $this->invoke_code('os_migrate_demo_vsite_set_variable', array("'{$vsite}'", "'{$name}'", "'{$option}'"));
   }
 
   /**
@@ -1039,7 +1091,7 @@ class FeatureContext extends DrupalContext {
     $element = $page->find('xpath', "//h2[contains(., '{$facet}')]/following-sibling::div//a[contains(., '{$option}')]");
 
     if (!$element) {
-      throw new Exception("'%s' was not found under the facet '%s'", $option, $facet);
+      throw new Exception(sprintf("'%s' was not found under the facet '%s'", $option, $facet));
     }
 
     $element->press();
@@ -1235,6 +1287,15 @@ class FeatureContext extends DrupalContext {
     }
 
     $element->click();
+  }
+
+  /**
+   * @Given /^I go to the "([^"]*)" app settings in the vsite "([^"]*)"$/
+   */
+  public function iGoToTheAppSettingsInVsite($app_name, $vsite) {
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/build/features/' . $app_name . '"'),
+    );
   }
 
   /**
@@ -1443,12 +1504,53 @@ class FeatureContext extends DrupalContext {
    * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
    */
   public function iSetFeatureStatus ($feature, $status, $group) {
-
     return array(
       new Step\When('I visit "' . $group . '"'),
       new Step\When('I click "Build"'),
       new Step\When('I select "' . $status . '" from "' . $feature . '"'),
       new Step\When('I press "edit-submit"'),
     );
+  }
+
+  /**
+   * @Given /^I update the node "([^"]*)" field "([^"]*)" to "([^"]*)"$/
+   */
+  public function iUpdateTheNodeFieldTo($title, $field, $value) {
+    $title = str_replace("'", "\'", $title);
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+
+    $purl = $this->invoke_code('os_migrate_demo_get_node_vsite_purl', array("'$nid'"));
+    $purl = !empty($purl) ? $purl . '/' : '';
+
+    return array(
+      new Step\When('I visit "' . $purl . 'node/' . $nid . '/edit"'),
+      new Step\When('I fill in "' . $field . '" with "' . $value . '"'),
+      new Step\When('I press "Save"'),
+    );
+  }
+
+  /**
+   * @Given /^I make "([^"]*)" a member in vsite "([^"]*)"$/
+   */
+  public function iMakeAMemberInVsite($username, $group) {
+    return array(
+      new Step\When('I visit "' . $group . '/cp/users/add"'),
+      new Step\When('I fill in "User" with "' . $username . '"'),
+      new Step\When('I press "Add users"'),
+    );
+  }
+
+  /**
+   * @Given /^I make registration to event without javascript available$/
+   */
+  public function iMakeRegistrationToEventWithoutJavascriptAvailable() {
+    $this->invoke_code('os_migrate_demo_event_registration_form');
+  }
+
+  /**
+   * @Given /^I make registration to event without javascript unavailable$/
+   */
+  public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
+    $this->invoke_code('os_migrate_demo_event_registration_link');
   }
 }

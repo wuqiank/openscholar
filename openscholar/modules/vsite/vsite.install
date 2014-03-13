@@ -540,3 +540,50 @@ function vsite_update_7017() {
   features_revert(array('vsite' => array('user_permission')));
 }
 
+/**
+ * Saves the value for the newly exported variable `theme_settings`.
+ *
+ * This is so that there is no need to revert the feature.
+ */
+function vsite_update_7018() {
+  $name = 'theme_settings';
+  $original = variable_get($name, array());
+  $modified = array(
+    'toggle_favicon' => 0,
+    'default_favicon' => 0,
+    'favicon_path' => NULL,
+    'favicon_upload' => NULL,
+  );
+  $value = array_merge($original, $modified);
+
+  variable_set($name, $value);
+}
+
+/*
+ * Set "content editor" permissions for "synced" permissions.
+ */
+function vsite_update_7019() {
+  $permissions = array('edit boxes');
+
+  $group_bundles = og_get_all_group_bundle();
+
+  foreach (array_keys($group_bundles['node']) as $bundle) {
+    $og_roles = og_roles('node', $bundle);
+    $rid = array_search('content editor', $og_roles);
+    og_role_grant_permissions($rid, $permissions);
+  }
+}
+
+/**
+ * Add description to image fields
+ */
+function vsite_update_7020() {
+  features_revert(array('vsite' => array('field_instance')));
+}
+
+/**
+ * Revert field instance exports for meta description to vsite group bundles.
+ */
+function vsite_update_7021() {
+  features_revert(array('vsite' => array('field_instance')));
+}

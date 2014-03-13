@@ -293,7 +293,7 @@ function gkplus_views_pre_build(&$view) {
  * Implements hook_node_insert().
  */
 function gkplus_node_insert($node) {
-  if (!_gkplus_check_sid() || $node->type !== 'page' || !$node->nid) {
+  if (!_gkplus_check_sid() || !$node->nid || !isset($node->gkplus_minitheme)) {
     return;
   }
   _gkplus_entity_setting_update($node->nid, 'minitheme_nodes', $node->gkplus_minitheme);
@@ -303,7 +303,7 @@ function gkplus_node_insert($node) {
  * Implements hook_node_update().
  */
 function gkplus_node_update($node) {
-  if (!_gkplus_check_sid() || $node->type !== 'page' || !$node->nid) {
+  if (!_gkplus_check_sid() || !$node->nid || !isset($node->gkplus_minitheme)) {
     return;
   }
   _gkplus_entity_setting_update($node->nid, 'minitheme_nodes', $node->gkplus_minitheme);

@@ -183,8 +183,33 @@ function vsite_strongarm() {
     'hwp_lab_research_group' => 'hwp_lab_research_group',
     'hwp_project' => 'hwp_project',
     'hwp_personal' => 'hwp_personal',
+    'hwp_event_conference' => 'hwp_event_conference',
   );
   $export['os_enabled_spaces_presets'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'theme_settings';
+  $strongarm->value = array(
+    'toggle_logo' => 1,
+    'toggle_name' => 1,
+    'toggle_slogan' => 1,
+    'toggle_node_user_picture' => 1,
+    'toggle_comment_user_picture' => 1,
+    'toggle_comment_user_verification' => 1,
+    'toggle_favicon' => 0,
+    'toggle_main_menu' => 1,
+    'toggle_secondary_menu' => 1,
+    'default_logo' => 1,
+    'logo_path' => NULL,
+    'logo_upload' => NULL,
+    'default_favicon' => 0,
+    'favicon_path' => NULL,
+    'favicon_upload' => NULL,
+    'nice_menus_custom_css' => NULL,
+  );
+  $export['theme_settings'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

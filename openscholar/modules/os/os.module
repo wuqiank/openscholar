@@ -217,6 +217,14 @@ function os_entity_info_alter(&$info) {
     'label' => t('Title'),
     'custom settings' => TRUE,
   );
+  $info['node']['view modes']['slide_teaser'] = array(
+    'label' => t('Slide Teaser'),
+    'custom settings' => TRUE,
+  );
+  $info['node']['view modes']['no_image_teaser'] = array(
+    'label' => t('No image Teaser'),
+    'custom settings' => TRUE,
+  );
 }
 
 /**
@@ -294,7 +302,7 @@ function os_block_view($delta = '') {
 function os_block_view_alter(&$block, &$data) {
   ctools_include('menu', 'os');
 
-  if (array_key_exists($data->delta, os_get_menus()) && count($block['content'])) {
+  if (!empty($data->delta) && array_key_exists($data->delta, os_get_menus()) && count($block['content'])) {
   	// Remove nice menus from the sidebar and footer regions.
   	$theme = (in_array($data->region, array('footer', 'footer_first', 'footer_third', 'sidebar_first', 'sidebar_second'))) ? '' : 'os_nice_menus';
     $block['content'] += array(
@@ -583,13 +591,21 @@ function os_process_node(&$vars) {
     $trailing_break_tag = (bool) strlen($text_after_break) == 0;
   }
 
-  // Exits now if the body will be displayed shortened, this means there is
-  // more body content to read by clicking "Read more", so we display the link.
+  // Now we know whether the read more links needs to be displayed or not.
+  // With this information we can move the read more link so it can be displayed inline with the block
   if ($body_shortened && !$trailing_break_tag) {
-    return;
+    $link = $vars['content']['links']['node']['#links']['node-readmore'];
+    $link['attributes']['class'][] = 'node-readmore';
+    // Get last position of the last closing marker in teaser.
+    if (preg_match('!</?(?:p)[^>]*>\s*$!i', $vars['content']['body'][0]['#markup'], $match, PREG_OFFSET_CAPTURE)) {
+      $insert_point = $match[0][1];
+      // Insert the link.
+      $vars['content']['body'][0]['#markup'] = substr_replace($vars['content']['body'][0]['#markup'], ' '.l($link['title'], $link['href'], $link), $insert_point, 0);
+    }
+
   }
 
-  // Otherwise, hides the "Read more" link by removing it from the render array.
+  // Hide the original "Read more" link by removing it from the render array.
   unset($vars['content']['links']['node']['#links']['node-readmore']);
 }
 
@@ -909,6 +925,13 @@ function os_form_node_form_alter(&$form, $form_state) {
   if (isset($form['og_group_ref']['und'][0]['admin']['add_more']['#value'])) {
     $form['og_group_ref']['und'][0]['admin']['add_more']['#value'] = t('Add administrator');
   }
+
+  unset($form['additional_settings']);
+  foreach (element_children($form) as $c) {
+    unset($form[$c]['#group']);
+  }
+
+  $form['actions_top'] = $form['actions'];
 }
 
 /**
@@ -1252,11 +1275,6 @@ function os_system_info_alter(&$info, $file, $type) {
   // If the base theme for this theme is 'os_basetheme' or if the is a 'vsite'
   // theme add the default regions.
   if ((isset($info['base theme']) && $info['base theme'] == 'os_basetheme') || (isset($info['os']['theme_type']) && $info['os']['theme_type'] == 'vsite')) {
-    if (!file_exists(dirname($file->filename) . '/favicon.ico')) {
-      $info['settings']['favicon_path'] = drupal_get_path('theme', 'os_basetheme').'/favicon.ico';
-      $info['settings']['default_favicon'] = 0;
-    }
-
     $info['regions'] += array(
       'branding_header' => 'Branding Header',
       'branding_footer' => 'Branding Footer',
@@ -1296,9 +1314,6 @@ function os_url_outbound_alter(&$path, &$options, $original) {
         // When accessing to any address the spaces module use purl_goto(). The
         // purl_goto() use url() for knowing the path of the URL we accessing.
         // url() will return eventually the path.
-        // This section alter the $path to the $_GET['q'] which is node/%.json
-        // which will convert by the url() to foo/bar.
-        // $path = $_GET['q'];
         return;
       }
     }
@@ -1522,17 +1537,17 @@ function os_access_region($module, $delta) {
   $region = os_get_region($module, $delta);
 
   $locked = variable_get('os_locked_regions', array());
-  $spaces = spaces_access_admin();
+  if (!boxes_access_edit()) {
+    return;
+  }
 
-  // the region is locked
-  if (isset($locked[$region]) && $locked[$region]) {
+  // The region is locked
+  if (!empty($locked[$region]) && $locked[$region]) {
     // check the permission
-    return $spaces && (user_access('edit locked regions') || user_access('manage locked regions'));
+    return user_access('edit locked regions') || user_access('manage locked regions');
   }
-  else {
-    // the region is not locked, so just return whatever spaces says
-    return $spaces;
-  }
+
+  return TRUE;
 }
 
 /**
@@ -1661,7 +1676,7 @@ function os_entity_view_modes($entity_type = NULL, $bundle = NULL) {
 function os_os_entity_view_modes_alter(&$info) {
   $bundles = array_keys(os_get_bundles(TRUE));
   $bundles = array_diff($bundles, array('feed_importer'));
-  $bundle_views = array_fill_keys($bundles, array('full', 'teaser', 'title'));
+  $bundle_views = array_fill_keys($bundles, array('full', 'teaser', 'title', 'slide_teaser'));
   $info['node'] = array_merge_recursive($info['node'], $bundle_views);
 }
 
@@ -1696,6 +1711,7 @@ function os_app_info($app_name = NULL) {
             'index author' => FALSE,
             'importers' => array(),
             'require_parent_node' => FALSE,
+            'browse_pages' => FALSE,
           );
 
           // Adds the module information.
@@ -1762,23 +1778,6 @@ function os_library() {
  */
 function os_library_alter(&$libraries) {
   $libraries['drupal.ajax']['dependencies'][] = array('os', 'os.ajax-fix');
-}
-
-/**
- * Implements hook_restws_resource_info_alter().
- *
- * Customize what resources will be avalible for RestWS to use
- */
-function os_restws_resource_info_alter(&$info){
-
-//   //Remove entity types except those listed
-//   $enabled_entities = variable_get('os_restws_entities',array('node'));
-//   foreach (entity_get_info() as $entity_type => $info) {
-//     if(isset($info[$entity_type]) && !in_array($entity_type, $enabled_entities)){
-//       unset($info[$entity_type]);
-//     }
-//   }
-
 }
 
 /**
@@ -2088,10 +2087,89 @@ function os_requirements($phase) {
 }
 
 /**
- * implementation of hook_context_default_contexts_alter
+ * Implements of hook_context_default_contexts_alter
  */
 function os_context_default_contexts_alter(&$contexts){
   if (module_exists('olark') && isset($contexts['os_public'])) {
     $contexts['os_public']->reactions['olark_add'] = array('add' => 1);
   }
+}
+
+/**
+ * Implements hook_preprocess_node
+ */
+function os_preprocess_node(&$vars) {
+  if ($vars['view_mode'] == 'slide_teaser') {
+    $vars['header_attributes_array']['class'][] = 'toggle';
+    $vars['content_attributes_array']['class'][] = 'os-slider';
+    $vars['links_attributes_array']['class'][] = 'os-slider';
+    drupal_add_js(drupal_get_path('module', 'os').'/theme/os_toggle.js');
+  }
+}
+
+/**
+ * Implements hook_field_display_node_alter 
+ *
+ * Makes the slide_teaser display mode just like teaser.  
+ */
+function os_field_display_node_alter(&$display, $context) {
+  if ($context['view_mode'] == 'slide_teaser') {
+    $display = $context['instance']['display']['teaser'];
+  }
+}
+
+/**
+ * API function for copy a file from a URL and throw exception when needed.
+ *
+ * @param $url
+ *  The URL of the file.
+ * @param bool $exception
+ *  Determine if an exception need to be thrown when the copy of the file
+ *  failed. When set to false the reason for the failure will return as a text
+ *  in the returned array.
+ *
+ * @throws Exception
+ *  Throwing an error when the copy of the file failed and the $exception set to
+ *  TRUE.
+ * @return array
+ *  Return array of the file or error if occurred and the type of the return
+ *  data(file/text).
+ */
+function os_copy_file($url, $exception = FALSE) {
+  if (empty($url)) {
+    return os_file_copy_set_error(t('You need to pass a url of the file.'), $exception);
+  }
+
+  if (drupal_http_request($url)->code != 200) {
+    return os_file_copy_set_error(t("The file was not reachable."), $exception);
+  }
+
+  if (!is_writeable('public://')) {
+    return os_file_copy_set_error(t("The file directory is not wrietable. Please check her permission."), $exception);
+  }
+
+  if (!$file = system_retrieve_file($url, 'public://', TRUE)) {
+    return os_file_copy_set_error(t('An error occurred due unknown reason.'), $exception);
+  }
+
+  return array(
+    'type' => 'file',
+    'file' => $file,
+  );
+}
+
+/**
+ * Set error when trying to copy the file.
+ *
+ * @see os_copy_file().
+ */
+function os_file_copy_set_error($message, $exception) {
+  if ($exception) {
+    throw new Exception($message);
+  }
+
+  return array(
+    'type' => 'error',
+    'message' => $message,
+  );
 }
