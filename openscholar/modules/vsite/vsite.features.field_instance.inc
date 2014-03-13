@@ -84,7 +84,7 @@ function vsite_field_default_field_instances() {
 
   // Exported field_instance: 'node-department-field_meta_description'
   $field_instances['node-department-field_meta_description'] = array(
-    'bundle' => 'page',
+    'bundle' => 'department',
     'default_value' => NULL,
     'deleted' => 0,
     'description' => 'Best if 150 characters or less. Used as a meta description tag for your site\'s home page in search results.',
@@ -128,7 +128,7 @@ function vsite_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_meta_description',
-    'label' => 'Site description',
+    'label' => 'Meta description',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -730,7 +730,7 @@ function vsite_field_default_field_instances() {
 
   // Exported field_instance: 'node-personal-field_meta_description'
   $field_instances['node-personal-field_meta_description'] = array(
-    'bundle' => 'page',
+    'bundle' => 'personal',
     'default_value' => NULL,
     'deleted' => 0,
     'description' => 'Best if 150 characters or less. Used as a meta description tag for your site\'s home page in search results.',
@@ -1376,7 +1376,7 @@ function vsite_field_default_field_instances() {
 
   // Exported field_instance: 'node-project-field_meta_description'
   $field_instances['node-project-field_meta_description'] = array(
-    'bundle' => 'page',
+    'bundle' => 'project',
     'default_value' => NULL,
     'deleted' => 0,
     'description' => 'Best if 150 characters or less. Used as a meta description tag for your site\'s home page in search results.',
@@ -1597,76 +1597,6 @@ function vsite_field_default_field_instances() {
       'text_processing' => 0,
       'user_register_form' => FALSE,
     ),
-  // Exported field_instance: 'node-personal-field_meta_description'
-  $field_instances['node-personal-field_meta_description'] = array(
-    'bundle' => 'personal',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 12,
-      ),
-      'links' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'no_image_teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'sidebar_teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'slide_teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'title' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_meta_description',
-    'label' => 'Meta description',
-    'required' => 0,
-    'settings' => array(
-      'text_processing' => 0,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'text',
-      'settings' => array(
-        'rows' => 5,
-      ),
-      'type' => 'text_textarea',
-      'weight' => 42,
-    ),
-  );
-
     'widget' => array(
       'module' => 'text',
       'settings' => array(
