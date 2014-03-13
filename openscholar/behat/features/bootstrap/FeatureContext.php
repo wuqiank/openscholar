@@ -311,6 +311,17 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @When /^I create a new "([^"]*)" entry with the name "([^"]*)" in the group "([^"]*)"$/
+   */
+  public function iCreateANewEntryWithTheNameInGroup($type, $name, $group) {
+    return array(
+      new Step\When('I visit "' . $group . '/node/add/' . $type . '"'),
+      new Step\When('I fill in "Title" with "'. $name . '"'),
+      new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
    * @When /^I change privacy of the site "([^"]*)" to "([^"]*)"$/
    */
   public function iChangePrivacyTo($vsite, $visibility) {
@@ -606,6 +617,103 @@ class FeatureContext extends DrupalContext {
       }
 
       throw new Exception("Some errors were found:\n" . implode("\n", $string));
+    }
+  }
+
+  /**
+   * @Then /^I should see the following message <json>:$/
+   */
+  public function iShouldSeeTheFollowingMessageJson(TableNode $table) {
+    // Get the json output and decode it.
+    $json_output = $this->getSession()->getPage()->getContent();
+    $json = json_decode($json_output);
+
+    // Hashing table, and define variables for later.
+    $hash = $table->getRows();
+
+    if (isset($json->messages)) {
+      foreach ($json->messages as $message) {
+        $error = array();
+        foreach ($hash as $table_row) {
+          if (isset($message->arguments->{$table_row[0]})) {
+            if ($message->arguments->{$table_row[0]} != $table_row[1]) {
+              $error['values'][$table_row[0]] = ' not equal to ' . $table_row[1];
+            }
+          }
+          else {
+            $error['not_found'][$table_row[0]] = " doesn't exist.";
+          }
+        }
+        if (empty($error)) {
+          break;
+        }
+      }
+    }
+    else {
+      $error = "No messages were found.";
+    }
+
+    // Build the error string if needed.
+    if (!empty($error)) {
+      $string = array();
+
+      if (!empty($error['values'])) {
+        foreach ($error['values'] as $variable => $message) {
+          $string[] = '  ' . $variable . $message;
+        }
+      }
+      if (!empty($error['not_found'])) {
+        foreach ($error['not_found'] as $variable => $message) {
+          $string[] = '  ' . $variable . $message;
+        }
+      }
+
+      if (is_string($error)) {
+        $string[] = $error;
+      }
+
+      throw new Exception("Some errors were found:\n" . implode("\n", $string));
+    }
+  }
+
+  /**
+   * @Then /^I should not see the following message <json>:$/
+   */
+  public function iShouldNotSeeTheFollowingMessageJson(TableNode $table) {
+    // Get the json output and decode it.
+    $json_output = $this->getSession()->getPage()->getContent();
+    $json = json_decode($json_output);
+
+    // Hashing table, and define variables for later.
+    $hash = $table->getRows();
+
+    if (isset($json->messages)) {
+      foreach ($json->messages as $message) {
+        $error = array();
+        foreach ($hash as $table_row) {
+          if (isset($message->arguments->{$table_row[0]})) {
+            if ($message->arguments->{$table_row[0]} != $table_row[1]) {
+              $error['values'][$table_row[0]] = ' not equal to ' . $table_row[1];
+            }
+          }
+          else {
+            $error['not_found'][$table_row[0]] = " doesn't exist.";
+          }
+        }
+        if (empty($error)) {
+          break;
+        }
+      }
+    }
+    else {
+      $error = "No messages were found.";
+    }
+
+    if (empty($error)) {
+      throw new Exception("Message with the given properties appear on the page when it shouldn't have");
+    }
+    elseif (is_string($error)) {
+      throw new Exception("{$error}");
     }
   }
 
