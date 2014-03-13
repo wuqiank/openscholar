@@ -54,7 +54,6 @@ features[field_instance][] = node-event-field_event_registration
 features[field_instance][] = node-event-field_upload
 features[field_instance][] = registration-event_signup_simple-field_department
 features[field_instance][] = registration-event_signup_simple-field_full_name
-features[menu_links][] = primary-menu:calendar
 features[node][] = event
 features[metatag][] = node:event
 features[user_permission][] = administer event_signup_simple registration
