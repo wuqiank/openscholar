@@ -2109,7 +2109,9 @@ function os_files_filter_media_process($text) {
 }
 
 function os_files_field_attach_create_bundle($entity_type, $type) {
-  os_files_add_fields($type);
+  if ($entity_type == 'file') {
+    os_files_add_fields($type);
+  }
 }
 
 /**
