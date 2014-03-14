@@ -260,7 +260,7 @@ function os_profiles_process_node(&$vars) {
   if (isset($vars['content']['field_email'])) {
     $email_plain = $vars['content']['field_email'][0]['#markup'];
     if ($email_plain) {
-      $vars['content']['field_email'][0]['#markup'] = '<a href="mailto:' . $email_plain . '">email</a>';
+      $vars['content']['field_email'][0]['#markup'] = '<a href="mailto:' . $email_plain . '" title="'.$vars['title'].'\'s e-mail">email</a>';
     }
   }
   if (isset($vars['content']['field_phone'])) {
