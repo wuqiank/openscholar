@@ -490,6 +490,8 @@ background: none;
 border-radius: 0;
 }
 
+.form-item-biblio-url,
+.form-item-biblio-url-title,
 .node-biblio-form .form-item-biblio-section,
 .node-biblio-form .form-item-biblio-number-of-volumes,
 .node-biblio-form .form-item-biblio-number,
@@ -503,6 +505,8 @@ border-radius: 0;
 	vertical-align: top;
 }
 
+.form-item-biblio-url input.form-text,
+.form-item-biblio-url-title input.form-text,
 .node-biblio-form .form-item-biblio-section input.form-text,
 .node-biblio-form .form-item-biblio-number-of-volumes input.form-text,
 .node-biblio-form .form-item-biblio-number input.form-text,
@@ -514,7 +518,15 @@ border-radius: 0;
 	width:100px;
 }
 
+.form-item-biblio-url .description,
+.form-item-biblio-url-title .description,
+.form-item-biblio-url input.form-text,
+.form-item-biblio-url-title input.form-text {
+	width:270px;
+}
 
+
+#edit-biblio-notes-value,
 #edit-biblio-abst-e-value {
 	height:100px;
 }
@@ -550,6 +562,15 @@ padding-left:15px;
 
 html.js fieldset.collapsible#edit-publication-extras .form-wrapper .fieldset-wrapper {
 padding-left:0;
+}
+
+
+.field-widget-image-image {
+	background:#f1f1f1;
+	padding:10px;
+	border:1px solid #ccc;
+	width: 94%;
+	margin:20px 0;
 }
 
 #edit-field-biblio-extra .description {margin-left:35px;}
