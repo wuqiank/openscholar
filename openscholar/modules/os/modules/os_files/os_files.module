@@ -436,9 +436,10 @@ function os_files_form_file_entity_delete_form_alter(&$form, &$form_state) {
     $form['#submit'][] = 'os_files_redirect_after_delete_file';
   }
 
-  array_unshift($form['#submit'], 'os_files_save_file_usage');
+  //array_unshift($form['#submit'], 'os_files_save_file_usage');
+  array_unshift($form['#submit'], 'os_files_delete_remove_reference');
 
-  $form['#submit'][] = 'os_files_delete_remove_reference';
+  //$form['#submit'][] = 'os_files_delete_remove_reference';
 }
 
 function os_files_form_file_delete_submit(&$form, &$form_state) {
@@ -502,12 +503,20 @@ function os_files_delete_remove_reference($form, $form_state) {
   $file = $form_state['file'];
   $operations = array();
 
-  if (empty($form_state['file_usage'])) {
-    return;
-  }
+  $submits = array_diff($form['#submit'], array('os_files_delete_remove_references'));
+
+  $usage = file_usage_list($file);
 
   foreach (array_chunk($form_state['file_usage'], 10) as $chunk) {
-    $operations[] = array('_os_files_delete_remove_reference_finished', array($chunk, $file));
+    $operations[] = array('_os_files_delete_remove_reference_batch', array($chunk, $file));
+  }
+
+  // add submit functions to end of list,
+  // since there seems to be no way to pass them to the finished callback
+  foreach ($submits as $f) {
+    if (function_exists($f)) {
+      $operations[] = array($f, array($form, $form_state));
+    }
   }
 
   $batch = array(
@@ -517,6 +526,7 @@ function os_files_delete_remove_reference($form, $form_state) {
     'init_message' => t('The references removed procedure has started.'),
     'progress_message' => t('Processed @current out of @total.'),
     'error_message' => t('Example Batch has encountered an error.'),
+    'file' => drupal_get_path('module', 'file_entity').'/file_entity.pages.inc',
   );
 
   batch_set($batch);
@@ -532,7 +542,7 @@ function os_files_delete_remove_reference($form, $form_state) {
  * @param $file
  *  The file object which his reference need to be remove.
  */
-function _os_files_delete_remove_reference_finished($nids, $file) {
+function _os_files_delete_remove_reference_batch($nids, $file) {
   $nodes = node_load_multiple($nids);
 
   foreach ($nodes as $node) {
@@ -549,10 +559,20 @@ function _os_files_delete_remove_reference_finished($nids, $file) {
 
       $file_field = &$node->{$field}[LANGUAGE_NONE];
 
+      if (!is_array($file_field)) {
+        continue;
+      }
+
       foreach ($file_field as $delta => $value) {
         if ($value['fid'] == $file->fid || !$file_field[$delta]) {
           // The file we delete is in the current delta or the the value is
           // NULL. We cannot set a NULL value.
+
+          watchdog('os_files', 'Removing file %fid from field %field of node %nid', array(
+            '%fid' => $file->fid,
+            '%field' => $field,
+            '%nid' => $node->nid
+          ));
           unset($file_field[$delta]);
         }
       }
@@ -563,7 +583,10 @@ function _os_files_delete_remove_reference_finished($nids, $file) {
         unset($node->{$field}[LANGUAGE_NONE]);
       }
     }
-
+    watchdog('os_files', 'File %fid removed from all fields of node %nid', array(
+      '%fid' => $file->fid,
+      '%nid' => $node->nid,
+    ));
     node_save($node);
   }
 }
