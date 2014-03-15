@@ -113,6 +113,9 @@ function os_slideshow_form_slideshow_slide_node_form_alter(&$form, &$state, $for
       unset($form['actions'][$action]);
     }
   }
+
+  // When adding a new slide hide the actions top button.
+  hide($form['actions_top']);
 }
 
 /**
