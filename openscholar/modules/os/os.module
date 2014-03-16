@@ -715,6 +715,11 @@ function os_preprocess_page(&$vars) {
     }
   }
 
+  // Check if the user is rss feed item.
+  if (in_array('os_rss_feed', array_keys($active))) {
+    $module = 'os_rss_feed';
+  }
+
   $section_links['header'] = array(
       'title' => 'This Section',
     );

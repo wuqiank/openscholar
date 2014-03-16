@@ -1,0 +1,9 @@
+name = OS RSS feed
+description = Allow to determine RSS feed for sites.
+core = 7.x
+package = Features
+dependencies[] = context
+dependencies[] = ctools
+features[context][] = os_rss_feed
+features[ctools][] = context:context:3
+features[features_api][] = api:2
