@@ -41,8 +41,17 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * order to show the facet. To do so we execute a "silent" search on solr
    * without showing the results.
    */
-  public function call_empty_search_if_needed() {
+  public function call_empty_search_if_needed($delta) {
+    $parsed = &drupal_static('facetapi_parsed_deltas', array());
+    // Test block visibility if not already tested.
+    if (empty($delta) || !empty($parsed[$delta])) {
+      return;
+    }
+    $map = facetapi_get_delta_map();
+    list($searcher, $realm_name, $facet_name) = facetapi_parse_delta($map[$delta]);
 
+    ctools_include('apachesolr_search.pages', 'apachesolr', '');
+    apachesolr_search_custom_page('browse_person');
   }
   
   /**
@@ -57,16 +66,17 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       return $block;
     }
 
-    // Verify the facet block has something to work on (means - it is in a solr
-    // search page). If not - execute the empty solr search without showing
-    // the results.
-    $this->call_empty_search_if_needed();
+    $delta = $block['delta'];
 
     // Filter by OG vocab.
     $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
     $delta_og_vocab = array_search($string_og_vocab, $map);
 
-    $delta = $block['delta'];
+    // Verify the facet block has something to work on (means - it is in a solr
+    // search page). If not - execute the empty solr search without showing
+    // the results.
+    $this->call_empty_search_if_needed($delta_og_vocab);
+
     $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
     $block['delta'] = $delta;
 
