@@ -19,4 +19,5 @@ Feature:
       And I should not see the following message <json>:
           | @{message:field-node-reference:title} | private different title |
           # Make the VSite public again.
+      And I am logging in as "john"
       And I change privacy of the site "obama" to "Public on the web. "
