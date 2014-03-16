@@ -47,11 +47,11 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     if (empty($delta) || !empty($parsed[$delta])) {
       return;
     }
-    $map = facetapi_get_delta_map();
-    list($searcher, $realm_name, $facet_name) = facetapi_parse_delta($map[$delta]);
-
     ctools_include('apachesolr_search.pages', 'apachesolr', '');
-    apachesolr_search_custom_page('browse_person');
+    $feature = os_get_active_feature();
+    $app_info = os_app_info($feature->name);
+    $browse_page = reset(array_keys($app_info['browse_pages']));
+    apachesolr_search_custom_page('browse_' . $browse_page);
   }
   
   /**
