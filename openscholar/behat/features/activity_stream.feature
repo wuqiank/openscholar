@@ -16,5 +16,7 @@ Feature:
      When I visit "activity.json"
      Then I should see the following message <json>:
           | @{message:field-node-reference:title} | public unique title     |
-     And I should not see the following message <json>:
+      And I should not see the following message <json>:
           | @{message:field-node-reference:title} | private different title |
+          # Make the VSite public again.
+      And I change privacy of the site "obama" to "Public on the web. "
