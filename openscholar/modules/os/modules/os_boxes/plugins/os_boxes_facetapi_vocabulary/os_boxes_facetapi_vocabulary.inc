@@ -37,6 +37,15 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
   }
 
   /**
+   * Facet widgets that in a non-solr search page must fake a search page in
+   * order to show the facet. To do so we execute a "silent" search on solr
+   * without showing the results.
+   */
+  public function call_empty_search_if_needed() {
+
+  }
+  
+  /**
    * Implementation of boxes_content::render().
    */
   public function render() {
@@ -47,6 +56,11 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     if (!$map = facetapi_get_delta_map()) {
       return $block;
     }
+
+    // Verify the facet block has something to work on (means - it is in a solr
+    // search page). If not - execute the empty solr search without showing
+    // the results.
+    $this->call_empty_search_if_needed();
 
     // Filter by OG vocab.
     $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
