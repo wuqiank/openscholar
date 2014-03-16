@@ -23,7 +23,20 @@ function os_rss_feed_menu() {
     'access callback' => 'spaces_access_admin',
   );
 
+  $items['rss-feed'] = array(
+    'title' => 'OS RSS feed settings',
+    'page callback' => 'os_rss_feed_show_link',
+    'access callback' => TRUE,
+  );
+
   return $items;
+}
+
+/**
+ * Display the content for thr rss-feed menu item.
+ */
+function os_rss_feed_show_link() {
+  return 'a';
 }
 
 /**
