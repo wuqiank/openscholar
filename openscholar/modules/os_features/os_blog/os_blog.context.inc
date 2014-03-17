@@ -29,7 +29,7 @@ function os_blog_context_default_contexts() {
       'values' => array(
         'blog' => 'blog',
         'blog/*' => 'blog/*',
-        'browse/blog' => 'browse/blog',
+        'browse/blogs' => 'browse/blogs',
       ),
     ),
     'views' => array(
@@ -63,6 +63,13 @@ function os_blog_context_default_contexts() {
           'module' => 'boxes',
           'delta' => 'blog_rss_feed',
           'region' => 'footer',
+          'weight' => '-10',
+        ),
+        'boxes-vocabulary_filter_blog' => array(
+          'module' => 'boxes',
+          'delta' => 'vocabulary_filter_blog',
+          'title' => t('Filter by taxonomy'),
+          'region' => 'sidebar_second',
           'weight' => '-10',
         ),
       ),
