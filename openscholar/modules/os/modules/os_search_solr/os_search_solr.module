@@ -512,9 +512,9 @@ function os_search_solr_context_default_contexts() {
   $export = array();
   $export['os_search'] = os_search_solr_setup_core_search_context();
 
-  foreach (os_search_solr_get_browse_pages_info() as $bundle_name => $bundle_info) {
-    $export['browse_' . $bundle_name] = os_search_solr_setup_bundle_context($bundle_name, $bundle_info['title'], $bundle_info['url'], $bundle_info['menu_item']);
-  }
+  $browse_pages_info = os_search_solr_get_browse_pages_info();
+  $page_bundle_info = $browse_pages_info['page'];
+  $export['browse_page'] = os_search_solr_setup_bundle_context('page', $page_bundle_info['title'], $page_bundle_info['url'], $page_bundle_info['menu_item']);
 
   return $export;
 }
