@@ -1,9 +1,7 @@
 <!--REGION TO HOUSE RESPONSIVE MENU. OTHER CONTENT CAN'T BE PLACED HERE-->
-
-		<div class="responive-menu-container clearfix">
-		  <?php print render($page['responsive_menu']); ?>
-		</div>
-	</div>
+<div class="responive-menu-container clearfix">
+  <?php print render($page['responsive_menu']); ?>
+</div>
 
 <!--FLEXIBLE ADMIN HEADER FOR USE BY SELECT GROUPS USING OS-->
 <?php if ($branding_header = render($page['branding_header'])): ?>
