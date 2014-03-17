@@ -14,3 +14,17 @@ Feature:
       And I press "Save"
      Then I visit "john/about"
       And I should see the meta tag "description" with value "custom tag value"
+
+  @api
+  Scenario: Edit meta description tag on vsite (group) bundles.
+    Given I am logging in as "john"
+      And I visit "john/cp/settings"
+      And I fill in "Meta description" with "A site about John"
+      And I press "Save"
+     When I visit "john"
+     Then I should see the meta tag "description" with value "A site about John"
+     Then I visit "john/cp/settings"
+      And I fill in "Meta description" with "New value"
+      And I press "Save"
+     When I visit "john"
+     Then I should see the meta tag "description" with value "New value"
