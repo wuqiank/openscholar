@@ -207,20 +207,19 @@ body#widget {display: inline-block;}
 
   /* Footer panels */
 
- .footer .region-footer {
+ .at-panel.footer .region-footer {
     	width: 100%;
   	}
   	
- .footer .region {
+ .at-panel.footer .region {
     	display: inline-block;
   	} 	  	  	
  
- .footer .region.region-footer-bottom {
+ .at-panel.footer .region.region-footer-bottom {
     	display: block !important;
   	} 
  
- 
- 
+
   .footer.footer-right .region-footer,
   .footer-left.footer .region-footer {
     	width: 74%;
@@ -1004,9 +1003,15 @@ border-top:1px solid #ccc;
     color: #333;
 }
 
+
 .accordion .ui-widget-content {
      color: inherit;
 }
+
+.accordion .ui-widget-content a {
+     color: #215990;
+}
+
 
 .ui-widget-content {
      color: inherit;

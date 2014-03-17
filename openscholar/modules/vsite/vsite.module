@@ -2943,11 +2943,11 @@ function vsite_get_os_override_permissions() {
 function vsite_og_permission() {
   return array(
     'administer boxes' => array(
-      'title' => t('Administer boxes'),
+      'title' => t('Administer widgets'),
       'os_override' => TRUE,
     ),
     'edit boxes' => array(
-      'title' => t('Edit boxes'),
+      'title' => t('Edit widgets'),
       'description' => t('Edit existing boxes.'),
       'os_override' => TRUE,
     ),

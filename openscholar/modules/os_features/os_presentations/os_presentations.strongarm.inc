@@ -82,7 +82,7 @@ function os_presentations_strongarm() {
   $strongarm->value = array(
     'title' => array(
       'region' => 'main',
-      'weight' => '1',
+      'weight' => '0',
       'has_required' => TRUE,
       'title' => 'Title',
     ),
@@ -119,28 +119,28 @@ function os_presentations_strongarm() {
     ),
     'body' => array(
       'region' => 'main',
-      'weight' => '2',
+      'weight' => '1',
       'has_required' => FALSE,
       'title' => 'Body',
       'hidden' => 0,
     ),
     'field_presentation_date' => array(
       'region' => 'main',
-      'weight' => '3',
+      'weight' => '2',
       'has_required' => FALSE,
       'title' => 'Presentation Date',
       'hidden' => 0,
     ),
     'field_presentation_file' => array(
       'region' => 'main',
-      'weight' => '5',
+      'weight' => '4',
       'has_required' => FALSE,
       'title' => 'Presentation Files',
       'hidden' => 0,
     ),
     'field_presentation_location' => array(
       'region' => 'main',
-      'weight' => '4',
+      'weight' => '3',
       'has_required' => FALSE,
       'title' => 'Location',
       'hidden' => 0,
@@ -169,7 +169,7 @@ function os_presentations_strongarm() {
     ),
     'os_presentations_attach_files' => array(
       'region' => 'main',
-      'weight' => '0',
+      'weight' => '5',
       'has_required' => FALSE,
       'title' => 'Attach Files',
       'hidden' => 0,
@@ -195,6 +195,14 @@ function os_presentations_strongarm() {
       'weight' => '0',
       'has_required' => FALSE,
       'title' => 'Save',
+      'hidden' => 0,
+    ),
+    'metatags' => array(
+      'region' => 'main',
+      'weight' => '8',
+      'has_required' => FALSE,
+      'title' => 'Meta tags',
+      'collapsed' => 1,
       'hidden' => 0,
     ),
   );
