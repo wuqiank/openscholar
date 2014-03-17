@@ -27,6 +27,7 @@ projects[colorbox][version] = 2.5
 
 projects[comment_sources][subdir] = "contrib"
 projects[comment_sources][version] = 2.0
+projects[comment_sources][patch][] = "https://drupal.org/files/issues/22086870-comment-source-wrong-query-field-1.patch"
 
 projects[context][subdir] = "contrib"
 projects[context][version] = 3.0-beta4
