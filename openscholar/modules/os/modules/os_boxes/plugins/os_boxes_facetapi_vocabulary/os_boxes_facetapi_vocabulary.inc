@@ -51,8 +51,12 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       // No active feature.
       return;
     }
-    if ((!$app_info = os_app_info($feature->name)) || (!$browse_page = reset(array_keys($app_info['browse_pages'])))) {
-      // No browse_pages information available.
+    if (!$app_info = os_app_info($feature->name)) {
+      // No app information available.
+      return;
+    }
+    if (!$browse_page = reset(array_keys($app_info['browse_pages']))) {
+      // No browse_pages.
       return;
     }
 

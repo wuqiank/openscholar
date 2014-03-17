@@ -70,7 +70,7 @@ function os_booklets_context_default_contexts() {
         'boxes-vocabulary_filter_book' => array(
           'module' => 'boxes',
           'delta' => 'vocabulary_filter_book',
-          'title' => t('Filter by taxonomy'),
+          'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),

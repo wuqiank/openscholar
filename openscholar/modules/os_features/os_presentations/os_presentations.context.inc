@@ -58,7 +58,7 @@ function os_presentations_context_default_contexts() {
         'boxes-vocabulary_filter_presentation' => array(
           'module' => 'boxes',
           'delta' => 'vocabulary_filter_presentation',
-          'title' => t('Filter by taxonomy'),
+          'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),

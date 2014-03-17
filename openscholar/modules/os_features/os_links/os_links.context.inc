@@ -49,7 +49,7 @@ function os_links_context_default_contexts() {
         'boxes-vocabulary_filter_links' => array(
           'module' => 'boxes',
           'delta' => 'vocabulary_filter_links',
-          'title' => t('Filter by taxonomy'),
+          'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
