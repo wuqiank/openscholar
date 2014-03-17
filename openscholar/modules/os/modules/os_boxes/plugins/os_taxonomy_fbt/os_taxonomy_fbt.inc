@@ -97,7 +97,7 @@ class os_taxonomy_fbt extends os_boxes_default {
       '#options' => array(
         'contextual' => t("Determine for me"),
         '--all--' => t('All posts'),
-        'select' => t('Select post types'),
+        'select' => t('Select post type'),
       ),
       '#default_value' => $this->options['behavior'],
       '#description' => t('The post types that will included in the count. Determine for me will filter the content on the "current page".'),
@@ -105,10 +105,10 @@ class os_taxonomy_fbt extends os_boxes_default {
 
     $form['bundles'] = array(
       '#type' => 'select',
-      '#title' => t('Select Post types'),
+      '#title' => t('Select Post type'),
       '#options' => os_get_bundles(array(1,2)),
       '#description' => t('The post types that will be included in the count'),
-      '#multiple' => TRUE,
+      '#multiple' => FALSE,
       '#size' => count(os_get_bundles(array(1,2))) / 2,
       '#dependency' => array(
         'edit-behavior' => array('select'),
