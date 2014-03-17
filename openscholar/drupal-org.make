@@ -393,6 +393,7 @@ projects[views_og_cache][subdir] = "contrib"
 projects[views_og_cache][download][type] = git
 projects[views_og_cache][download][branch] = 7.x-1.x-dev
 projects[views_og_cache][download][revision] = dddbfa2
+projects[views_og_cache][patch][] = "https://drupal.org/files/issues/voc-cache-key-arguments.patch"
 
 projects[views_slideshow][subdir] = "contrib"
 projects[views_slideshow][version] = 3.0
