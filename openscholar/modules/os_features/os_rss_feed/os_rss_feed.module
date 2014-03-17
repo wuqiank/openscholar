@@ -122,13 +122,18 @@ function os_rss_feed_terms_element_validate($element, &$form_state) {
 function os_rss_feed_get_nids() {
   $nids = array();
 
+  $query = new EntityFieldQuery();
+  $query
+    ->entityCondition('entity_type', 'node');
+
+  if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    $query->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id);
+  }
+
   // Load all the nodes by node types.
   $types = variable_get('os_rss_feed_content_types', array());
 
   if ($types) {
-    $query = new EntityFieldQuery();
-    $query->entityCondition('entity_type', 'node');
-
     $bundles = array();
     foreach ($types as $type) {
       if (!$type) {
@@ -140,12 +145,6 @@ function os_rss_feed_get_nids() {
 
     if ($bundles) {
       $query->propertyCondition('type', $bundles, 'IN');
-    }
-
-    $results = $query->execute();
-
-    if (!empty($results['node'])) {
-      $nids = array_keys($results['node']);
     }
   }
 
@@ -163,16 +162,16 @@ function os_rss_feed_get_nids() {
       $tids = array_merge($tids, array_keys($vocab));
     }
 
-    $query = new EntityFieldQuery();
-    $results = $query
-      ->entityCondition('entity_type', 'node')
-      ->fieldCondition(OG_VOCAB_FIELD, 'target_id', $tids, 'IN')
-      ->execute();
-    if (!empty($results['node'])) {
-      $nids = array_merge($nids, array_keys($results['node']));
+    if ($tids) {
+      $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $tids, 'IN');
     }
   }
 
+  $results = $query->execute();
 
-  return implode('+', $nids);
+  if (!empty($results['node'])) {
+    $nids = array_keys($results['node']);
+  }
+
+  return implode(',', $nids);
 }
