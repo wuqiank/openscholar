@@ -64,6 +64,8 @@ class vsite extends space_og {
     // We cannot rely on parent::activate() to check excluded path, as our URL
     // is prefixed with the PURL, thus drupal_match_path() never find a matching
     // path. Instead, we remvoe the PURL from the path and check it ourself.
+    // So for example instead of checking john/user/1/edit we check on
+    // user/1/edit.
     $paths = implode("\n", $this->excluded_paths());
     $path = explode('/', $_GET['q']);
     unset($path[0]);
