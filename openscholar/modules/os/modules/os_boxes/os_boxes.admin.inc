@@ -256,3 +256,10 @@ function os_boxes_embed_code($box, $embed_style) {
   print '';
   exit;
 }
+
+/**
+ * Placeholder function. Always returns a 404.
+ */
+function os_boxes_placeholder() {
+  return MENU_NOT_FOUND;
+}

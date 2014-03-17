@@ -849,6 +849,28 @@ function os_migrate_demo_vsite_set_variable($vsite, $name, $value) {
 }
 
 /**
+ * Return the number of times the feed item exists.
+ *
+ * @param $title
+ *  The title of the feed item.
+ * @param $vsite
+ *  The vsite name.
+ */
+function os_migrate_demo_count_node_instances($title, $vsite) {
+  $nid = os_migrate_demo_get_node_id($vsite, TRUE);
+  $query = new EntityFieldQuery();
+
+  $results = $query
+    ->entityCondition('entity_type', 'os_feed_item')
+    ->propertyCondition('title', $title)
+    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $nid)
+    ->count()
+    ->execute();
+
+  print $results;
+}
+
+/**
  * Get the uid of the owner of a group.
  *
  * @param $group

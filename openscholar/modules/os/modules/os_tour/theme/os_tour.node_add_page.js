@@ -48,10 +48,10 @@
               {
                 title: Drupal.t('Pages are posts'),
                 content: Drupal.t('If your site has other apps enabled, you can also create things like events, person profiles and much more.'),
-                target: document.querySelector('h1.page-title'),
+                target: document.querySelector(tourLink),
                 placement: "bottom",
                 xOffset: 0,
-                yOffset: 0
+                yOffset: -50
               },
               {
                 title: Drupal.t('Titles'),

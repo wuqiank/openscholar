@@ -10,7 +10,7 @@ Feature:
      Then I click "Air"
       And I should not see "Norma"
 
-  @api @wip
+  @api
   Scenario: Test browse with one term not showing categories block
     Given I visit "obama/browse/blogs"
      Then I should not see "filter by taxonomy"

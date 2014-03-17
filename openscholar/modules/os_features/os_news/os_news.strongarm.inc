@@ -164,7 +164,7 @@ function os_news_strongarm() {
     ),
     'revision_information' => array(
       'region' => 'right',
-      'weight' => '5',
+      'weight' => '6',
       'has_required' => FALSE,
       'title' => 'Revision information',
       'collapsed' => 1,
@@ -188,7 +188,7 @@ function os_news_strongarm() {
     ),
     'comment_settings' => array(
       'region' => 'right',
-      'weight' => '6',
+      'weight' => '5',
       'has_required' => FALSE,
       'title' => 'Comment settings',
       'collapsed' => 1,
@@ -215,6 +215,14 @@ function os_news_strongarm() {
       'weight' => '0',
       'has_required' => FALSE,
       'title' => 'Save',
+      'hidden' => 0,
+    ),
+    'metatags' => array(
+      'region' => 'main',
+      'weight' => '40',
+      'has_required' => FALSE,
+      'title' => 'Meta tags',
+      'collapsed' => 1,
       'hidden' => 0,
     ),
   );

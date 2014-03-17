@@ -92,23 +92,17 @@ html.js input.throbbing {
     margin-top: -43px;
 }
 
-
-a.advanced-help-link {
-    float: right;
-}
-
-
-.advanced-help-link {
+.os-help-link {
     background: url("../../../themes/os_basetheme/images/scholarbase-sprite.png") no-repeat 0 -150px;
     display: block;
-    float: left;
+    float: right;
   margin-top: 2px;
     padding: 0;
   height: 19px;
     width: 19px;
 }
 
-.advanced-help-link:hover {
+.os-help-link:hover {
     background: url("../../../themes/os_basetheme/images/scholarbase-sprite.png") no-repeat 0 -170px;
 }
 
