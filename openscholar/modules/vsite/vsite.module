@@ -1753,11 +1753,6 @@ function vsite_preprocess_page(&$vars) {
   global $user;
   $item = menu_get_item();
 
-  // Moves vsite metatags to the content_top region so they aren't unset later.
-  if (drupal_is_front_page() && $vsite = vsite_get_vsite()) {
-    $vars['page']['content_top']['metatags'] = $vars['page']['content']['metatags'];
-  }
-
   // Only make the change to the local menu tab in the /user page.
   // Add in the "Add full name" link only on the /user page.
   if(isset($item) && (strpos($item['path'], 'user') === 0)) {
@@ -3260,4 +3255,14 @@ function vsite_metatag_metatags_view_alter(&$output, $instance) {
   // We need to register the term's metatags, so we can later fetch them.
   // @see metatag_page_build().
   metatag_page_set_metatags($instance, $output);
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function vsite_page_build(&$page) {
+  // Moves vsite metatags to the content_top region so they aren't unset later.
+  if (drupal_is_front_page() && $vsite = vsite_get_vsite()) {
+    $page['content_top']['metatags'] = $page['page']['content']['metatags'];
+  }
 }
