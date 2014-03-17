@@ -5,6 +5,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * Create a new box.
    */
   protected function __construct() {
+    ctools_include('taxonomy', 'os');
     parent::__construct();
     $this->title = t('Filter by taxonomy');
   }
@@ -23,7 +24,6 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * Implementation of boxes_content::options_form().
    */
   public function options_form(&$form_state) {
-    ctools_include('taxonomy', 'os');
     $form = parent::options_form($form_state);
 
     $form['vocabularies'] = array(
@@ -99,9 +99,8 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    */
   private function get_bundle_vocabularies() {
 
-    ctools_include('taxonomy', 'os');
-    $bundle = $this->options['bundle'];
-    $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', $bundle);
+    $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', str_replace("vocabulary_filter_", "", $this->delta));
+
     $vocabularies = array();
 
     if ($taxonomy_vocabularies) {

@@ -44,7 +44,12 @@ function os_profiles_os_app_info() {
  * Implements hook_init().
  */
 function os_profiles_init() {
-  if (!$uuid = variable_get('os_profiles_nodes_uuid')) {
+  if (variable_get('os_profiles_no_restws', FALSE) || !module_exists('restws')) {
+    // No RestWS.
+    return;
+  }
+
+  if (!($uuid = variable_get('os_profiles_nodes_uuid'))) {
     // Return if no UUID is set that is, no profile nodes need to be updated.
     return;
   }
@@ -101,7 +106,13 @@ function os_profiles_init() {
     // it for later.
     $person_photo = $data->values['field_person_photo'];
     unset($data->values['field_person_photo']);
-    $handler->update($node->nid, $data->values);
+    try {
+      $handler->update($node->nid, $data->values);
+    }
+    catch (RestWSException $e) {
+      // TODO: watchdog message
+      return;
+    }
 
     // We need to replace the field ID in the field with the new file ID we got.
     $file = NULL;
@@ -175,7 +186,7 @@ function os_profiles_admin_paths() {
  */
 function os_profiles_os_entity_view_modes() {
   return array('node' => array(
-    'person' => array('sidebar_teaser'),
+    'person' => array('sidebar_teaser', 'no_image_teaser'),
   ));
 }
 
@@ -563,6 +574,11 @@ function os_profiles_profiles_fields() {
  * Submit handler; Importing person profile from external source.
  */
 function os_profiles_sync_profile_submit($form, $form_state) {
+  if (variable_get('os_profiles_no_restws', FALSE) || !module_exists('restws')) {
+    // No RestWS.
+    return;
+  }
+
   global $base_url, $user;
   $keys = os_profiles_profiles_fields();
   $values = $data = array();

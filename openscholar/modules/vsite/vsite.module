@@ -2624,9 +2624,11 @@ function vsite_taxonomy_term_presave($term) {
  * Validate handler; Prevent duplicate aliases.
  */
 function vsite_form_alias_validate($form, &$form_state) {
-  $entity_type = $form['#entity_type'];
+  if (!empty($form['#entity_type'])) {
+    $entity_type = $form['#entity_type'];
+  }
 
-  if(!$entity_type && $form['#form_id'] == 'taxonomy_form_vocabulary'){
+  if (empty($entity_type) && $form['#form_id'] == 'taxonomy_form_vocabulary') {
     $entity_type = 'taxonomy_vocabulary';
   }
 
@@ -2644,9 +2646,9 @@ function vsite_form_alias_validate($form, &$form_state) {
       $entity->vid = $form_state['values']['vid'];
       break;
     case 'taxonomy_vocabulary':
-        // Vocabs must have a vid in order to generate their alias.
-        $entity = $form_state['vocabulary'];
-        break;
+      // Vocabs must have a vid in order to generate their alias.
+      $entity = $form_state['vocabulary'];
+      break;
   }
 
   // Verify the path is not in use.
@@ -2936,11 +2938,11 @@ function vsite_get_os_override_permissions() {
 function vsite_og_permission() {
   return array(
     'administer boxes' => array(
-      'title' => t('Administer boxes'),
+      'title' => t('Administer widgets'),
       'os_override' => TRUE,
     ),
     'edit boxes' => array(
-      'title' => t('Edit boxes'),
+      'title' => t('Edit widgets'),
       'description' => t('Edit existing boxes.'),
       'os_override' => TRUE,
     ),
