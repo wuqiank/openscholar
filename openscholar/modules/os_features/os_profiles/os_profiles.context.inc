@@ -47,10 +47,9 @@ function os_profiles_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'boxes-vocabulary_filter_people' => array(
+        'boxes-vocabulary_filter_person' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_people',
-          'title' => t('Filter by taxonomy'),
+          'delta' => 'vocabulary_filter_person',
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
