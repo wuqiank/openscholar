@@ -139,7 +139,7 @@ function os_boxes_load($key) {
  */
 function os_boxes_create_delta() {
   // TODO: Replace with real function
-  return 'og-'.time();
+  return time();
 }
 
 /**
