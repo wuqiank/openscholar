@@ -61,6 +61,10 @@ class vsite extends space_og {
     // Test purl paths.
     $this->activate_purl_modifier();
 
+    if (!parent::activate()) {
+      return FALSE;
+    }
+
     // We cannot rely on parent::activate() to check excluded path, as our URL
     // is prefixed with the PURL, thus drupal_match_path() never find a matching
     // path. Instead, we remvoe the PURL from the path and check it ourself.
