@@ -1104,7 +1104,7 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^I remove the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
+   * @Given /^I remove from the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
    */
   public function iRemoveTheRoleThePermissionInTheGroup($role, $group, $permission) {
     $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
@@ -1112,7 +1112,7 @@ class FeatureContext extends DrupalContext {
 
     return array(
       new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
-      new Step\When('I uncheck the box "' . $permission . '"'),
+      new Step\When('I uncheck the box "edit-' . $rid . '-' . $permission . '"'),
       new Step\When('I press "Save permissions"'),
     );
   }
@@ -1646,7 +1646,7 @@ class FeatureContext extends DrupalContext {
     if ($element) {
       throw new Exception("A button with id|name|value equal to '$button' was found.");
     }
-  }
+}
 
   /**
    * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
@@ -1703,6 +1703,28 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I verify that "([^"]*)" is the owner of vsite "([^"]*)"$/
+   */
+  public function iVerifyThatIsTheOwnerOfVsite($username, $group) {
+    $uid = $this->invoke_code('os_migrate_demo_get_user_by_name', array($username));
+    $author_uid = $this->invoke_code('os_migrate_demo_get_vsite_owner_uid', array($group));
+
+    if ($uid != $author_uid) {
+      throw new Exception("User '$username' is not the owner of vsite '$group'.");
+    }
+  }
+
+  /**
+   * @Given /^I edit the membership of "([^"]*)" in vsite "([^"]*)"$/
+   */
+  public function iEditTheMembershipOfInVsite($username, $group) {
+    $uid = $this->invoke_code('os_migrate_demo_get_user_by_name', array($username));
+    return array(
+      new Step\When('I visit "' . $group . '/cp/users/edit_membership/' . $uid . '"'),
+    );
+  }
+
+ /**
    * @Given /^I re import feed item "([^"]*)"$/
    */
   public function iReImportFeedItem($node) {
