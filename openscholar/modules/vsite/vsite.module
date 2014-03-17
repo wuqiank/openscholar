@@ -3263,6 +3263,6 @@ function vsite_metatag_metatags_view_alter(&$output, $instance) {
 function vsite_page_build(&$page) {
   // Moves vsite metatags to the content_top region so they aren't unset later.
   if (drupal_is_front_page() && $vsite = vsite_get_vsite()) {
-    $page['content_top']['metatags'] = $page['page']['content']['metatags'];
+    $page['content_top']['metatags'] = $page['content']['metatags'];
   }
 }

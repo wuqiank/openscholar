@@ -26,5 +26,6 @@ Feature:
      Then I visit "john/cp/settings"
       And I fill in "Meta description" with "New value"
       And I press "Save"
+      And I clear the cache
      When I visit "john"
      Then I should see the meta tag "description" with value "New value"
