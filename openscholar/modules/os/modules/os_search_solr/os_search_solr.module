@@ -520,17 +520,6 @@ function os_search_solr_context_default_contexts() {
 }
 
 /**
- * Implements of hook_context_default_contexts_alter().
- */
-function os_search_solr_context_default_contexts_alter(&$contexts) {
-  if (!empty($contexts['blog_blog'])) {
-    $reactions = $contexts['blog_blog']->reactions;
-    unset($reactions['block']['blocks']['views-os_blog-block']);
-    $contexts['blog_blog']->reactions = $reactions;
-  }
-}
-
-/**
  * Utility function; Get bundles for browse_pages.
  *
  * @return array
