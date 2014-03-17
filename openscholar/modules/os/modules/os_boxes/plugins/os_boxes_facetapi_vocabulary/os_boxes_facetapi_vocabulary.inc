@@ -42,16 +42,14 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * without showing the results.
    */
   public function call_empty_search_if_needed($delta) {
-    $parsed = &drupal_static('facetapi_parsed_deltas', array());
-    // Test block visibility if not already tested.
-    if (empty($delta) || !empty($parsed[$delta])) {
-      return;
-    }
     ctools_include('apachesolr_search.pages', 'apachesolr', '');
     $feature = os_get_active_feature();
     $app_info = os_app_info($feature->name);
     $browse_page = reset(array_keys($app_info['browse_pages']));
-    apachesolr_search_custom_page('browse_' . $browse_page);
+    $page_id = 'browse_' . $browse_page;
+    if (!apachesolr_has_searched('solr')) {
+      apachesolr_search_custom_page($page_id);
+    }
   }
   
   /**
