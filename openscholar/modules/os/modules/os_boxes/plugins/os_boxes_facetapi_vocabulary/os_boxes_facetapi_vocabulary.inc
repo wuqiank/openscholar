@@ -56,9 +56,27 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       return;
     }
 
-    $page_id = 'browse_' . $browse_page;
-    ctools_include('apachesolr_search.pages', 'apachesolr', '');
-    apachesolr_search_custom_page($page_id);
+    // Execute the query.
+    try {
+      $page_id = 'browse_' . $browse_page;
+      $solr = apachesolr_get_solr('solr');
+      $search_page = apachesolr_search_page_load($page_id);
+
+      $conditions = apachesolr_search_conditions_default($search_page);
+
+      // Initializes params for empty query.
+      $params = array(
+        'spellcheck' => 'false',
+        'fq' => isset($conditions['fq']) ? $conditions['fq'] : array(),
+        'rows' => 1,
+      );
+      $context['page_id'] = $page_id;
+      $context['search_type'] = 'apachesolr_search_show_facets';
+      apachesolr_search_run_empty('apachesolr', $params, $search_page['search_path'], $solr, $context);
+    }
+    catch (Exception $e) {
+      watchdog('Apache Solr', nl2br(check_plain($e->getMessage())), NULL, WATCHDOG_ERROR);
+    }
   }
   
   /**
