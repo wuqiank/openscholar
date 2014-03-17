@@ -58,24 +58,32 @@ class vsite extends space_og {
       drupal_exit();
     }
 
-    // Test purl paths
+    // Test purl paths.
     $this->activate_purl_modifier();
 
-    if (parent::activate()) {
-      // Sets up user roles (call before menu_get_item caches access info)
-      $this->activate_user_roles();
-
-      $router_items = &drupal_static('menu_get_item');
-      // Have the menu access params already been set?
-      if (isset($router_items[$_GET['q']])) {
-        // If the current menu item may rely on the space so we reset the cached access information
-        unset($router_items[$_GET['q']]);
-      }
-
-      return TRUE;
+    // We cannot rely on parent::activate() to check excluded path, as our URL
+    // is prefixed with the PURL, thus drupal_match_path() never find a matching
+    // path. Instead, we remvoe the PURL from the path and check it ourself.
+    $paths = implode("\n", $this->excluded_paths());
+    $path = explode('/', $_GET['q']);
+    unset($path[0]);
+    $path = implode('/', $path);
+    if (drupal_match_path($path, $paths)) {
+      $this->deactivate();
+      return FALSE;
     }
 
-    return FALSE;
+    // Sets up user roles (call before menu_get_item caches access info)
+    $this->activate_user_roles();
+
+    $router_items = &drupal_static('menu_get_item');
+    // Have the menu access params already been set?
+    if (isset($router_items[$_GET['q']])) {
+      // If the current menu item may rely on the space so we reset the cached access information
+      unset($router_items[$_GET['q']]);
+    }
+
+    return TRUE;
   }
 
   /**
