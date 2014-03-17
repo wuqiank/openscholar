@@ -48,6 +48,13 @@ function os_classes_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
+        'boxes-vocabulary_filter_class' => array(
+          'module' => 'boxes',
+          'delta' => 'vocabulary_filter_class',
+          'title' => t('Filter by taxonomy'),
+          'region' => 'sidebar_second',
+          'weight' => '-10',
+        ),
       ),
     ),
     'menu' => 'classes',

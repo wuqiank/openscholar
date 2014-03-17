@@ -55,6 +55,13 @@ function os_presentations_context_default_contexts() {
           'weight' => '-8',
           'label' => 'Recent Presentations',
         ),
+        'boxes-vocabulary_filter_presentation' => array(
+          'module' => 'boxes',
+          'delta' => 'vocabulary_filter_presentation',
+          'title' => t('Filter by taxonomy'),
+          'region' => 'sidebar_second',
+          'weight' => '-10',
+        ),
       ),
     ),
     'menu' => 'presentations',

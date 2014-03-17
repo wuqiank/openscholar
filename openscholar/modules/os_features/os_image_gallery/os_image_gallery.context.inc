@@ -59,6 +59,13 @@ function os_image_gallery_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-52',
         ),
+        'boxes-vocabulary_filter_media_gallery' => array(
+          'module' => 'boxes',
+          'delta' => 'vocabulary_filter_media_gallery',
+          'title' => t('Filter by taxonomy'),
+          'region' => 'sidebar_second',
+          'weight' => '-10',
+        ),
       ),
     ),
   );

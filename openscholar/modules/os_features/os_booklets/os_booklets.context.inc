@@ -67,6 +67,13 @@ function os_booklets_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-7',
         ),
+        'boxes-vocabulary_filter_book' => array(
+          'module' => 'boxes',
+          'delta' => 'vocabulary_filter_book',
+          'title' => t('Filter by taxonomy'),
+          'region' => 'sidebar_second',
+          'weight' => '-10',
+        ),
       ),
     ),
     'menu' => 'documents',
