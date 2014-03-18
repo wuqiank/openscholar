@@ -26,11 +26,21 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
 
+    $bundle = $this->options['bundle'];
+    $selected_vocab = $this->options['vocabularies'];
+
+    if (!empty($form_state['values']['bundle'])) {
+      // We have the bundle from the AJAX.
+      $bundle = $form_state['values']['bundle'];
+      $selected_vocab = 'all';
+    }
+
     $form['bundle'] = array(
       '#type' => 'select',
       '#description' => t('Which bundle would you like to use.'),
       '#title' => t('Bundle'),
       '#options' => os_get_bundles(array(1,2)),
+      '#default_value' => $bundle,
       '#required' => TRUE,
       '#ajax' => array(
         'callback' => 'os_boxes_facetapi_vocabulary_ajax_callback',
@@ -41,23 +51,18 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $form['vocab_wrapper'] = array(
       '#prefix' => '<div id="vocab-wrapper">',
       '#suffix' => '</div>',
-      '#tree' => TRUE,
       '#parents' => array('vocab_wrapper'),
     );
 
-    $bundle = !empty($form_state['values']['bundle']) ? $form_state['values']['bundle'] : FALSE;
-    $options = array('all' => t('All vocabularies'));
-    if ($bundle) {
-      $vocabs = os_search_solr_get_bundle_vocabularies($bundle);
-      $options = array_merge($options, $vocabs);
+    $vocabs = os_search_solr_get_bundle_vocabularies($bundle);
+    $options = array('all' => t('All vocabularies')) + $vocabs;
 
-      $form['vocab_wrapper']['vocabularies'] = array(
-        '#title' => t('Select vocabularies'),
-        '#type' => 'select',
-        '#options' => $options,
-      );
-
-    }
+    $form['vocab_wrapper']['vocabularies'] = array(
+      '#title' => t('Select vocabularies'),
+      '#type' => 'select',
+      '#options' => $options,
+      '#default_value' => $selected_vocab,
+    );
 
     return $form;
   }
