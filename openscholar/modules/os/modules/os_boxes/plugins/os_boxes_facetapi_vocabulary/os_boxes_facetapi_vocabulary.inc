@@ -5,7 +5,6 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * Create a new box.
    */
   protected function __construct() {
-    ctools_include('taxonomy', 'os');
     parent::__construct();
     $this->title = t('Filter by taxonomy');
   }
@@ -42,13 +41,14 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     );
 
     $form['vocabularies'] = array(
-      '#title' => t("Generated Checkboxes"),
+      '#title' => 'Select vocabularies',
       // The prefix/suffix provide the div that we're replacing, named by
       // #ajax['wrapper'] above.
       '#prefix' => '<div id="vocabularies-div">',
       '#suffix' => '</div>',
-      '#type' => 'fieldset',
-      '#description' => t('This is where we get automatically generated checkboxes'),
+      '#type' => 'select',
+      '#options' => array('all' => 'All vocabularies'),
+      '#states' => array('invisible' => array(':input[name="bundle"]' => array('value' => ""), ), ),
     );
 
     return $form;
