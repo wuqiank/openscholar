@@ -918,18 +918,24 @@ function os_search_solr_theme_registry_alter(&$theme_registry) {
   $theme_registry['search_results']['template'] = 'search-results';
 }
 
-function os_search_solr_bundle_selected($form, $form_state) {
-  $bundle = $form_state['values']['bundle'];
+function os_search_solr_bundle_selected_form_element($bundle, $default_values) {
   $element = array(
     '#options' => array('all' => 'All vocabularies') + os_search_solr_get_bundle_vocabularies($bundle),
-    '#type' => 'select',
+    '#type' => 'checkboxes',
+    '#default_value' => $default_values,
     '#multiple' => TRUE,
     '#prefix' => '<div id="vocabularies-div">',
     '#suffix' => '</div>',
     '#title' => 'Select vocabularies',
-    '#states' => array('invisible' => array(':input[name="bundle"]' => array('value' => ""), ), ),
+    //'#states' => array('invisible' => array(':input[name="bundle"]' => array('value' => ""), ), ),
   );
   return $element;
+}
+
+function os_search_solr_bundle_selected($form, $form_state) {
+  $bundle = $form_state['values']['bundle'];
+  $default_value = $form_state['values']['vocabularies'];
+  return os_search_solr_bundle_selected_form_element($bundle, $default_value);
 }
 
 function os_search_solr_get_bundle_vocabularies($bundle) {
