@@ -26,30 +26,24 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
 
+    $bundle = 'blog';
+    $default_value = array();
+
     $form['bundle'] = array(
       '#type' => 'select',
       '#description' => t('Which bundle would you like to use.'),
       '#title' => t('Bundle'),
-      '#options' => os_get_bundles(array(1,2)),
+      '#options' => os_get_bundles(array(OS_PUBLIC_APP, OS_PRIVATE_APP)),
       '#required' => TRUE,
+      '#default_value' => $bundle,
       '#ajax' => array(
         'callback' => 'os_search_solr_bundle_selected',
         'wrapper' => 'vocabularies-div',
-        'method' => 'replace',
         'effect' => 'fade',
       ),
     );
 
-    $form['vocabularies'] = array(
-      '#title' => 'Select vocabularies',
-      // The prefix/suffix provide the div that we're replacing, named by
-      // #ajax['wrapper'] above.
-      '#prefix' => '<div id="vocabularies-div">',
-      '#suffix' => '</div>',
-      '#type' => 'select',
-      '#options' => array('all' => 'All vocabularies'),
-      '#states' => array('invisible' => array(':input[name="bundle"]' => array('value' => ""), ), ),
-    );
+    $form['vocabularies'] = os_search_solr_bundle_selected_form_element($bundle, $default_value);
 
     return $form;
   }
