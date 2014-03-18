@@ -172,6 +172,13 @@ class os_taxonomy_fbt extends os_boxes_default {
     return $form;
   }
 
+  function options_submit($form, $form_state) {
+    if (is_array($form_state['values']['bundles'])) {
+      return;
+    }
+    $this->options['bundles'] = (array) $form_state['values']['bundles'];
+  }
+
   /**
    * Implements boxes_content::render().
    */
@@ -234,6 +241,12 @@ class os_taxonomy_fbt extends os_boxes_default {
     return $block;
   }
 
+  /**
+   * Save a box.
+   */
+  public function save() {
+
+  }
   /**
    * Return the cache parameters for this box.
    */
