@@ -93,7 +93,7 @@ class os_boxes_booktoc extends os_boxes_default {
       // the toc of the book on the current page
       $node = menu_get_object();
       if (isset($node->book['bid']) && book_type_is_allowed($node->type)) {
-        $book_nid = $node->book['bid'];
+        $book_nid = $node->nid;
       }
       else {
         $block['title'] = $block['subject'] = '';
