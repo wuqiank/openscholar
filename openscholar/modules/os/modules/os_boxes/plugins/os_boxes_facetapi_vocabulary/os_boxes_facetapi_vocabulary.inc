@@ -62,6 +62,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       '#title' => t('Select vocabularies'),
       '#type' => 'select',
       '#options' => $options,
+      '#multiple' => TRUE,
       '#default_value' => $selected_vocab,
     );
 
@@ -154,6 +155,10 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
         // Get the list of selected vocabularies
         $selected = array();
         foreach ($this->options['vocabularies'] as $vocabulary_name => $value) {
+          if ($value == "all") {
+            $selected = array();
+            break;
+          }
           if ($value) {
             $selected[$vocabulary_name] = $value;
           }
