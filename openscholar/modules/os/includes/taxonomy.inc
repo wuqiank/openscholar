@@ -47,8 +47,8 @@ function os_get_vocabularies(){
  *   Array of vocabulary entities.
  */
 function os_get_vocabularies_by_bundle($entity_type, $bundle) {
-   if (!$vsite = vsite_get_vsite()) {
-       return;
+  if (!$vsite = vsite_get_vsite()) {
+    return;
   }
 
   $query = db_select('og_vocab', 'ogv');
