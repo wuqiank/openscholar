@@ -75,5 +75,6 @@ features[variable][] = node_preview_cv
 features[variable][] = node_submitted_bio
 features[variable][] = node_submitted_cv
 features[variable][] = nodeformscols_field_placements_bio_default
+features[variable][] = nodeformscols_field_placements_cv_default
 spaces[types][] = og
 spaces[types][] = site

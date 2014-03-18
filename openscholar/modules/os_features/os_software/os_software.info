@@ -85,6 +85,7 @@ features[variable][] = node_preview_software_release
 features[variable][] = node_submitted_software_project
 features[variable][] = node_submitted_software_release
 features[variable][] = nodeformscols_field_placements_software_project_default
+features[variable][] = nodeformscols_field_placements_software_release_default
 features[variable][] = pathauto_node_software_project_pattern
 features[variable][] = pathauto_node_software_release_pattern
 features[views_view][] = os_software_projects

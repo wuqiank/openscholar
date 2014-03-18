@@ -47,6 +47,10 @@ function os_activity_json($options = array()) {
   $query->entityCondition('entity_type', 'message');
   $query->range(0, $options['range']);
   $query->propertyOrderBy('timestamp', 'DESC');
+  if (module_exists('vsite_access')) {
+    $query->fieldCondition('field_private_message', 'value', VSITE_ACCESS_PUBLIC);    
+  }
+
   // Only continues to filter by current space if we can load the vsite.
   // @FIXME This condition currently returns empty results when not site-wide...
   if (module_exists('vsite') && $options['filter_vsite']) {
