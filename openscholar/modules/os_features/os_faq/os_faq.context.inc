@@ -52,13 +52,6 @@ function os_faq_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
-        'boxes-vocabulary_filter_faq' => array(
-          'module' => 'boxes',
-          'delta' => 'vocabulary_filter',
-          'title' => 'Filter by taxonomy',
-          'region' => 'sidebar_second',
-          'weight' => '-10',
-        ),
       ),
     ),
     'menu' => 'faq',

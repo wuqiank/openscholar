@@ -51,13 +51,6 @@ function os_publications_context_default_contexts() {
           'weight' => 22,
           'region' => 'sidebar_second',
         ),
-        'boxes-vocabulary_filter_biblio' => array(
-          'module' => 'boxes',
-          'delta' => 'vocabulary_filter',
-          'title' => 'Filter by taxonomy',
-          'region' => 'sidebar_second',
-          'weight' => '-10',
-        ),
       ),
     ),
   );

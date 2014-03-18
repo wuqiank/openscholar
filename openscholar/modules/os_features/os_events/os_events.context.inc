@@ -57,13 +57,6 @@ function os_events_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
-        'boxes-vocabulary_filter_event' => array(
-          'module' => 'boxes',
-          'delta' => 'vocabulary_filter',
-          'title' => 'Filter by taxonomy',
-          'region' => 'sidebar_second',
-          'weight' => '-10',
-        ),
       ),
     ),
   );

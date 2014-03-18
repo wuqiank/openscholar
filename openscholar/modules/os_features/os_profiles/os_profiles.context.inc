@@ -44,18 +44,6 @@ function os_profiles_context_default_contexts() {
       ),
     ),
   );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'boxes-vocabulary_filter_person' => array(
-          'module' => 'boxes',
-          'delta' => 'vocabulary_filter',
-          'region' => 'sidebar_second',
-          'weight' => '-10',
-        ),
-      ),
-    ),
-  );
   $context->condition_mode = 0;
 
   // Translatables
