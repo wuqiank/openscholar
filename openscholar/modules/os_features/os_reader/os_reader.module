@@ -27,7 +27,7 @@ function os_reader_menu() {
   $items['rss-feed'] = array(
     'title callback' => 'os_reader_feed_title_callback',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('os_rss_feed_create'),
+    'page arguments' => array('os_reader_importer_feed_create'),
     'access arguments' => array('access content'),
   );
 
@@ -675,7 +675,7 @@ function os_reader_cron() {
 /**
  * Supply form for create RSS feed links.
  */
-function os_importer_feed_create($form, $form_state) {
+function os_reader_importer_feed_create($form, $form_state) {
   global $base_url;
 
   if (!module_exists('vsite')) {
@@ -692,7 +692,7 @@ function os_importer_feed_create($form, $form_state) {
         $items[] = array('key' => $bundle, 'link' => node_type_get_name($bundle));
       }
 
-      $links = _os_importer_feed_create($items, 'type');
+      $links = _os_reader_importer_feed_create($items, 'type');
     }
 
     if (!empty($form_state['input']['os_rss_feed_vocabs'])) {
@@ -705,7 +705,7 @@ function os_importer_feed_create($form, $form_state) {
         }
       }
 
-      $links = array_merge($links, _os_importer_feed_create($items, 'term'));
+      $links = array_merge($links, _os_reader_importer_feed_create($items, 'term'));
     }
 
     $form['results'] = array(
@@ -798,7 +798,7 @@ function os_importer_feed_create($form, $form_state) {
     '#suffix' => '</div>',
   );
 
-  $form['#attached']['css'][] = drupal_get_path('module', 'os_rss_feed') . '/css/os_rss_fees_results.css';
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_reader') . '/css/os_rss_fees_results.css';
 
   return $form;
 }
@@ -822,12 +822,12 @@ function os_importer_feed_create($form, $form_state) {
  *    $items[] = array('key' => $term->tid, 'link' => $term->name);
  *  }
  *
- * $links = array_merge($links, _os_importer_feed_create($items, 'term'));
+ * $links = array_merge($links, _os_reader_importer_feed_create($items, 'term'));
  * @endcode
  *
- * @see os_rss_feed_create().
+ * @see os_reader_importer_feed_create().
  */
-function _os_importer_feed_create($items, $key) {
+function _os_reader_importer_feed_create($items, $key) {
   $links = array();
   foreach ($items as $item) {
     $options = array(
@@ -836,7 +836,7 @@ function _os_importer_feed_create($items, $key) {
       ),
     );
 
-    $links[] = l($item['link'], 'os_importer_feed_export', $options);
+    $links[] = l($item['link'], 'os_reader_importer_feed_export', $options);
   }
 
   return $links;
@@ -845,16 +845,15 @@ function _os_importer_feed_create($items, $key) {
 /**
  * Get RSS in xml format according to filter criteria.
  */
-function os_importer_feed_export() {
-  if (empty($_GET['type'])) {
-    return;
+function os_reader_importer_feed_export() {
+  if (isset($_GET['type'])) {
+    $nids = os_reader_importer_feed_get_nids('bundle', $_GET['type']);
   }
-
-  if ($_GET['type'] == 'bundle') {
-    $nids = os_rss_feed_get_nids('bundle', $_GET['type']);
+  elseif (isset($_GET['term'])) {
+    $nids = os_reader_importer_feed_get_nids('term', $_GET['term']);
   }
   else {
-    $nids = os_rss_feed_get_nids('term', $_GET['term']);
+    return;
   }
 
   return implode(",", $nids);
@@ -871,7 +870,7 @@ function os_importer_feed_export() {
  * @return Array
  *  List of node IDs.
  */
-function os_importer_feed_get_nids($type, $value) {
+function os_reader_importer_feed_get_nids($type, $value) {
   $nids = array();
 
   $query = new EntityFieldQuery();

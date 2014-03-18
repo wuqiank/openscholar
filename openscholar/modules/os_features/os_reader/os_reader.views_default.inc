@@ -366,7 +366,7 @@ function os_reader_views_default_views() {
   $handler->display->display_options['arguments']['nid']['field'] = 'nid';
   $handler->display->display_options['arguments']['nid']['default_action'] = 'default';
   $handler->display->display_options['arguments']['nid']['default_argument_type'] = 'php';
-  $handler->display->display_options['arguments']['nid']['default_argument_options']['code'] = 'return os_rss_feed_export();';
+  $handler->display->display_options['arguments']['nid']['default_argument_options']['code'] = 'return os_reader_importer_feed_export();';
   $handler->display->display_options['arguments']['nid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['nid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['nid']['summary_options']['items_per_page'] = '25';
@@ -386,7 +386,7 @@ function os_reader_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'rss';
   $handler->display->display_options['row_plugin'] = 'node_rss';
   $handler->display->display_options['row_options']['item_length'] = 'teaser';
-  $handler->display->display_options['path'] = 'os_importer_feed_export';
+  $handler->display->display_options['path'] = 'os_rss_feed_export';
   $export['os_rss_feed_export'] = $view;
 
   return $export;
