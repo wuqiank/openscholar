@@ -1432,6 +1432,17 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Then /^I change site title to "([^"]*)" in the site "([^"]*)"$/
+   */
+  public function iChangeSiteTitleTo($title, $vsite) {
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/settings"'),
+      new Step\When('I fill in "Site title" with value "' . $title . '"'),
+      new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
    * @Then /^I should see the feed item "([^"]*)" was imported$/
    */
   public function iShouldSeeTheFeedItemWasImported($feed_item) {
