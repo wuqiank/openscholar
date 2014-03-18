@@ -506,8 +506,20 @@ function os_files_delete_remove_reference($form, $form_state) {
   $submits = array_diff($form['#submit'], array('os_files_delete_remove_references'));
 
   $usage = file_usage_list($file);
+  $fields = array(
+    'file',
+    'imagefield_crop',
+  );
+  $file_usage = array();
+  foreach ($usage as $module => $types) {
+    if (in_array($module, $fields)) {
+      foreach ($types['node'] as $id => $count) {
+        $file_usage[] = $id;
+      }
+    }
+  }
 
-  foreach (array_chunk($form_state['file_usage'], 10) as $chunk) {
+  foreach (array_chunk($file_usage, 10) as $chunk) {
     $operations[] = array('_os_files_delete_remove_reference_batch', array($chunk, $file));
   }
 
@@ -531,7 +543,7 @@ function os_files_delete_remove_reference($form, $form_state) {
 
   batch_set($batch);
 
-  batch_process($form_state['redirect']);
+  //batch_process($form_state['redirect']);
 }
 
 /**
