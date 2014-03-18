@@ -97,6 +97,16 @@ function os_files_menu_alter(&$callbacks){
   $callbacks['file/%file/delete/ajax']['delivery callback'] = 'ajax_deliver';
 }
 
+function os_files_theme() {
+  $items = array(
+    'os_files_image_list' => array(
+      'render element' => 'elements',
+    )
+  );
+
+  return $items;
+}
+
 function os_files_theme_registry_alter(&$reg){
   unset($reg['oembed']['template']);
   $reg['oembed']['function'] = 'theme_os_files_oembed';
@@ -104,6 +114,11 @@ function os_files_theme_registry_alter(&$reg){
 
 function theme_os_files_oembed($vars){
   return render($vars['content']);
+}
+
+function theme_os_files_image_list($vars) {
+  unset ($vars['elements']['#theme']);
+  return drupal_render($vars['elements']);
 }
 
 /**
@@ -1566,7 +1581,7 @@ function os_files_field_formatter_info(){
 function os_files_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display){
   $elements = array(
     '#type' => 'markup',
-    '#theme' => '',
+    '#theme' => 'os_files_image_list',
     '#attributes' => array(
       'class' => array(
         'field-items'
@@ -2109,7 +2124,9 @@ function os_files_filter_media_process($text) {
 }
 
 function os_files_field_attach_create_bundle($entity_type, $type) {
-  os_files_add_fields($type);
+  if ($entity_type == 'file') {
+    os_files_add_fields($type);
+  }
 }
 
 /**

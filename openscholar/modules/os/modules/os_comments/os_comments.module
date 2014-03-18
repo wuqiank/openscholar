@@ -283,8 +283,7 @@ function os_comments_node_view($node, $view_mode) {
   }
 
   // Does nothing if the node type is a group bundle.
-  $group_bundles = og_get_all_group_bundle();
-  if (in_array($node->type, $group_bundles['node'])) {
+  if (og_is_group('node', $node)) {
     return;
   }
 
