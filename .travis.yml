@@ -11,12 +11,7 @@ mysql:
 before_script:
   # Install Drush
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer global require drush/drush:6.2.0
-  # Patch Drush
-  - cd ~/.composer/vendor/drush/drush
-  - curl https://gist.githubusercontent.com/amitaibu/9616193/raw/5f80d4e8cf1afa79960f56b316333aa5b2c7333c/gistfile1.diff | git apply
-  - cd -
-
+  - composer global require drush/drush:6.*
   # Install apache
   - sudo apt-get update
   - sudo apt-get install apache2
