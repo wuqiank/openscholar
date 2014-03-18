@@ -10,3 +10,7 @@
   margin-bottom: 11px;
   text-transform: uppercase;
 }
+
+.empty-selection {
+  color: red;
+}

@@ -31,9 +31,15 @@
           links += "<a href='" + baseUrl + "?term=" + $(this).val() + "'>" + $(this).text() + "</a><br />";
         });
 
-        // Print out the links we collected.
-        var html = "<h4>" + Drupal.t('Your feed is ready') + "</h4>";
-        html += links;
+        if (links == '') {
+          html = '<span class="empty-selection">' + Drupal.t("You must select of the options above.") + '</span>';
+        }
+        else {
+          // Build the HTML output.
+          var html = "<h4>" + Drupal.t('Your feed is ready') + "</h4>";
+          html += links;
+        }
+
         $("#os_rss_feed_results").html(html).attr('class', 'os_rss_fees_results');
       });
     }

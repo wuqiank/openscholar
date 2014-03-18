@@ -190,7 +190,11 @@ function _os_rss_feed_create($items, $key) {
  * Get RSS in xml format according to filter criteria.
  */
 function os_rss_feed_export() {
-  if (isset($_GET['type'])) {
+  if (empty($_GET['type'])) {
+    return;
+  }
+
+  if ($_GET['type'] == 'bundle') {
     $nids = os_rss_feed_get_nids('bundle', $_GET['type']);
   }
   else {
