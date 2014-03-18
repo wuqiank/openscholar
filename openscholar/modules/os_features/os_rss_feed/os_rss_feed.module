@@ -37,6 +37,8 @@ function os_rss_feed_menu() {
  * Supply form for create RSS feed links.
  */
 function os_rss_feed_create($form, $form_state) {
+  global $base_url;
+
   if (!empty($form_state['input'])) {
     $links = array();
 
@@ -97,7 +99,10 @@ function os_rss_feed_create($form, $form_state) {
     '#attached' => array(
       'css' => array(libraries_get_path('select2') . '/select2.css'),
       'js' => array(
-        array('type' => 'setting', 'data' => array('sv_list_vocab_bundles' => $vocabs)),
+        array('type' => 'setting', 'data' => array(
+          'sv_list_vocab_bundles' => $vocabs,
+          'url' => $base_url,
+        )),
         libraries_get_path('select2') . '/select2.js',
         drupal_get_path('module', 'os_rss_feed') . '/js/os_rss_feed.js',
       ),
@@ -128,6 +133,7 @@ function os_rss_feed_create($form, $form_state) {
       '#multiple' => TRUE,
       '#default_value' => $vocab_default_value,
       '#description' => t('Select vocab/terms that will show on RSS links in the page.'),
+      '#attributes' => array('class' => array('terms-select')),
     );
   }
 
@@ -141,13 +147,21 @@ function os_rss_feed_create($form, $form_state) {
     ),
   );
 
+  $form['results'] = array(
+    '#type' => 'item',
+    '#markup' => '',
+    '#prefix' => '<div id="os_rss_feed_results">',
+    '#suffix' => '</div>',
+  );
+
   return $form;
 }
 
 /**
- * Submit handler; Build the links for the RSS.
+ * Build the links for the RSS.
  */
 function _os_rss_feed_create($items, $key) {
+  $links = array();
   foreach ($items as $item) {
     $options = array(
       'query' => array(
