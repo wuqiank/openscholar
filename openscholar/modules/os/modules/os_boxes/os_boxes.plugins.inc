@@ -292,7 +292,7 @@ function _os_boxes_boxes_plugins() {
     'handler' => array(
       'class' => 'os_boxes_columns',
       'file' => 'os_boxes_columns.inc',
-      'path' => $path  . '/os_boxes_columns',
+      'path' => $path . '/os_boxes_columns',
       'parent' => 'os_boxes_default',
     )
   );
@@ -306,5 +306,6 @@ function _os_boxes_boxes_plugins() {
       'parent' => 'os_boxes_default',
     ),
   );
+
   return $info;
 }
