@@ -42,7 +42,45 @@ function os_rss_feed_menu() {
 /**
  * Supply form for create RSS feed links.
  */
-function os_rss_feed_create() {
+function os_rss_feed_create($form, $form_state) {
+  if (!empty($form_state['input'])) {
+    $links = array();
+
+    if (!empty($form_state['input']['os_rss_feed_content_types'])) {
+      $items = array();
+
+      foreach ($form_state['input']['os_rss_feed_content_types'] as $bundle) {
+        $items[] = array('key' => $bundle, 'link' => node_type_get_name($bundle));
+      }
+
+      $links = _os_rss_feed_create($items, 'type');
+    }
+
+    if (!empty($form_state['input']['os_rss_feed_vocabs'])) {
+      $items = array();
+      foreach ($form_state['input']['os_rss_feed_vocabs'] as $terms) {
+        $taxonomy_terms = taxonomy_term_load_multiple($terms);
+
+        foreach ($taxonomy_terms as $term) {
+          $items[] = array('key' => $term->tid, 'link' => $term->name);
+        }
+      }
+
+      $links = array_merge($links, _os_rss_feed_create($items, 'term'));
+    }
+
+    $form['results'] = array(
+      '#type' => 'item',
+      '#markup' => implode("<br />", $links),
+    );
+
+    $form['go_back'] = array(
+      '#type' => 'item',
+      '#markup' => t('!go-back and select more filters.', array('!go-back' => l(t('Go back'), 'rss-feed'))),
+    );
+
+    return $form;
+  }
 
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
@@ -113,6 +151,23 @@ function os_rss_feed_create() {
 }
 
 /**
+ * Submit handler; Build the links for the RSS.
+ */
+function _os_rss_feed_create($items, $key) {
+  foreach ($items as $item) {
+    $options = array(
+      'query' => array(
+        $key => $item['key'],
+      ),
+    );
+
+    $links[] = l($item['link'], 'os_rss_feed_export', $options);
+  }
+
+  return $links;
+}
+
+/**
  * Get RSS in xml format according to filter criteria.
  */
 function os_rss_feed_export() {
@@ -124,7 +179,7 @@ function os_rss_feed_export() {
     $nids = os_rss_feed_get_nids('bundle', $_GET['type']);
   }
   else {
-    $nids = os_rss_feed_get_nids('terms', explode(",", $_GET['terms']));
+    $nids = os_rss_feed_get_nids('term', $_GET['term']);
   }
 
   $nodes = node_load_multiple($nids);
@@ -144,10 +199,9 @@ function os_rss_feed_export() {
  * Build the Content with the RSS feeds.
  *
  * @param $type
- *  The type we need search by: bundles or terms.
+ *  The type we need search by: bundle or term.
  * @param $value
- *  The value we need to search for. For bundle pass a single arguments for
- *  terms pass an array.
+ *  The value we need to search for.
  *
  * @return Array
  *  List of node IDs.
@@ -167,8 +221,7 @@ function os_rss_feed_get_nids($type, $value) {
     $query->propertyCondition('type', $value);
   }
   else {
-    dpm($value);
-    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $value, 'IN');
+    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $value);
   }
 
   $results = $query->execute();
