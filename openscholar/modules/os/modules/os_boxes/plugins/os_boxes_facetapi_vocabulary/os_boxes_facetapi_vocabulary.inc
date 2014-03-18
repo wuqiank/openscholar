@@ -33,23 +33,31 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       '#options' => os_get_bundles(array(1,2)),
       '#required' => TRUE,
       '#ajax' => array(
-        'callback' => 'os_search_solr_bundle_selected',
-        'wrapper' => 'vocabularies-div',
-        'method' => 'replace',
-        'effect' => 'fade',
+        'callback' => 'os_boxes_facetapi_vocabulary_ajax_callback',
+        'wrapper' => 'vocab-wrapper',
       ),
     );
 
-    $form['vocabularies'] = array(
-      '#title' => 'Select vocabularies',
-      // The prefix/suffix provide the div that we're replacing, named by
-      // #ajax['wrapper'] above.
-      '#prefix' => '<div id="vocabularies-div">',
+    $form['vocab_wrapper'] = array(
+      '#prefix' => '<div id="vocab-wrapper">',
       '#suffix' => '</div>',
-      '#type' => 'select',
-      '#options' => array('all' => 'All vocabularies'),
-      '#states' => array('invisible' => array(':input[name="bundle"]' => array('value' => ""), ), ),
+      '#tree' => TRUE,
+      '#parents' => array('vocab_wrapper'),
     );
+
+    $bundle = !empty($form_state['values']['bundle']) ? $form_state['values']['bundle'] : FALSE;
+    $options = array('all' => t('All vocabularies'));
+    if ($bundle) {
+      $vocabs = os_search_solr_get_bundle_vocabularies($bundle);
+      $options = array_merge($options, $vocabs);
+
+      $form['vocab_wrapper']['vocabularies'] = array(
+        '#title' => t('Select vocabularies'),
+        '#type' => 'select',
+        '#options' => $options,
+      );
+
+    }
 
     return $form;
   }
@@ -100,7 +108,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       watchdog('Apache Solr', nl2br(check_plain($e->getMessage())), NULL, WATCHDOG_ERROR);
     }
   }
-  
+
   /**
    * Implementation of boxes_content::render().
    */
@@ -163,4 +171,14 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     }
     return $block;
   }
+}
+
+/**
+ * AJAX callback to attach the vocab to the form.
+ *
+ * Since the controlling logic for populating the form is in the form builder
+ * function, all we do here is select the element and return it to be updated.
+ */
+function os_boxes_facetapi_vocabulary_ajax_callback($form, &$form_state) {
+  return $form['options']['vocab_wrapper'];
 }
