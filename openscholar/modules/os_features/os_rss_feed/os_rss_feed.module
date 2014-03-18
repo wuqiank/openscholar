@@ -30,12 +30,6 @@ function os_rss_feed_menu() {
     'access arguments' => array('access content'),
   );
 
-  $items['os_rss_feed_export'] = array(
-    'title' => 'RSS export',
-    'page callback' => 'os_rss_feed_export',
-    'access arguments' => array('access content'),
-  );
-
   return $items;
 }
 
@@ -171,10 +165,6 @@ function _os_rss_feed_create($items, $key) {
  * Get RSS in xml format according to filter criteria.
  */
 function os_rss_feed_export() {
-  header('Content-type: text/xml');
-  $output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-  $output .= "<xml>";
-
   if (isset($_GET['type'])) {
     $nids = os_rss_feed_get_nids('bundle', $_GET['type']);
   }
@@ -182,17 +172,7 @@ function os_rss_feed_export() {
     $nids = os_rss_feed_get_nids('term', $_GET['term']);
   }
 
-  $nodes = node_load_multiple($nids);
-
-  foreach ($nodes as $node) {
-    $render = node_view($node, 'teaser');
-    unset($render['#contextual_links']);
-    $output .= render($render);
-  }
-
-  $output .= "</xml>";
-
-  echo $output;
+  return implode(",", $nids);
 }
 
 /**
