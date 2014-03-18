@@ -242,12 +242,6 @@ class os_taxonomy_fbt extends os_boxes_default {
   }
 
   /**
-   * Save a box.
-   */
-  public function save() {
-
-  }
-  /**
    * Return the cache parameters for this box.
    */
   public function cache_info() {}
