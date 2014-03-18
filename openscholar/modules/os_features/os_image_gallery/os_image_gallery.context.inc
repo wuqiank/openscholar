@@ -61,7 +61,7 @@ function os_image_gallery_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_media_gallery' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_media_gallery',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',

@@ -43,7 +43,7 @@ function harvard_courses_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_harvard_course' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_harvard_course',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',

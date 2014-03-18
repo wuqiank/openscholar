@@ -18,7 +18,7 @@ define('OS_FILE_FILEPATH_SINGLETENANT', 'share');
  * Implements hook_init.
  * Ensures oembed plugin types are available
  */
-function os_files_init() {
+function os_files_init_remove() {
   $plugins = ctools_get_plugins('oembed', 'providers');
   if (!isset($plugins['embedly'])) {
     $info = ctools_plugin_get_plugin_type_info();

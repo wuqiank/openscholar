@@ -63,7 +63,7 @@ function os_news_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_news' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_news',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',

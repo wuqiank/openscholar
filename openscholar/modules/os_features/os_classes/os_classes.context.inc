@@ -50,7 +50,7 @@ function os_classes_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_class' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_class',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',

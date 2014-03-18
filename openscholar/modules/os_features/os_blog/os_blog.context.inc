@@ -67,7 +67,7 @@ function os_blog_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_blog' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_blog',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',

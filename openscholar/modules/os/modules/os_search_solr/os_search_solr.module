@@ -584,7 +584,7 @@ function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundl
       'blocks' => array(
         'boxes-vocabulary_filter_' . $bundle_name => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_' . $bundle_name,
+          'delta' => 'vocabulary_filter',
           'title' => t('Filter by taxonomy'),
           'region' => 'sidebar_second',
           'weight' => '-10',
@@ -908,32 +908,6 @@ function os_search_solr_preprocess_search_results(&$variables) {
 }
 
 /**
- * Implements hook_default_box_alter().
- */
-function os_search_solr_default_box_alter(&$items) {
-  foreach (array_keys(os_search_solr_get_browse_pages_info()) as $bundle_name) {
-    $items['vocabulary_filter_' . $bundle_name] = os_search_solr_vocabulary_filter_box($bundle_name);
-  }
-}
-
-/**
- * Utility function to create vocabulary filter box.
- *
- * @return stdClass
- *   Vocabulary filter box object.
- */
-function os_search_solr_vocabulary_filter_box($bundle_name) {
-  $box = new stdClass();
-  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
-  $box->api_version = 1;
-  $box->delta = 'vocabulary_filter_' . $bundle_name;
-  $box->plugin_key = 'os_boxes_facetapi_vocabulary';
-  $box->title = t('Filter by taxonomy');
-  $box->description = 'Vocabulary filter for ' . node_type_get_name($bundle_name);
-  return $box;
-}
-
-/**
  * Implements hook_theme_registry_alter().
  *
  * @param $theme_registry
@@ -942,4 +916,59 @@ function os_search_solr_theme_registry_alter(&$theme_registry) {
   $path = drupal_get_path('module', 'os_search_solr');
   $theme_registry['search_results']['path'] = $path;
   $theme_registry['search_results']['template'] = 'search-results';
+}
+
+function os_search_solr_bundle_selected($form, $form_state) {
+  $bundle = $form_state['values']['bundle'];
+  $element = array(
+    '#options' => array('all' => 'All vocabularies') + os_search_solr_get_bundle_vocabularies($bundle),
+    '#type' => 'select',
+    '#multiple' => TRUE,
+    '#title' => 'Select vocabularies',
+  );
+  return $element;
+}
+
+function os_search_solr_get_bundle_vocabularies($bundle) {
+
+  $taxonomy_vocabularies = os_search_solr_get_vocabularies_by_bundle('node', $bundle);
+
+  $vocabularies = array();
+
+  if ($taxonomy_vocabularies) {
+    foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
+      $vocabularies[$taxonomy_vocabulary->machine_name] = $taxonomy_vocabulary->name;
+    }
+  }
+
+  return $vocabularies;
+}
+
+/**
+ * Utility to get vocabulary entities related to entity type and bundle.
+ *
+ * @param $entity_type
+ *   Entity type name.
+ * @param $bundle
+ *   Bundle name.
+ *
+ * @return mixed
+ *   Array of vocabulary entities.
+ */
+function os_search_solr_get_vocabularies_by_bundle($entity_type, $bundle) {
+  if (!$vsite = vsite_get_vsite()) {
+    return;
+  }
+
+  $query = db_select('og_vocab', 'ogv');
+  $query->join('og_vocab_relation', 'ogr', 'ogr.vid = ogv.vid');
+  $result = $query
+    ->fields('ogv')
+    ->condition('ogv.entity_type', $entity_type)
+    ->condition('ogv.bundle', $bundle)
+    ->condition('ogr.gid', $vsite->id)
+    ->execute()
+    ->fetchAllAssoc('vid');
+
+  return taxonomy_vocabulary_load_multiple(array_keys($result));
 }

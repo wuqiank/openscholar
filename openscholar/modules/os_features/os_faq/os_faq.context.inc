@@ -54,7 +54,7 @@ function os_faq_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_faq' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_faq',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',

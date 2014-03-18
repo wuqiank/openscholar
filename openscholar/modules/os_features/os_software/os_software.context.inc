@@ -60,14 +60,14 @@ function os_software_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_software_project' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_software_project',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
         'boxes-vocabulary_filter_software_release' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_software_release',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',

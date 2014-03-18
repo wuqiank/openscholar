@@ -15,7 +15,8 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    */
   public function options_defaults() {
     $options = parent::options_defaults();
-    $options['vocabularies'] = $this->get_bundle_vocabularies();
+    $options['bundle'] = FALSE;
+    $options['vocabularies'] = array();
 
     return $options;
   }
@@ -26,13 +27,30 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
   public function options_form(&$form_state) {
     $form = parent::options_form($form_state);
 
-    $form['vocabularies'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Vocabularies'),
-      '#description' => t('Select which vocabularies to show. No selection will show all vocabularies.'),
-      '#options' => $this->get_bundle_vocabularies(),
-      '#default_value' => (!empty($this->options['vocabularies']) ? $this->options['vocabularies'] : array()),
+    $form['bundle'] = array(
+      '#type' => 'select',
+      '#description' => t('Which bundle would you like to use.'),
+      '#title' => t('Bundle'),
+      '#options' => os_get_bundles(array(1,2)),
+      '#required' => TRUE,
+      '#ajax' => array(
+        'callback' => 'os_search_solr_bundle_selected',
+        'wrapper' => 'vocabularies-div',
+        'method' => 'replace',
+        'effect' => 'fade',
+      ),
     );
+
+    $form['vocabularies'] = array(
+      '#title' => t("Generated Checkboxes"),
+      // The prefix/suffix provide the div that we're replacing, named by
+      // #ajax['wrapper'] above.
+      '#prefix' => '<div id="vocabularies-div">',
+      '#suffix' => '</div>',
+      '#type' => 'fieldset',
+      '#description' => t('This is where we get automatically generated checkboxes'),
+    );
+
     return $form;
   }
 
@@ -144,28 +162,5 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       $block['content'] = render($block['content']);
     }
     return $block;
-  }
-
-  /**
-   * Get all the vocabularies id using the taxonomy terms, relevant to the
-   * current bundle.
-   */
-  private function get_bundle_vocabularies() {
-    if (!$this->options['bundle']) {
-      // When loading the box for the first time, the bundle key is empty.
-      return;
-    }
-
-    $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', str_replace("vocabulary_filter_", "", $this->delta));
-
-    $vocabularies = array();
-
-    if ($taxonomy_vocabularies) {
-      foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
-        $vocabularies[$taxonomy_vocabulary->machine_name] = $taxonomy_vocabulary->name;
-      }
-    }
-
-    return $vocabularies;
   }
 }

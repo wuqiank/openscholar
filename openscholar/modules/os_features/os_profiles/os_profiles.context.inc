@@ -49,7 +49,7 @@ function os_profiles_context_default_contexts() {
       'blocks' => array(
         'boxes-vocabulary_filter_person' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_person',
+          'delta' => 'vocabulary_filter',
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),

@@ -59,7 +59,7 @@ function os_events_context_default_contexts() {
         ),
         'boxes-vocabulary_filter_event' => array(
           'module' => 'boxes',
-          'delta' => 'vocabulary_filter_event',
+          'delta' => 'vocabulary_filter',
           'title' => 'Filter by taxonomy',
           'region' => 'sidebar_second',
           'weight' => '-10',
