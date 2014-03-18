@@ -32,7 +32,9 @@
         });
 
         // Print out the links we collected.
-        $("#os_rss_feed_results").html(links);
+        var html = "<h4>" + Drupal.t('Your feed is ready') + "</h4>";
+        html += links;
+        $("#os_rss_feed_results").html(html).attr('class', 'os_rss_fees_results');
       });
     }
   };

@@ -24,13 +24,20 @@ function os_rss_feed_menu() {
   );
 
   $items['rss-feed'] = array(
-    'title' => 'RSS export',
+    'title callback' => 'os_rss_feed_title_callback',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_rss_feed_create'),
     'access arguments' => array('access content'),
   );
 
   return $items;
+}
+
+/**
+ * Title callback;
+ */
+function os_rss_feed_title_callback() {
+  return t('@site-name RSS Feeds', array('@site-name' => variable_get('site_name')));
 }
 
 /**
@@ -141,6 +148,7 @@ function os_rss_feed_create($form, $form_state) {
 
   $form['actions'] = array(
     '#type' => 'actions',
+    '#weight' => 10,
     'submit' => array(
       '#type' => 'submit',
       '#value' => t('Submit'),
@@ -149,10 +157,13 @@ function os_rss_feed_create($form, $form_state) {
 
   $form['results'] = array(
     '#type' => 'item',
+    '#weight' => 11,
     '#markup' => '',
     '#prefix' => '<div id="os_rss_feed_results">',
     '#suffix' => '</div>',
   );
+
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_rss_feed') . '/css/os_rss_fees_results.css';
 
   return $form;
 }
