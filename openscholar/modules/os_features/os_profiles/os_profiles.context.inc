@@ -44,6 +44,7 @@ function os_profiles_context_default_contexts() {
       ),
     ),
   );
+  $context->reactions = array();
   $context->condition_mode = 0;
 
   // Translatables
