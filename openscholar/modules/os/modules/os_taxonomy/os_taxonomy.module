@@ -559,21 +559,15 @@ function os_taxonomy_get_prefix_path(&$options) {
   }
   $map = features_get_component_map('node');
 
-  if (is_array($options['bundles'])) {
-    foreach ($options['bundles'] as $bundle) {
-      if (isset($feature) && isset($map[$bundle]) && count($map[$bundle]) && $feature != current($map[$bundle])) {
-        unset($feature);
-        break;
-      }
-      elseif (isset($map[$bundle]) && count($map[$bundle])) {
-        $feature = current($map[$bundle]);
-      }
+  foreach ($options['bundles'] as $bundle) {
+    if (isset($feature) && isset($map[$bundle]) && count($map[$bundle]) && $feature != current($map[$bundle])) {
+      unset($feature);
+      break;
+    }
+    elseif (isset($map[$bundle]) && count($map[$bundle])) {
+      $feature = current($map[$bundle]);
     }
   }
-  else {
-    $feature = current($map[$options['bundles']]);
-  }
-
 
   // Counting how much bundles are associated with the vocabulary. If only 1
   // then use the prefix of the app related to the node bundle.
@@ -1250,11 +1244,8 @@ function os_taxonomy_count_attached_entities_query_object($tid, $bundles = array
     $query->condition($node_published);
   }
 
-  if (!empty($bundles) && is_array($bundles)) {
+  if (!empty($bundles)) {
     $query->condition('ogv.bundle', $bundles, 'IN');
-  }
-  elseif (!empty($bundles)) {
-    $query->condition('ogv.bundle', $bundles);
   }
 
   return $query;
@@ -1523,10 +1514,7 @@ function _os_taxonomy_bundle_entities($bundles = array()) {
 
   foreach ($bundle_functions as $entity => $func) {
     $entity_bundles = array_keys($func(TRUE));
-    if (is_array($bundles) && array_intersect($entity_bundles, $bundles)) {
-      $ret[] = $entity;
-    }
-    elseif (in_array($bundles, $entity_bundles)) {
+    if (array_intersect($entity_bundles, $bundles)) {
       $ret[] = $entity;
     }
   }
