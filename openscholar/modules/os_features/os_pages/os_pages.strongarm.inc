@@ -101,11 +101,11 @@ function os_pages_strongarm() {
       'collapsed' => 1,
       'hidden' => 0,
     ),
-    'os_advanced' => array(
+    'os_seo' => array(
       'region' => 'right',
       'weight' => '7',
       'has_required' => FALSE,
-      'title' => 'Advanced options',
+      'title' => 'SEO',
       'collapsed' => 1,
       'hidden' => 0,
     ),
