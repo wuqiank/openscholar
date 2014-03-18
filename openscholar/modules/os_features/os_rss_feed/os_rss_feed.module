@@ -46,6 +46,10 @@ function os_rss_feed_title_callback() {
 function os_rss_feed_create($form, $form_state) {
   global $base_url;
 
+  if (!module_exists('vsite')) {
+    return;
+  }
+
   if (!empty($form_state['input'])) {
     $links = array();
 
@@ -79,7 +83,7 @@ function os_rss_feed_create($form, $form_state) {
 
     $form['go_back'] = array(
       '#type' => 'item',
-      '#markup' => t('!go-back and select more filters.', array('!go-back' => l(t('Go back'), 'rss-feed'))),
+      '#markup' => t('<a href="@url">Go back</a> and select more filters.', array('@url' => url('rss-feed'))),
     );
 
     return $form;
@@ -92,7 +96,7 @@ function os_rss_feed_create($form, $form_state) {
     '#description' => t('Select the content types whose rss deeds will be shown by default.'),
   );
 
-  $vsite = module_exists('vsite') && vsite_get_vsite() ? vsite_get_vsite() : 0;
+  $vsite = vsite_get_vsite();
   ctools_include('taxonomy', 'vsite_vocab');
   $vocabs = vsite_vocab_get_vocabularies($vsite);
 
@@ -100,7 +104,7 @@ function os_rss_feed_create($form, $form_state) {
   $vocab_form = array(
     '#type' => 'fieldset',
     '#collapsible' => FALSE,
-    '#title' => 'Filter by Vocabulary',
+    '#title' => t('Filter by Vocabulary'),
     '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
     '#tree' => TRUE,
     '#attached' => array(
@@ -118,7 +122,6 @@ function os_rss_feed_create($form, $form_state) {
 
   // Create a select field for each vocabulary, with the vocabulary's terms as
   // the field's options.
-  $selected_terms = variable_get('os_rss_feed_vocabs');
   foreach (array_keys($vocabs) as $vid) {
     $vocabulary = taxonomy_vocabulary_load($vid);
 
@@ -170,6 +173,27 @@ function os_rss_feed_create($form, $form_state) {
 
 /**
  * Build the links for the RSS.
+ *
+ * @param $items
+ *  Arrays of items that will be rendered to links. The validate structure is:
+ *    - key: The value which the node will be filtered by
+ *    - link: The title of the feed.
+ * @param $key
+ *  The name of the query argument which hold the value that will be filter by.
+ *
+ * @return Array
+ *  Array of rendered links.
+ *
+ * @code
+ *  $taxonomy_terms = taxonomy_term_load_multiple($terms);
+ *  foreach ($taxonomy_terms as $term) {
+ *    $items[] = array('key' => $term->tid, 'link' => $term->name);
+ *  }
+ *
+ * $links = array_merge($links, _os_rss_feed_create($items, 'term'));
+ * @endcode
+ *
+ * @see os_rss_feed_create().
  */
 function _os_rss_feed_create($items, $key) {
   $links = array();

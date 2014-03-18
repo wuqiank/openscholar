@@ -20,15 +20,18 @@
 
         var baseUrl = settings.url + "/" + settings.pathPrefix + "os_rss_feed_export";
         var links = '';
+        var count = 0;
 
         // Gather all the bundles.
         $("#edit-os-rss-feed-content-types").find("input:checked").each(function() {
           links += "<a href='" + baseUrl + "?type=" + $(this).val() + "'>" + $(this).siblings().text() + "</a><br />";
+          count++;
         });
 
         // Gather all the terms.
         $(".terms-select").find("option:selected").each(function() {
           links += "<a href='" + baseUrl + "?term=" + $(this).val() + "'>" + $(this).text() + "</a><br />";
+          count++;
         });
 
         if (links == '') {
@@ -36,7 +39,7 @@
         }
         else {
           // Build the HTML output.
-          var html = "<h4>" + Drupal.t('Your feed is ready') + "</h4>";
+          var html = "<h4>" + Drupal.formatPlural(count, 'Your feed is ready', 'Your feeds are ready') + "</h4>";
           html += links;
         }
 

@@ -668,10 +668,3 @@ function os_update_7030() {
     ->condition('module', 'menu')
     ->execute();
 }
-
-/**
- * Enable the OS RSS feed module.
- */
-function os_update_7031() {
-  module_enable(array('os_rss_feed'));
-}
