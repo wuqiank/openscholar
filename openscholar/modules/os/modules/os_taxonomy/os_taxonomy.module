@@ -571,7 +571,7 @@ function os_taxonomy_get_prefix_path(&$options) {
 
   // Counting how much bundles are associated with the vocabulary. If only 1
   // then use the prefix of the app related to the node bundle.
-  if ($og_context = og_context() && !isset($feature)) {
+  if (!isset($feature) && $og_context = og_context()) {
     $bundles = os_taxonomy_og_vocabulary_bundles($options['vocabulary'], $og_context['gid']);
 
     if (count($bundles) === 1) {
@@ -582,14 +582,13 @@ function os_taxonomy_get_prefix_path(&$options) {
     }
   }
 
-  $options['path_prefix'] = isset($feature) ? variable_get("os_taxonomy_app_path_{$feature}", strval(os_get_app_path($feature))) : 'taxonomy';
+  $options['path_prefix'] = isset($feature) ? variable_get("os_taxonomy_app_path_{$feature}", strval(os_get_app_path($feature))) : '';
 
   if (strlen($options['path_prefix'])) {
     $options['path_prefix'] = $options['path_prefix'] . "/";
   }
 
-  $info = os_app_info($feature);
-  if (!empty($info['nodetypes']))
+  if (!empty($feature) && ($info = os_app_info($feature)) && !empty($info['nodetypes']))
   $options['nodetype'] = ucwords($info['nodetypes'][0]);
 }
 

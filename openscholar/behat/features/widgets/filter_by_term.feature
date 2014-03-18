@@ -100,6 +100,21 @@ Feature:
      Then I should not get a "200" HTTP response
 
   @api
+  Scenario: Test that the "filter by term" is rendered with the right link.
+    Given I am logging in as "john"
+      And the widget "Filter by term" is set in the "Publications" page with the following <settings>:
+          | Widget Description     | Taxonomy            | textfield   |
+          | Vocabularies           | science             | select list |
+          | Post types             | Select post type    | select list |
+          | Select Post type       | Publication         | select list |
+          | Show child terms       | check               | checkbox    |
+          | Taxonomy tree depth.   | Show all children   | select list |
+          | Show number of posts   | check               | checkbox    |
+      And I visit "john/publications"
+     When I click "Air (1)"
+     Then I should see "The little prince"
+
+  @api
   Scenario: Verify that an empty term is shown if it has non-empty children.
     Given I am logging in as "john"
       And the widget "Filter by term" is set in the "Calendar" page with the following <settings>:
