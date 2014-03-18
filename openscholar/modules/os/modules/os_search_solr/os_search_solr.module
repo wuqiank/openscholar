@@ -512,10 +512,6 @@ function os_search_solr_context_default_contexts() {
   $export = array();
   $export['os_search'] = os_search_solr_setup_core_search_context();
 
-  $browse_pages_info = os_search_solr_get_browse_pages_info();
-  $page_bundle_info = $browse_pages_info['page'];
-  $export['browse_page'] = os_search_solr_setup_bundle_context('page', $page_bundle_info['title'], $page_bundle_info['url'], $page_bundle_info['menu_item']);
-
   return $export;
 }
 
@@ -541,60 +537,6 @@ function os_search_solr_get_browse_pages_info() {
     }
   }
   return $browse_pages_info;
-}
-
-/**
- * Setup blocks for browse context.
- *
- * @param $bundle_name
- *   Bundle machine name.
- * @param $bundle_title
- *   Bundle label.
- *
- * @return stdClass
- *   Bundle context information.
- */
-function os_search_solr_setup_bundle_context($bundle_name, $bundle_title, $bundle_url, $menu_item) {
-  $searcher_name = os_search_solr_get_searcher_name();
-  // Gets delta map
-  if (!$map = facetapi_get_delta_map()) {
-    return;
-  }
-
-  // Filter by OG vocab.
-  $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
-  $delta_og_vocab = array_search($string_og_vocab, $map);
-
-  $context = new stdClass();
-
-  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
-  $context->api_version = 3;
-  $context->name = 'browse_' . $bundle_name;
-  $context->description = $bundle_title;
-  $context->tag = 'OpenScholar';
-  $context->conditions = array(
-    'path' => array(
-      'values' => array(
-        $bundle_url => $bundle_url,
-      ),
-    ),
-  );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'boxes-vocabulary_filter_' . $bundle_name => array(
-          'module' => 'boxes',
-          'delta' => 'vocabulary_filter',
-          'title' => t('Filter by taxonomy'),
-          'region' => 'sidebar_second',
-          'weight' => '-10',
-        ),
-      ),
-    ),
-    'menu' => $menu_item,
-  );
-  $context->condition_mode = 1;
-  return $context;
 }
 
 /**
