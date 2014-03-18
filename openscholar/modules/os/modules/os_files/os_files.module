@@ -503,7 +503,7 @@ function os_files_delete_remove_reference($form, $form_state) {
   $file = $form_state['file'];
   $operations = array();
 
-  $submits = array_diff($form['#submit'], array('os_files_delete_remove_references'));
+  $submits = array_diff($form['#submit'], array('os_files_delete_remove_reference'));
 
   $usage = file_usage_list($file);
   $fields = array(
