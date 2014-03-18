@@ -49,7 +49,6 @@ function os_rss_feed_create() {
     '#title' => t('Content types'),
     '#options' => os_get_bundles(array(1)),
     '#description' => t('Select the content types whose rss deeds will be shown by default.'),
-    '#default_value' => variable_get('os_rss_feed_content_types'),
   );
 
   $vsite = module_exists('vsite') && vsite_get_vsite() ? vsite_get_vsite() : 0;
@@ -96,7 +95,6 @@ function os_rss_feed_create() {
       '#title' => $vocabulary->name,
       '#multiple' => TRUE,
       '#default_value' => $vocab_default_value,
-      '#element_validate' => array('os_rss_feed_terms_element_validate'),
       '#description' => t('Select vocab/terms that will show on RSS links in the page.'),
     );
   }
@@ -122,20 +120,19 @@ function os_rss_feed_export() {
   $output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
   $output .= "<xml>";
 
-  $query = new EntityFieldQuery();
-  $results = $query
-    ->entityCondition('entity_type', 'node')
-    ->propertyCondition('type', $_GET['type'])
-    ->execute();
+  if (isset($_GET['type'])) {
+    $nids = os_rss_feed_get_nids('bundle', $_GET['type']);
+  }
+  else {
+    $nids = os_rss_feed_get_nids('terms', explode(",", $_GET['terms']));
+  }
 
-  if (!empty($results['node'])) {
-    $nodes = node_load_multiple(array_keys($results['node']));
+  $nodes = node_load_multiple($nids);
 
-    foreach ($nodes as $node) {
-      $render = node_view($node, 'teaser');
-      unset($render['#contextual_links']);
-      $output .= render($render);
-    }
+  foreach ($nodes as $node) {
+    $render = node_view($node, 'teaser');
+    unset($render['#contextual_links']);
+    $output .= render($render);
   }
 
   $output .= "</xml>";
@@ -144,99 +141,18 @@ function os_rss_feed_export() {
 }
 
 /**
- * Settings form for the OS RSS feed module.
- */
-function os_rss_feed_settings($form, &$form_state) {
-
-  $form['os_rss_feed_content_types'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Content types'),
-    '#options' => os_get_bundles(array(1)),
-    '#description' => t('Select the content types whose rss deeds will be shown by default.'),
-    '#default_value' => variable_get('os_rss_feed_content_types'),
-  );
-
-  $vsite = module_exists('vsite') && vsite_get_vsite() ? vsite_get_vsite() : 0;
-  ctools_include('taxonomy', 'vsite_vocab');
-  $vocabs = vsite_vocab_get_vocabularies($vsite);
-
-  // The 'vocabs' tree will contain select fields - one for each vocabulary.
-  $vocab_form = array(
-    '#type' => 'fieldset',
-    '#collapsible' => FALSE,
-    '#title' => 'Filter by Vocabulary',
-    '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
-    '#tree' => TRUE,
-    '#attached' => array(
-      'css' => array(libraries_get_path('select2') . '/select2.css'),
-      'js' => array(
-        array('type' => 'setting', 'data' => array('sv_list_vocab_bundles' => $vocabs)),
-        libraries_get_path('select2') . '/select2.js',
-        drupal_get_path('module', 'os_rss_feed') . '/js/os_rss_feed.js',
-      ),
-    ),
-  );
-
-  // Create a select field for each vocabulary, with the vocabulary's terms as
-  // the field's options.
-  $selected_terms = variable_get('os_rss_feed_vocabs');
-  foreach (array_keys($vocabs) as $vid) {
-    $vocabulary = taxonomy_vocabulary_load($vid);
-
-    // Get the vocabulary's terms.
-    $terms = array();
-    foreach (taxonomy_get_tree($vid) as $item) {
-      $term = taxonomy_term_load($item->tid);
-      $terms[$term->tid] = $term->name;
-    }
-
-    $element = 'vocab_' . $vid;
-    $vocab_default_value = (isset($selected_terms[$element])) ? $selected_terms[$element] : array();
-
-    // Create select field with the terms as options.
-    $vocab_form[$element] = array(
-      '#type' => 'select',
-      '#options' => $terms,
-      '#title' => $vocabulary->name,
-      '#multiple' => TRUE,
-      '#default_value' => $vocab_default_value,
-      '#element_validate' => array('os_rss_feed_terms_element_validate'),
-      '#description' => t('Select vocab/terms that will show on RSS links in the page.'),
-    );
-  }
-
-  $form['os_rss_feed_vocabs'] = $vocab_form;
-
-  $form['actions'] = array(
-    '#type' => 'actions',
-    'submit' => array(
-      '#type' => 'submit',
-      '#value' => t('Submit'),
-    ),
-  );
-
-  return system_settings_form($form);
-}
-
-/**
- * Element validate; Set 'terms' according to 'os_rss_feed_vocabs'.
- */
-function os_rss_feed_terms_element_validate($element, &$form_state) {
-  // Get all selected terms from the 'vocab' select fields.
-  $tids = array();
-  foreach ($form_state['values']['os_rss_feed_vocabs'] as $value) {
-    $tids = array_merge($tids, $value);
-  }
-
-  // Set 'terms' value to be the selected vocab terms.
-  $terms_element = array('#parents' => array('terms'));
-  form_set_value($terms_element, $tids, $form_state);
-}
-
-/**
  * Build the Content with the RSS feeds.
+ *
+ * @param $type
+ *  The type we need search by: bundles or terms.
+ * @param $value
+ *  The value we need to search for. For bundle pass a single arguments for
+ *  terms pass an array.
+ *
+ * @return Array
+ *  List of node IDs.
  */
-function os_rss_feed_get_nids() {
+function os_rss_feed_get_nids($type, $value) {
   $nids = array();
 
   $query = new EntityFieldQuery();
@@ -247,41 +163,12 @@ function os_rss_feed_get_nids() {
     $query->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id);
   }
 
-  // Load all the nodes by node types.
-  $types = variable_get('os_rss_feed_content_types', array());
-
-  if ($types) {
-    $bundles = array();
-    foreach ($types as $type) {
-      if (!$type) {
-        continue;
-      }
-
-      $bundles[] = $type;
-    }
-
-    if ($bundles) {
-      $query->propertyCondition('type', $bundles, 'IN');
-    }
+  if ($type == 'bundle') {
+    $query->propertyCondition('type', $value);
   }
-
-  // Get all the nodes by terms.
-  $selected_terms = variable_get('os_rss_feed_vocabs', array());
-
-  if ($selected_terms) {
-    $tids = array();
-
-    foreach ($selected_terms as $vocab) {
-      if (!$vocab) {
-        continue;
-      }
-
-      $tids = array_merge($tids, array_keys($vocab));
-    }
-
-    if ($tids) {
-      $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $tids, 'IN');
-    }
+  else {
+    dpm($value);
+    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $value, 'IN');
   }
 
   $results = $query->execute();
@@ -290,5 +177,5 @@ function os_rss_feed_get_nids() {
     $nids = array_keys($results['node']);
   }
 
-  return implode(',', $nids);
+  return $nids;
 }
