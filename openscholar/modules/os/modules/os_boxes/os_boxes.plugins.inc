@@ -299,7 +299,7 @@ function _os_boxes_boxes_plugins() {
 
   if (module_exists('os_search_solr')) {
     $info['os_boxes_facetapi_vocabulary'] = array(
-      'title' => 'Taxonomy Filter',
+      'title' => 'Faceted taxonomy',
       'handler' => array(
         'class' => 'os_boxes_facetapi_vocabulary',
         'file' => 'os_boxes_facetapi_vocabulary.inc',
