@@ -120,13 +120,6 @@ border-top: none;
 }
 
 
-.block.block-boxes-os_boxes_rand_widget {
-	background: none;
-     border: none !important;
-     margin-bottom: 0 !important;
-}
-
-
 .front #content-panels .block-content, .sidebar .block-content {
      padding: 15px;
 }
@@ -136,9 +129,9 @@ border-top: none;
     padding: 15px 0px;
 }
 
-.block.block-boxes-os_boxes_rand_widget .block-content:first-child,
+
 .sidebar .node-teaser.node-person {
-    padding: 0!important;
+    padding: 0;
 }
 
 .sidebar .block.section-nav, #content-column .block.section-nav {
