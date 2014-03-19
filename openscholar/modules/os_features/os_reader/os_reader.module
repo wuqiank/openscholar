@@ -748,17 +748,31 @@ function os_reader_importer_feed_create($form, $form_state) {
 
 /**
  * Return commons form elements: vocabs for selection and bundles.
+ *
+ * @param $values
+ *  Default value of the form. Allowed values:
+ *    - content_types: The content types.
+ *    - selected_terms: The selected terms IDs.
+ *
+ * @return Array
+ *  Form elements.
  */
-function os_reader_importer_feed_element() {
+function os_reader_importer_feed_element($values = array()) {
   global $base_url;
 
   $form = array();
+
+  $values += array(
+    'content_types' => array(),
+    'selected_terms' => array(),
+  );
 
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
     '#options' => os_get_bundles(array(1)),
     '#description' => t('Select the content types whose rss deeds will be shown by default.'),
+    '#default_value' => $values['content_types'],
   );
 
   $vsite = vsite_get_vsite();
@@ -798,7 +812,7 @@ function os_reader_importer_feed_element() {
     }
 
     $element = 'vocab_' . $vid;
-    $vocab_default_value = (isset($selected_terms[$element])) ? $selected_terms[$element] : array();
+    $vocab_default_value = (isset($values['selected_terms'][$element])) ? $values['selected_terms'][$element] : array();
 
     // Create select field with the terms as options.
     $vocab_form[$element] = array(
@@ -929,7 +943,12 @@ function os_reader_context_load_alter(&$context) {
  * Create a predefined RSS feeds.
  */
 function os_reader_feed_settings($form, $form_settings) {
-  $form = os_reader_importer_feed_element();
+
+  $values = array(
+    'content_types' => variable_get('os_rss_feed_content_types', array()),
+    'selected_terms' => variable_get('os_rss_feed_vocabs', array()),
+  );
+  $form = os_reader_importer_feed_element($values);
 
   return system_settings_form($form);
 }
