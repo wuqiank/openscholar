@@ -14,7 +14,7 @@ function os_reader_menu() {
     'page arguments' => array(2, 3, 4),
     'access callback' => 'os_reader_ajax_copy_feed_to_news_access',
     'access arguments' => array(2, 3, 5),
-    'theme callback' => 'os_reader_ajax_theme_name',
+    'theme callback' => 'cp_theme_name',
   );
 
   $items['cp/build/features/os_rss_feed'] = array(
@@ -46,15 +46,6 @@ function os_reader_import_page_title($type) {
  */
 function os_reader_feed_title_callback() {
   return t('@site-name RSS Feeds', array('@site-name' => variable_get('site_name')));
-}
-
-/**
- * Callback function for the theme name. When the ajax action for import the
- * feed item, the theme may changed. This will prevent from the loading other
- * themes.
- */
-function os_reader_ajax_theme_name() {
-  return 'cp_theme';
 }
 
 /**
