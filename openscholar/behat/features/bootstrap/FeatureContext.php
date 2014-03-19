@@ -1536,8 +1536,10 @@ class FeatureContext extends DrupalContext {
     $purl = $this->invoke_code('os_migrate_demo_get_term_vsite_purl', array("'$tid'"));
     $purl = !empty($purl) ? $purl . '/' : '';
 
+    $path = "{$purl}taxonomy/term/{$tid}/edit";
+    throw new Exception("This page gives 404: $path");
     return array(
-      new Step\When('I visit "' . $purl . 'taxonomy/term/' . $tid . '/edit"'),
+      new Step\When("I visit \"$path\""),
     );
   }
 

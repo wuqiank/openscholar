@@ -228,7 +228,7 @@ projects[message][subdir] = "contrib"
 projects[message][version] = 1.8
 
 projects[metatag][subdir] = "contrib"
-projects[metatag][version] = 1.0-beta9
+projects[metatag][version] = 1.x-dev
 
 projects[module_filter][subdir] = "contrib"
 projects[module_filter][version] = 1.7

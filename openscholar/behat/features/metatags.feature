@@ -6,15 +6,16 @@ Feature:
     Given I visit "john/about"
      Then I should see the meta tag "description" with value "Page about john"
 
-  @api
+  @api @metatag @wip
   Scenario: Edit meta description on a taxonomy term.
     Given I am logging in as "john"
-    And I create the term "Has description" in vocabulary "science"
-    Then I edit the term "Has description"
-    And I fill in "Description" with "This term has a meta description."
-    Then I press "Save"
-    When I visit the original page for the term "Has description"
-    Then I should see the meta tag "description" with value "This term has a meta description."
+      And I visit "obama"
+      And I create the term "Hasdescription" in vocabulary "family"
+     Then I edit the term "Hasdescription"
+      And I fill in "Description" with "This term has a meta description."
+     Then I press "Save"
+     When I visit the original page for the term "Hasdescription"
+     Then I should see the meta tag "description" with value "This term has a meta description."
 
   @api
   Scenario: Testing custom metatags.
