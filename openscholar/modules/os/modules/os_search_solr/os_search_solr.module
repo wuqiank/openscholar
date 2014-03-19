@@ -3,6 +3,26 @@
 include_once ('os_search_solr.features.inc');
 
 /**
+ * Implements hook_boxes_plugins().
+ */
+function os_search_solr_boxes_plugins() {
+  $plugins = array();
+
+  $plugins['os_search_solr_more_like_this'] = array(
+    'title' => t('More like this'),
+    'tags' => array('Content'),
+    'handler' => array(
+      'class' => 'os_search_solr_more_like_this',
+      'file' => 'os_search_solr_more_like_this.inc',
+      'path' => drupal_get_path('module', 'os_search_solr') . '/plugins/os_search_solr_more_like_this',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+
+  return $plugins;
+}
+
+/**
  * Implements hook_block_info().
  */
 function os_search_solr_block_info() {
@@ -266,8 +286,10 @@ function os_search_solr_apachesolr_index_node_status_callback($entity_id, $entit
   $group_wrapper = entity_metadata_wrapper('node', $gid);
 
   if (module_exists('vsite_access') && !empty($group_wrapper->{VSITE_ACCESS_FIELD}) && $group_wrapper->{VSITE_ACCESS_FIELD}->value()) {
-    // Private group, exclude it.
-    return;
+    // Private group, and not a private install, exclude it.
+    if (variable_get('file_default_scheme', 'public') != 'private') {
+      return;
+    }
   }
 
   $map = features_get_component_map('node');
@@ -450,14 +472,13 @@ function os_search_solr_mark_entity_by_bundles($vsite_id, $bundles = array(), $l
     return;
   }
 
-  foreach ($result['node'] as $nid => $object) {
-    // The object returned by EFQ has nid / vid / type whcich is good enough for
-    // entity_extract_ids() so we can pass that as the node object.
-    apachesolr_entity_update($object, 'node');
+  $nodes = node_load_multiple(array_keys($result['node']));
+  foreach ($nodes as $node) {
+    apachesolr_entity_update($node, 'node');
+    // Set last processed node ID.
+    $values[$vsite_id]['last_nid'] = $node->nid;
   }
 
-  // Set last processed node ID.
-  $values[$vsite_id]['last_nid'] = $nid;
   variable_set('os_search_solr_reindex_by_bundles', $values);
 }
 
@@ -916,7 +937,7 @@ function os_search_solr_default_box_alter(&$items) {
 }
 
 /**
- * Utility function to create vucabulary filter box.
+ * Utility function to create vocabulary filter box.
  *
  * @return stdClass
  *   Vocabulary filter box object.
@@ -929,11 +950,29 @@ function os_search_solr_vocabulary_filter_box($bundle_name) {
   $box->plugin_key = 'os_boxes_facetapi_vocabulary';
   $box->title = t('Filter by taxonomy');
   $box->description = 'Vocabulary filter';
-  $box->options = array(
-    'bundle' => $bundle_name,
-  );
 
   return $box;
+}
+
+/**
+ * Implements hook os_layout_get_alter()
+ */
+function os_search_solr_os_layout_get_alter($context_name, &$blocks){
+  // Only allow the facet browse contexts, to use facet boxes.
+  if (strpos($context_name, "browse_") === 0) {
+    $context = context_load($context_name);
+    if($context && $context->export_module == "os_search_solr"){
+      return;
+    }
+  }
+
+  // Remove default boxes added by this module.
+  foreach ($blocks as $key => $block) {
+    if(strpos($key, "boxes-vocabulary_filter") === 0 && !empty($block['plugin']) && $block['plugin'] == 'os_boxes_facetapi_vocabulary') {
+      // Remove facet blocks that do not belong here
+      unset($blocks[$key]);
+    }
+  }
 }
 
 /**
@@ -945,4 +984,67 @@ function os_search_solr_theme_registry_alter(&$theme_registry) {
   $path = drupal_get_path('module', 'os_search_solr');
   $theme_registry['search_results']['path'] = $path;
   $theme_registry['search_results']['template'] = 'search-results';
+}
+
+/**
+ * Implements hook_apachesolr_field_mappings_alter().
+ */
+function os_search_solr_apachesolr_field_mappings_alter(&$mappings, $entity) {
+  $mappings['entityreference']['indexing_callback'] = 'os_search_solr_entityreference_indexing_callback';
+}
+
+/**
+ * OS search solr indexing for the entity reference field. The "more like this"
+ * block functionallity for terms is possible because the term reference
+ * indexing function indexed the terms names. We need to index the label of the
+ * entity when the entity reference field is referencing to taxonomy terms.
+ *
+ * @see https://drupal.org/node/2206633
+ */
+function os_search_solr_entityreference_indexing_callback($entity, $field_name, $index_key, $field_info) {
+  $fields = array();
+  if (!empty($entity->{$field_name}) && array_key_exists(LANGUAGE_NONE, $entity->$field_name)) {
+
+    // Gets entity type and index key. We need to prefix the ID with the entity
+    // type so we know what entity we are dealing with in the mapping callback.
+    $entity_type = $field_info['field']['settings']['target_type'];
+    $index_key = apachesolr_index_key($field_info);
+
+    // Iterates over all references and adds them to the fields.
+    foreach ($entity->{$field_name}[LANGUAGE_NONE] as $reference) {
+      if ($id = (!empty($reference['target_id'])) ? $reference['target_id'] : FALSE) {
+        $fields[] = array(
+          'key' => $index_key,
+          'value' => $entity_type . ':' . $id,
+        );
+      }
+
+      $ids[] = $id;
+    }
+
+    if ($entity_type == 'taxonomy_term') {
+      // Index the term names into a text field for MLT queries and keyword
+      // searching.
+      $terms = entity_load($entity_type, $ids);
+      foreach ($terms as $term) {
+        $vid = $term->vid;
+
+        $fields[] = array(
+          'key' => 'tm_vid_' . $vid . '_names',
+          'value' => $term->name,
+        );
+      }
+    }
+  }
+
+  return $fields;
+}
+
+/**
+ * Validate handler for the "More like this" block.
+ */
+function os_search_solr_more_like_this_bundles_element_validate($element, &$form_state) {
+  if (!$form_state['values']['results_from_type'] && empty($element['#value'])) {
+    form_error($element, t('You must select at least one node type when leaving the related posts checkbox un-checked.'));
+  }
 }

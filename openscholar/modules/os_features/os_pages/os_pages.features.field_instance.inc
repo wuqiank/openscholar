@@ -72,7 +72,7 @@ function os_pages_field_default_field_instances() {
       'module' => 'os_wysiwyg',
       'settings' => array(
         'max_rows' => 10,
-        'rows' => 3,
+        'rows' => 10,
         'summary_rows' => 5,
       ),
       'type' => 'os_wysiwyg_expanding_textarea',
@@ -126,7 +126,7 @@ function os_pages_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_meta_description',
-    'label' => 'Summary description',
+    'label' => 'Meta description',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,

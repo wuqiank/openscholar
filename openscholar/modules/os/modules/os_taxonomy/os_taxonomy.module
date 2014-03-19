@@ -571,7 +571,7 @@ function os_taxonomy_get_prefix_path(&$options) {
 
   // Counting how much bundles are associated with the vocabulary. If only 1
   // then use the prefix of the app related to the node bundle.
-  if ($og_context = og_context() && !isset($feature)) {
+  if (!isset($feature) && $og_context = og_context()) {
     $bundles = os_taxonomy_og_vocabulary_bundles($options['vocabulary'], $og_context['gid']);
 
     if (count($bundles) === 1) {
@@ -582,14 +582,13 @@ function os_taxonomy_get_prefix_path(&$options) {
     }
   }
 
-  $options['path_prefix'] = isset($feature) ? variable_get("os_taxonomy_app_path_{$feature}", strval(os_get_app_path($feature))) : 'taxonomy';
+  $options['path_prefix'] = isset($feature) ? variable_get("os_taxonomy_app_path_{$feature}", strval(os_get_app_path($feature))) : '';
 
   if (strlen($options['path_prefix'])) {
     $options['path_prefix'] = $options['path_prefix'] . "/";
   }
 
-  $info = os_app_info($feature);
-  if (!empty($info['nodetypes']))
+  if (!empty($feature) && ($info = os_app_info($feature)) && !empty($info['nodetypes']))
   $options['nodetype'] = ucwords($info['nodetypes'][0]);
 }
 
@@ -628,6 +627,8 @@ function os_taxonomy_preprocess_page(&$page) {
   }
 
   if (!empty($active['tid'])) {
+    $ctxs = array_keys(context_active_contexts());
+
     $section_links['page-header'] = array(
       'title' => t('This Term'),
     );
@@ -1005,7 +1006,7 @@ function theme_os_taxonomy_tagged_nodes($variables) {
     'nodeorder' => FALSE,
   );
   $taxonomy_term = $variables['taxonomy_term'];
-  $vocabulary = $variables['vocabulary'];
+  $vocabulary = !empty($variables['vocabulary']) ? $variables['vocabulary'] : NULL;
   if(!$vocabulary && !($vocabulary = taxonomy_vocabulary_load($taxonomy_term->vid))){
     // Somthing bad has happened we don't have a vocab or term.
     return FALSE;
@@ -1201,6 +1202,7 @@ function os_taxonomy_count_attached_nodes_query_object($tid, $node_bundles = arr
     ->fields('t');
 
   $query->join('node', 'n', 't.nid = n.nid');
+  $query->condition('n.status', '1', '=');
   if (!empty($node_bundles)) {
     $query->condition('n.type', $node_bundles, 'IN');
   }
@@ -1226,10 +1228,20 @@ function os_taxonomy_count_attached_entities_query_object($tid, $bundles = array
   $entities = _os_taxonomy_bundle_entities($bundles);
   if (empty($bundles) || in_array('file', $entities)) {
     $query->leftJoin('file_managed', 'fm', '(ogv.entity_type = :file AND ogv.entity_id = fm.fid)', array(':file' => 'file'));
+
+    $file_published = db_or();
+    $file_published->isNull('fm.fid');
+    $file_published->condition('fm.status', '1', '=');
+    $query->condition($file_published);
   }
 
   if (empty($bundles) || in_array('node', $entities)) {
     $query->leftJoin('node', 'n', '(ogv.entity_id = n.nid AND ogv.entity_type = :node)', array(':node' => 'node'));
+
+    $node_published = db_or();
+    $node_published->isNull('n.nid');
+    $node_published->condition('n.status', '1', '=');
+    $query->condition($node_published);
   }
 
   if (!empty($bundles)) {
@@ -1602,7 +1614,7 @@ function os_taxonomy_taxonomy_vocabulary_insert($vocabulary) {
       module_load_include('inc', 'pathauto');
       $uri = entity_uri('taxonomy_vocabulary', $vocabulary);
       $langcode = !empty($langcode) ? $langcode : LANGUAGE_NONE;
-      pathauto_create_alias('taxonomy_vocabulary', 'update', $uri['path'], array('vocabulary' => $vocabulary), $vocabulary->vocabulary_machine_name, $langcode);
+      pathauto_create_alias('taxonomy_vocabulary', 'update', $uri['path'], array('vocabulary' => $vocabulary), $vocabulary->machine_name, $langcode);
       return;
     }
   }

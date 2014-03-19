@@ -36,3 +36,31 @@ Feature:
     # Verify the user is in john's vsite and the source node vsite.
       And I should see "John"
       And I should see "White house"
+
+  @api
+  Scenario: Empty the value of a field from the original node and check the
+            listener node updated.
+    Given I am logging in as "john"
+      And I visit "obama/node/58/edit"
+     When I fill in "Address" with ""
+      And I press "Save"
+      And I sleep for "10"
+      And I visit "john/people/hillary-diane-rodham-clinton"
+     Then I should not see "White house"
+
+  @api
+  Scenario: Test changing the owner of a VSite.
+    Given I am logging in as "admin"
+      And I give the user "john" the role "vsite admin" in the group "obama"
+     When I am logging in as "john"
+      And I edit the membership of "michelle" in vsite "obama"
+      And I check the box "Set as site manager"
+      And I press "Save"
+      And I verify that "michelle" is the owner of vsite "obama"
+      And I should verify that the user "michelle" has a role of "vsite admin" in the group "obama"
+     Then I am logging in as "michelle"
+      And I edit the membership of "john" in vsite "obama"
+      And I check the box "Set as site manager"
+      And I press "Save"
+      And I verify that "john" is the owner of vsite "obama"
+      And I should verify that the user "john" has a role of "vsite admin" in the group "obama"

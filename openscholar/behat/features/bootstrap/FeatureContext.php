@@ -311,6 +311,35 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @When /^I create a new "([^"]*)" entry with the name "([^"]*)" in the group "([^"]*)"$/
+   */
+  public function iCreateANewEntryWithTheNameInGroup($type, $name, $group) {
+    return array(
+      new Step\When('I visit "' . $group . '/node/add/' . $type . '"'),
+      new Step\When('I fill in "Title" with "'. $name . '"'),
+      new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
+   * @When /^I change privacy of the site "([^"]*)" to "([^"]*)"$/
+   */
+  public function iChangePrivacyTo($vsite, $visibility) {
+
+    $privacy_level = array(
+      'Public on the web. ' => 0,
+      'Anyone with the link. ' => 2,
+      'Invite only during site creation. ' => 1,
+    );
+
+    return array(
+      new Step\When('I visit "' . $vsite . '/cp/settings"'),
+      new Step\When('I select the radio button named "vsite_private" with value "' . $privacy_level[$visibility] . '"'),
+      new Step\When('I press "edit-submit"'),
+    );
+  }
+
+  /**
    * @Then /^I should verify the node "([^"]*)" not exists$/
    */
   public function iShouldVerifyTheNodeNotExists($title) {
@@ -450,10 +479,15 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^cache is enabled for anonymous users$/
+   * @Given /^cache is "([^"]*)" for anonymous users$/
    */
-  public function cacheIsEnabledForAnonymousUsers() {
-    $this->getDriver()->drush('vset cache 1');
+  public function cacheIsForAnonymousUsers($status) {
+    if ($status == "enabled") {
+      $this->getDriver()->drush('vset cache 1');
+    }
+    else if ($status == "disabled") {
+      $this->getDriver()->drush('vset cache 0');
+    }
   }
 
   /**
@@ -583,6 +617,103 @@ class FeatureContext extends DrupalContext {
       }
 
       throw new Exception("Some errors were found:\n" . implode("\n", $string));
+    }
+  }
+
+  /**
+   * @Then /^I should see the following message <json>:$/
+   */
+  public function iShouldSeeTheFollowingMessageJson(TableNode $table) {
+    // Get the json output and decode it.
+    $json_output = $this->getSession()->getPage()->getContent();
+    $json = json_decode($json_output);
+
+    // Hashing table, and define variables for later.
+    $hash = $table->getRows();
+
+    if (isset($json->messages)) {
+      foreach ($json->messages as $message) {
+        $error = array();
+        foreach ($hash as $table_row) {
+          if (isset($message->arguments->{$table_row[0]})) {
+            if ($message->arguments->{$table_row[0]} != $table_row[1]) {
+              $error['values'][$table_row[0]] = ' not equal to ' . $table_row[1];
+            }
+          }
+          else {
+            $error['not_found'][$table_row[0]] = " doesn't exist.";
+          }
+        }
+        if (empty($error)) {
+          break;
+        }
+      }
+    }
+    else {
+      $error = "No messages were found.";
+    }
+
+    // Build the error string if needed.
+    if (!empty($error)) {
+      $string = array();
+
+      if (!empty($error['values'])) {
+        foreach ($error['values'] as $variable => $message) {
+          $string[] = '  ' . $variable . $message;
+        }
+      }
+      if (!empty($error['not_found'])) {
+        foreach ($error['not_found'] as $variable => $message) {
+          $string[] = '  ' . $variable . $message;
+        }
+      }
+
+      if (is_string($error)) {
+        $string[] = $error;
+      }
+
+      throw new Exception("Some errors were found:\n" . implode("\n", $string));
+    }
+  }
+
+  /**
+   * @Then /^I should not see the following message <json>:$/
+   */
+  public function iShouldNotSeeTheFollowingMessageJson(TableNode $table) {
+    // Get the json output and decode it.
+    $json_output = $this->getSession()->getPage()->getContent();
+    $json = json_decode($json_output);
+
+    // Hashing table, and define variables for later.
+    $hash = $table->getRows();
+
+    if (isset($json->messages)) {
+      foreach ($json->messages as $message) {
+        $error = array();
+        foreach ($hash as $table_row) {
+          if (isset($message->arguments->{$table_row[0]})) {
+            if ($message->arguments->{$table_row[0]} != $table_row[1]) {
+              $error['values'][$table_row[0]] = ' not equal to ' . $table_row[1];
+            }
+          }
+          else {
+            $error['not_found'][$table_row[0]] = " doesn't exist.";
+          }
+        }
+        if (empty($error)) {
+          break;
+        }
+      }
+    }
+    else {
+      $error = "No messages were found.";
+    }
+
+    if (empty($error)) {
+      throw new Exception("Message with the given properties appear on the page when it shouldn't have");
+    }
+    elseif (is_string($error)) {
+      throw new Exception("{$error}");
     }
   }
 
@@ -875,6 +1006,19 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I should see the meta tag "([^"]*)" with value "([^"]*)"$/
+   */
+  public function iShouldSeeTheMetaTag($tag, $value) {
+    $page = $this->getSession()->getPage();
+    if (!$text = $page->find('xpath', "//meta[@name='{$tag}']/@content")) {
+      throw new Exception("The meta tag {$tag} does not exist");
+    }
+    if ($text->getText() != $value) {
+      throw new Exception("The meta tag {$tag} value is not {$value}");
+    }
+  }
+
+  /**
    * @Given /^I should see the text "([^"]*)" under "([^"]*)"$/
    */
   public function iShouldSeeTheTextUnder($text, $container) {
@@ -960,7 +1104,7 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^I remove the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
+   * @Given /^I remove from the role "([^"]*)" in the group "([^"]*)" the permission "([^"]*)"$/
    */
   public function iRemoveTheRoleThePermissionInTheGroup($role, $group, $permission) {
     $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$group}'"));
@@ -968,7 +1112,7 @@ class FeatureContext extends DrupalContext {
 
     return array(
       new Step\When('I visit "' . $group . '/group/node/' . $nid . '/admin/permission/' . $rid . '/edit"'),
-      new Step\When('I uncheck the box "' . $permission . '"'),
+      new Step\When('I uncheck the box "edit-' . $rid . '-' . $permission . '"'),
       new Step\When('I press "Save permissions"'),
     );
   }
@@ -1141,6 +1285,18 @@ class FeatureContext extends DrupalContext {
 
     return array(
       new Step\When('I visit "' . $purl . 'node/' . $nid . '/edit"'),
+    );
+  }
+
+  /**
+   * @When /^I edit the page meta data of "([^"]*)" in "([^"]*)"$/
+   */
+  public function iEditTheMetaTags($title, $group) {
+    $title = str_replace("'", "\'", $title);
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$title}'"));
+
+    return array(
+      new Step\When('I visit "' . $group . '/os/pages/' . $nid . '/meta"'),
     );
   }
 
@@ -1466,6 +1622,21 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Then /^I should verify the next week calendar is displayed correctly$/
+   */
+  public function iShouldVerifyNextWeekDisplayed() {
+    $str_next_sunday_date = date('F-j-Y', strtotime('next Sunday'));
+    $parts = explode('-', $str_next_sunday_date);
+    $week_header = 'Week of ' . $parts[0] . ' ' . $parts[1] . ', ' . $parts[2];
+    $page = $this->getSession()->getPage();
+    $element = $page->find('xpath', "//h3[.='$week_header']");
+
+    if (!$element) {
+      throw new Exception("The weekly calendar for the '$week_header' is not displayed correctly");
+    }
+  }
+
+  /**
    * @Then /^I should not see the button "([^"]*)"$/
    */
   public function iShouldNotSeeTheButton($button) {
@@ -1475,7 +1646,7 @@ class FeatureContext extends DrupalContext {
     if ($element) {
       throw new Exception("A button with id|name|value equal to '$button' was found.");
     }
-  }
+}
 
   /**
    * @Given /^I set feature "([^"]*)" to "([^"]*)" on "([^"]*)"$/
@@ -1557,5 +1728,50 @@ class FeatureContext extends DrupalContext {
    */
   public function iDisablePinserver() {
     $this->invoke_code('module_disable', array('array(\'pinserver\', \'pinserver_authenticate\', \'os_pinserver_auth\')'));
+  }
+
+  /**
+   * @Given /^I verify that "([^"]*)" is the owner of vsite "([^"]*)"$/
+   */
+  public function iVerifyThatIsTheOwnerOfVsite($username, $group) {
+    $uid = $this->invoke_code('os_migrate_demo_get_user_by_name', array($username));
+    $author_uid = $this->invoke_code('os_migrate_demo_get_vsite_owner_uid', array($group));
+
+    if ($uid != $author_uid) {
+      throw new Exception("User '$username' is not the owner of vsite '$group'.");
+    }
+  }
+
+  /**
+   * @Given /^I edit the membership of "([^"]*)" in vsite "([^"]*)"$/
+   */
+  public function iEditTheMembershipOfInVsite($username, $group) {
+    $uid = $this->invoke_code('os_migrate_demo_get_user_by_name', array($username));
+    return array(
+      new Step\When('I visit "' . $group . '/cp/users/edit_membership/' . $uid . '"'),
+    );
+  }
+
+ /**
+   * @Given /^I re import feed item "([^"]*)"$/
+   */
+  public function iReImportFeedItem($node) {
+    $nid = $this->invoke_code('os_migrate_demo_get_node_id', array("'$node'"));
+
+    return array(
+      new Step\When('I visit "node/' . $nid . '/import"'),
+      new Step\When('I press "Import"'),
+    );
+  }
+
+  /**
+   * @Then /^I verify the feed item "([^"]*)" exists only "([^"]*)" time for "([^"]*)"$/
+   */
+  public function iVerifyTheFeedItemeExistsOnlyTimeFor($node, $time, $vsite) {
+    $count = $this->invoke_code('os_migrate_demo_count_node_instances', array("'$node'", "'$vsite'"));
+
+    if ($count != $time) {
+      throw new Exception(sprintf('The feed items has been imported %s times.', $count));
+    }
   }
 }

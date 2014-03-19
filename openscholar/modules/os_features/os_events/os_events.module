@@ -199,6 +199,51 @@ function os_events_default_registration_type() {
   return $items;
 }
 
+function os_events_date_formatter_pre_view_alter(&$entity, $vars) {
+  if ($entity->type != 'event') {
+    return;
+  }
+
+  if (!isset($entity->date_id)) {
+    if ($entity->view = views_get_current_view()
+      && $entity->view->plugin_name == 'date_ical'
+      && isset($entity->view->row_index)
+      && isset($entity->view->result[$entity->view->row_index])) {
+
+      // this entity is being rendered by a view.
+      //
+
+      $view = $entity->view;
+      $result = $view->result[$view->row_index];
+      $field = 'field_data_field_date_field_date_value';
+      $delta = -1;
+      if (isset($result->field_data_field_date_delta)) {
+        $delta = $result->field_data_field_date_delta;
+      }
+      else {
+        foreach ($entity->field_date[LANGUAGE_NONE] as $d => $r) {
+          if ($r['value'] == $result->$field) {
+            $delta = $d;
+            break;
+          }
+        }
+      }
+      $entity->date_id = 'node.'.$entity->nid.'.field_date.'.$delta;
+    }
+    else {
+      // this is a single node, and we need to filter it down to just the next occurence of an event
+      if (count($vars['items']) > 1) {
+        foreach ($vars['items'] as $d => $i) {
+          if (REQUEST_TIME < strtotime($i['value'])) {
+            $entity->date_id = 'node.'.$entity->nid.'.field_date.'.$d;
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
 /**
  * Implements hook_process_node().
  */
@@ -730,8 +775,6 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
     '#element_validate' => array('os_events_validate_mail'),
   );
 
-  $form['#submit'][] = 'os_events_set_event_default_mail';
-
   // Set the default time for a reminder to be a day before the event.
   $event_date = reset($wrapper->field_date->value());
   $reminder = empty($reminder_date) ? strtotime('-1 day', strtotime($event_date['value'])) : strtotime($reminder_date);
@@ -777,16 +820,6 @@ function os_events_validate_mail($element, $form_state, $form) {
 }
 
 /**
- * Submit handler; Set default email in event.
- */
-function os_events_set_event_default_mail($form, &$form_state) {
-  // Set the default email in the event.
-  $wrapper = entity_metadata_wrapper('node', $form_state['entity']['entity_id']);
-  $wrapper->field_default_email->set($form_state['values']['from']);
-  $wrapper->save();
-}
-
-/**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function os_events_field_widget_registration_select_form_alter(&$element, &$form_state, $context) {
@@ -806,9 +839,6 @@ function os_events_field_widget_registration_select_form_alter(&$element, &$form
 
   // Disable signup for repeated events.
   $element['registration_type']['#states']['enabled'][':input[name="field_date[und][0][show_repeat_settings]"]'] = array('checked' => FALSE);
-
-  // Uncheck the signup checkbox for repeated events.
-  $element['registration_type']['#states']['checked'][':input[name="field_date[und][0][show_repeat_settings]"]'] = array('checked' => FALSE);
 
   // Add JS to change button description,
   $element['registration_type']['#attached']['js'] = array(
@@ -1026,10 +1056,8 @@ function os_events_mail_alter(&$message) {
   // Get event default email address.
   $wrapper = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
 
-  $default_email = $wrapper->field_default_email->value();
-
   // Set default email as the message's sender.
-  $message['headers']['From'] = !empty($default_email) ? $default_email : $wrapper->author->mail->value();
+  $message['headers']['From'] = $wrapper->author->mail->value();
 }
 
 /**

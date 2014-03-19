@@ -5,6 +5,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * Create a new box.
    */
   protected function __construct() {
+    ctools_include('taxonomy', 'os');
     parent::__construct();
     $this->title = t('Filter by taxonomy');
   }
@@ -23,7 +24,6 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * Implementation of boxes_content::options_form().
    */
   public function options_form(&$form_state) {
-    ctools_include('taxonomy', 'os');
     $form = parent::options_form($form_state);
 
     $form['vocabularies'] = array(
@@ -60,7 +60,11 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $block['subject'] = $this->title;
     $block['title'] = $this->title;
 
-    if (!empty($block['content'])) {
+    if (empty($block['content'])) {
+      // Block content must be defined, even if it is empty, to avoid errors.
+      $block['content'] = '';
+    }
+    else {
       if (!empty($this->options['vocabularies'])) {
         // Get the list of selected vocabularies
         $selected = array();
@@ -94,14 +98,19 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * current bundle.
    */
   private function get_bundle_vocabularies() {
+    if (!$this->options['bundle']) {
+      // When loading the box for the first time, the bundle key is empty.
+      return;
+    }
 
-    ctools_include('taxonomy', 'os');
-    $bundle = $this->options['bundle'];
-    $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', $bundle);
+    $taxonomy_vocabularies = os_get_vocabularies_by_bundle('node', str_replace("vocabulary_filter_", "", $this->delta));
+
     $vocabularies = array();
 
-    foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
-      $vocabularies[$taxonomy_vocabulary->machine_name] = $taxonomy_vocabulary->name;
+    if ($taxonomy_vocabularies) {
+      foreach ($taxonomy_vocabularies as $taxonomy_vocabulary) {
+        $vocabularies[$taxonomy_vocabulary->machine_name] = $taxonomy_vocabulary->name;
+      }
     }
 
     return $vocabularies;

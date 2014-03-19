@@ -111,12 +111,21 @@ border-top: none;
      border-right: medium none;
 }
 
-.front #content-panels .block, .sidebar .block {
+.front #content-panels .block, 
+.sidebar .block {
      -moz-box-sizing: border-box;
      background: none repeat scroll 0px 0px #FFFFFF;
      border: 1px solid #DDDDDD;
      margin-bottom: 15px;
 }
+
+
+.block.block-boxes-os_boxes_rand_widget {
+	background: none;
+     border: none !important;
+     margin-bottom: 0 !important;
+}
+
 
 .front #content-panels .block-content, .sidebar .block-content {
      padding: 15px;
@@ -127,8 +136,9 @@ border-top: none;
     padding: 15px 0px;
 }
 
+.block.block-boxes-os_boxes_rand_widget .block-content:first-child,
 .sidebar .node-teaser.node-person {
-    padding: 0;
+    padding: 0!important;
 }
 
 .sidebar .block.section-nav, #content-column .block.section-nav {

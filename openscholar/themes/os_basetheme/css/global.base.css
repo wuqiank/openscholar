@@ -350,7 +350,7 @@ p {
 
 
 #columns p:only-child,
-#columns p:nth-last-of-type(1) {
+#columns p:last-child {
      margin: 0 0px .4em;
 }
 

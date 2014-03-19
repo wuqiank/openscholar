@@ -96,6 +96,23 @@ function vsite_cron() {
 }
 
 /**
+ * Implements hook_og_membership_presave().
+ *
+ * Set the membership of "support team" to active.
+ */
+function vsite_og_membership_presave(OgMembership $og_membership) {
+  if (!empty($og_membership->id)) {
+    return;
+  }
+
+  if ($og_membership->type != 'support_expire') {
+    return;
+  }
+
+  $og_membership->state = OG_STATE_ACTIVE;
+}
+
+/**
  * Implements hook_og_membership_insert().
  *
  */
@@ -2607,9 +2624,11 @@ function vsite_taxonomy_term_presave($term) {
  * Validate handler; Prevent duplicate aliases.
  */
 function vsite_form_alias_validate($form, &$form_state) {
-  $entity_type = $form['#entity_type'];
+  if (!empty($form['#entity_type'])) {
+    $entity_type = $form['#entity_type'];
+  }
 
-  if(!$entity_type && $form['#form_id'] == 'taxonomy_form_vocabulary'){
+  if (empty($entity_type) && $form['#form_id'] == 'taxonomy_form_vocabulary') {
     $entity_type = 'taxonomy_vocabulary';
   }
 
@@ -2627,9 +2646,9 @@ function vsite_form_alias_validate($form, &$form_state) {
       $entity->vid = $form_state['values']['vid'];
       break;
     case 'taxonomy_vocabulary':
-        // Vocabs must have a vid in order to generate their alias.
-        $entity = $form_state['vocabulary'];
-        break;
+      // Vocabs must have a vid in order to generate their alias.
+      $entity = $form_state['vocabulary'];
+      break;
   }
 
   // Verify the path is not in use.
@@ -2815,40 +2834,6 @@ function vsite_cp_settings() {
   }
   $settings = array();
 
-  // For personal sites only, allow an author link.
-  if ($vsite->group->type == 'personal') {
-    $default_value = variable_get('vsite_head_link_rel_author', '');
-    $settings['vsite_head_link_rel_author'] = array(
-      'form' => array(
-        '#type' => 'textfield',
-        '#title' => t('Author URL'),
-        '#default_value' => $default_value,
-        '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
-      ),
-      'group' => array(
-        '#id' => 'structured_data',
-        '#title' => t('Structured data'),
-        '#weight' => 31,
-      ),
-    );
-  }
-
-  // For all sites, allow a publisher link.
-  $default_value = variable_get('vsite_head_link_rel_publisher', '');
-  $settings['vsite_head_link_rel_publisher'] = array(
-    'form' => array(
-      '#type' => 'textfield',
-      '#title' => t('Publisher URL'),
-      '#default_value' => $default_value,
-      '#description' => t('Enter the URL to your publishing entity\'s permanent web address. Use a Google+ page URL to be eligible for a branded knowledge panel in Google search results.'),
-    ),
-    'group' => array(
-      '#id' => 'structured_data',
-      '#title' => t('Structured data'),
-      '#weight' => 31,
-    ),
-  );
-
   $default = array('department', 'project');
   $subsite_parents = variable_get('subsite_parents', $default);
   if (!in_array($vsite->group->type, $subsite_parents)) {
@@ -2953,11 +2938,11 @@ function vsite_get_os_override_permissions() {
 function vsite_og_permission() {
   return array(
     'administer boxes' => array(
-      'title' => t('Administer boxes'),
+      'title' => t('Administer widgets'),
       'os_override' => TRUE,
     ),
     'edit boxes' => array(
-      'title' => t('Edit boxes'),
+      'title' => t('Edit widgets'),
       'description' => t('Edit existing boxes.'),
       'os_override' => TRUE,
     ),
@@ -3067,17 +3052,37 @@ function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
  */
 function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
   // Only continues if we have a purl (in order to save the favicon properly).
-  if (!$purl = vsite_get_purl()) {
+  if (!$purl = vsite_get_purl() || !$vsite = vsite_get_vsite()) {
     return;
   }
 
   // Builds the "Site favicon" file field widget.
   // Renders a fieldset with a managed file widget.
+  $meta_description = '';
+  $vsite = vsite_get_vsite();
+  $items = field_get_items('node', $vsite->group, 'field_meta_description');
+  if (isset($items[0]['value'])) {
+    $meta_description = $items[0]['value'];
+  }
   $fieldset = array(
-    'vsite_favicon' => array(
+    'vsite_seo' => array(
       '#type' => 'fieldset',
-      '#title' => t('Site favicon'),
+      '#title' => t('SEO'),
       '#weight' => 30,
+      'vsite_title' => array(
+        '#type' => 'textfield',
+        '#title' => t('Site title'),
+        '#default_value' => $vsite->group->title,
+        '#description' => t('Your site\'s official title, as displayed in your Site info widget, in search results, and in browser tabs.'),
+      ),
+      'vsite_meta_description' => array(
+        '#type' => 'textarea',
+        '#rows' => 2,
+        '#title' => t('Meta description'),
+        '#resizable' => FALSE,
+        '#default_value' => $meta_description,
+        '#description' => t('A brief summary to appear in search results for your site\'s home page. Ideally 155 characters or less.'),
+      ),
       'site_favicon_fid' => array(
         '#type' => 'managed_file',
         '#title' => t('Favicon'),
@@ -3089,8 +3094,26 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
           'file_validate_size' => array(2*1024*1024),
         ),
       ),
+      'vsite_head_link_rel_publisher' => array(
+        '#type' => 'textfield',
+        '#title' => t('Publisher URL'),
+        '#default_value' => variable_get('vsite_head_link_rel_publisher', ''),
+        '#description' => t('Enter the URL to your publishing entity\'s permanent web address. Use a Google+ page URL to be eligible for a branded knowledge panel in Google search results.'),
+      ),
     ),
   );
+
+  // For personal sites only, allow an author link.
+  if ($vsite->group->type == 'personal') {
+    $fieldset['vsite_seo']['vsite_head_link_rel_author'] = array(
+      'form' => array(
+        '#type' => 'textfield',
+        '#title' => t('Author URL'),
+        '#default_value' => variable_get('vsite_head_link_rel_author', ''),
+        '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
+      ),
+    );
+  }
 
   // Adds the fieldset to the form.
   $form += $fieldset;
@@ -3102,16 +3125,52 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
 /**
  * Submit callback for cp_settings_form().
  *
- * Updates the 'field_favicon' value on the vsite node.
+ * Updates variable values exposed in the CP > Settings form for this vsite.
  *
  * @see vsite_form_cp_settings_form_alter()
  */
 function vsite_cp_settings_form_submit($form, &$form_state) {
   // Get the vsite_privacy value.
-  $name = 'site_favicon_fid';
-  if (isset($form_state['values'][$name])) {
-    $value = $form_state['values'][$name];
-    $vsite = vsite_get_vsite();
-    $vsite->controllers->variable->set($name, $value);
+  $values = array(
+    'site_favicon_fid' => array('type' => 'variable'),
+    'vsite_head_link_rel_publisher' => array('type' => 'variable'),
+    'vsite_head_link_rel_author' => array('type' => 'variable'),
+    'vsite_title' => array('type' => 'property', 'property' => 'title'),
+    'field_meta_description' => array('type' => 'property', 'index' => 'value', 'use_set' => TRUE),
+  );
+  $modified = FALSE;
+  $vsite = vsite_get_vsite();
+  $wrapper = entity_metadata_wrapper('node', $vsite->group);
+  foreach ($values as $name => $info) {
+    switch ($info['type']) {
+      case 'variable':
+        if (isset($form_state['values'][$name])) {
+          $value = $form_state['values'][$name];
+          $vsite = vsite_get_vsite();
+          $vsite->controllers->variable->set($name, $value);
+        }
+        break;
+      case 'property':
+        if (isset($form_state['values'][$name])) {
+          $value = $form_state['values'][$name];
+          if (isset($info['index'])) {
+            $value = array($info['index'] => $value);
+          }
+          $property = isset($info['property']) ? $info['property'] : $name;
+          if (isset($info['use_set'])) {
+            $wrapper->{$property}->set($value);
+          }
+          else {
+            $wrapper->{$property} = $value;
+          }
+
+          $modified = TRUE;
+        }
+        break;
+    }
+  }
+
+  if ($modified) {
+    $wrapper->save();
   }
 }

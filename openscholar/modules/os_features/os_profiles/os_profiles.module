@@ -44,12 +44,17 @@ function os_profiles_os_app_info() {
  * Implements hook_init().
  */
 function os_profiles_init() {
+  if (variable_get('os_profiles_no_restws', FALSE) || !module_exists('restws')) {
+    // No RestWS.
+    return;
+  }
+
   if (!($uuid = variable_get('os_profiles_nodes_uuid'))) {
     // Return if no UUID is set that is, no profile nodes need to be updated.
     return;
   }
 
-  if (!($time = variable_get('os_profiles_nodes_uuid_time'))) {
+  if (!$time = variable_get('os_profiles_nodes_uuid_time')) {
     // Return if no time for the update of the profiles has been set.
     return;
   }
@@ -60,28 +65,32 @@ function os_profiles_init() {
     return;
   }
 
-  // When the original node and the destination node are on the same installation
-  // and the original has been updated the updating of the destination node will
-  // be accomplished instantly. We need to wait approximately 5 seconds so a
-  // normal end user that updates a profile that was copied won't think the
-  // update of the node is slow.
+  // When the original node and the destination node are on the same
+  // installation and the original has been updated the updating of the
+  // destination node will be accomplished instantly. We need to wait
+  // approximately 5 seconds so a normal end user that updates a profile that
+  // was copied won't think the update of the node is slow.
   if ($time + 5 >= time()) {
     return;
   }
 
   // Load the nodes that need to be updated.
   $query = new EntityFieldQuery();
-  $results = $query
+  $result = $query
     ->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'person')
     ->fieldCondition('field_uuid', 'value', $uuid)
     ->execute();
 
-  if (empty($results['node'])) {
+  if (empty($result['node'])) {
     return;
   }
 
-  $nids = array_keys($results['node']);
+  if (!lock_acquire('os_profile_sync')) {
+    return;
+  }
+
+  $nids = array_keys($result['node']);
   $nodes = node_load_multiple($nids);
   $fields = os_profiles_profiles_fields();
   $handler = restws_resource_controller('node');
@@ -97,23 +106,33 @@ function os_profiles_init() {
     // it for later.
     $person_photo = $data->values['field_person_photo'];
     unset($data->values['field_person_photo']);
-    $handler->update($node->nid, $data->values);
+    try {
+      $handler->update($node->nid, $data->values);
+    }
+    catch (RestWSException $e) {
+      // TODO: watchdog message
+      return;
+    }
 
     // We need to replace the field ID in the field with the new file ID we got.
+    $file = NULL;
     if ($person_photo) {
       $file_info = os_profiles_get_origin_node_values($person_photo['file']['uri'] . '.json', array('url'));
       $copy_file = os_copy_file($file_info->values['url'], TRUE);
 
       if ($copy_file['type'] == 'file') {
-        os_profiles_insert_image($node, $copy_file['file'], $data->data['person_photo_dimension']);
+        $file = $copy_file['file'];
       }
     }
+
+    os_profiles_insert_image($node, $file, $data->data['person_photo_dimension']);
   }
 
   // Delete the UUID that needs to be updated and the time in which the UUID
-  // was set.
+  // was set. Also release the lock.
   variable_del('os_profiles_nodes_uuid');
   variable_del('os_profiles_nodes_uuid_time');
+  lock_release('os_profile_sync');
 }
 
 /**
@@ -167,7 +186,7 @@ function os_profiles_admin_paths() {
  */
 function os_profiles_os_entity_view_modes() {
   return array('node' => array(
-    'person' => array('sidebar_teaser'),
+    'person' => array('sidebar_teaser', 'no_image_teaser'),
   ));
 }
 
@@ -555,6 +574,11 @@ function os_profiles_profiles_fields() {
  * Submit handler; Importing person profile from external source.
  */
 function os_profiles_sync_profile_submit($form, $form_state) {
+  if (variable_get('os_profiles_no_restws', FALSE) || !module_exists('restws')) {
+    // No RestWS.
+    return;
+  }
+
   global $base_url, $user;
   $keys = os_profiles_profiles_fields();
   $values = $data = array();
@@ -664,9 +688,7 @@ function os_profiles_sync_profile_submit($form, $form_state) {
 
   $node = node_load($nid);
 
-  if ($file) {
-    os_profiles_insert_image($node, $file, $photo_dimension);
-  }
+  os_profiles_insert_image($node, $file, $photo_dimension);
 
   $params = array(
     '@title' => $node->title,
@@ -688,15 +710,21 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  *  The image field crop settings.
  */
 function os_profiles_insert_image($node, $file, $dimensions) {
-  $node->field_person_photo[$node->language][0] = array(
-    'fid' => $file->fid,
-    'display' => 1,
-    'description' => '',
-    'cropbox_x' => $dimensions['cropbox_x'],
-    'cropbox_y' => $dimensions['cropbox_y'],
-    'cropbox_height' => $dimensions['cropbox_height'],
-    'cropbox_width' => $dimensions['cropbox_width'],
-  );
+  if (!$file) {
+    // The file is empty. Truncating the file field.
+    unset($node->field_person_photo[$node->language][0]);
+  }
+  else {
+    $node->field_person_photo[$node->language][0] = array(
+      'fid' => $file->fid,
+      'display' => 1,
+      'description' => '',
+      'cropbox_x' => $dimensions['cropbox_x'],
+      'cropbox_y' => $dimensions['cropbox_y'],
+      'cropbox_height' => $dimensions['cropbox_height'],
+      'cropbox_width' => $dimensions['cropbox_width'],
+    );
+  }
 
   node_save($node);
 }
@@ -718,13 +746,21 @@ function os_profiles_get_origin_node_values($address, $fields) {
   // to get un-cached node we need to add the time stamp to the query string.
   $request = drupal_http_request(url($address, array('query' => array('REST_CALL' => 1, 'override_cache' => time()))));
   $data = drupal_json_decode($request->data);
+  $values = array();
 
-  foreach ($fields as $key) {
-    if (empty($data[$key])) {
-      continue;
+  foreach ($fields as $field) {
+    $info = field_info_field($field);
+    if (empty($data[$field])) {
+      // The field value in the original node is empty. Entity metadata wrapper
+      // need NULL to delete the field. Multiple cardinality field need array
+      // and because the field empty we need to pass array(NULL).
+      $value = $info['cardinality'] == 1 ? NULL : array(NULL);
+    }
+    else {
+      $value = $data[$field];
     }
 
-    $values[$key] = $data[$key];
+    $values[$field] = $value;
   }
 
   return (object) array(

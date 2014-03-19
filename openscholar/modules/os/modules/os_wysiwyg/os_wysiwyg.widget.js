@@ -2,7 +2,10 @@
  * Adds behavior to self-hiding wysiwyg widget
  */
 (function ($) {
-  
+
+  localStorage.osWysiwygExpandableTextarea = localStorage.osWysiwygExpandableTextarea || JSON.stringify({});
+  var settings = JSON.parse(localStorage.osWysiwygExpandableTextarea);
+
   function wysiwyg_expand(e) {
     var parent;
     if (typeof e == 'undefined') { //wtf IE
@@ -26,12 +29,16 @@
       parent = $(e.currentTarget).parents('.form-item');
     }
     var editor = parent.find('.mceEditor table.mceLayout'),
-      height = (parseInt(parent.find('[data-maxrows]').attr('data-maxrows')) * 25);
+      dim = parent.find('[data-maxrows]'),
+      height = (parseInt(dim.attr('data-maxrows')) * 25);
+
+    if (typeof settings[editor.attr('id')] != 'undefined') {
+      height = settings[editor.attr('id')].height;
+    }
 
     editor.removeClass('os-wysiwyg-collapsed');
     parent.find('.wysiwyg-toggle-wrapper').show();
-    editor.stop().animate({height: height+'px'}, 600);
-    $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
+    $('iframe', editor).stop().animate({height: height+'px'}, 600);
     editor.children('tbody').children('tr.mceFirst, tr.mceLast').animate({opacity: 1.0}, 600);
   }
 
@@ -44,23 +51,23 @@
     $('.mceEditor table.mceLayout').not('.os-wysiwyg-collapsed').each(function () {
       var editor = $(this),
         parent = editor.parents('.form-item'),
-        height = (parseInt(parent.find('[data-minrows]').attr('data-minrows')) * 20);
+        iframe = $('iframe', editor);
 
+      if (!editor.hasClass('os-wysiwyg-collapsed')) {
+        settings[this.id] = {
+          height: iframe.height()
+        };
+        localStorage.osWysiwygExpandableTextarea = JSON.stringify(settings);
+      }
+
+      // prevents listboxes from being out of place
       if (this.id == target_id) {
         return;
       }
 
-      // when a scrollable area is resized, it calculates the new scroll position with the following formula:
-      // document.body.scrollTop = min(document.body.scrollTop, document.body.scrollHeight - window.innerHeight)
-      // if the old scroll position was higher than the new maximum, it gets set to maximum
-      // otherwise, nothing happens
-      // we need to get the difference between old scroll position and new, subtract it from the height the wysiwyg tags,
-      // and then subtract that from the new position
-
-
-      editor.stop().animate({height: height+'px'}, 600)
+      editor.css('height', '')
         .addClass('os-wysiwyg-collapsed');
-      $('iframe', editor).stop().animate({height: height+1+'px'}, 600);
+
       parent.find('.wysiwyg-toggle-wrapper').hide();
     })
   }
@@ -85,7 +92,20 @@
         // use mouseup because it fires before click, and can't be prevented by other scripts' click handlers
         $('body').mouseup(wysiwyg_minimize);
 
-        wysiwyg_minimize();
+        $('.mceEditor table.mceLayout').not('.os-wysiwyg-collapsed').each(function () {
+          var editor = $(this),
+            parent = editor.parents('.form-item'),
+            dim = parent.find('[data-minrows]'),
+            height = (parseInt(dim.attr('data-minrows')) * 20),
+            iframe = $('iframe', editor);
+
+
+          editor.css('height', '')
+            .addClass('os-wysiwyg-collapsed');
+          $('iframe', editor).css({height: height+'px'});
+          parent.find('.wysiwyg-toggle-wrapper').hide();
+        });
+
         $('.os-wysiwyg-expandable ~ .wysiwyg-toggle-wrapper a').click(toggleHandlers);
       }
       else {

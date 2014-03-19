@@ -657,3 +657,14 @@ function os_update_7029() {
   $message .= t('Reverted metatag and field_instance config for modules: @modules<br/>', array('@modules' => implode(', ', $modules)));
   return $message;
 }
+
+/**
+ * Delete duplicated "calendar" and "publications" links in the primary menu.
+ */
+function os_update_7030() {
+  db_delete('menu_links')
+    ->condition('menu_name', 'primary-menu')
+    ->condition('link_path', array('calendar', 'publications'), 'IN')
+    ->condition('module', 'menu')
+    ->execute();
+}

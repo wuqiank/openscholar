@@ -166,7 +166,7 @@ text-shadow: 0px -1px 0px rgba(30, 30, 30, 0.25);
 -webkit-border-radius: 4px;
 -moz-border-radius: 4px;
 border-radius: 4px;
-background: #4183c4;
+background: #3b76b1;
 
 }
 
@@ -341,7 +341,7 @@ color: #FFFFFF;
 -webkit-border-radius: 4px;
 -moz-border-radius: 4px;
 border-radius: 4px;
-background: #4183c4;
+background: #3b76b1;
 }
 
 .logged-in.no-sidebars.page-user #content .user-add-website {
@@ -366,10 +366,12 @@ fieldset.pin-fieldset legend,
 
 #user-login fieldset, 
 .pin-button, fieldset.pin-fieldset legend, #user-login fieldset legend {
-    width: 300px;
     padding-left: 0;
 }
 
+#pin-login.pin-button {
+	width:300px;
+}
 
 fieldset#edit-pin-fieldset {
 	background:#F7F7F7;
@@ -589,7 +591,7 @@ text-decoration:none;
     text-align: center;
 }
 
-#block-os-search-db-site-search, #block-os-search-solr-site-search{
+#block-os-search-db-site-search {
     display: block;
     width: 100%;
     text-align: center;
@@ -605,7 +607,7 @@ text-decoration:none;
     -webkit-border-radius:3px  !important;
 }
 
-#block-os-search-db-site-search #search-block-form #edit-submit, #block-os-search-solr-site-search #search-block-form #edit-submit {
+#block-os-search-db-site-search #search-block-form #edit-submit {
     width: auto;
     height: auto;
     text-indent: 0;
@@ -653,22 +655,20 @@ text-decoration:none;
     background: transparent url('../images/search.png') 14px 14px no-repeat;
 }
 
-#block-os-search-db-site-search #edit-actions, #block-os-search-solr-site-search #edit-actions {
+#block-os-search-db-site-search #edit-actions {
     float: left;
     margin-right: -125px;
 }
 
-#block-os-search-db-site-search #search-block-form .container-inline, #block-os-search-solr-site-search #search-block-form .container-inline {
+#block-os-search-db-site-search #search-block-form .container-inline {
     max-width: none;
 }
 
-#block-os-search-db-site-search #search-block-form .container-inline .form-item,
-#block-os-search-solr-site-search #search-block-form .container-inline .form-item {
+#block-os-search-db-site-search #search-block-form .container-inline .form-item {
     width: auto;
 }
 
-#block-os-search-db-site-search .form-item.form-type-textfield.form-item-search-block-form,
-#block-os-search-solr-site-search .form-item.form-type-textfield.form-item-search-block-form {
+#block-os-search-db-site-search .form-item.form-type-textfield.form-item-search-block-form {
     margin-right: -16px;
 }
 

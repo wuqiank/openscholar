@@ -26,8 +26,8 @@ function hwpi_basetheme_preprocess_html(&$vars) {
  * Adds mobile menu controls to menubar.
  */
 function hwpi_basetheme_page_alter(&$page) {
-  $page['header_second']['#sorted'] = false;
-  $page['header_second']['mobile'] = array(
+  $page['responsive_menu']['#sorted'] = false;
+  $page['responsive_menu']['mobile'] = array(
     '#theme' => 'links',
     '#attributes' => array(
       'class' => array('mobile-buttons'),
@@ -36,7 +36,7 @@ function hwpi_basetheme_page_alter(&$page) {
     '#links' => array(
       'mobi-main' => array(
         'href' => '#',
-        'title' => '<span aria-hidden="true" class="icon-menu"></span>Menu',
+        'title' => '<span aria-hidden="true" class="icon-menu"></span>',
         'external' => true,
         'html' => true,
         'attributes' => array(
@@ -86,7 +86,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
     return;
   }
 
-  if (!empty($vars['field_person_photo'])) {
+  if (!empty($vars['node']->field_person_photo)) {
     $vars['classes_array'][] = 'with-person-photo';
   }
   else {
@@ -130,7 +130,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
       $vars['content']['pic_bio']['field_person_photo'][0] = array('#markup' => $image);
 
       // If 'body' is empty make sure image is displayed.
-      if (empty($vars['body'])) {
+      if (empty($vars['body'][$vars['language']])) {
         $vars['content']['pic_bio']['#access'] = TRUE;
       }
     }
@@ -633,41 +633,6 @@ function hwpi_basetheme_status_messages($vars) {
     $output .= "</div></div></div>";
   }
   return $output;
-}
-
-function hwpi_basetheme_date_formatter_pre_view_alter(&$entity, $vars) {
-  if ($entity->type != 'event') {
-    return;
-  }
-
-  // Only display the start time for this particular instance of a repeat event.
-  if (!$entity->view = views_get_current_view()) {
-    return;
-  }
-
-
-
-  // Don't remove the field date when exporting the calendar. This the unique
-  // identifier of Google calendar.
-  if ($entity->view->plugin_name == 'date_ical') {
-    return;
-  }
-
-  if (isset($entity->view) && isset($entity->view->row_index) && isset($entity->view->result[$entity->view->row_index])) {
-    $result = $entity->view->result[$entity->view->row_index];
-    $field = 'field_data_field_date_field_date_value';
-    $delta = -1;
-    foreach ($entity->field_date[LANGUAGE_NONE] as $d => $r) {
-      if ($r['value'] == $result->$field) {
-        $delta = $d;
-        break;
-      }
-    }
-    $entity->date_id = 'node.'.$entity->nid.'.field_date.'.$delta;
-  }
-  else {
-    $entity->active_date = $vars['items'][0];
-  }
 }
 
 /**
