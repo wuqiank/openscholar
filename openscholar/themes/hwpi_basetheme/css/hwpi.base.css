@@ -100,7 +100,6 @@ table caption {
   float: right;
 }
 
-.node-type-page .breadcrumb, 
 .breadcrumb,
 .breadcrumb a {
 	color:#215990;
@@ -108,13 +107,9 @@ table caption {
 	font-size:12px;
 	font-weight:bold;
 	letter-spacing:0.1em;
-	margin:0;
-	padding-bottom:0;
+	margin: -20px 0 .5em 0;
 }
 
-.node-type-page .breadcrumb {
-	padding-bottom:.5em;
-}
 
 .breadcrumb span {
   color: #1e1e1e;

@@ -168,6 +168,13 @@ margin-left:6em;
 
 .block-boxes-os_sv_list_box .sv-list-view-title h1 {font-family:arial;}
 
+
+
+.breadcrumb, 
+.breadcrumb a {
+		margin: -20px 0 .2em 0;
+}
+
 /* Border control */
 .not-front.two-sidebars #content-column .content-inner {
 	border-right: 1px solid #e7e7e7;
