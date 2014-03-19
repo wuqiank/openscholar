@@ -49,7 +49,7 @@
           html += "<a href='" + baseUrl + query + "'>" + Drupal.t("Click here") + "</a><br />";
         }
 
-        $("#os_rss_feed_results").html(html).attr('class', 'os_rss_fees_results');
+        $("#os_rss_feed_results").html(html).attr('class', 'os_rss_feed_results');
       });
     }
   };

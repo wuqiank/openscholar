@@ -1,4 +1,4 @@
-.os_rss_fees_results {
+.os_rss_feed_results {
   display: block;
   padding: 6px;
   margin: 10px 0;
@@ -6,7 +6,7 @@
   border: 10px solid #ebebe9;
 }
 
-.os_rss_fees_results h4 {
+.os_rss_feed_results h4 {
   margin-bottom: 11px;
   text-transform: uppercase;
 }

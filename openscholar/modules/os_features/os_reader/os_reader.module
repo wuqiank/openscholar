@@ -781,7 +781,7 @@ function os_reader_importer_feed_create($form, $form_state) {
     '#suffix' => '</div>',
   );
 
-  $form['#attached']['css'][] = drupal_get_path('module', 'os_reader') . '/css/os_rss_fees_results.css';
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_reader') . '/css/os_rss_feed_results.css';
 
   return $form;
 }
