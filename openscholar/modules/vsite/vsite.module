@@ -1877,6 +1877,9 @@ function vsite_mail_alter(&$message){
       // Alter the message body.
       $message['body'][0] = t("Dear !firstname,\n\nA site owner at the !site website has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This login can be used only once.)\n\nYour username is: !username \n\nAfter setting your password with the included link, you will be able to log in at !futurelogin in the future.\n\nSincerely,\nThe !site Team", $replacements);
       break;
+    case 'contact_page_mail':
+      $message['headers']['Sender'] = $message['headers']['Return-Path'] = $message['headers']['From'];
+      break;
   }
 }
 
