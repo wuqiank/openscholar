@@ -45,6 +45,11 @@ Feature: Testing OpenScholar calendar page.
      Then I look for ".field_date.0@"
 
   @api
+  Scenario: Test that site-wise calendar is disabled
+     Given I go to "calendar"
+      Then I should get a "403" HTTP response
+
+  @api
   Scenario: Test the week tab and
     Given I visit "john/calendar"
       And I click "Week"
