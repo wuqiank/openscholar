@@ -891,31 +891,38 @@ function _os_reader_importer_feed_create($items, $key) {
  * Get RSS in xml format according to filter criteria.
  */
 function os_reader_importer_feed_export() {
-  if (isset($_GET['type'])) {
-    $nids = os_reader_importer_feed_get_nids('bundle', $_GET['type']);
+  if (isset($_GET['type']) && isset($_GET['term'])) {
+    $data = array(
+      'bundle' => implode(',', $_GET['type']),
+      'term' => implode(',', $_GET['term']),
+    );
+  }
+  else if (isset($_GET['type'])) {
+    $data['bundle'] = implode(',', $_GET['type']);
   }
   elseif (isset($_GET['term'])) {
-    $nids = os_reader_importer_feed_get_nids('term', $_GET['term']);
+    $data['term'] = implode(',', $_GET['term']);
   }
   else {
     return;
   }
 
+  $nids = os_reader_importer_feed_get_nids($data);
   return implode(",", $nids);
 }
 
 /**
  * Build the Content with the RSS feeds.
  *
- * @param $type
- *  The type we need search by: bundle or term.
- * @param $value
- *  The value we need to search for.
+ * @param $info
+ *  Array of search criteria with of one of the next filters:
+ *    - bundle: Array of bundles names.
+ *    - term: Array of term IDs.
  *
  * @return Array
  *  List of node IDs.
  */
-function os_reader_importer_feed_get_nids($type, $value) {
+function os_reader_importer_feed_get_nids($info) {
   $nids = array();
 
   $query = new EntityFieldQuery();
@@ -926,11 +933,12 @@ function os_reader_importer_feed_get_nids($type, $value) {
     $query->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id);
   }
 
-  if ($type == 'bundle') {
-    $query->propertyCondition('type', $value);
+  if (!empty($info['bundle'])) {
+    $query->propertyCondition('type', $info['bundle'], 'IN');
   }
-  else {
-    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $value);
+
+  if (!empty($info['term'])) {
+    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $info['term']);
   }
 
   $results = $query->execute();

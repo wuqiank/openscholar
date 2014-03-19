@@ -33,10 +33,10 @@
 
         if (terms.length > 0) {
           if (bundles.length > 0) {
-            query += "?term=" + terms.join();
+            query += "&term=" + terms.join();
           }
           else {
-            query += "&term=" + terms.join();
+            query += "?term=" + terms.join();
           }
         }
 
