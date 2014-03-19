@@ -51,9 +51,12 @@
     var $row = $(str),
       icon = $(file.preview).find('img.file-icon');
     $row.find('img.file-icon').replaceWith(icon);
+    $row.find('.ctools-use-modal-process').removeClass('ctools-use-modal-processed');
+    $row.find('.ajax-processed').removeClass('ajax-processed');
     var $wrapper = $row.wrapAll('<div class="file-list-single form-wrapper media-draggable-processed" id="id"></div>').parent();
     setupRowHandlers.call($wrapper);
     $('.file-list-single').parent().append($wrapper);
+    Drupal.attachBehaviors($wrapper);
   }
 
   function setupRowHandlers() {

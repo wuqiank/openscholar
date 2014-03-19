@@ -52,9 +52,6 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
   $field_settings = $instance['settings'];
   $widget_settings = $instance['widget']['settings'];
 
-  ctools_include('modal');
-  ctools_modal_add_js();
-
   $element += array(
     '#field' => $field,
     '#instance' => $instance,
@@ -203,6 +200,10 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {
 function media_draggable_field_widget_indiv_process($element) {
   $file = $element['#file'];
 
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_modal_add_js();
+
   if (!$file) {
     $file = (object)array(
       'fid' => 0,
@@ -227,7 +228,10 @@ function media_draggable_field_widget_indiv_process($element) {
         'href' => 'media/'.$file->fid.'/edit/nojs',
         'title' => t('Edit'),
         'attributes' => array(
-          'class' => 'use-ajax',
+          'class' => array(
+            'use-ajax',
+            'ctools-use-modal',
+          )
         )
       ),
       'remove' => array(
@@ -236,6 +240,11 @@ function media_draggable_field_widget_indiv_process($element) {
         'external' => true,
       )
     ),
+    '#attached' => array(
+      'library' => array(
+        array('system', 'drupal.ajax')
+      )
+    )
   );
 
   return $element;
