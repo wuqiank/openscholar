@@ -108,7 +108,7 @@
       //console.log($('#vocabs', context).find('.form-select:not(.select2-processed)'))
       $("#edit-vocabs", context).addClass('select2-processed').find('.form-select:not(.select2-processed)').select2({
         placeholder: Drupal.t("Click here to select terms"),
-        width: '20em',
+        width: '20em'
       });
     }
   };
