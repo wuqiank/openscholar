@@ -987,12 +987,15 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
     '#weight' => -99,
   );
 
-  $profile_styles = array(
-    'title' => t('Name only'),
-    'teaser' => t('Teaser'),
-    'sidebar_teaser' => t('Name, image, and professional title'),
-    'no_image_teaser' => t('No image teaser'),
-  );
+  $entity_info = entity_get_info('node');
+  foreach ($entity_info['view modes'] as $name => $info) {
+    if (!$info['custom settings']) {
+      // Display only display modes the user turned on.
+      continue;
+    }
+
+    $profile_styles[$name] = $info['label'];
+  }
 
   $profile_styles_hover = array();
   $counter = 0;
@@ -1047,8 +1050,13 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
 
   // Form element for uploading a default image.
   $allowed_file_types = 'gif png jpg jpeg';
+  global $language;
+
   $form['file'] = array(
     '#type' => 'managed_file',
+    '#field_parents' => array(),
+    '#field_name' => array(),
+    '#language' => $language->language,
     '#title' => t('Default image'),
     '#field_prefix' => '<div class="">',
     '#field_suffix' => '</div>' . $image,
