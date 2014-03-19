@@ -1,0 +1,19 @@
+Index: profiles/openscholar/modules/contrib/spaces/spaces.module
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- profiles/openscholar/modules/contrib/spaces/spaces.module	(revision )
++++ profiles/openscholar/modules/contrib/spaces/spaces.module	(revision )
+@@ -695,6 +695,11 @@
+     if ($access_callback == 'node_access' && $args[0] == 'create') {
+       $node_type = str_replace('-', '_', $args[1]);
+       $feature = !empty($map[$node_type]) ? reset($map[$node_type]) : NULL;
++      if (!module_exists($feature)) {
++        do {
++          $feature = next($map[$node_type]);
++        } while (!module_exists($feature));
++      }
+       if ($feature) {
+         return spaces_access_feature('create', $feature);
+       }
