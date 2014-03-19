@@ -676,8 +676,6 @@ function os_reader_cron() {
  * Supply form for create RSS feed links.
  */
 function os_reader_importer_feed_create($form, $form_state) {
-  global $base_url;
-
   if (!module_exists('vsite')) {
     return;
   }
@@ -722,6 +720,25 @@ function os_reader_importer_feed_create($form, $form_state) {
   }
 
   $form = os_reader_importer_feed_element();
+
+  // Display only the bundle the manager selected.
+  $selected_bundles = variable_get('os_rss_feed_content_types', array());
+
+  foreach ($selected_bundles as $key => $bundle) {
+    if (!$bundle) {
+      unset($form['os_rss_feed_content_types']['#options'][$key]);
+    }
+  }
+
+  // Display only selected vocabularies.
+  $selected_vocabularies = variable_get('os_rss_feed_vocabs');
+
+  foreach ($selected_vocabularies as $key => $vocab) {
+    if (!$vocab) {
+      unset($form['os_rss_feed_vocabs'][$key]);
+    }
+  }
+
   $form['#attached']['js'][] = drupal_get_path('module', 'os_reader') . '/js/os_rss_feed_submission.js';
 
   $form['actions'] = array(
