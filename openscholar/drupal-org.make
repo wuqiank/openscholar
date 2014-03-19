@@ -23,11 +23,11 @@ projects[calendar][version] = 3.4
 projects[calendar][patch][] = "http://raw.github.com/openscholar/openscholar/72d63ee3537c31505b7481975886ec13789feeb5/patches/calendar-fix-week-view-overflow.patch"
 
 projects[colorbox][subdir] = "contrib"
-; projects[colorbox][version] = 1.3
-projects[colorbox][version] = 2.4
+projects[colorbox][version] = 2.5
 
 projects[comment_sources][subdir] = "contrib"
 projects[comment_sources][version] = 2.0
+projects[comment_sources][patch][] = "https://drupal.org/files/issues/22086870-comment-source-wrong-query-field-1.patch"
 
 projects[context][subdir] = "contrib"
 projects[context][version] = 3.0-beta4
@@ -88,10 +88,8 @@ projects[entityreference][version] = 1.1
 projects[entityreference][patch][] = "http://drupal.org/files/1802916-er-show-identifier-14.patch"
 
 projects[entityreference_prepopulate][subdir] = "contrib"
-; projects[entityreference_prepopulate][version] = 1.3
-projects[entityreference_prepopulate][download][type] = git
-projects[entityreference_prepopulate][download][revision] = e2c2811
-projects[entityreference_prepopulate][patch][] = "http://drupal.org/files/2007746-er-hide-access-5.patch"
+projects[entityreference_prepopulate][version] = 1.5
+projects[entityreference_prepopulate][patch][] = "https://drupal.org/files/issues/1994702-er-ajax-9.patch"
 
 projects[elysia_cron][subdir] = "contrib"
 projects[elysia_cron][version] = 2.1
@@ -267,9 +265,7 @@ projects[oembed][patch][] = "http://drupalcode.org/project/oembed.git/patch/a27a
 projects[oembed][patch][] = "http://drupal.org/files/issues/oembed.2134415.wysiwyg_dimensions.patch"
 
 projects[og][subdir] = "contrib"
-projects[og][version] = 2.4
-projects[og][patch][] = "https://drupal.org/files/issues/2153555-og-role-maintain-on-revert-6.patch"
-projects[og][patch][] = "https://drupal.org/files/issues/redirect-after-unsubscribe-1794294.patch"
+projects[og][version] = 2.6
 
 projects[og_moderation][subdir] = "contrib"
 projects[og_moderation][version] = 2.0
