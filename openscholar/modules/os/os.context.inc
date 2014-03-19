@@ -110,7 +110,6 @@ function os_context_default_contexts() {
       'values' => array(
         '~cp/*' => '~cp/*',
         '~admin/*' => '~admin/*',
-        'browse/pages' => 'browse/pages',
       ),
     ),
     'os_site' => array(
@@ -132,12 +131,6 @@ function os_context_default_contexts() {
           'module' => 'os',
           'delta' => 'primary-menu',
           'region' => 'menu_bar',
-        ),
-        'boxes-vocabulary_filter' => array(
-          'module' => 'boxes',
-          'delta' => 'vocabulary_filter',
-          'region' => 'sidebar_second',
-          'weight' => '-10',
         ),
         'boxes-site_logo' => array(
           'module' => 'boxes',
