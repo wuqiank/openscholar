@@ -131,6 +131,7 @@ function os_context_default_contexts() {
           'module' => 'os',
           'delta' => 'primary-menu',
           'region' => 'menu_bar',
+          'weight' => '-10',
         ),
         'boxes-site_logo' => array(
           'module' => 'boxes',
