@@ -64,7 +64,25 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       '#options' => $options,
       '#multiple' => TRUE,
       '#default_value' => $selected_vocab,
+
+          '#attached' => array(
+              'css' => array(libraries_get_path('select2') . '/select2.css'),
+             'js' => array(
+                  array('type' => 'setting', 'data' => array(
+                     'sv_list_vocab_bundles' => $vocabs,
+                    )),
+                  libraries_get_path('select2') . '/select2.js',
+               drupal_get_path('module', 'os_boxes') . '/plugins/os_boxes_facetapi_vocabulary/os_boxes_facetapi_vocabulary.js',
+                ),
+            ),
     );
+//    $form['#attached'] = array(
+//      'css' => array(libraries_get_path('select2') . '/select2.css'),
+//      'js' => array(
+//        libraries_get_path('select2') . '/select2.js',
+//        drupal_get_path('module', 'os_boxes') . '/plugins/os_boxes_facetapi_vocabulary/os_boxes_facetapi_vocabulary.js',
+//      ),
+//    );
 
     return $form;
   }
