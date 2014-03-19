@@ -20,7 +20,7 @@ function os_reader_menu() {
   $items['cp/build/features/os_rss_feed'] = array(
     'title' => 'OS RSS feed settings',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('os_rss_feed_settings'),
+    'page arguments' => array('os_reader_feed_settings'),
     'access callback' => 'spaces_access_admin',
   );
 
@@ -721,6 +721,38 @@ function os_reader_importer_feed_create($form, $form_state) {
     return $form;
   }
 
+  $form = os_reader_importer_feed_element();
+
+  $form['actions'] = array(
+    '#type' => 'actions',
+    '#weight' => 10,
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    ),
+  );
+
+  $form['results'] = array(
+    '#type' => 'item',
+    '#weight' => 11,
+    '#markup' => '',
+    '#prefix' => '<div id="os_rss_feed_results">',
+    '#suffix' => '</div>',
+  );
+
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_reader') . '/css/os_rss_fees_results.css';
+
+  return $form;
+}
+
+/**
+ * Return commons form elements: vocabs for selection and bundles.
+ */
+function os_reader_importer_feed_element() {
+  global $base_url;
+
+  $form = array();
+
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
@@ -780,25 +812,6 @@ function os_reader_importer_feed_create($form, $form_state) {
   }
 
   $form['os_rss_feed_vocabs'] = $vocab_form;
-
-  $form['actions'] = array(
-    '#type' => 'actions',
-    '#weight' => 10,
-    'submit' => array(
-      '#type' => 'submit',
-      '#value' => t('Submit'),
-    ),
-  );
-
-  $form['results'] = array(
-    '#type' => 'item',
-    '#weight' => 11,
-    '#markup' => '',
-    '#prefix' => '<div id="os_rss_feed_results">',
-    '#suffix' => '</div>',
-  );
-
-  $form['#attached']['css'][] = drupal_get_path('module', 'os_reader') . '/css/os_rss_fees_results.css';
 
   return $form;
 }
@@ -909,4 +922,13 @@ function os_reader_context_load_alter(&$context) {
   // key and the settings_link key will add for the context a settings button.
   $context->export_module = 'os_reader';
   $context->settings_link = TRUE;
+}
+
+/**
+ * Create a predefined RSS feeds.
+ */
+function os_reader_feed_settings($form, $form_settings) {
+  $form = os_reader_importer_feed_element();
+
+  return system_settings_form($form);
 }
