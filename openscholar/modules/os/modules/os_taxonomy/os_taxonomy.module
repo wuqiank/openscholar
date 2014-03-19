@@ -1758,7 +1758,7 @@ function _os_taxonomy_create_default_context($vocabulary) {
 
 /**
  * Implements hook_form_FORM_ID_alter() for taxonomy_form_term().
- *
+ * @TODO once any term meta description shows at all, update form to use new field
 function os_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state, $form_id) {
   $form['os_taxonomy_seo'] = array(
     '#type' => 'fieldset',

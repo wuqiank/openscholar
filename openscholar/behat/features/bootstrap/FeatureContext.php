@@ -1537,7 +1537,6 @@ class FeatureContext extends DrupalContext {
     $purl = !empty($purl) ? $purl . '/' : '';
 
     $path = "{$purl}taxonomy/term/{$tid}/edit";
-    throw new Exception("This page gives 404: $path");
     return array(
       new Step\When("I visit \"$path\""),
     );
