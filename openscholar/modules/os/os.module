@@ -696,7 +696,7 @@ function os_preprocess_page(&$vars) {
         }
       }
       else {
-        // Allow non-nodes context to use the add a settings link.
+        // Allow non-nodes context to use the settings link.
         if (!empty($a->export_module) && !empty($a->conditions['path']['values']) && !empty($a->settings_link)) {
           foreach ($a->conditions['path']['values'] as $path) {
             if (drupal_match_path($_GET['q'], $path)) {

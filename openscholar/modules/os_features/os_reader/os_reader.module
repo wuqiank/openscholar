@@ -787,7 +787,7 @@ function os_reader_importer_feed_create($form, $form_state) {
 }
 
 /**
- * Return commons form elements: vocabs for selection and bundles.
+ * Return commons form elements: vocabularies and bundles for selection.
  *
  * @param $values
  *  Default value of the form. Allowed values:
@@ -911,7 +911,7 @@ function _os_reader_importer_feed_create($items, $key) {
 }
 
 /**
- * Get RSS in xml format according to filter criteria.
+ * Get the node IDs according the the filter criteria.
  */
 function os_reader_importer_feed_export() {
   if (!empty($_GET['type']) && !empty($_GET['term'])) {
@@ -939,7 +939,7 @@ function os_reader_importer_feed_export() {
  *
  * @param $info
  *  Array of search criteria with of one of the next filters:
- *    - bundle: Array of bundles names.
+ *    - bundle: Array of bundles.
  *    - term: Array of term IDs.
  *
  * @return Array
@@ -991,7 +991,6 @@ function os_reader_context_load_alter(&$context) {
  * Create a predefined RSS feeds.
  */
 function os_reader_feed_settings($form, $form_settings) {
-
   $values = array(
     'content_types' => variable_get('os_rss_feed_content_types', array()),
     'selected_terms' => variable_get('os_rss_feed_vocabs', array()),
