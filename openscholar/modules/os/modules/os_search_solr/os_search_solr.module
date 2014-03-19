@@ -3,6 +3,26 @@
 include_once ('os_search_solr.features.inc');
 
 /**
+ * Implements hook_boxes_plugins().
+ */
+function os_search_solr_boxes_plugins() {
+  $plugins = array();
+
+  $plugins['os_search_solr_more_like_this'] = array(
+    'title' => t('More like this'),
+    'tags' => array('Content'),
+    'handler' => array(
+      'class' => 'os_search_solr_more_like_this',
+      'file' => 'os_search_solr_more_like_this.inc',
+      'path' => drupal_get_path('module', 'os_search_solr') . '/plugins/os_search_solr_more_like_this',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+
+  return $plugins;
+}
+
+/**
  * Implements hook_block_info().
  */
 function os_search_solr_block_info() {
@@ -895,3 +915,65 @@ function os_search_solr_get_bundle_vocabularies($bundle) {
   return $vocabularies;
 }
 
+/**
+ * Implements hook_apachesolr_field_mappings_alter().
+ */
+function os_search_solr_apachesolr_field_mappings_alter(&$mappings, $entity) {
+  $mappings['entityreference']['indexing_callback'] = 'os_search_solr_entityreference_indexing_callback';
+}
+
+/**
+ * OS search solr indexing for the entity reference field. The "more like this"
+ * block functionallity for terms is possible because the term reference
+ * indexing function indexed the terms names. We need to index the label of the
+ * entity when the entity reference field is referencing to taxonomy terms.
+ *
+ * @see https://drupal.org/node/2206633
+ */
+function os_search_solr_entityreference_indexing_callback($entity, $field_name, $index_key, $field_info) {
+  $fields = array();
+  if (!empty($entity->{$field_name}) && array_key_exists(LANGUAGE_NONE, $entity->$field_name)) {
+
+    // Gets entity type and index key. We need to prefix the ID with the entity
+    // type so we know what entity we are dealing with in the mapping callback.
+    $entity_type = $field_info['field']['settings']['target_type'];
+    $index_key = apachesolr_index_key($field_info);
+
+    // Iterates over all references and adds them to the fields.
+    foreach ($entity->{$field_name}[LANGUAGE_NONE] as $reference) {
+      if ($id = (!empty($reference['target_id'])) ? $reference['target_id'] : FALSE) {
+        $fields[] = array(
+          'key' => $index_key,
+          'value' => $entity_type . ':' . $id,
+        );
+      }
+
+      $ids[] = $id;
+    }
+
+    if ($entity_type == 'taxonomy_term') {
+      // Index the term names into a text field for MLT queries and keyword
+      // searching.
+      $terms = entity_load($entity_type, $ids);
+      foreach ($terms as $term) {
+        $vid = $term->vid;
+
+        $fields[] = array(
+          'key' => 'tm_vid_' . $vid . '_names',
+          'value' => $term->name,
+        );
+      }
+    }
+  }
+
+  return $fields;
+}
+
+/**
+ * Validate handler for the "More like this" block.
+ */
+function os_search_solr_more_like_this_bundles_element_validate($element, &$form_state) {
+  if (!$form_state['values']['results_from_type'] && empty($element['#value'])) {
+    form_error($element, t('You must select at least one node type when leaving the related posts checkbox un-checked.'));
+  }
+}
