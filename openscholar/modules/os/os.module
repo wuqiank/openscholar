@@ -692,7 +692,6 @@ function os_preprocess_page(&$vars) {
       if (isset($a->conditions['node']['values']) && $a->conditions['node']['options']['node_form'] == 0) {
         if (in_array($type, $a->conditions['node']['values'])) {
           $printed = TRUE;
-          $context = $a->name;
           $module  = $a->export_module;
         }
       }
@@ -702,7 +701,6 @@ function os_preprocess_page(&$vars) {
           foreach ($a->conditions['path']['values'] as $path) {
             if (drupal_match_path($_GET['q'], $path)) {
               // The path of the context match the current path.
-              $context = $a->name;
               $module  = $a->export_module;
             }
           }
