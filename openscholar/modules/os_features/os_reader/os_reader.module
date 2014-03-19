@@ -896,3 +896,17 @@ function os_reader_importer_feed_get_nids($type, $value) {
 
   return $nids;
 }
+
+/**
+ * Implements hook_context_load_alter().
+ */
+function os_reader_context_load_alter(&$context) {
+  if ($context->name != 'os_rss_feed') {
+    return;
+  }
+
+  // The context of the rss feed is not node context. Adding the export_module
+  // key and the settings_link key will add for the context a settings button.
+  $context->export_module = 'os_reader';
+  $context->settings_link = TRUE;
+}

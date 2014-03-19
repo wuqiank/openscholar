@@ -696,6 +696,18 @@ function os_preprocess_page(&$vars) {
           $module  = $a->export_module;
         }
       }
+      else {
+        // Allow non-nodes context to use the add a settings link.
+        if (!empty($a->export_module) && !empty($a->conditions['path']['values']) && !empty($a->settings_butotn)) {
+          foreach ($a->conditions['path']['values'] as $path) {
+            if (drupal_match_path($_GET['q'], $path)) {
+              // The path of the context match the current path.
+              $context = $a->name;
+              $module  = $a->export_module;
+            }
+          }
+        }
+      }
     }
 
     // Determine node create access.
