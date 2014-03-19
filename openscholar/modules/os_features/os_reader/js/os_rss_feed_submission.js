@@ -1,20 +1,16 @@
 /**
- * jQuery to toggle form elements according to content type.
+ * Handle the submission of the feed settings form.
  */
 
 (function($) {
 
-  Drupal.behaviors.os_rss_feed_list = {
-    attach : function(context) {
-      $("#edit-os-rss-feed-vocabs", context).addClass('select2-processed').find('.form-select:not(.select2-processed)').select2({
-        placeholder: Drupal.t("Click here to select terms"),
-        width: '20em'
-      });
-    }
-  };
-
   Drupal.behaviors.os_rss_feed_submition = {
     attach: function(context, settings) {
+
+      if (settings.submission_handle) {
+        return;
+      }
+
       $('#edit-submit').click(function(event) {
         event.preventDefault();
 

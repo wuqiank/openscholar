@@ -722,6 +722,7 @@ function os_reader_importer_feed_create($form, $form_state) {
   }
 
   $form = os_reader_importer_feed_element();
+  $form['#attached']['js'][] = drupal_get_path('module', 'os_reader') . '/js/os_rss_feed_submission.js';
 
   $form['actions'] = array(
     '#type' => 'actions',
@@ -779,7 +780,7 @@ function os_reader_importer_feed_element() {
           'url' => $base_url,
         )),
         libraries_get_path('select2') . '/select2.js',
-        drupal_get_path('module', 'os_reader') . '/js/os_rss_feed.js',
+        drupal_get_path('module', 'os_reader') . '/js/os_rss_feed_vocabs.js',
       ),
     ),
   );
