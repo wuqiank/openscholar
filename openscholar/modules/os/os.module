@@ -109,7 +109,6 @@ function os_menu_alter(&$items) {
   $items['user/login']['page callback'] = 'os_in_readonly_mode';
   $items['user/login']['page arguments'] = array('login');
   $items['user/register']['page callback'] = 'os_in_readonly_mode';
-  $items['user/register']['access callback'] = TRUE;
   $items['user/register']['page arguments'] = array('register');
   $items['user/password']['page callback'] = 'os_in_readonly_mode';
   $items['user/password']['page arguments'] = array('password');
