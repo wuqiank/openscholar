@@ -132,6 +132,7 @@ function os_context_default_contexts() {
           'module' => 'os',
           'delta' => 'primary-menu',
           'region' => 'menu_bar',
+        ),
         'boxes-vocabulary_filter' => array(
           'module' => 'boxes',
           'delta' => 'vocabulary_filter',
