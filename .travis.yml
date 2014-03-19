@@ -11,7 +11,7 @@ mysql:
 before_script:
   # Install Drush
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer global require drush/drush:6.2.0
+  - composer global require drush/drush:6.*
   # Install apache
   - sudo apt-get update
   - sudo apt-get install apache2
@@ -50,7 +50,6 @@ before_script:
   - mkdir -p sites/default/files
   - sudo chmod 777 /tmp -R
   - sudo chmod 777 sites/default -R
-  - curl https://gist.githubusercontent.com/amitaibu/9638119/raw/172fd4afde0266c0d31fcf4f578a13873ce68172/gistfile1.txt >> .htaccess
   - time drush si openscholar --account-pass=admin --db-url=mysql://root:@127.0.0.1/drupal openscholar_flavor_form.os_profile_flavor=development openscholar_install_type.os_profile_type=vsite --yes
   - drush vset purl_base_domain http://127.0.0.1
   - drush en os_migrate_demo -y
