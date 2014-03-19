@@ -665,7 +665,9 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 	display:inline;
 }
 
-
+.block-boxes-os_sv_list_box h3 a {
+	font-family:arial;
+	}
 
 /**
 LIST OF POSTS - PERSON TEASER IN SIDEBAR

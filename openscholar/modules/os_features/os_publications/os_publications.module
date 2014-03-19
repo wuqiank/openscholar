@@ -396,6 +396,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       $form['biblio_authors']['biblio_contributors'][$k]['auth_category']['#type'] = 'hidden';
     }
   }
+  unset($form['biblio_authors']['#title'], $form['biblio_authors']['#description']);
 
   // We're coming from biblio's ajax callback. It requires the form structure for authors be unchanged.
   if (isset($form_state['values']['op']) && $form_state['values']['op'] == t('Add author')) {
@@ -407,6 +408,12 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['body'][LANGUAGE_NONE][0]['summary']['#access'] = false;
   $form['biblio_tabs']['biblio_full_text']['body'] = $form['body'];
   unset($form['body']);
+
+  unset($form['biblio_tabs']['#type']);
+  foreach (element_children($form['biblio_tabs']) as $k => $t) {
+    unset($form['biblio_tabs'][$k]['#group']);
+  }
+
 
   // Take certain vtabs out of biblio vtabs and into the main form.
   // The vtabs we are pulling may contain fields we either want outside of vtabs
@@ -436,6 +443,8 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       unset($form['biblio_tabs'][$tab]);
     }
   }
+
+  $form['biblio_abst_e']['#weight'] = -1;
 
   // Add our related URL title field to the form
   // Place it next to the URL title field, which is in a vtab.
@@ -475,17 +484,52 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   // Hide the rest of the vtabs behind a collapsible fieldset.
   $form['publication_extras'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Publication Extras',
+    '#title' => 'Publication Details',
     '#weight' => 20,
     'biblio_tabs' => $form['biblio_tabs'],
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
 
+  foreach (array('field_biblio_extra' => 12, 'field_biblio_image' => 11, 'og_vocabulary' => 9) as $field => $weight) {
+    if (isset($form[$field])) {
+      $form['publication_extras'][$field] = $form[$field];
+      $form['publication_extras'][$field]['#weight'] = $weight;
+      unset($form[$field]);
+    }
+  }
+
+  $form['publication_extras']['biblio_tabs'][5]['#weight'] = 1;
+
+  foreach (element_children($form['publication_extras']['biblio_tabs']) as $k) {
+    $elem = &$form['publication_extras']['biblio_tabs'][$k];
+    if ($elem['#type'] == 'fieldset') {
+      $elem['#collapsible'] = FALSE;
+    }
+  }
+
+  dpm($form);
+  $tabs = &$form['publication_extras']['biblio_tabs'];
+  unset($tabs['biblio_full_text']['body'][LANGUAGE_NONE][0]['#title']);
+  unset($tabs[5]['#title']);
+  $tabs[5]['url']['#prefix'] = '<h4>'.t('Publisher\'s Version of Article').'</h4>';
+  $tabs[5]['url']['biblio_url']['#title'] = t('Link Text');
+  $tabs[5]['url']['biblio_url_title']['#title'] = t('Article URL');
+  unset($tabs[7]['biblio_notes']['#title']);
+  $form['publication_extras']['field_biblio_extra'][LANGUAGE_NONE][0]['label']['#title'] = t('Description');
+
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
 
   unset($form['biblio_tabs']);
+}
+
+/**
+ * Repositions form elements before nodeformcols does things to them.
+ * For some reason, doing this in node_form_alter wasn't working
+ */
+function os_publications_nodeformcols_pre_placement_alter(&$form) {
+  $form['biblio_abst_e']['#weight'] = 2;
 }
 
 /**
@@ -845,7 +889,11 @@ function os_publications_preprocess_page(&$variables) {
   ctools_include('infinite_scroll', 'os');
   _os_add_infinite_scroll('os_publications', '#content li.pager-next>a', '#content>.biblio-category-section', array('pager' => '#content ul.pager', 'hide_biblio_categories' => TRUE));
 
-
+  // Hide the numbers of results found for anonymous users.
+  if (user_is_anonymous()) {
+    unset($variables['page']['content']['system_main']['biblio_page']['header']['export_links']);
+  }
+  
   // Make sure both filters are there.
   if(!isset($menu['map'][1]) || !isset($menu['map'][2])) {
     return;

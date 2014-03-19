@@ -248,7 +248,7 @@ function os_importer_import_access($bundle, $feed = TRUE) {
     $source = feeds_source($bundle);
     $config = $source->importer->getConfig();
 
-    if (!$bundle = $config['processor']['config']['content_type']) {
+    if (!$config['processor']['config']['content_type']) {
       return FALSE;
     }
   }

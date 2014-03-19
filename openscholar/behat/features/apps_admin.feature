@@ -49,7 +49,7 @@ Feature:
        Then I should get a "200" HTTP response
 
     @api
-    Scenario: Check content editor without edit boxes permission can't edit
+    Scenario: Check content editor without edit widgets permission can't edit
       Given I am logging in as "john"
        When I give the user "klark" the role "content editor" in the group "john"
         And I go to "john/cp/users/permissions"
@@ -57,7 +57,7 @@ Feature:
         And I press "Confirm"
         And I go to "john/cp/users/permissions"
        Then I should see the button "Save permissions"
-        And I remove the role "content editor" in the group "john" the permission "Edit boxes"
+        And I remove the role "content editor" in the group "john" the permission "Edit widgets"
         And I click "Log out"
         And I am logging in as "klark"
         And I go to "john/os/widget/boxes/os_addthis/edit"

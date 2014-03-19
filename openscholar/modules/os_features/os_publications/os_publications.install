@@ -1108,3 +1108,21 @@ function os_publications_update_7018() {
 
   features_revert($revert);
 }
+
+/**
+ * Reverting publications user permission.
+ */
+function os_publications_update_7019() {
+  $revert = array('os_publications' => array('user_permission'));
+
+  features_revert($revert);
+}
+
+/**
+ * Reverting publications user permission.
+ */
+function os_publications_update_7020() {
+  $revert = array('os_publications' => array('user_permission'));
+
+  features_revert($revert);
+}

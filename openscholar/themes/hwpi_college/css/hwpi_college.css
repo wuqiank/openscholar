@@ -408,8 +408,7 @@ h1#page-title {
 	margin-bottom: 20px;
 }
 
-.front #content-column .block.block-boxes-os_boxes_rand_widget,
-.block.block-boxes-os_boxes_rand_widget,
+
 .not-front #content-column .block.block-boxes-os_boxes_columns,
 .front #content-column .block.block-boxes-os_boxes_columns,
 .block-boxes-os_boxes_tabs .block,
@@ -429,14 +428,6 @@ h1#page-title {
   padding-top:12px;
 }
 
-
-#content-panels .block-boxes-os_boxes_rand_widget .block-inner:first-child {
-	padding-top:0;
-}
-
-#content-panels .block-boxes-os_boxes_rand_widget .block-inner:first-child .block .block-inner {
-	padding-top:15px;
-}
 
 #content-panels .block-inner {
     margin-top: 0;
@@ -461,7 +452,7 @@ h1#page-title {
     padding-bottom: 1em;
 }
 
-.block-boxes-os_boxes_rand_widget h2.block-title,
+
 h2.block-title {
     background: none repeat scroll 0 0 transparent;
  	color: #1F1F1F;
@@ -472,13 +463,6 @@ h2.block-title {
     line-height: 16px;
     text-transform: uppercase;
     padding-bottom: 1em;
-}
-
-
-.block-boxes-os_boxes_rand_widget h2.block-title {
-
-    font-size: 0.78em !important;
-  
 }
 
 .region-sidebar-second {
