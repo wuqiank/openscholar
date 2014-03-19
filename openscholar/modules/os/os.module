@@ -73,6 +73,7 @@ function os_menu() {
     'page callback' => 'os_boxes_placeholder',
     'type' => MENU_LOCAL_TASK,
     'file' => 'os_boxes.admin.inc',
+    'file path' => drupal_get_path('module', 'os_boxes'),
     'context' => MENU_CONTEXT_INLINE,
     'weight' => 1,
     'menu_name' => 'widgets',
@@ -694,8 +695,18 @@ function os_preprocess_page(&$vars) {
       if (isset($a->conditions['node']['values']) && $a->conditions['node']['options']['node_form'] == 0) {
         if (in_array($type, $a->conditions['node']['values'])) {
           $printed = TRUE;
-          $context = $a->name;
           $module  = $a->export_module;
+        }
+      }
+      else {
+        // Allow non-nodes context to use the settings link.
+        if (!empty($a->export_module) && !empty($a->conditions['path']['values']) && !empty($a->settings_link)) {
+          foreach ($a->conditions['path']['values'] as $path) {
+            if (drupal_match_path($_GET['q'], $path)) {
+              // The path of the context match the current path.
+              $module  = $a->export_module;
+            }
+          }
         }
       }
     }
@@ -931,12 +942,14 @@ function os_form_node_form_alter(&$form, $form_state) {
 
   unset($form['additional_settings']);
   foreach (element_children($form) as $c) {
+    if (isset($form[$c]['#type']) && $form[$c]['#type'] == 'fieldset' && isset($form[$c]['#group'])) {
+      $form[$c]['#collapsed'] = true;
+    }
     unset($form[$c]['#group']);
   }
 
   $form['actions_top'] = $form['actions'];
 }
-
 
 /**
  * Page argument; passed to drupal_get_form in os_menu().

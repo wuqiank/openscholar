@@ -503,10 +503,6 @@ function cp_content_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['spaces'] = array(
-    'type' => 'spaces_og',
-    'frontpage' => 0,
-  );
   /* Field: Content: Type */
   $handler->display->display_options['fields']['type']['id'] = 'type';
   $handler->display->display_options['fields']['type']['table'] = 'node';
@@ -683,7 +679,7 @@ function cp_content_views_default_views() {
     ),
     'timestamp' => array(
       'sortable' => 1,
-      'default_sort_order' => 'asc',
+      'default_sort_order' => 'desc',
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
@@ -877,6 +873,12 @@ function cp_content_views_default_views() {
   $handler->display->display_options['filters']['status']['value'] = array(
     1 => '1',
   );
+  /* Filter criterion: File Usage: Module */
+  $handler->display->display_options['filters']['module']['id'] = 'module';
+  $handler->display->display_options['filters']['module']['table'] = 'file_usage';
+  $handler->display->display_options['filters']['module']['field'] = 'module';
+  $handler->display->display_options['filters']['module']['operator'] = '!=';
+  $handler->display->display_options['filters']['module']['value'] = 'imagefield_crop';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');

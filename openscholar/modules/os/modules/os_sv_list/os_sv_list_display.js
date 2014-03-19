@@ -9,26 +9,14 @@
     attach: function (ctx) {
     	
       // add a click handler to lists of posts
-      $(ctx).find('.block-boxes-os_sv_list_box', ctx).click(click_handler).each(function () {
+      $('.os-sv-list', ctx).closest('.boxes-box-content').click(click_handler).each(function () {
         // save the current page to our cache
         // get the delta of the box and the page, and store them that way
         var page_elem = $(this).find('[data-page]'),
           page = page_elem.attr('data-page'),
           delta = page_elem.attr('data-delta');
         
-        data[delta] = {};
-        data[delta][page] = page_elem.parent().html();
-      });
-      
-      // add a click handler to lsits of files
-      $(ctx).find('.block-boxes-os_sv_list_file', ctx).click(click_handler).each(function () {
-        // save the current page to our cache
-        // get the delta of the box and the page, and store them that way
-        var page_elem = $(this).find('[data-page]'),
-          page = page_elem.attr('data-page'),
-          delta = page_elem.attr('data-delta');
-        
-        data[delta] = {};
+        data[delta] = data[delta] || {};
         data[delta][page] = page_elem.parent().html();
       });
       
@@ -49,7 +37,7 @@
         
         // get data from the cache
         if (typeof data[delta][args.page] != 'undefined') {
-          var parent = $(e.currentTarget).find('.boxes-box-content').html(data[delta][args.page]);
+          var parent = $(e.target).closest('.boxes-box-content').html(data[delta][args.page]);
           Drupal.attachBehaviors(parent);
         }
         // if it doesn't exist, we have to ask the server for it
@@ -69,7 +57,7 @@
             },
             success: function (commands, status, xhr) {
               var html, i,
-              parent = $(e.currentTarget).find('.boxes-box-content');
+              parent = $(e.currentTarget);
               
               for (i in commands) {
                 if (commands[i].command == 'insert' 
@@ -84,7 +72,7 @@
               parent.html(html);
               Drupal.attachBehaviors(parent);
               // and add it to our cache so we won't have to request it again
-              var page = parent.find('[data-page]').attr('data-page');
+              var page = parseInt(parent.find('[data-page]').attr('data-page'));
               data[delta][page] = html;
               $(e.currentTarget).find('.ajax-progress').remove();
             }

@@ -45,7 +45,6 @@ dependencies[] = title
 dependencies[] = token
 dependencies[] = pathauto
 dependencies[] = biblio
-dependencies[] = advanced_help
 dependencies[] = jquery_update
 dependencies[] = redirect
 
