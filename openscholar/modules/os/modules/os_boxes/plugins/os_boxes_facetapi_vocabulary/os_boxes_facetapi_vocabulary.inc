@@ -147,7 +147,8 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
     if (empty($block['content'])) {
       // Block content must be defined, even if it is empty, to avoid errors.
-      $block['content'] = '';
+      // It also need to be some text, otherwise we get errors.
+      $block['content'] = '<nothing>';
     }
     else {
       if (!empty($this->options['vocabularies'])) {
