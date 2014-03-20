@@ -221,9 +221,9 @@ function cp_user_change_site_owner_form($form_state) {
   $form['site_owner_name'] = array(
     '#type' => 'textfield',
     '#title' => t('User name'),
-    '#autocomplete_path' => 'user/autocomplete',
+    '#autocomplete_path' => 'cp/users/change_site_owner_autocomplete',
     '#required' => TRUE,
-    '#description' => t('Select the group member that will be the site owner.'),
+    '#description' => t('Select the site member.'),
   );
 
   // Builds and returns a confirmation form.
@@ -236,6 +236,23 @@ function cp_user_change_site_owner_form($form_state) {
 }
 
 /**
+ * Validate function; Verify the new owner of the site belong is a site member.
+ */
+function cp_user_change_site_owner_form_validate($form, &$form_state) {
+  $space = spaces_get_space();
+
+  preg_match("/.+\((\d+)\)/", $form_state['values']['site_owner_name'], $matches);
+  $uid = $matches[1];
+
+  if (!og_get_membership('node', $space->group->nid, 'user', $uid)) {
+    form_set_error('site_owner_name', t('The selected user is a group member.'));
+    return;
+  }
+
+  $form_state['uid'] = $uid;
+}
+
+/**
  * Submit callback; Changes owner of the site after confirmation.
  */
 function cp_user_change_site_owner_form_submit($form, &$form_state) {
@@ -244,21 +261,17 @@ function cp_user_change_site_owner_form_submit($form, &$form_state) {
   $gid = $form_state['values']['gid'];
   $new_owner_name = $form_state['values']['site_owner_name'];
 
-  // Get the new owner's uid.
-  $new_owner = user_load_by_name($new_owner_name);
-  $uid = $new_owner->uid;
-
   $node = node_load($gid);
 
   // Make sure previous owner remains "vsite admin".
   _cp_user_set_role($node->uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
 
   // Set site owner (VSite manager).
-  $node->uid = $uid;
+  $node->uid = $form_state['uid'];
   node_save($node);
 
   // Give the new owner the "vsite admin" role and revoke other roles.
-  _cp_user_set_role($uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
+  _cp_user_set_role($form_state['uid'], $gid, OS_USER_ROLE_ADMIN, $bundle);
 
   // Set the message and redirect back to the cp/users page
   $site = $form_state['values']['site_name'];
