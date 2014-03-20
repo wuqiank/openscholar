@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * @file
+ * Assert all taxonomy term aliases are prefixed with PURL.
+ *
+ * Usage:
+ *   drush scr update_taxonomy_alias.php
+ */
+
+if (!drupal_is_cli()) {
+  // Prevent invoking script from browser.
+  return;
+}
+
 $results = db_select('url_alias', 'u')
   ->fields('u')
   ->condition('source', '%taxonomy/term%', 'LIKE')
