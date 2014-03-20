@@ -745,7 +745,6 @@ function vsite_preset_spaces_presets() {
     'og_tasks' => array(
       0 => 'vsite_preset_section_about',
       1 => 'vsite_preset_section_program',
-      2 => 'vsite_preset_section_speakers',
       3 => 'vsite_preset_section_register',
       4 => 'vsite_preset_section_logistics',
       5 => 'vsite_preset_menu_order',
@@ -753,9 +752,8 @@ function vsite_preset_spaces_presets() {
     'variable' => array(
       'vsite_preset_menu_order' => array(
         'primary-menu' => array(
-          'HOME' => -6,
-          'Program' => -5,
-          'Speakers' => -4,
+          'HOME' => -5,
+          'Program' => -4,
           'Register' => -3,
           'Logistics' => -2,
           'About' => -1,
