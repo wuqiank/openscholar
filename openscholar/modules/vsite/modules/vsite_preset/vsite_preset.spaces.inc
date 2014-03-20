@@ -752,8 +752,9 @@ function vsite_preset_spaces_presets() {
     'variable' => array(
       'vsite_preset_menu_order' => array(
         'primary-menu' => array(
-          'HOME' => -5,
-          'Program' => -4,
+          'HOME' => -6,
+          'Program' => -5,
+          'Speakers' => -4,
           'Register' => -3,
           'Logistics' => -2,
           'About' => -1,
