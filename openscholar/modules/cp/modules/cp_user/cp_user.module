@@ -54,6 +54,16 @@ function cp_user_menu() {
     'file' => 'cp_user.pages.inc',
   );
 
+  // @todo: Is access should be limited to site owner?
+  $items['cp/users/change_site_owner'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => 'Change site owner',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cp_user_change_site_owner_form'),
+    'access callback' => 'cp_user_admin_access',
+    'file' => 'cp_user.pages.inc',
+  );
+
   $items['cp/users/permissions'] = array(
     'type' => MENU_LOCAL_TASK,
     'title' => 'Permissions',
@@ -491,6 +501,7 @@ function cp_user_admin_paths() {
     'cp/users/edit_membership/*' => TRUE,
     'cp/users/delete_membership/*' => TRUE,
     'cp/users/add' => TRUE,
+    'cp/users/change_site_owner' => TRUE,
   );
 
   return $paths;

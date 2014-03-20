@@ -15,9 +15,10 @@ function cp_user_get_member_rows($gid) {
 
   // Defines end-user text for these values.
   $default_status = t('Active');
-  $owner_role = t('Manager');
+  $owner_role = t('Site owner');
   $role_edit_text = t('edit');
   $status_edit_text = t('remove');
+  $change_site_owner_text = t('change');
 
   // Loads information for each member of the vsite.
   $member_uids = cp_user_get_member_uids($gid);
@@ -37,8 +38,9 @@ function cp_user_get_member_rows($gid) {
     // If the user is the owner, return a special row with no edit links.
     if ($is_owner) {
       $role = $owner_role;
-      $role_edit_link = '';
       $status_edit_link = '';
+      $options = array('attributes' => array('class' => array('cp-user-float-right')));
+      $role_edit_link = l($change_site_owner_text, "cp/users/change_site_owner", $options);
     }
 
     // Otherwise, checks the current user's OG roles.
@@ -195,6 +197,72 @@ function cp_user_remove_membership_confirm_submit($form, &$form_state) {
   $site_name = $form_state['values']['site_name'];
   // Set the message and redirect back to the cp/users page
   drupal_set_message(t('Member <em>@user</em> has been removed from <em>@site</em>', array('@user' => $user_name, '@site' => $site_name)));
+  drupal_goto('cp/users');
+}
+
+/**
+ * Form builder; Builds the "Change site owner" form.
+ */
+function cp_user_change_site_owner_form($form_state) {
+  $space = spaces_get_space();
+  $site = $space->group->title;
+
+  // Form sets.
+  $form['gid'] = array('#type' => 'value', '#value' => $space->group->nid);
+  $form['bundle'] = array('#type' => 'value', '#value' => $space->group->type);
+  $form['site_name'] = array('#type' => 'value', '#value' => $site);
+
+  $form['title'] = array(
+    '#type' => 'markup',
+    '#markup' => t('<h2>Make an existing member the site owner</h2>'),
+    '#weight' => 0,
+  );
+
+  $form['site_owner_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('User name'),
+    '#autocomplete_path' => 'user/autocomplete',
+    '#required' => TRUE,
+    '#description' => t('Select the group member that will be the site owner.'),
+  );
+
+  // Builds and returns a confirmation form.
+  $question = t('Change the owner of the site <em>@site</em>', array('@site' => $site));
+  $path = 'cp/users';
+  $description = ' ';
+  $yes = t('Save');
+  $no = t('Cancel');
+  return confirm_form($form, $question, $path, $description, $yes, $no);
+}
+
+/**
+ * Submit callback; Changes owner of the site after confirmation.
+ */
+function cp_user_change_site_owner_form_submit($form, &$form_state) {
+  // Accesses values from the form.
+  $bundle = $form_state['values']['bundle'];
+  $gid = $form_state['values']['gid'];
+  $new_owner_name = $form_state['values']['site_owner_name'];
+
+  // Get the new owner's uid.
+  $new_owner = user_load_by_name($new_owner_name);
+  $uid = $new_owner->uid;
+
+  $node = node_load($gid);
+
+  // Make sure previous owner remains "vsite admin".
+  _cp_user_set_role($node->uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
+
+  // Set site owner (VSite manager).
+  $node->uid = $uid;
+  node_save($node);
+
+  // Give the new owner the "vsite admin" role and revoke other roles.
+  _cp_user_set_role($uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
+
+  // Set the message and redirect back to the cp/users page
+  $site = $form_state['values']['site_name'];
+  drupal_set_message(t('The user <em>@user</em> is now the owner of the site <em>@site</em>.', array('@user' => $new_owner_name, '@site' => $site)));
   drupal_goto('cp/users');
 }
 
