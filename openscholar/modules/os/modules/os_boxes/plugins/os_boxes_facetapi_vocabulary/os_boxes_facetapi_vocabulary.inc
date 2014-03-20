@@ -74,11 +74,6 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    * without showing the results.
    */
   public function call_empty_search_if_needed($delta) {
-    if (apachesolr_has_searched('solr')) {
-      // Search was executed already.
-      return;
-    }
-
     if (!$feature = os_get_active_feature()) {
       // No active feature.
       return;
@@ -95,8 +90,14 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     // Execute the query.
     try {
       $page_id = 'browse_' . $browse_page;
-      $solr = apachesolr_get_solr('solr');
       $search_page = apachesolr_search_page_load($page_id);
+      $env_id = $search_page['env_id'];
+
+      if (apachesolr_has_searched($env_id)) {
+        // Search was executed already.
+        return;
+      }
+      $solr = apachesolr_get_solr($env_id);
 
       $conditions = apachesolr_search_conditions_default($search_page);
 
