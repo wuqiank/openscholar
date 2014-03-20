@@ -2947,7 +2947,7 @@ function vsite_og_permission() {
     ),
     'edit boxes' => array(
       'title' => t('Edit widgets'),
-      'description' => t('Edit existing boxes.'),
+      'description' => t('Edit existing widgets.'),
       'os_override' => TRUE,
     ),
   );
