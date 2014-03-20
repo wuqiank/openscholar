@@ -9,8 +9,6 @@ mysql:
   encoding: utf8
 
 before_script:
-  - phpenv config-add openscholar/behat/travis.ini
-  # Install Drush
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - composer global require drush/drush:6.2.0
   # Install apache
