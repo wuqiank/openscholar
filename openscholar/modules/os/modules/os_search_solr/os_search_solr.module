@@ -133,15 +133,11 @@ function os_search_solr_apachesolr_query_alter(DrupalSolrQueryInterface $query) 
 function os_search_solr_get_searcher_name() {
   $searcher_name = '';
   if(module_exists('facetapi')) {
-	// Get the searcher info.
-    $searcher_array = facetapi_get_searcher_info();
-    // First element is the default.
-    $search = array_shift($searcher_array);
-    if(array_key_exists('name', $search)) {
-      $searcher_name = $search['name'];
-    }
+    $environments = apachesolr_load_all_environments();
+    $default = apachesolr_default_environment();
+    // Prefix seems to be hardcoded in facetapi code.
+    $searcher_name = 'apachesolr@' . $environments[$default]['name'];
   }
-
   return $searcher_name;
 }
 
