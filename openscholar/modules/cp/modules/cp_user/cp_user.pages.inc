@@ -39,13 +39,18 @@ function cp_user_get_member_rows($gid) {
     if ($is_owner) {
       $role = $owner_role;
       $status_edit_link = '';
+
+      $options = array('attributes' => array('class' => array('cp-user-change-site-owner')));
+      $change_ownership = l($change_site_owner_text, "cp/users/change_site_owner", $options);
+
       $options = array('attributes' => array('class' => array('cp-user-float-right')));
-      $role_edit_link = l($change_site_owner_text, "cp/users/change_site_owner", $options);
+      $role_edit_link = l($role_edit_text, "cp/users/edit_membership/{$uid}", $options);
     }
 
     // Otherwise, checks the current user's OG roles.
     // The member's role could be one of: Vsite admin, Content Editor, or Member.
     else {
+      $change_ownership = '';
       $human_name = TRUE;
       $role = _cp_user_get_role($uid, $vsite->group->nid, $human_name);
       $options = array('attributes' => array('class' => array('cp-user-float-right')));
@@ -58,7 +63,7 @@ function cp_user_get_member_rows($gid) {
     $row = array(
       'name' => $name,
       'username' => $user->name,
-      'role' => $role . $role_edit_link,
+      'role' => $role . $role_edit_link . $change_ownership,
       'status' => $default_status . $status_edit_link,
     );
 
