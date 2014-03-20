@@ -26,7 +26,7 @@ function os_help_get_variables_from_id($type, $id) {
   switch ($type) {
     case 'path':
       $links = array(
-        'cp/appearance' => array('url' => '', 'title' => ''),
+        'cp/appearance' => array('url' => 'http://docs.openscholar.harvard.edu/managing-look-your-site', 'title' => 'Manage Appearance'),
         'cp/build' => array('url' => 'http://docs.openscholar.harvard.edu/content-apps-and-widgets', 'title' => 'Apps'),
         'cp/build/apps' => array('url' => 'http://docs.openscholar.harvard.edu/content-apps-and-widgets', 'title' => 'Apps'),
         'cp/build/layout' => array('url' => '', 'title' => ''),
