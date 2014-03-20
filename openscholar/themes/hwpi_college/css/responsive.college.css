@@ -10,6 +10,11 @@ ul.mobile-buttons {
     padding: 0 20px !important;
 }
 
+#columns .block-boxes-os_boxes_columns .region-inner {
+ 	padding:0 !important;
+}
+
+
 #columns .sidebar .region-inner {
     padding: 0 20px 20px 0 !important;
 }
