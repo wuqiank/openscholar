@@ -628,7 +628,16 @@ function os_events_url_outbound_alter(&$path, &$options, $original_path) {
   $data = explode('/', $original_path);
   $path = $data[0];
 
-  $format = array('year' => 'Y', 'month' => 'Y-m', 'week' => 'Y-\W', 'day' => 'Y-m-d');
+  // The format for week, "Y-\WW-1", is interpreted by date functions like so:
+  // The string consists of three parts delimited by dashes "-",
+  // The first part "Y" stands for the year in 4 digits,
+  // The second part "\WW" is actually "\W" and "W", meaning the first W is
+  // escaped and would be written as "W" and the second W is not escaped and
+  // thus stands for the number of the week,
+  // The third part "1" stands for the day of the week, starting from Monday.
+  // So the result of "Y-\WW-1" is for example "2014-W05-1", which strtotime()
+  // interprets as: Monday of the 5th week of 2014.
+  $format = array('year' => 'Y', 'month' => 'Y-m', 'week' => 'Y-\WW-1', 'day' => 'Y-m-d');
   $date_format = new DateTime;
 
   if (isset($_GET[$data[1]])) {
@@ -642,12 +651,7 @@ function os_events_url_outbound_alter(&$path, &$options, $original_path) {
     $date_format->setTimestamp($time);
   }
 
-  if ($data[1] == 'week') {
-    $date = date_format($date_format, $format[$data[1]]) . date_week(date_format($date_format, 'Y-m-d'));
-  }
-  else {
-    $date = date_format($date_format, $format[$data[1]]);
-  }
+  $date = date_format($date_format, $format[$data[1]]);
 
   $type = $data[1];
 
