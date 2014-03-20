@@ -416,6 +416,10 @@ body.page-cp.page-cp-account #messages {
 
 
 /* PUBLICATIONS SETTING FORM IN MODAL */
+
+fieldset .fieldset-legend {text-transform:none;}
+
+
 .os_publications-customize-form .column-left,
 .os_publications-customize-form #comment_settings {
 	float:left;
@@ -537,8 +541,13 @@ background: none;
 padding-left: 0;
 }
 
-table#field-biblio-extra-values tr,
-table#field-biblio-extra-values th,
+
+ 
+
+
+.field-name-field-biblio-extra table.field-multiple-table,
+.field-name-field-biblio-extra table.field-multiple-table tr,
+.field-name-field-biblio-extra table.field-multiple-table th,
 html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper fieldset {
 background-color: #FFF;
 border:none;
@@ -615,6 +624,8 @@ form.node-form fieldset {
 
 /* Shrinks the biblio node form to take up less vertical space. */
 
+
+.field-name-field-biblio-extra table.field-multiple-table td .form-item.form-type-textfield,
 #field-biblio-extra-values td .form-item.form-type-textfield {
 	float: left;
 	width:43%;
@@ -706,14 +717,17 @@ form.node-form.overlay-processed .form-region-right  fieldset.collapsed .fieldse
      width: 89%;
 }
 
+
+
 html.js .form-region-right  fieldset.collapsible .fieldset-legend {
     background: url("../../../../../misc/menu-expanded.png") no-repeat scroll 5px 9px #F5F5F5;
  
 }
 
-
+.form-region-main a.fieldset-title,
 form.node-form.overlay-processed .form-region-right .fieldset-title {
      font-size: 1.08em;
+     font-weight: normal;
 }
 
 form.node-form.overlay-processed {
