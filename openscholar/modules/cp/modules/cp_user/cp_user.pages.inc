@@ -18,7 +18,7 @@ function cp_user_get_member_rows($gid) {
   $owner_role = t('Site owner');
   $role_edit_text = t('edit');
   $status_edit_text = t('remove');
-  $change_site_owner_text = t('change');
+  $change_site_owner_text = t('Change owner');
 
   // Loads information for each member of the vsite.
   $member_uids = cp_user_get_member_uids($gid);
