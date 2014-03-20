@@ -13,6 +13,14 @@ define('CP_MENU_OFF', 'off');
 define('CP_MENU_MINI', 'mini');
 define('CP_MENU_FULL', 'full');
 
+
+/**
+ * Theme callback for admin pages when the CP theme isn't applied.
+ */
+function cp_theme_name() {
+  return 'cp_theme';
+}
+
 /**
  * Defines the default maximum number of allowed URL redirects per site.
  */

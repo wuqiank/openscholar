@@ -559,6 +559,7 @@ function vsite_preset_spaces_presets() {
         'os_classes' => '1',
       ),
       'spaces_features_available' => array(
+        'os_biocv',
         'os_blog',
         'os_booklets',
         'os_classes',

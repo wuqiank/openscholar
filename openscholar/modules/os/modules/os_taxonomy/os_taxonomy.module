@@ -1310,7 +1310,7 @@ function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = N
   $query = os_taxonomy_count_attached_entities_query_object($tid, $bundles);
 
   if (module_exists('nodeorder')) {
-    $query->leftJoin('taxonomy_term_data', 't', 'ogv.og_vocabulary_target_id = t.tid');
+    $query->leftJoin('taxonomy_index', 't', '(ogv.entity_type = :node_order_type AND ogv.entity_id = t.nid)', array(':node_order_type' => 'node'));
     $query->orderBy('t.weight', 'ASC');
   }
 
