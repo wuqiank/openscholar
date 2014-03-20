@@ -55,8 +55,8 @@ function cp_content_views_pre_render(&$view) {
 function cp_content_add_page_access() {
   $bundles = os_get_bundles();
   foreach ($bundles as $type => $name) {
-    if (node_hook($type, 'form') && node_access('create', $type)) {
-      return TRUE;
+    if (node_hook($type, 'form') && $item = menu_get_item('node/add/'.$type)) {
+      return $item['access'];
     }
   }
   if (user_access('administer content types')) {
