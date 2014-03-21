@@ -3156,24 +3156,33 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
         if (isset($form_state['values'][$name])) {
           $value = $form_state['values'][$name];
           $property = isset($info['property']) ? $info['property'] : $name;
-          if (isset($info['use_set'])) {
-            $wrapper->{$property}->set($value);
+          $old_value = $wrapper->{$property}->value();
+          if ($old_value != $value) {
+            if (isset($info['use_set'])) {
+              $wrapper->{$property}->set($value);
+              $modified = TRUE;
+            }
+            else {
+              $wrapper->{$property} = $value;
+              $modified = TRUE;
+            }
           }
-          else {
-            $wrapper->{$property} = $value;
-          }
-          $modified = TRUE;
         }
         break;
     }
   }
 
+  // Only saves wrapper and clears metatag cache when the values have changed.
   if ($modified) {
     $wrapper->save();
-    if (function_exists('metatag_metatags_cache_clear') && isset($vsite->group->type, $vsite->group->nid)) {
-      // @TODO Find correct $cid for just this entity.
-      cache_clear_all('*', 'cache_metatag', TRUE);
-    }
+    // Clear the cache so that the the new tags are available immediately.
+    // @TODO: Further restrict cache ID by active domain or vsite?
+    // Cache ID for a standard domain site looks like:
+    //
+    //   "output:global:frontpage:en:200:http:basedomain.com:/"
+    //
+    // Investigate: How do multiple standard-domain sites differentiate $cid?
+    cache_clear_all('output:global:frontpage:*', 'cache_metatag', TRUE);
   }
 }
 
