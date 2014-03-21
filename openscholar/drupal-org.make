@@ -283,6 +283,7 @@ projects[og_views][version] = 1.0
 projects[og_vocab][subdir] = "contrib"
 projects[og_vocab][version] = 1.2
 projects[og_vocab][patch][] = "https://drupal.org/files/issues/og-vocab-reset-to-alpahbetical-2174907-4.patch"
+projects[og_vocab][patch][] = "https://raw.github.com/openscholar/openscholar/a1e60e2a0b016982dba29c83017e8613fec53cea/patches/og_vocab.nested_field.patch"
 
 projects[olark][subdir] = "contrib"
 projects[olark][version] = 1.0-beta1
