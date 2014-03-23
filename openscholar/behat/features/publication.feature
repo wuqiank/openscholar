@@ -17,7 +17,7 @@ Feature:
      Then response header "x-drupal-cache" should be "HIT"
       And cache is "disabled" for anonymous users
 
-  @api @foo
+  @api
   Scenario: Test the Authors field in Publication form
     Given I am logging in as "john"
      When I edit the node "The Little Prince"
