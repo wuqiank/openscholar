@@ -122,7 +122,7 @@ class os_search_solr_more_like_this extends os_boxes_default {
 
     if (!$environment = apachesolr_environment_load($env)) {
       // A default environment was not found. Return early.
-      drupal_set_message(t('A default Apache solr environment is not defined.'), 'error');
+      drupal_set_message(t("A default Apache solr environment isn't defined."), 'error');
       return;
     }
 
