@@ -9,9 +9,8 @@ mysql:
   encoding: utf8
 
 before_script:
-  # Install Drush
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer global require drush/drush:6.*
+  - composer global require drush/drush:6.2.0
   # Install apache
   - sudo apt-get update
   - sudo apt-get install apache2

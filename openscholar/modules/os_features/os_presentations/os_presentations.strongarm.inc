@@ -62,6 +62,13 @@ function os_presentations_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'diff_show_preview_changes_node_presentation';
+  $strongarm->value = 0;
+  $export['diff_show_preview_changes_node_presentation'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'menu_options_presentation';
   $strongarm->value = array(
     0 => 'main-menu',

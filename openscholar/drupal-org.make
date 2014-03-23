@@ -351,6 +351,7 @@ projects[spaces][subdir] = "contrib"
 projects[spaces][revision] = "eac3a7e"
 projects[spaces][patch][] = "http://drupal.org/files/1470434-spaces-og-28.patch"
 projects[spaces][patch][] = "http://drupal.org/files/spaces_ui-show_disabled-1662918-1.patch"
+projects[spaces][patch][] = "https://raw.github.com/openscholar/openscholar/5a4fe7c322656962de9037e3c2a29e9e5fac41f7/patches/spaces.disabled_features.patch"
 projects[spaces][download][type] = git
 projects[spaces][download][branch] = 7.x-3.x
 projects[spaces][download][revision] = eac3a7e
@@ -386,9 +387,7 @@ projects[views_bulk_operations][subdir] = "contrib"
 projects[views_bulk_operations][version] = 3.0
 
 projects[views_og_cache][subdir] = "contrib"
-projects[views_og_cache][download][type] = git
-projects[views_og_cache][download][branch] = 7.x-1.x-dev
-projects[views_og_cache][download][revision] = dddbfa2
+projects[views_og_cache][version] = 1.0
 
 projects[views_slideshow][subdir] = "contrib"
 projects[views_slideshow][version] = 3.0

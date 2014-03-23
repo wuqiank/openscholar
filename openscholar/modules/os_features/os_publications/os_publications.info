@@ -79,6 +79,7 @@ features[variable][] = comment_default_per_page_biblio
 features[variable][] = comment_form_location_biblio
 features[variable][] = comment_preview_biblio
 features[variable][] = comment_subject_field_biblio
+features[variable][] = diff_show_preview_changes_node_biblio
 features[variable][] = menu_options_biblio
 features[variable][] = menu_parent_biblio
 features[variable][] = node_options_biblio

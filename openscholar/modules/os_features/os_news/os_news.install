@@ -66,3 +66,17 @@ function os_news_update_7004() {
 
   features_revert($revert);
 }
+
+/**
+ * Refreshes exported field and image for News app
+ */
+function os_news_update_7005() {
+  $revert = array(
+    'os_news' => array(
+      'image',
+      'field_instance',
+    )
+  );
+
+  features_revert($revert);
+}

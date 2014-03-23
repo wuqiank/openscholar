@@ -1877,6 +1877,9 @@ function vsite_mail_alter(&$message){
       // Alter the message body.
       $message['body'][0] = t("Dear !firstname,\n\nA site owner at the !site website has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This login can be used only once.)\n\nYour username is: !username \n\nAfter setting your password with the included link, you will be able to log in at !futurelogin in the future.\n\nSincerely,\nThe !site Team", $replacements);
       break;
+    case 'contact_page_mail':
+      $message['headers']['Sender'] = $message['headers']['Return-Path'] = $message['headers']['From'];
+      break;
   }
 }
 
@@ -2553,6 +2556,7 @@ function _vsite_add_site_link($title, $description, $parent = NULL, $options = a
       'attributes' => array(
         'data-tooltip' => $description,
       ),
+      'html' => FALSE,
     ),
   );
 
@@ -2943,7 +2947,7 @@ function vsite_og_permission() {
     ),
     'edit boxes' => array(
       'title' => t('Edit widgets'),
-      'description' => t('Edit existing boxes.'),
+      'description' => t('Edit existing widgets.'),
       'os_override' => TRUE,
     ),
   );
@@ -3075,7 +3079,7 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
         '#default_value' => $vsite->group->title,
         '#description' => t('Your site\'s official title, as displayed in your Site info widget, in search results, and in browser tabs.'),
       ),
-      'vsite_meta_description' => array(
+      'field_meta_description' => array(
         '#type' => 'textarea',
         '#rows' => 2,
         '#title' => t('Meta description'),
@@ -3106,12 +3110,10 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
   // For personal sites only, allow an author link.
   if ($vsite->group->type == 'personal') {
     $fieldset['vsite_seo']['vsite_head_link_rel_author'] = array(
-      'form' => array(
-        '#type' => 'textfield',
-        '#title' => t('Author URL'),
-        '#default_value' => variable_get('vsite_head_link_rel_author', ''),
-        '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
-      ),
+      '#type' => 'textfield',
+      '#title' => t('Author URL'),
+      '#default_value' => variable_get('vsite_head_link_rel_author', ''),
+      '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
     );
   }
 
@@ -3136,7 +3138,7 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
     'vsite_head_link_rel_publisher' => array('type' => 'variable'),
     'vsite_head_link_rel_author' => array('type' => 'variable'),
     'vsite_title' => array('type' => 'property', 'property' => 'title'),
-    'field_meta_description' => array('type' => 'property', 'index' => 'value', 'use_set' => TRUE),
+    'field_meta_description' => array('type' => 'property', 'use_set' => TRUE),
   );
   $modified = FALSE;
   $vsite = vsite_get_vsite();
@@ -3153,9 +3155,6 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
       case 'property':
         if (isset($form_state['values'][$name])) {
           $value = $form_state['values'][$name];
-          if (isset($info['index'])) {
-            $value = array($info['index'] => $value);
-          }
           $property = isset($info['property']) ? $info['property'] : $name;
           if (isset($info['use_set'])) {
             $wrapper->{$property}->set($value);
@@ -3163,7 +3162,6 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
           else {
             $wrapper->{$property} = $value;
           }
-
           $modified = TRUE;
         }
         break;
@@ -3172,5 +3170,103 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
 
   if ($modified) {
     $wrapper->save();
+  }
+}
+
+/**
+ * Implements hook_metatag_metatag_view_alter().
+ */
+function vsite_metatag_metatags_view_alter(&$output, $instance) {
+  // Only alters metatag view behavior for vsite home pages.
+  if ($instance != 'global:frontpage' || !$vsite = vsite_get_vsite()) {
+    return;
+  }
+
+  // Runs through the same basic actions as metatag does for entity view.
+  // @see metatag_entity_view()
+  // If this entity object isn't allowed meta tags, skip it.
+  $entity = $vsite->group;
+  $entity_type = 'node';
+  $view_mode = 'full';
+  if (!metatag_entity_has_metatags($entity_type, $entity)) {
+    return;
+  }
+
+  // Obtain some details of the entity that are needed elsewhere.
+  list($entity_id, $revision_id, $bundle) = entity_extract_ids($entity_type, $entity);
+  $revision_id = intval($revision_id);
+  $instance = "{$entity_type}:{$bundle}";
+
+  // Determine the language this entity actually uses.
+  $entity_language = metatag_entity_get_language($entity_type, $entity);
+
+  // No language was defined for the entity.
+  if ($entity_language == LANGUAGE_NONE) {
+    $langcode = LANGUAGE_NONE;
+  }
+  else {
+    $enabled_languages = field_content_languages();
+    foreach (field_language($entity_type, $entity) as $field => $lang) {
+      // Only accept actual language values that are properly enabled.
+      if ($lang != LANGUAGE_NONE && in_array($lang, $enabled_languages)) {
+        $langcode = $lang;
+      }
+    }
+  }
+
+  // All applicable pieces for this current page.
+  $cid_parts = array(
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'entity_id' => $entity_id,
+    'revision_id' => $revision_id,
+    'langcode' => $langcode,
+    'view_mode' => $view_mode,
+  );
+  $cid = metatag_cache_default_cid_parts($cid_parts);
+
+  if ($cache = metatag_cache_get($cid)) {
+    $output = $cache->data;
+  }
+  else {
+    // Separate the meta tags.
+    $metatags = isset($entity->metatags) ? $entity->metatags : array();
+
+    // Build options for meta tag rendering.
+    $options = array(
+      'entity' => $entity,
+      'entity_type' => $entity_type,
+      'view_mode' => $view_mode,
+    );
+
+    // Ensure we actually pass a language object rather than language code.
+    $languages = language_list();
+    if (isset($languages[$langcode])) {
+      $options['language'] = $languages[$langcode];
+    }
+
+    // Reload the entity object from cache as it may have been altered.
+    $token_type = token_get_entity_mapping('entity', $entity_type);
+    $entities = entity_load($entity_type, array($entity_id));
+    $options['token data'][$token_type] = $entities[$entity_id];
+    $options['entity'] = $entities[$entity_id];
+
+    // Render the metatags and save to the cache.
+    $output = metatag_metatags_view($instance, $metatags, $options);
+    metatag_cache_set($cid, $output);
+  }
+
+  // We need to register the term's metatags, so we can later fetch them.
+  // @see metatag_page_build().
+  metatag_page_set_metatags($instance, $output);
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function vsite_page_build(&$page) {
+  // Moves vsite metatags to the content_top region so they aren't unset later.
+  if (drupal_is_front_page() && $vsite = vsite_get_vsite()) {
+    $page['content_top']['metatags'] = $page['content']['metatags'];
   }
 }

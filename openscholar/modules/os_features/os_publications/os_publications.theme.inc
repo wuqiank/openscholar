@@ -241,16 +241,16 @@ function theme_os_publications_contributors($variables) {
 
     // Build the table row.
     $row = array('');
-    $row[] = array('data' => drupal_render($form[$key]['name']) . drupal_render($form[$key]['auth_category']),
-      'class' => array('biblio-contributor', 'biblio-contributor-category'),
-    );
     $row[] = array('data' => drupal_render($form[$key]['auth_type']),
       'class' => array('biblio-contributor-type'),
+    );
+    $row[] = array('data' => drupal_render($form[$key]['name']) . drupal_render($form[$key]['auth_category']),
+      'class' => array('biblio-contributor', 'biblio-contributor-category'),
     );
     $row[] = drupal_render($form[$key]['rank']);
     $rows[] = array('data' => $row, 'class' => array('draggable'));
   }
-  $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => $form['#id'])));
+  $output = theme('table', array('rows' => $rows, 'attributes' => array('id' => $form['#id'])));
   //$output .= drupal_render_children($form);
   return $output;
 }
