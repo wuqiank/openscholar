@@ -409,15 +409,10 @@ class vsite extends space_og {
 
     $og_roles = og_get_user_roles('node', $this->id);
 
-    if (!$add_role_names = array_intersect($role_names, $og_roles)) {
-      // No site-wide roles to add.
-      return;
-    }
-
     // Re-populate "user_access" static.
     $perm = &drupal_static('user_access');
 
-    foreach ($add_role_names as $role_name) {
+    foreach (array_intersect($role_names, $og_roles) as $role_name) {
       // Add site-wide roles, based on the VSite roles.
       $role = user_role_load_by_name($role_name);
       $roles[$role->rid] = $role->name;
