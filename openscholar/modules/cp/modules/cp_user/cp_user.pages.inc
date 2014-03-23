@@ -20,12 +20,15 @@ function cp_user_get_member_rows($gid) {
   $status_edit_text = t('remove');
   $change_site_owner_text = t('Change owner');
 
-  // Loads information for each member of the vsite.
-  $member_uids = cp_user_get_member_uids($gid);
-  foreach ($member_uids as $uid) {
+  // Loading the node for set the site owner in the top of the table.
+  $node = node_load($gid);
 
-    // Loads the user object in order to get first and last names if available.
-    $user = user_load($uid);
+  $uids = cp_user_get_member_uids($gid);
+  unset($uids[$node->uid]);
+  $uids = array_merge(array($node->uid), $uids);
+  $users = user_load_multiple($uids);
+
+  foreach ($users as $user) {
 
     // Loads the user's full name-- first and last name.
     $name = _cp_user_get_full_name($user);
@@ -33,7 +36,7 @@ function cp_user_get_member_rows($gid) {
     // Checks to see if the user is the admin of this group.
     $vsite = spaces_get_space();
     // Checks if the current user is this vsite's author (owner).
-    $is_owner = (bool) ($vsite->group->uid == $uid);
+    $is_owner = (bool) ($vsite->group->uid == $user->uid);
 
     // If the user is the owner, return a special row with no edit links.
     if ($is_owner) {
@@ -44,7 +47,7 @@ function cp_user_get_member_rows($gid) {
       $change_ownership = l($change_site_owner_text, "cp/users/change_site_owner", $options);
 
       $options = array('attributes' => array('class' => array('cp-user-float-right')));
-      $role_edit_link = l($role_edit_text, "cp/users/edit_membership/{$uid}", $options);
+      $role_edit_link = l($role_edit_text, "cp/users/edit_membership/{$user->uid}", $options);
     }
 
     // Otherwise, checks the current user's OG roles.
@@ -52,10 +55,10 @@ function cp_user_get_member_rows($gid) {
     else {
       $change_ownership = '';
       $human_name = TRUE;
-      $role = _cp_user_get_role($uid, $vsite->group->nid, $human_name);
+      $role = _cp_user_get_role($user->uid, $vsite->group->nid, $human_name);
       $options = array('attributes' => array('class' => array('cp-user-float-right')));
-      $role_edit_link = l($role_edit_text, "cp/users/edit_membership/{$uid}", $options);
-      $status_edit_link = l($status_edit_text, "cp/users/delete_membership/{$uid}", $options);
+      $role_edit_link = l($role_edit_text, "cp/users/edit_membership/{$user->uid}", $options);
+      $status_edit_link = l($status_edit_text, "cp/users/delete_membership/{$user->uid}", $options);
     }
 
     // Prepare the row to be used by theme_table().
@@ -83,17 +86,21 @@ function cp_user_get_member_rows($gid) {
  *   The list of members' User IDs in the specified vsite.
  */
 function cp_user_get_member_uids($gid) {
-  $query = db_select('og_membership', 'ogm');
-  $query->condition('ogm.gid', $gid);
-  $query->condition('entity_type', 'user');
-  $query->fields('ogm', array('etid'));
-  $results = $query->execute()->fetchAll();
+  $results = db_select('og_membership', 'ogm')
+    ->condition('ogm.gid', $gid)
+    ->condition('entity_type', 'user')
+    ->fields('ogm', array('etid'))
+    ->execute()
+    ->fetchAll();
 
   $member_uids = array();
-  foreach ($results as $record => $values) {
-    if (isset($values->etid) && $values->etid != 0) {
-      $member_uids[] = $values->etid;
+
+  foreach ($results as $result) {
+    if ($result->etid == 0) {
+      continue;
     }
+
+    $member_uids[$result->etid] = $result->etid;
   }
 
   return $member_uids;
@@ -209,6 +216,8 @@ function cp_user_remove_membership_confirm_submit($form, &$form_state) {
  * Form builder; Builds the "Change site owner" form.
  */
 function cp_user_change_site_owner_form($form_state) {
+  global $user;
+
   $space = spaces_get_space();
   $site = $space->group->title;
 
@@ -223,12 +232,29 @@ function cp_user_change_site_owner_form($form_state) {
     '#weight' => 0,
   );
 
-  $form['site_owner_name'] = array(
-    '#type' => 'textfield',
+  $space = spaces_get_space();
+  $query = new EntityFieldQuery();
+  $results =  $query
+    ->entityCondition('entity_type', 'user')
+    ->propertyCondition('uid', $space->group->uid, '!=')
+    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $space->group->nid)
+    ->execute();
+
+  $users = array();
+  if (!empty($results['user'])) {
+    $members = user_load_multiple(array_keys($results['user']));
+
+    foreach ($members as $member) {
+      $users[$member->uid] = $member->name;
+    }
+  }
+
+  $form['new_site_owner'] = array(
+    '#type' => 'select',
     '#title' => t('User name'),
-    '#autocomplete_path' => 'cp/users/change_site_owner_autocomplete',
     '#required' => TRUE,
     '#description' => t('Select the site member.'),
+    '#options' => $users,
   );
 
   // Builds and returns a confirmation form.
@@ -241,46 +267,29 @@ function cp_user_change_site_owner_form($form_state) {
 }
 
 /**
- * Validate function; Verify the new owner of the site belong is a site member.
- */
-function cp_user_change_site_owner_form_validate($form, &$form_state) {
-  $space = spaces_get_space();
-
-  preg_match("/.+\((\d+)\)/", $form_state['values']['site_owner_name'], $matches);
-  $uid = $matches[1];
-
-  if (!og_get_membership('node', $space->group->nid, 'user', $uid)) {
-    form_set_error('site_owner_name', t('The selected user is a group member.'));
-    return;
-  }
-
-  $form_state['uid'] = $uid;
-}
-
-/**
  * Submit callback; Changes owner of the site after confirmation.
  */
 function cp_user_change_site_owner_form_submit($form, &$form_state) {
   // Accesses values from the form.
   $bundle = $form_state['values']['bundle'];
   $gid = $form_state['values']['gid'];
-  $new_owner_name = $form_state['values']['site_owner_name'];
 
   $node = node_load($gid);
+  $user = user_load($form_state['values']['new_site_owner']);
 
   // Make sure previous owner remains "vsite admin".
   _cp_user_set_role($node->uid, $gid, OS_USER_ROLE_ADMIN, $bundle);
 
   // Set site owner (VSite manager).
-  $node->uid = $form_state['uid'];
+  $node->uid = $user->uid;
   node_save($node);
 
   // Give the new owner the "vsite admin" role and revoke other roles.
-  _cp_user_set_role($form_state['uid'], $gid, OS_USER_ROLE_ADMIN, $bundle);
+  _cp_user_set_role($form_state['values']['new_site_owner'], $gid, OS_USER_ROLE_ADMIN, $bundle);
 
   // Set the message and redirect back to the cp/users page
   $site = $form_state['values']['site_name'];
-  drupal_set_message(t('The user <em>@user</em> is now the owner of the site <em>@site</em>.', array('@user' => $new_owner_name, '@site' => $site)));
+  drupal_set_message(t('The user <em>@user</em> is now the owner of the site <em>@site</em>.', array('@user' => $user->name, '@site' => $site)));
   drupal_goto('cp/users');
 }
 
