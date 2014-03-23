@@ -110,6 +110,7 @@ class os_search_solr_more_like_this extends os_boxes_default {
 
     // Load the block with the first delta.
     $block = apachesolr_search_mlt_block_load($delta);
+    $env = apachesolr_default_environment();
 
     if ($this->options['results_from_type']) {
       $this->options['mlt_type_filters'] = array($node->type);
@@ -119,9 +120,15 @@ class os_search_solr_more_like_this extends os_boxes_default {
       $this->options['mlt_type_filters'] = '';
     }
 
+    if (!$environment = apachesolr_environment_load($env)) {
+      // A default environment was not found. Return early.
+      drupal_set_message(t('A default Apache solr environment is not defined.'), 'error');
+      return;
+    }
+
     // Adding the settings of the widget.
     $block = array_merge($block, $this->options);
-    $env_id = (!empty($block['mlt_env_id'])) ? $block['mlt_env_id'] : '';
+    $env_id = $environment['env_id'];
 
     try {
       $solr = apachesolr_get_solr($env_id);
