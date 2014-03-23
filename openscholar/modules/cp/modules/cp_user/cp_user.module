@@ -54,20 +54,13 @@ function cp_user_menu() {
     'file' => 'cp_user.pages.inc',
   );
 
-  // @todo: Is access should be limited to site owner?
   $items['cp/users/change_site_owner'] = array(
     'type' => MENU_CALLBACK,
     'title' => 'Change site owner',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('cp_user_change_site_owner_form'),
-    'access callback' => 'cp_user_admin_access',
+    'access callback' => 'cp_user_site_owner_access',
     'file' => 'cp_user.pages.inc',
-  );
-
-  $items['cp/users/change_site_owner_autocomplete'] = array(
-    'title' => 'Auto complete',
-    'page callback' => 'cp_user_autocomplete',
-    'access callback' => 'cp_user_admin_access',
   );
 
   $items['cp/users/permissions'] = array(
@@ -97,6 +90,16 @@ function cp_user_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Determine if the user can change the site owner.
+ */
+function cp_user_site_owner_access() {
+  $space = spaces_get_space();
+  global $user;
+
+  return $user->uid == $space->group->uid || user_access('administer group');
 }
 
 /**
@@ -830,30 +833,4 @@ function cp_user_form_og_ui_admin_new_role_alter(&$form, &$form_state) {
  */
 function cp_user_roles_add_redirect($form, &$form_state) {
   $form_state['redirect'] = 'cp/users/roles';
-}
-
-/**
- * Return auto complete for users.
- */
-function cp_user_autocomplete($string = '') {
-  $space = spaces_get_space();
-  $query = new EntityFieldQuery();
-  $results =  $query
-    ->entityCondition('entity_type', 'user')
-    ->propertyCondition('name', $string, 'CONTAINS')
-    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $space->group->nid)
-    ->execute();
-
-  if (empty($results['user'])) {
-    return;
-  }
-
-  $output = array();
-
-  $users = user_load_multiple(array_keys($results['user']));
-  foreach ($users as $user) {
-    $output[check_plain($user->name) . ' (' . $user->uid . ')'] = check_plain($user->name);
-  }
-
-  drupal_json_output($output);
 }
