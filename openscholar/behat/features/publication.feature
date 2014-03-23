@@ -17,12 +17,12 @@ Feature:
      Then response header "x-drupal-cache" should be "HIT"
       And cache is "disabled" for anonymous users
 
-  @api
+  @api @foo
   Scenario: Test the Authors field in Publication form
     Given I am logging in as "john"
      When I edit the node "The Little Prince"
-     Then I should see "Authors"
-      And I should see "Enter a single name per line"
+     Then I should see "Author"
+      And I should see "Add author"
 
   @api
   Scenario: Verify publications are sorted by the creation date of the node.
