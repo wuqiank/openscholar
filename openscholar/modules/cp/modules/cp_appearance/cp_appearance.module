@@ -700,7 +700,7 @@ function cp_appearance_manage_base_submit($form, &$form_state) {
   $paths = explode("/", $new_path);
 
   if (!file_exists($new_path)) {
-    drupal_mkdir("public://john/subtheme/" . end($paths), 777, TRUE);
+    drupal_mkdir("public://" . $vsite->og->purl . "/subtheme/" . end($paths), 777, TRUE);
     chmod($new_path, octdec(777));
   }
 
