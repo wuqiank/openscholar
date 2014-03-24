@@ -371,7 +371,6 @@ function os_pages_node_view_alter(&$build, $type) {
  * Implements hook_form_BASE_FORM_ID_alter() for node_form.
  */
 function os_pages_form_page_node_form_alter(&$form, &$form_state) {
-  dpm('file');
   // Adds a custom fieldset for the right-hand column to hold meta description.
   $path = drupal_get_path('module', 'os_pages');
   $form['os_seo'] = array(
