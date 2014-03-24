@@ -7,6 +7,7 @@ cd www
 drush sql-drop -y
 echo "Importing SQL file."
 `drush sql-connect` < $1
+exit
 drush updb -y
 drush fra -y
 drush cc all
