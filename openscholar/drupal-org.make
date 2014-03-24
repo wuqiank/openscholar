@@ -389,6 +389,7 @@ projects[views_bulk_operations][version] = 3.0
 
 projects[views_og_cache][subdir] = "contrib"
 projects[views_og_cache][version] = 1.0
+projects[views_og_cache][patch][] = "https://drupal.org/files/issues/2224623-diplay-handler-1.patch"
 
 projects[views_slideshow][subdir] = "contrib"
 projects[views_slideshow][version] = 3.0
