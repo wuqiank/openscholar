@@ -63,7 +63,9 @@ function os_pages_menu() {
   );
 
   $items['os/pages/%node/subpage'] = array(
-    'title' => 'Add Existing Subpage',
+    'title' => 'Add Existing Page',
+    'title callback' => 'os_pages_add_subpage_title',
+    'title arguments' => array(2),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_pages_add_subpage_form', 2),
     'type' => MENU_CALLBACK,
@@ -87,6 +89,13 @@ function os_pages_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Uses the name of the parent node in the title of the form
+ */
+function os_pages_add_subpage_title($node) {
+  return t('Add Existing Page as Subpage of @title', array('@title' => $node->title));
 }
 
 /**
@@ -361,11 +370,8 @@ function os_pages_node_view_alter(&$build, $type) {
 /**
  * Implements hook_form_BASE_FORM_ID_alter() for node_form.
  */
-function os_pages_form_node_form_alter(&$form, &$form_state) {
-  if ($form['#node']->type != 'page') {
-    return;
-  }
-
+function os_pages_form_page_node_form_alter(&$form, &$form_state) {
+  dpm('file');
   // Adds a custom fieldset for the right-hand column to hold meta description.
   $path = drupal_get_path('module', 'os_pages');
   $form['os_seo'] = array(
@@ -765,7 +771,7 @@ function os_pages_add_subpage_form($form, &$form_state, $node) {
   include_once (drupal_get_path('module', 'vsite') . '/includes/nodeautocomplete.inc');
   $form['add-page'] = array(
     '#type' => 'textfield',
-    '#title' =>  t('Select a post'),
+    '#title' =>  t('Select a Page'),
     '#maxlength' => 180,
     '#autocomplete_path' => 'os/pages/autocomplete/'.$node->nid,
     '#element_validate' => array('vsite_node_autocomplete_validate'),
