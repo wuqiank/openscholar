@@ -96,10 +96,13 @@ function cp_user_menu() {
  * Determine if the user can change the site owner.
  */
 function cp_user_site_owner_access() {
-  $space = spaces_get_space();
+  if (!module_exists('vsite') || !$vsite = vsite_get_vsite()) {
+    return FALSE;
+  }
+
   global $user;
 
-  return $user->uid == $space->group->uid || user_access('administer group');
+  return $user->uid == $vsite->group->uid || user_access('administer group');
 }
 
 /**
