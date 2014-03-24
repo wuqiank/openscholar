@@ -15,14 +15,13 @@ function cp_user_get_member_rows($gid) {
 
   // Defines end-user text for these values.
   $default_status = t('Active');
-  $owner_role = '<b>' . t('Site owner') . '</b>';
+  $owner_role = '<strong>' . t('Site owner') . '</strong>';
   $role_edit_text = t('edit');
   $status_edit_text = t('remove');
   $change_site_owner_text = t('Change owner');
 
-  // Loading the node for set the site owner in the top of the table.
-  $uids = cp_user_get_member_uids($gid);
-  $accounts = user_load_multiple($uids);
+  // Load the members accounts.
+  $accounts = user_load_multiple(cp_user_get_member_uids($gid));
 
   foreach ($accounts as $account) {
 
@@ -88,6 +87,11 @@ function cp_user_get_member_uids($gid) {
     ->propertyCondition('gid', $gid)
     ->propertyCondition('entity_type', 'user')
     ->execute();
+
+  if (empty($results['og_membership'])) {
+    // No members.
+    return array();
+  }
 
   $results = og_membership_load_multiple(array_keys($results['og_membership']));
 
@@ -227,16 +231,14 @@ function cp_user_change_site_owner_form($form_state) {
     '#markup' => '<h2>' . t('Make an existing member the site owner') . '</h2>',
   );
 
-  $query = new EntityFieldQuery();
-  $results =  $query
-    ->entityCondition('entity_type', 'user')
-    ->propertyCondition('uid', $vsite->group->uid, '!=')
-    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->group->nid)
-    ->execute();
+  // Get all VSite members UIDs.
+  $members_uids = cp_user_get_member_uids($vsite->group->nid);
+  // Remove the VSite owner from the list.
+  unset($members_uids[$vsite->group->uid]);
 
   $users = array();
-  if (!empty($results['user'])) {
-    $members = user_load_multiple(array_keys($results['user']));
+  if (!empty($members_uids)) {
+    $members = user_load_multiple($members_uids);
 
     foreach ($members as $member) {
       $users[$member->uid] = $member->name;
@@ -278,7 +280,7 @@ function cp_user_change_site_owner_form_submit($form, &$form_state) {
 
   // Set the message and redirect back to the cp/users page
   $site = $form_state['values']['site_name'];
-  drupal_set_message(t('The user <em>@user</em> is now the owner of the site <em>@site</em>.', array('@user' => $account->name, '@site' => $site)));
+  drupal_set_message(t('The user %user is now the owner of the site %site.', array('%user' => $account->name, '%site' => $site)));
   drupal_goto('cp/users');
 }
 
