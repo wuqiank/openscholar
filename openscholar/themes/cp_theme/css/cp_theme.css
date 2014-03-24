@@ -447,6 +447,10 @@ fieldset .fieldset-legend {text-transform:none;}
   display: none;
 }
 
+
+.field-name-og-vocabulary table,
+.field-name-og-vocabulary table th,
+.field-name-og-vocabulary table tr,
 table#field-biblio-extra-values,
 table#field-biblio-extra-values th,
 #edit-biblio-authors table,
@@ -460,12 +464,14 @@ table#edit-biblio-contributors tr.even {
 	margin:0;
 }
 
+.field-name-og-vocabulary table td,
 table#field-biblio-extra-values td,
 #edit-biblio-authors table td,
 table#edit-biblio-contributors td {
 	padding: 8px 0;
 }
 
+#edit-og-vocabulary input.form-submit,
 .node-biblio-form #edit-field-biblio-extra input.form-submit,
 #edit-biblio-authors #edit-add-more {
 cursor: pointer;
@@ -526,7 +532,7 @@ border-radius: 0;
 
 #edit-biblio-notes-value,
 #edit-biblio-abst-e-value {
-	height:100px;
+	height:60px;
 }
 
 
@@ -622,13 +628,18 @@ form.node-form fieldset {
 	margin: 1em 0px 0.5em;
 }
 
+
+fieldset#edit-5 {
+	padding-top: 0;
+}
+
 /* Shrinks the biblio node form to take up less vertical space. */
 
 
 .field-name-field-biblio-extra table.field-multiple-table td .form-item.form-type-textfield,
 #field-biblio-extra-values td .form-item.form-type-textfield {
 	float: left;
-	width:43%;
+	width:45%;
 	padding-right: 4%;
 }
 
