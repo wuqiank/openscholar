@@ -145,3 +145,21 @@ function cp_content_batch_alter(&$batch) {
   // Update the entities batch to the entities of the current vsite.
   $arguments[0] = $ids;
 }
+
+/**
+ * Implements hook_node_access().
+ *
+ * Check the user's permission to create new content in the current VSite.
+ */
+function cp_content_node_access($node, $op, $account) {
+  if ($op != 'create') {
+    // Not "create" operation.
+    return;
+  }
+
+  // Get current VSite.
+  $vsite = vsite_get_vsite();
+
+  // Check the user's permission to create new content in the current VSite.
+  return og_user_access('node', $vsite->group->nid, 'create ' . $node . ' content', $account);
+}
