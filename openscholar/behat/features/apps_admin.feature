@@ -57,7 +57,7 @@ Feature:
         And I press "Confirm"
         And I go to "john/cp/users/permissions"
        Then I should see the button "Save permissions"
-        And I remove from the role "content editor" in the group "john" the permission "Edit widgets"
+        And I remove from the role "content editor" in the group "john" the permission "edit-boxes"
         And I click "Log out"
         And I am logging in as "klark"
         And I go to "john/os/widget/boxes/os_addthis/edit"
