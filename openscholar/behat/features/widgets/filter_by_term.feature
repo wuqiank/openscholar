@@ -13,9 +13,9 @@ Feature:
      When I visit "john/publications"
      Then I should see "Filter by term"
       And I should see the following <links>
-      | Antoine de Saint-Exupéry |
-      | Douglas Noël Adams       |
-      | Antoine de Saint-Exupéry |
+        | Antoine de Saint-Exupéry |
+        | Douglas Noël Adams       |
+        | Antoine de Saint-Exupéry |
 
   @api
   Scenario: Verify that the number of tagged posts appended to the term name.
@@ -105,11 +105,6 @@ Feature:
       And the widget "Filter by term" is set in the "Publications" page with the following <settings>:
           | Widget Description     | Taxonomy            | textfield   |
           | Vocabularies           | science             | select list |
-          | Post types             | Select post type    | select list |
-          | Select Post type       | Publication         | select list |
-          | Show child terms       | check               | checkbox    |
-          | Taxonomy tree depth.   | Show all children   | select list |
-          | Show number of posts   | check               | checkbox    |
       And I visit "john/publications"
      When I click "Air (1)"
      Then I should see "The little prince"
