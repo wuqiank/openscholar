@@ -282,6 +282,7 @@ projects[og_views][version] = 1.0
 
 projects[og_vocab][subdir] = "contrib"
 projects[og_vocab][version] = 1.2
+projects[og_vocab][patch][] = "https://drupal.org/files/issues/2224007-og-vocab-set-value-1.patch"
 projects[og_vocab][patch][] = "https://drupal.org/files/issues/og-vocab-reset-to-alpahbetical-2174907-4.patch"
 
 projects[olark][subdir] = "contrib"
@@ -387,8 +388,7 @@ projects[views_bulk_operations][subdir] = "contrib"
 projects[views_bulk_operations][version] = 3.0
 
 projects[views_og_cache][subdir] = "contrib"
-projects[views_og_cache][version] = 1.0
-projects[views_og_cache][patch][] = "https://drupal.org/files/issues/2224623-diplay-handler-1.patch"
+projects[views_og_cache][version] = 1.1
 
 projects[views_slideshow][subdir] = "contrib"
 projects[views_slideshow][version] = 3.0
