@@ -368,7 +368,7 @@ class FeatureContext extends DrupalContext {
    * @Given /^the widget "([^"]*)" is set in the "([^"]*)" page with the following <settings>:$/
    */
   public function theWidgetIsSetInThePageWithSettings($page, $widget, TableNode $table) {
-    return theWidgetIsSetInThePageBytheNameWithSettings($page, $widget, '', $table);
+    return $this->theWidgetIsSetInThePageBytheNameWithSettings($page, $widget, '', $table);
   }
 
   /**
