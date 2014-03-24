@@ -60,6 +60,33 @@ Feature: User functionality testing.
      Then I should get a "200" HTTP response
 
   @api
+  Scenario: Create a custom role in a vsite with edit & administer widgets
+            permissions.
+    Given I am logging in as "john"
+      And I visit "john/cp/users/roles"
+      And I fill in "Name" with "Widget editor"
+      And I press "Add role"
+      And I visit "john/cp/users/roles"
+      And I give the role "Widget editor" in the group "john" the permission "Administer widgets"
+      And I give the role "Widget editor" in the group "john" the permission "Edit widgets"
+      And I give the user "michelle" the role "Widget editor" in the group "john"
+      And I am logging in as "michelle"
+      And I visit "john/publications"
+      And I should see the text "Edit Widget" under "contextual-links-wrapper"
+      And I should see the text "Remove Widget" under "contextual-links-wrapper"
+          # Check "edit" ability.
+     When I visit "john/os/widget/boxes/os_publications_recent/edit?destination=publications"
+     Then I should get a "200" HTTP response
+
+  @api
+  Scenario: Test that a user with a custom role that doesn't have content
+            creation Permissions won't have the "content" link in the cp for
+            adding content.
+    Given I am logging in as "michelle"
+     When I visit "john"
+     Then I should not see the text "Content" under "toolbar"
+
+  @api
   Scenario: Restore default roles and permissions in a VSite.
     Given I am logging in as "john"
       And I visit "john/cp/users/roles"
