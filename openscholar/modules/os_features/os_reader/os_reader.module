@@ -98,10 +98,10 @@ function os_reader_theme() {
     ),
     'os_reader_importer_bundles' => array(
       'variables' => array(
+        'title' => '',
+        'sub-title' => '',
         'items' => '',
       ),
-      'template' => 'os-reader-importer_bundles',
-      'path' => drupal_get_path('module', 'os_reader') . '/template',
     ),
   );
 }
@@ -748,7 +748,8 @@ function os_reader_importer_feed_create($form, $form_state) {
   $form['pre_defined'] = array(
     '#type' => 'item',
     '#markup' => theme('os_reader_importer_bundles', array(
-      'title' => t('You can use predefined feeds:'),
+      'title' => t('By content'),
+      'sub-title' => t('You can filter content by pre defined node types:'),
       'items' => $links['bundles'],
     )),
     '#weight' => -10,
@@ -1014,4 +1015,19 @@ function os_reader_feed_settings($form, $form_settings) {
   $form = os_reader_importer_feed_element($values);
 
   return system_settings_form($form);
+}
+
+/**
+ * Theme callback; Display the links of the feed with additional text.
+ */
+function theme_os_reader_importer_bundles($variables) {
+  drupal_add_css(drupal_get_path('module', 'os_reader') . '/os_reader.css');
+  $content = '<h2 class="os-reader-feed-title">' . $variables['title'] . '</h2>';
+  $content .= '<span class="os-reader-feed-sub-title">' . $variables['sub-title'] . '</span>';
+  $content .= theme('item_list', array(
+    'items' => $variables['items'],
+    'attributes' => array('class' => array('os-reader-feed-items')),
+  ));
+
+  return $content;
 }
