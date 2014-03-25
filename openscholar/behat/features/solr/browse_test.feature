@@ -24,7 +24,7 @@ Feature:
   @api
   Scenario: Test direct browsing of category
     Given I am logging in as "john"
-      And the widget "Faceted taxonomy" is set in the "Media Galleries" page by the name "galleries" with the following <settings>:
+      And the widget "Faceted taxonomy" is set in the "Galleries" page by the name "galleries" with the following <settings>:
         | Content type           | Media Gallery              | select list |
       And I am not logged in
     Given I visit "john/browse/gallery/?f[0]=sm_og_vocabulary%3Ataxonomy_term%3A3"
