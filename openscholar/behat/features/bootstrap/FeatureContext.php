@@ -1639,7 +1639,8 @@ class FeatureContext extends DrupalContext {
     $element = $page->find('xpath', "//h3[.='$week_header']");
 
     if (!$element) {
-      throw new Exception("The weekly calendar for the '$week_header' is not displayed correctly");
+      $element = $page->find('xpath', "//h3");
+      throw new Exception("The weekly calendar for the '$week_header' is not displayed correctly. It was '" . $element->getText() ."'");
     }
   }
 
