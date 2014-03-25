@@ -3075,6 +3075,7 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
       '#weight' => 30,
       'vsite_title' => array(
         '#type' => 'textfield',
+        '#required' => TRUE,
         '#title' => t('Site title'),
         '#default_value' => $vsite->group->title,
         '#description' => t('Your site\'s official title, as displayed in your Site info widget, in search results, and in browser tabs.'),
