@@ -16,7 +16,10 @@ Feature:
 
   @api @last
   Scenario: Test browse with one term not showing categories block
-    Given I visit "obama/browse/blogs"
+    Given I am logging in as "john"
+      And I change privacy of the site "obama" to "Public on the web. "
+     Then I am not logged in
+      And I visit "obama/browse/blogs"
      Then I should not see "faceted taxonomy"
       And I should see the text "Blog" under "content-inner"
       And I should see "Me and michelle obama"
