@@ -1746,4 +1746,18 @@ class FeatureContext extends DrupalContext {
       throw new Exception(sprintf('The feed items has been imported %s times.', $count));
     }
   }
+
+  /**
+   * @Given /^I remove all create permissions for basic members in vsite "([^"]*)"$/
+   */
+  public function iRemoveAllCreatePermissionsForBasicMembersInVsite($vsite) {
+    $uid = $this->invoke_code('os_migrate_demo_get_os_bundles', array($username));
+  }
+
+  /**
+   * @Given /^I restore all create permissions for basic members in vsite "([^"]*)"$/
+   */
+  public function iRestoreAllCreatePermissionsForBasicMembersInVsite($vsite) {
+
+  }
 }
