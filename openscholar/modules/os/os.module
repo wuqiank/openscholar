@@ -898,14 +898,23 @@ function os_form_alter(&$form, &$form_state, $form_id) {
  * @see os_form_alter()
  */
 function os_entity_form_after_build($form, $form_state) {
-  $node = isset($form['#node'])?$form['#node']:NULL;
+  // Triggers context_node_condition() for this node type, defaults to "page".
+  $node = isset($form['#node']) ? $form['#node'] : NULL;
   if (!isset($node) && isset($form['#entity']) && !isset($form['#entity']->comment)) {
      // dummy node
-    $node = (object)array('type' => 'page');
+    $node = (object) array('type' => 'page');
   }
   if (isset($node)) {
     context_node_condition($node, 'form');
   }
+
+  // Hides the metatags and redirect fieldsets from all users.
+  foreach (array('metatags', 'redirect') as $element) {
+    if (isset($form[$element])) {
+      $form[$element]['#access'] = FALSE;
+    }
+  }
+
   return $form;
 }
 
@@ -2174,3 +2183,4 @@ function os_file_copy_set_error($message, $exception) {
     'message' => $message,
   );
 }
+
