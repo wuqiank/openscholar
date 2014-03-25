@@ -1751,13 +1751,31 @@ class FeatureContext extends DrupalContext {
    * @Given /^I remove all create permissions for basic members in vsite "([^"]*)"$/
    */
   public function iRemoveAllCreatePermissionsForBasicMembersInVsite($vsite) {
-    $uid = $this->invoke_code('os_migrate_demo_get_os_bundles', array($username));
+    $gid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$vsite}'"));
+
+    $bundles = $this->invoke_code('os_migrate_demo_get_os_bundles', array($gid));
+
+    $return = array();
+    foreach ($bundles as $bundle) {
+      $return[] = new Step\When('I give the role "Basic Member" in the group "' . $vsite . '" the permission "create ' . $bundle . ' content"');
+    }
+    return $return;
   }
 
   /**
    * @Given /^I restore all create permissions for basic members in vsite "([^"]*)"$/
    */
   public function iRestoreAllCreatePermissionsForBasicMembersInVsite($vsite) {
+    $gid = $this->invoke_code('os_migrate_demo_get_node_id', array("'{$vsite}'"));
 
+    $bundles = $this->invoke_code('os_migrate_demo_get_os_bundles', array($gid));
+    print_r($bundles);
+    $bundles = explode(';;;', $bundles);
+
+    $return = array();
+    foreach ($bundles as $bundle) {
+      $return[] = new Step\When('I remove from the role "Basic Member" in the group "' . $vsite . '" the permission "create ' . $bundle . ' content"');
+    }
+    return $return;
   }
 }

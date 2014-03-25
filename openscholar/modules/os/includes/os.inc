@@ -36,10 +36,14 @@ define('OS_PRIVATE_APP', 2);
  *    - 1: public
  *  TRUE returns all
  *
+ * @param $gid
+ *   optional; Specific VSite ID to get the available bundles from. Default is
+ *   the current VSite.
+ *
  * @return
  *  Array keyed with the bundle ID and the bundle name as value.
  */
-function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
+function os_get_bundles($include_status = array(OS_PUBLIC_APP), $gid = NULL) {
   $return_all = FALSE;
   if ($include_status === TRUE) {
     $return_all = TRUE;
@@ -50,7 +54,13 @@ function os_get_bundles($include_status = array(OS_PUBLIC_APP)) {
 
   $bundles = array();
   $app_info = os_app_info();
-  $spaces_features = variable_get('spaces_features', array());
+  if ($gid) {
+    $vsite = vsite_get_vsite($gid);
+    $spaces_features = $vsite->controllers->variable->values['preset']['spaces_features'];
+  }
+  else {
+    $spaces_features = variable_get('spaces_features', array());
+  }
 
   foreach ($app_info as $app_name => $info) {
     if (!isset($info['nodetypes'])) {
