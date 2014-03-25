@@ -86,18 +86,24 @@ function _os_reader_feed_importer_access_callback($op) {
  * Implements hook_theme().
  */
 function os_reader_theme() {
-  $items = array();
-
-  $items['os_reader'] = array(
-    'variables' => array(
-      'view' => '',
-      'importers' => '',
-      'add_new' => '',
+  return array(
+    'os_reader' => array(
+      'variables' => array(
+        'view' => '',
+        'importers' => '',
+        'add_new' => '',
+      ),
+      'template' => 'os-reader',
+      'path' => drupal_get_path('module', 'os_reader') . '/template',
     ),
-    'template' => 'os-reader',
+    'os_reader_importer_bundles' => array(
+      'variables' => array(
+        'items' => '',
+      ),
+      'template' => 'os-reader-importer_bundles',
+      'path' => drupal_get_path('module', 'os_reader') . '/template',
+    ),
   );
-
-  return $items;
 }
 
 /**
@@ -665,6 +671,14 @@ function os_reader_cron() {
 
 /**
  * Generate links for predefined terms and bundles.
+ *
+ * @param $content_types
+ *  Lists of selected content types.
+ * @param $vocabs
+ *  Lists of selected vocabularies.
+ *
+ * @return Array
+ *  Array of links.
  */
 function os_reader_importer_feed_links($content_types, $vocabs) {
   $links = $items = array();
@@ -678,7 +692,7 @@ function os_reader_importer_feed_links($content_types, $vocabs) {
       }
     }
 
-    $links = _os_reader_importer_feed_create($items, 'type');
+    $links['bundles'] = _os_reader_importer_feed_create($items, 'type');
   }
 
   if (!empty($vocabs)) {
@@ -690,9 +704,11 @@ function os_reader_importer_feed_links($content_types, $vocabs) {
         $items[] = array('key' => $term->tid, 'link' => $term->name);
       }
     }
+
+    $links['terms'] = _os_reader_importer_feed_create($items, 'term');
   }
 
-  return array_merge($links, _os_reader_importer_feed_create($items, 'term'));
+  return $links;
 }
 
 /**
@@ -706,6 +722,8 @@ function os_reader_importer_feed_create($form, $form_state) {
   if (!empty($form_state['input'])) {
     // The user submitted the form but the JS is disabled.
     $links = os_reader_importer_feed_links($form_state['input']['os_rss_feed_content_types'], $form_state['input']['os_rss_feed_vocabs']);
+
+    $links = array_merge($links['bundles'], $links['terms']);
 
     $form['results'] = array(
       '#type' => 'item',
@@ -721,21 +739,18 @@ function os_reader_importer_feed_create($form, $form_state) {
   }
 
   $selected_bundles = variable_get('os_rss_feed_content_types', array());
-  $selected_vocabularies = variable_get('os_rss_feed_vocabs');
+  $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
 
   $form = os_reader_importer_feed_element();
 
   $links = os_reader_importer_feed_links($selected_bundles, $selected_vocabularies);
 
-  $form['pre_defined_title'] = array(
-    '#type' => 'item',
-    '#markup' => t('You can use predefined feeds:'),
-    '#weight' => -11,
-  );
-
   $form['pre_defined'] = array(
     '#type' => 'item',
-    '#markup' => theme('item_list', array('items' => $links)),
+    '#markup' => theme('os_reader_importer_bundles', array(
+      'title' => t('You can use predefined feeds:'),
+      'items' => $links['bundles'],
+    )),
     '#weight' => -10,
   );
 
@@ -797,6 +812,16 @@ function os_reader_importer_feed_element($values = array()) {
     'content_types' => array(),
     'selected_terms' => array(),
   );
+
+  if (empty($values['content_types'])) {
+    $values['content_types'] = array(
+      'news',
+      'blog',
+      'events',
+      'presentation',
+      'biblio',
+    );
+  }
 
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
@@ -974,7 +999,7 @@ function os_reader_context_load_alter(&$context) {
 
   // The context of the rss feed is not node context. Adding the export_module
   // key and the settings_link key will add for the context a settings button.
-  $context->export_module = 'os_reader';
+  $context->export_module = 'os_rss_feed';
   $context->settings_link = TRUE;
 }
 

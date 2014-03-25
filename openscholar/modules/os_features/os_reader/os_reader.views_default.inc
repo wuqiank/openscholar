@@ -324,8 +324,6 @@ function os_reader_views_default_views() {
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $export['reader'] = $view;
 
-  $export = array();
-
   $view = new view();
   $view->name = 'os_rss_feed_export';
   $view->description = '';
