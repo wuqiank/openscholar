@@ -117,10 +117,16 @@ class os_boxes_follow extends os_boxes_default {
     drupal_add_css(drupal_get_path('module', 'os_boxes').'/plugins/os_boxes_follow/misc/os_follow.css');
     $links = array();
     $list_class = 'follow-me-links';
-    if(!$this->options['links']) {
-      $block['content'] = '';
+
+    $block['content'] = '';
+
+    $block['content'] .= theme('image', array('path' => 'misc/feed.png', 'title' => t('Syndicate content')));
+    $block['content'] .= l(t('RSS'), 'rss-feed', array('attributes' => array('class' => array('rss-feed-icon'))));
+
+    if (!$this->options['links']) {
       return $block;
     }
+
     foreach ($this->options['links'] as $n) {
       // Build the image link.
       $l = l($n['title'], $n['title'], array(
@@ -152,7 +158,7 @@ class os_boxes_follow extends os_boxes_default {
       $list_class = 'follow-me-links-vertical';
     }
     // Add the links to theme item_list funciton.
-    $block['content'] = theme('item_list', array(
+    $block['content'] .= theme('item_list', array(
       'items' => $items,
       'title' => '',
       'type' => 'ul',
