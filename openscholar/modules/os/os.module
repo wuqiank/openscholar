@@ -924,6 +924,11 @@ function os_entity_form_after_build($form, $form_state) {
     context_node_condition($node, 'form');
   }
 
+  // Hides the metatags fieldset from all users.
+  if (isset($form['metatags'])) {
+    $form['metatags']['#access'] = FALSE;
+  }
+
   return $form;
 }
 
