@@ -733,7 +733,8 @@ div.ctools-modal-content .modal-content {
 }
 
 div.ctools-modal-content .modal-content .messages {
-  width: 680px;
+  width: 95%;
+  padding: 0;
 }
 
 #modalContent .spaces-customize-form .buttons input.form-submit {
