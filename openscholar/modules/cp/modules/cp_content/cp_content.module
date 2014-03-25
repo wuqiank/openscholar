@@ -53,13 +53,13 @@ function cp_content_views_pre_render(&$view) {
  *
  * Returns TRUE if the user has the permission to create nodes of any type that
  * is currently active on the VSite, or if the user has the permission to create
- * new content type.
+ * new content types.
  * Returns FALSE otherwise.
  */
 function cp_content_add_page_access() {
   if (user_access('administer content types')) {
-    // User has the permission to administer the content types, so grant them
-    // access to the page anyway.
+    // User has the permission to administer the content types, so grant access
+    // to the page anyway.
     return TRUE;
   }
 
