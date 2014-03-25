@@ -3283,3 +3283,24 @@ function vsite_page_build(&$page) {
     $page['content_top']['metatags'] = $page['content']['metatags'];
   }
 }
+
+/**
+ * Builds the expected metatag cache ID parts as found in metatag.module.
+ */
+function _vsite_metatag_get_cid_parts($vsite) {
+  $entity_type = 'node';
+  $view_mode = 'full';
+  $entity = $vsite->group;
+  list($entity_id, $revision_id, $bundle) = entity_extract_ids($entity_type, $entity);
+  $cid_parts = array(
+    'instance' => "{$entity_type}:{$bundle}",
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'entity_id' => $entity_id,
+    'revision_id' => $revision_id,
+    'langcode' => LANGUAGE_NONE,
+    'view_mode' => $view_mode,
+  );
+
+  return $cid_parts;
+}
