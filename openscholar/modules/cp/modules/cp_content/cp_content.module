@@ -66,7 +66,7 @@ function cp_content_add_page_access() {
   // Access is TRUE if at least one of the OS bundles returns access TRUE.
   $bundles = os_get_bundles();
   foreach ($bundles as $type => $name) {
-    if ($item = menu_get_item('node/add/' . $type) && $item['access'] == TRUE) {
+    if ($item = menu_get_item('node/add/' . $type) && $item['access']) {
       return TRUE;
     }
   }
