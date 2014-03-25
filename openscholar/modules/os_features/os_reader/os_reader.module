@@ -748,6 +748,19 @@ function os_reader_importer_feed_create($form, $form_state) {
 
   $form = os_reader_importer_feed_element($values, FALSE);
 
+  // Allow to use select only the selected terms form the CP.
+  foreach ($form['os_rss_feed_vocabs'] as $key => $info) {
+    if (!in_array($key, array_keys($values['selected_terms']))) {
+      continue;
+    }
+
+    foreach (array_keys($info['#options']) as $tid) {
+      if (!in_array($tid, $values['selected_terms'][$key])) {
+        unset($form['os_rss_feed_vocabs'][$key]['#options'][$tid]);
+      }
+    }
+  }
+
   $links = os_reader_importer_feed_links($selected_bundles, $selected_vocabularies);
 
   $form['pre_defined'] = array(
@@ -859,15 +872,14 @@ function os_reader_importer_feed_element($values = array(), $populate = TRUE) {
   foreach (array_keys($vocabs) as $vid) {
     $vocabulary = taxonomy_vocabulary_load($vid);
 
+    $element = 'vocab_' . $vid;
+    $vocab_default_value = (isset($values['selected_terms'][$element])) ? $values['selected_terms'][$element] : array();
+
     // Get the vocabulary's terms.
     $terms = array();
-    foreach (taxonomy_get_tree($vid) as $item) {
-      $term = taxonomy_term_load($item->tid);
+    foreach (taxonomy_get_tree($vid) as $term) {
       $terms[$term->tid] = $term->name;
     }
-
-    $element = 'vocab_' . $vid;
-    $vocab_default_value = (isset($values['selected_terms'][$element]) && $populate) ? $values['selected_terms'][$element] : array();
 
     // Create select field with the terms as options.
     $vocab_form[$element] = array(
@@ -875,7 +887,7 @@ function os_reader_importer_feed_element($values = array(), $populate = TRUE) {
       '#options' => $terms,
       '#title' => $vocabulary->name,
       '#multiple' => TRUE,
-      '#default_value' => $vocab_default_value,
+      '#default_value' => $populate ? $vocab_default_value : array(),
       '#description' => t('Select vocab/terms that will show on RSS links in the page.'),
       '#attributes' => array('class' => array('terms-select')),
     );
