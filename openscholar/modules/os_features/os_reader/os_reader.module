@@ -741,7 +741,12 @@ function os_reader_importer_feed_create($form, $form_state) {
   $selected_bundles = variable_get('os_rss_feed_content_types', array());
   $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
 
-  $form = os_reader_importer_feed_element();
+  $values = array(
+    'content_types' => $selected_bundles,
+    'selected_terms' => $selected_vocabularies,
+  );
+
+  $form = os_reader_importer_feed_element($values, FALSE);
 
   $links = os_reader_importer_feed_links($selected_bundles, $selected_vocabularies);
 
@@ -801,10 +806,13 @@ function os_reader_importer_feed_create($form, $form_state) {
  *    - content_types: The content types.
  *    - selected_terms: The selected terms IDs.
  *
+ * @param $populate
+ *  Determine if we need to populate the elements in the form.
+ *
  * @return Array
  *  Form elements.
  */
-function os_reader_importer_feed_element($values = array()) {
+function os_reader_importer_feed_element($values = array(), $populate = TRUE) {
   global $base_url;
 
   $form = array();
@@ -814,22 +822,12 @@ function os_reader_importer_feed_element($values = array()) {
     'selected_terms' => array(),
   );
 
-  if (empty($values['content_types'])) {
-    $values['content_types'] = array(
-      'news',
-      'blog',
-      'events',
-      'presentation',
-      'biblio',
-    );
-  }
-
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
     '#options' => os_get_bundles(array(1)),
     '#description' => t('Select the content types whose rss deeds will be shown by default.'),
-    '#default_value' => $values['content_types'],
+    '#default_value' => $populate ? $values['content_types'] : array(),
   );
 
   $vsite = vsite_get_vsite();
@@ -869,7 +867,7 @@ function os_reader_importer_feed_element($values = array()) {
     }
 
     $element = 'vocab_' . $vid;
-    $vocab_default_value = (isset($values['selected_terms'][$element])) ? $values['selected_terms'][$element] : array();
+    $vocab_default_value = (isset($values['selected_terms'][$element]) && $populate) ? $values['selected_terms'][$element] : array();
 
     // Create select field with the terms as options.
     $vocab_form[$element] = array(
@@ -1012,6 +1010,17 @@ function os_reader_feed_settings($form, $form_settings) {
     'content_types' => variable_get('os_rss_feed_content_types', array()),
     'selected_terms' => variable_get('os_rss_feed_vocabs', array()),
   );
+
+  if (empty($values['content_types'])) {
+    $values['content_types'] = array(
+      'news',
+      'blog',
+      'events',
+      'presentation',
+      'biblio',
+    );
+  }
+
   $form = os_reader_importer_feed_element($values);
 
   return system_settings_form($form);
