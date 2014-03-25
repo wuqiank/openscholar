@@ -215,7 +215,7 @@ function cp_user_remove_membership_confirm_submit($form, &$form_state) {
 }
 
 /**
- * Form builder; Builds the "Change site owner" form.
+ * Builds the "Change site owner" form.
  */
 function cp_user_change_site_owner_form($form_state) {
   $vsite = vsite_get_vsite();
@@ -253,8 +253,13 @@ function cp_user_change_site_owner_form($form_state) {
     '#options' => $users,
   );
 
+
+  $params = array(
+    '@site' => $site,
+  );
+
   // Builds and returns a confirmation form.
-  return confirm_form($form, t('Change the owner of the site <em>@site</em>', array('@site' => $site)), 'cp/users', '', t('Save'), t('Cancel'));
+  return confirm_form($form, t('Change the owner of the site <em>@site</em>', $params), 'cp/users', '', t('Save'), t('Cancel'));
 }
 
 /**
