@@ -3056,7 +3056,7 @@ function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
  */
 function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
   // Only continues if we have a purl (in order to save the favicon properly).
-  if (!$purl = vsite_get_purl() || !$vsite = vsite_get_vsite()) {
+  if (!($purl = vsite_get_purl()) || !$vsite = vsite_get_vsite()) {
     return;
   }
 
