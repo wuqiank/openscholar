@@ -2190,3 +2190,10 @@ function os_file_copy_set_error($message, $exception) {
     'message' => $message,
   );
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter for FORM_ID().
+ */
+function os_form_FORM_ID_alter() {
+
+}
