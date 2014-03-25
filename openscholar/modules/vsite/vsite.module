@@ -3285,6 +3285,20 @@ function vsite_page_build(&$page) {
 }
 
 /**
+ * Implements hook_metatag_page_cache_cid_parts_alter().
+ */
+function vsite_metatag_page_cache_cid_parts_alter(&$cid_parts) {
+  // Only alters metatag view behavior for vsite home pages.
+  if (!isset($cid_parts['instance']) || $cid_parts['instance'] != 'global:frontpage' || !$vsite = vsite_get_vsite()) {
+    return;
+  }
+
+  // Modify $cid_parts to match the vsite entity $cid_parts.
+  $vsite_cid_parts = _vsite_metatag_get_cid_parts($vsite);
+  $cid_parts = array_merge($cid_parts, $vsite_cid_parts);
+}
+
+/**
  * Builds the expected metatag cache ID parts as found in metatag.module.
  */
 function _vsite_metatag_get_cid_parts($vsite) {
