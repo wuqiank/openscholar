@@ -49,22 +49,28 @@ function cp_content_views_pre_render(&$view) {
 }
 
 /**
- * Same as _node_add_access but just for os bundles
- * @return boolean
+ * Access callback; For "Add new content" page.
+ *
+ * Returns TRUE if the user has the permission to create nodes of any type that
+ * is currently active on the VSite, or if the user has the permission to create
+ * new content type.
+ * Returns FALSE otherwise.
  */
 function cp_content_add_page_access() {
-  $bundles = os_get_bundles();
-  foreach ($bundles as $type => $name) {
-    if (node_hook($type, 'form') && $item = menu_get_item('node/add/'.$type)) {
-      return $item['access'];
-    }
-  }
   if (user_access('administer content types')) {
-    // There are no content types defined that the user has permission to create,
-    // but the user does have the permission to administer the content types, so
-    // grant them access to the page anyway.
+    // User has the permission to administer the content types, so grant them
+    // access to the page anyway.
     return TRUE;
   }
+
+  // Access is TRUE if at least one of the OS bundles returns access TRUE.
+  $bundles = os_get_bundles();
+  foreach ($bundles as $type => $name) {
+    if ($item = menu_get_item('node/add/' . $type) && $item['access'] == TRUE) {
+      return TRUE;
+    }
+  }
+
   return FALSE;
 }
 
@@ -144,22 +150,4 @@ function cp_content_batch_alter(&$batch) {
 
   // Update the entities batch to the entities of the current vsite.
   $arguments[0] = $ids;
-}
-
-/**
- * Implements hook_node_access().
- *
- * Check the user's permission to create new content in the current VSite.
- */
-function cp_content_node_access($node, $op, $account) {
-  if ($op != 'create') {
-    // Not "create" operation.
-    return;
-  }
-
-  // Get current VSite.
-  $vsite = vsite_get_vsite();
-
-  // Check the user's permission to create new content in the current VSite.
-  return og_user_access('node', $vsite->group->nid, 'create ' . $node . ' content', $account);
 }
