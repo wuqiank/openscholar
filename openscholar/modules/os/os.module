@@ -107,19 +107,16 @@ function os_menu_alter(&$items) {
   // Use custom callbacks for these menu items that will display a message
   // if site is in read-only mode. Access callbacks are altered to TRUE to get
   // to the page callback which will check the default access callback.
-  $items['user/login']['page callback'] = 'os_in_read_mode_login';
-  $items['user/register']['page callback'] = 'os_in_read_mode_register';
-  $items['user/register']['access callback'] = TRUE;
-  $items['user/password']['page callback'] = 'os_in_read_mode_password';
-
-  // Check if Pinserver should take over registration menu entries.
-  if (variable_get('os_pinserver_registration', FALSE)){
-    $items['site/register']['page callback'] = 'os_in_read_mode_site_register_pinserver';
-  }
-  else {
-    $items['site/register']['page callback'] = 'os_in_read_mode_site_register';
-  }
-  $items['site/register']['access callback'] = TRUE;
+  $items['user/login']['page callback'] = 'os_in_readonly_mode';
+  $items['user/login']['page arguments'] = array('login');
+  $items['user/register']['page callback'] = 'os_in_readonly_mode';
+  $items['user/register']['page arguments'] = array('register');
+  $items['user/password']['page callback'] = 'os_in_readonly_mode';
+  $items['user/password']['page arguments'] = array('password');
+  // Keep the original access callback for site/register because users need
+  // permissions to create VSites.
+  $items['site/register']['page callback'] = 'os_in_readonly_mode';
+  $items['site/register']['page arguments'] = array('site_register');
 
   // Displays 404 Not Found instead of default /node page.
   if (isset($items['node'])) {
@@ -137,75 +134,60 @@ function os_menu_alter(&$items) {
   // Apply CP theme for book revision page.
   $items['node/%node/revisions']['theme callback'] = 'cp_theme_name';
 }
+function os_in_readonly_mode($page) {
+  // Callback data for each page.
+  switch ($page) {
+    case 'login':
+      // Callback data for user/login.
+      $drupal_default_form = 'user_login';
+      $custom_callback_variable = 'os_readonly_login_callback';
+      break;
 
-/**
- * Page callback for user/login.
- */
-function os_in_read_mode_login() {
-  if (variable_get('os_readonly_mode', FALSE)) {
+    case 'register':
+      // Callback data for user/register.
+      $drupal_default_form = 'user_register_form';
+      $custom_callback_variable = 'os_readonly_register_callback';
+      break;
+
+    case 'password':
+      // Callback data for user/password.
+      $drupal_default_form = 'user_pass';
+      $custom_callback_variable = 'os_readonly_password_callback';
+      break;
+
+    case 'site_register':
+      // Callback data for site/register.
+      $drupal_default_form = 'vsite_register_form';
+      $custom_callback_variable = 'os_readonly_site_register_callback';
+      break;
+  }
+
+  global $user;
+
+  if (variable_get('os_readonly_mode', FALSE) && $user->uid != 1) {
+    // Read-only mode is active.
     return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
   }
 
   if (user_is_anonymous()) {
-    return drupal_get_form('user_login');
+    // Get custom callback function from variable.
+    $function = variable_get($custom_callback_variable, NULL);
+    if ($function) {
+      // Use the custom function.
+      return call_user_func($function);
+    }
+
+    // Use Drupal's default form.
+    return drupal_get_form($drupal_default_form);
+  }
+
+  if ($user->uid == 1) {
+    return drupal_get_form($drupal_default_form);
   }
 
   drupal_access_denied();
 }
 
-/**
- * Page callback for user/register.
- */
-function os_in_read_mode_register() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  if (user_register_access()) {
-    return drupal_get_form('user_register_form');
-  }
-
-  drupal_access_denied();
-}
-
-/**
- * Page callback for user/password.
- */
-function os_in_read_mode_password() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  return drupal_get_form('user_pass');
-}
-
-/**
- * Page callback for site/register, pinserver authentication.
- */
-function os_in_read_mode_site_register_pinserver() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  if (module_exists('os_pinserver_auth') && os_pinserver_auth_register_access()) {
-    return os_pinserver_auth_vsite_register_form_page();
-  }
-
-  return drupal_get_form('vsite_register_form');
-}
-
-/**
- * Page callback for site/register.
- */
-function os_in_read_mode_site_register() {
-  if (variable_get('os_readonly_mode', FALSE)) {
-    return variable_get('os_readonly_mode_message', OS_READONLY_MODE_MESSAGE);
-  }
-
-  if (vsite_vsite_exists_access()) {
-    return drupal_get_form('vsite_register_form');
-  }
-}
 
 /**
  * Implements hook_entity_info_alter().
@@ -523,7 +505,9 @@ function os_module_implements_alter(&$implementations, $hook) {
   elseif ($hook == 'init') {
     unset($implementations['purl']);
   }
-  elseif ($hook == 'form_alter') {
+  elseif ($hook == 'form_alter' || $hook == 'menu_alter') {
+    // Make the os implementation of menu_alter last so os_pinserver_auth won't
+    // override the "/user" page callback.
     unset($implementations['os']);
     $implementations['os'] = FALSE;
   }
