@@ -1,13 +1,13 @@
 Feature:
   Testing the metatags.
 
-  @api
+  @api @first
   Scenario: Testing default metatags.
     Given I visit "john/about"
      Then I should see the meta tag "description" with value "Page about john"
 
     
-  @api
+  @api @first
   Scenario: Testing custom metatags.
     Given I am logging in as "john"
       And I edit the page meta data of "about" in "john"
@@ -16,7 +16,7 @@ Feature:
      Then I visit "john/about"
       And I should see the meta tag "description" with value "custom tag value"
 
-  @api
+  @api @first
   Scenario: Edit meta description tag on vsite (group) bundles.
     Given I am logging in as "john"
       And I visit "john/cp/settings"

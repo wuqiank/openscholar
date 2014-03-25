@@ -1,7 +1,7 @@
 Feature:
   Testing the viste access.
 
-  @api
+  @api @first
   Scenario: Testing the Vsite access to the views.
     Given I visit "news"
       And I should see "I opened a new personal"
