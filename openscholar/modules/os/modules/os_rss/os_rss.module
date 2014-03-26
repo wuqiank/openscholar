@@ -21,8 +21,7 @@ function os_rss_menu() {
 
   $items['rss-feed'] = array(
     'title callback' => 'os_rss_feed_title_callback',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('os_rss_importer_feed_create'),
+    'page callback' => 'os_rss_list_of_feeds',
     'access arguments' => array('access content'),
   );
 
@@ -92,192 +91,21 @@ function os_rss_importer_feed_links($content_types, $vocabs) {
 
   return $links;
 }
-
 /**
  * Supply form for create RSS feed links.
  */
-function os_rss_importer_feed_create($form, $form_state) {
-  if (!module_exists('vsite')) {
-    return;
-  }
-
-  if (!empty($form_state['input'])) {
-    // The user submitted the form but the JS is disabled.
-    $links = os_rss_importer_feed_links($form_state['input']['os_rss_feed_content_types'], $form_state['input']['os_rss_feed_vocabs']);
-
-    $links = array_merge($links['bundles'], $links['terms']);
-
-    $form['results'] = array(
-      '#type' => 'item',
-      '#markup' => implode("<br />", $links),
-    );
-
-    $form['go_back'] = array(
-      '#type' => 'item',
-      '#markup' => t('<a href="@url">Go back</a> and select more filters.', array('@url' => url('rss-feed'))),
-    );
-
-    return $form;
-  }
-
+function os_rss_list_of_feeds() {
   $selected_bundles = variable_get('os_rss_feed_content_types', array());
   $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
 
-  $values = array(
-    'content_types' => $selected_bundles,
-    'selected_terms' => $selected_vocabularies,
-  );
-
-  $form = os_rss_importer_feed_element($values, FALSE);
-
-  // Allow to use select only the selected terms form the CP.
-  foreach ($form['os_rss_feed_vocabs'] as $key => $info) {
-    if (!in_array($key, array_keys($values['selected_terms']))) {
-      continue;
-    }
-
-    foreach (array_keys($info['#options']) as $tid) {
-      if (!in_array($tid, $values['selected_terms'][$key])) {
-        unset($form['os_rss_feed_vocabs'][$key]['#options'][$tid]);
-      }
-    }
-  }
-
   $links = os_rss_importer_feed_links($selected_bundles, $selected_vocabularies);
+  $content = theme('os_rss_importer_bundles', array(
+    'title' => t('By content'),
+    'sub-title' => t('You can filter content by pre defined node types:'),
+    'items' => $links['bundles'],
+  ));
 
-  $form['pre_defined'] = array(
-    '#type' => 'item',
-    '#markup' => theme('os_rss_importer_bundles', array(
-      'title' => t('By content'),
-      'sub-title' => t('You can filter content by pre defined node types:'),
-      'items' => $links['bundles'],
-    )),
-    '#weight' => -10,
-  );
-
-  // Display only the bundle the manager selected.
-  foreach ($selected_bundles as $key => $bundle) {
-    if (!$bundle) {
-      unset($form['os_rss_feed_content_types']['#options'][$key]);
-    }
-  }
-
-  // Display only selected vocabularies.
-  foreach ($selected_vocabularies as $key => $vocab) {
-    if (!$vocab) {
-      unset($form['os_rss_feed_vocabs'][$key]);
-    }
-  }
-
-  $form['#attached']['js'][] = drupal_get_path('module', 'os_rss') . '/js/os_rss_feed_submission.js';
-
-  $form['actions'] = array(
-    '#type' => 'actions',
-    '#weight' => 10,
-    'submit' => array(
-      '#type' => 'submit',
-      '#value' => t('Submit'),
-    ),
-  );
-
-  $form['results'] = array(
-    '#type' => 'item',
-    '#weight' => 11,
-    '#markup' => '',
-    '#prefix' => '<div id="os_rss_feed_results">',
-    '#suffix' => '</div>',
-  );
-
-  $form['#attached']['css'][] = drupal_get_path('module', 'os_rss') . '/css/os_rss_feed_results.css';
-
-  return $form;
-}
-
-/**
- * Return commons form elements: vocabularies and bundles for selection.
- *
- * @param $values
- *  Default value of the form. Allowed values:
- *    - content_types: The content types.
- *    - selected_terms: The selected terms IDs.
- *
- * @param $populate
- *  Determine if we need to populate the elements in the form.
- *
- * @return Array
- *  Form elements.
- */
-function os_rss_importer_feed_element($values = array(), $populate = TRUE) {
-  global $base_url;
-
-  $form = array();
-
-  $values += array(
-    'content_types' => array(),
-    'selected_terms' => array(),
-  );
-
-  $form['os_rss_feed_content_types'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Content types'),
-    '#options' => os_get_bundles(array(1)),
-    '#description' => t('Select the content types whose rss deeds will be shown by default.'),
-    '#default_value' => $populate ? $values['content_types'] : array(),
-  );
-
-  $vsite = vsite_get_vsite();
-  ctools_include('taxonomy', 'vsite_vocab');
-  $vocabs = vsite_vocab_get_vocabularies($vsite);
-
-  // The 'vocabs' tree will contain select fields - one for each vocabulary.
-  $vocab_form = array(
-    '#type' => 'fieldset',
-    '#collapsible' => FALSE,
-    '#title' => t('Filter by Vocabulary'),
-    '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
-    '#tree' => TRUE,
-    '#attached' => array(
-      'css' => array(libraries_get_path('select2') . '/select2.css'),
-      'js' => array(
-        array('type' => 'setting', 'data' => array(
-          'sv_list_vocab_bundles' => $vocabs,
-          'url' => $base_url,
-        )),
-        libraries_get_path('select2') . '/select2.js',
-        drupal_get_path('module', 'os_rss') . '/js/os_rss_feed_vocabs.js',
-      ),
-    ),
-  );
-
-  // Create a select field for each vocabulary, with the vocabulary's terms as
-  // the field's options.
-  foreach (array_keys($vocabs) as $vid) {
-    $vocabulary = taxonomy_vocabulary_load($vid);
-
-    $element = 'vocab_' . $vid;
-    $vocab_default_value = (isset($values['selected_terms'][$element])) ? $values['selected_terms'][$element] : array();
-
-    // Get the vocabulary's terms.
-    $terms = array();
-    foreach (taxonomy_get_tree($vid) as $term) {
-      $terms[$term->tid] = $term->name;
-    }
-
-    // Create select field with the terms as options.
-    $vocab_form[$element] = array(
-      '#type' => 'select',
-      '#options' => $terms,
-      '#title' => $vocabulary->name,
-      '#multiple' => TRUE,
-      '#default_value' => $populate ? $vocab_default_value : array(),
-      '#description' => t('Select vocab/terms that will show on RSS links in the page.'),
-      '#attributes' => array('class' => array('terms-select')),
-    );
-  }
-
-  $form['os_rss_feed_vocabs'] = $vocab_form;
-
-  return $form;
+  return $content;
 }
 
 /**
@@ -323,7 +151,6 @@ function _os_rss_importer_feed_create($items, $key) {
  * Get the node IDs according the the filter criteria.
  */
 function os_rss_importer_feed_export() {
-dpm('a');
   if (!empty($_GET['type']) && !empty($_GET['term'])) {
     $data = array(
       'bundle' => explode(',', $_GET['type']),
@@ -416,7 +243,69 @@ function os_rss_feed_settings($form, $form_settings) {
     );
   }
 
-  $form = os_rss_importer_feed_element($values);
+  $values += array(
+    'content_types' => array(),
+    'selected_terms' => array(),
+  );
+
+  $form['os_rss_feed_content_types'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Content types'),
+    '#options' => os_get_bundles(array(1)),
+    '#description' => t('Select the content types whose rss deeds will be shown by default.'),
+    '#default_value' => $values['content_types'],
+  );
+
+  $vsite = vsite_get_vsite();
+  ctools_include('taxonomy', 'vsite_vocab');
+  $vocabs = vsite_vocab_get_vocabularies($vsite);
+
+  // The 'vocabs' tree will contain select fields - one for each vocabulary.
+  $vocab_form = array(
+    '#type' => 'fieldset',
+    '#collapsible' => FALSE,
+    '#title' => t('Filter by Vocabulary'),
+    '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
+    '#tree' => TRUE,
+    '#attached' => array(
+      'css' => array(libraries_get_path('select2') . '/select2.css'),
+      'js' => array(
+        array('type' => 'setting', 'data' => array(
+          'sv_list_vocab_bundles' => $vocabs,
+        )),
+        libraries_get_path('select2') . '/select2.js',
+        drupal_get_path('module', 'os_rss') . '/js/os_rss_feed_vocabs.js',
+      ),
+    ),
+  );
+
+  // Create a select field for each vocabulary, with the vocabulary's terms as
+  // the field's options.
+  foreach (array_keys($vocabs) as $vid) {
+    $vocabulary = taxonomy_vocabulary_load($vid);
+
+    $element = 'vocab_' . $vid;
+    $vocab_default_value = (isset($values['selected_terms'][$element])) ? $values['selected_terms'][$element] : array();
+
+    // Get the vocabulary's terms.
+    $terms = array();
+    foreach (taxonomy_get_tree($vid) as $term) {
+      $terms[$term->tid] = $term->name;
+    }
+
+    // Create select field with the terms as options.
+    $vocab_form[$element] = array(
+      '#type' => 'select',
+      '#options' => $terms,
+      '#title' => $vocabulary->name,
+      '#multiple' => TRUE,
+      '#default_value' => $vocab_default_value,
+      '#description' => t('Select vocab/terms that will show on RSS links in the page.'),
+      '#attributes' => array('class' => array('terms-select')),
+    );
+  }
+
+  $form['os_rss_feed_vocabs'] = $vocab_form;
 
   return system_settings_form($form);
 }
