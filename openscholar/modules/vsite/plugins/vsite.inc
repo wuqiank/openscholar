@@ -413,6 +413,10 @@ class vsite extends space_og {
    */
   protected function activate_user_roles() {
     global $user;
+    if(user_is_anonymous()) {
+      // Anon users never get any special permissions.
+      return;
+    }
 
     $roles = $user->roles;
     $role_names = array(
@@ -421,7 +425,7 @@ class vsite extends space_og {
       'vsite user',
     );
 
-    $og_roles = og_get_user_roles('node', $this->id);
+    $og_roles = og_get_user_roles('node', $this->id, NULL, FALSE);
 
     // Re-populate "user_access" static.
     $perm = &drupal_static('user_access');
