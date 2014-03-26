@@ -78,15 +78,14 @@ function os_rss_importer_feed_links($content_types, $vocabs) {
 
   if (!empty($vocabs)) {
     $items = array();
-    foreach ($vocabs as $terms) {
-      $taxonomy_terms = taxonomy_term_load_multiple($terms);
 
-      foreach ($taxonomy_terms as $term) {
-        $items[] = array('key' => $term->tid, 'link' => $term->name);
-      }
+    $vocabs = taxonomy_vocabulary_load_multiple($vocabs);
+
+    foreach ($vocabs as $vocab) {
+      $items[] = array('key' => $vocab->vid, 'link' => $vocab->name);
     }
 
-    $links['terms'] = _os_rss_importer_feed_create($items, 'term');
+    $links['vocabs'] = _os_rss_importer_feed_create($items, 'vocab');
   }
 
   return $links;
@@ -99,10 +98,17 @@ function os_rss_list_of_feeds() {
   $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
 
   $links = os_rss_importer_feed_links($selected_bundles, $selected_vocabularies);
+
   $content = theme('os_rss_importer_bundles', array(
     'title' => t('By content'),
     'sub-title' => t('You can filter content by pre defined node types:'),
     'items' => $links['bundles'],
+  ));
+
+  $content .= theme('os_rss_importer_bundles', array(
+    'title' => t('By vocabs'),
+    'sub-title' => t('You can filter content by pre defined node types:'),
+    'items' => $links['vocabs'],
   ));
 
   return $content;
@@ -151,23 +157,29 @@ function _os_rss_importer_feed_create($items, $key) {
  * Get the node IDs according the the filter criteria.
  */
 function os_rss_importer_feed_export() {
-  if (!empty($_GET['type']) && !empty($_GET['term'])) {
-    $data = array(
-      'bundle' => explode(',', $_GET['type']),
-      'term' => explode(',', $_GET['term']),
+  if (!empty($_GET['type'])) {
+    $info = array(
+      'type' => 'type',
+      'data' => $_GET['type'],
     );
   }
-  else if (!empty($_GET['type'])) {
-    $data['bundle'] = explode(',', $_GET['type']);
-  }
-  elseif (!empty($_GET['term'])) {
-    $data['term'] = explode(',', $_GET['term']);
+  elseif (!empty($_GET['vocab'])) {
+    $vocab = taxonomy_get_tree($_GET['vocab']);
+    $tids = array();
+    foreach ($vocab as $term) {
+      $tids[] = $term->tid;
+    }
+
+    $info = array(
+      'type' => 'terms',
+      'data' => $tids,
+    );
   }
   else {
     return;
   }
 
-  $nids = os_rss_importer_feed_get_nids($data);
+  $nids = os_rss_importer_feed_get_nids($info);
   return implode(",", $nids);
 }
 
@@ -175,9 +187,9 @@ function os_rss_importer_feed_export() {
  * Build the Content with the RSS feeds.
  *
  * @param $info
- *  Array of search criteria with of one of the next filters:
- *    - bundle: Array of bundles.
- *    - term: Array of term IDs.
+ *  Array of search criteria with the next filters:
+ *    - type: type or terms.
+ *    - data: The node type or array of term IDs.
  *
  * @return Array
  *  List of node IDs.
@@ -193,12 +205,11 @@ function os_rss_importer_feed_get_nids($info) {
     $query->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $vsite->id);
   }
 
-  if (!empty($info['bundle'])) {
-    $query->propertyCondition('type', $info['bundle'], 'IN');
+  if ($info['type'] == 'type') {
+    $query->propertyCondition('type', $info['type']);
   }
-
-  if (!empty($info['term'])) {
-    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $info['term']);
+  else {
+    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $info['data'], 'IN');
   }
 
   $results = $query->execute();
@@ -230,7 +241,7 @@ function os_rss_context_load_alter(&$context) {
 function os_rss_feed_settings($form, $form_settings) {
   $values = array(
     'content_types' => variable_get('os_rss_feed_content_types', array()),
-    'selected_terms' => variable_get('os_rss_feed_vocabs', array()),
+    'vocabularies' => variable_get('os_rss_feed_vocabs', array()),
   );
 
   if (empty($values['content_types'])) {
@@ -245,7 +256,7 @@ function os_rss_feed_settings($form, $form_settings) {
 
   $values += array(
     'content_types' => array(),
-    'selected_terms' => array(),
+    'vocabularies' => array(),
   );
 
   $form['os_rss_feed_content_types'] = array(
@@ -260,52 +271,18 @@ function os_rss_feed_settings($form, $form_settings) {
   ctools_include('taxonomy', 'vsite_vocab');
   $vocabs = vsite_vocab_get_vocabularies($vsite);
 
-  // The 'vocabs' tree will contain select fields - one for each vocabulary.
-  $vocab_form = array(
-    '#type' => 'fieldset',
-    '#collapsible' => FALSE,
-    '#title' => t('Filter by Vocabulary'),
-    '#description' => t('Only include posts tagged with terms from the following vocabularies.'),
-    '#tree' => TRUE,
-    '#attached' => array(
-      'css' => array(libraries_get_path('select2') . '/select2.css'),
-      'js' => array(
-        array('type' => 'setting', 'data' => array(
-          'sv_list_vocab_bundles' => $vocabs,
-        )),
-        libraries_get_path('select2') . '/select2.js',
-        drupal_get_path('module', 'os_rss') . '/js/os_rss_feed_vocabs.js',
-      ),
-    ),
-  );
-
-  // Create a select field for each vocabulary, with the vocabulary's terms as
-  // the field's options.
-  foreach (array_keys($vocabs) as $vid) {
-    $vocabulary = taxonomy_vocabulary_load($vid);
-
-    $element = 'vocab_' . $vid;
-    $vocab_default_value = (isset($values['selected_terms'][$element])) ? $values['selected_terms'][$element] : array();
-
-    // Get the vocabulary's terms.
-    $terms = array();
-    foreach (taxonomy_get_tree($vid) as $term) {
-      $terms[$term->tid] = $term->name;
-    }
-
-    // Create select field with the terms as options.
-    $vocab_form[$element] = array(
-      '#type' => 'select',
-      '#options' => $terms,
-      '#title' => $vocabulary->name,
-      '#multiple' => TRUE,
-      '#default_value' => $vocab_default_value,
-      '#description' => t('Select vocab/terms that will show on RSS links in the page.'),
-      '#attributes' => array('class' => array('terms-select')),
-    );
+  $options = array();
+  foreach ($vocabs as $vocab) {
+    $options[$vocab->vid] = $vocab->name;
   }
 
-  $form['os_rss_feed_vocabs'] = $vocab_form;
+  $form['os_rss_feed_vocabs'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Vocabularies'),
+    '#options' => $options,
+    '#description' => t('Select the content types whose rss deeds will be shown by default.'),
+    '#default_value' => $values['vocabularies'],
+  );
 
   return system_settings_form($form);
 }
