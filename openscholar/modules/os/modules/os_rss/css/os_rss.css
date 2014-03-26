@@ -5,3 +5,9 @@
 .os-reader-feed-items li {
   list-style-type: none;
 }
+
+.os-reader-terms {
+  padding-left: 10px !important;
+  padding-bottom: 5px !important;
+  padding-top: 5px !important;
+}

@@ -99,6 +99,7 @@ function os_rss_list_of_feeds() {
         $vocabularies_feeds[] = theme('item_list', array(
           'title' => $vocabularies[$vid]->name,
           'items' => $links,
+          'attributes' => array('class' => array('os-reader-terms')),
         ));
       }
     }
@@ -108,6 +109,7 @@ function os_rss_list_of_feeds() {
         'title' => t('By vocabularies'),
         'sub-title' => t('You can filter content by pre defined vocabularies:'),
         'items' => $vocabularies_feeds,
+        'attributes' => array('class' => array('os-reader-feed-items')),
       ));
     }
   }
