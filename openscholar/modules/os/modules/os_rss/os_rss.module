@@ -185,7 +185,7 @@ function os_rss_importer_feed_export() {
  *
  * @param $info
  *  Array of search criteria with the next filters:
- *    - type: type or terms.
+ *    - type: type or term.
  *    - data: The node type or array of term IDs.
  *
  * @return Array
@@ -289,8 +289,10 @@ function os_rss_feed_settings($form, $form_settings) {
  */
 function theme_os_rss_importer_bundles($variables) {
   drupal_add_css(drupal_get_path('module', 'os_rss') . '/css/os_rss.css');
-  $content = '<h2 class="os-reader-feed-title">' . $variables['title'] . '</h2>';
-  $content .= '<span class="os-reader-feed-sub-title">' . $variables['sub-title'] . '</span>';
+
+  $content = '<h2 class="os-reader-feed-title">' . check_plain($variables['title']) . '</h2>';
+  $content .= '<span class="os-reader-feed-sub-title">' . check_plain($variables['sub-title']) . '</span>';
+
   $content .= theme('item_list', array(
     'items' => $variables['items'],
     'attributes' => array('class' => array('os-reader-feed-items')),
