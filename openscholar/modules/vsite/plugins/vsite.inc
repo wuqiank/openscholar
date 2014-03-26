@@ -413,7 +413,7 @@ class vsite extends space_og {
    */
   protected function activate_user_roles() {
     global $user;
-    if(!$user->uid) {
+    if(user_is_anonymous()) {
       // Anon users never get any special permissions.
       return;
     }
