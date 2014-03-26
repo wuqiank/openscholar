@@ -103,7 +103,7 @@ function os_rss_list_of_feeds() {
       }
     }
 
-    if ($items) {
+    if ($vocabularies_feeds) {
       $content .= theme('os_rss_importer_bundles', array(
         'title' => t('By vocabularies'),
         'sub-title' => t('You can filter content by pre defined vocabularies:'),
