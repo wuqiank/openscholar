@@ -125,7 +125,7 @@ class os_search_solr_more_like_this extends os_boxes_default {
       // The user select all the bundles. Set as an empty string.
       $this->options['mlt_type_filters'] = '';
     }
-    $settings = array_merge($this->options, $settings);
+    $settings = array_merge($settings, $this->options);
 
     // Adding the settings of the widget.
     $env_id = $environment['env_id'];
