@@ -280,7 +280,7 @@ function os_rss_feed_settings($form, $form_settings) {
     '#type' => 'checkboxes',
     '#title' => t('Vocabularies'),
     '#options' => $options,
-    '#description' => t('Select the content types whose rss deeds will be shown by default.'),
+    '#description' => t('Select vocabularies that will show an RSS links in the page.'),
     '#default_value' => $values['vocabularies'],
   );
 
