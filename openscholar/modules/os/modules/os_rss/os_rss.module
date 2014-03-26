@@ -203,7 +203,7 @@ function os_rss_importer_feed_get_nids($info) {
   }
 
   if ($info['type'] == 'type') {
-    $query->propertyCondition('type', $info['type']);
+    $query->propertyCondition('type', $info['data']);
   }
   else {
     $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $info['data']);
