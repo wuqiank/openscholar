@@ -51,29 +51,13 @@ function os_rss_theme() {
 }
 
 /**
- * Generate links for predefined terms and bundles.
- *
- * @param $content_types
- *  Lists of selected content types.
- * @param $vocabs
- *  Lists of selected vocabularies.
- *
- * @return Array
- *  Array of links.
- */
-function os_rss_importer_feed_links($content_types, $vocabs) {
-  $links = $items = array();
-
-  return $links;
-}
-/**
  * Supply form for create RSS feed links.
  */
 function os_rss_list_of_feeds() {
   $selected_bundles = variable_get('os_rss_feed_content_types', array());
   $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
 
-  $links = array();
+  $content = '';
 
   if (!empty($selected_bundles)) {
     $items = array();
@@ -84,14 +68,16 @@ function os_rss_list_of_feeds() {
       }
     }
 
-    $links['bundles'] = _os_rss_importer_feed_create($items, 'type');
-  }
+    if ($items) {
+      $links = _os_rss_importer_feed_create($items, 'type');
 
-  $content = theme('os_rss_importer_bundles', array(
-    'title' => t('By content'),
-    'sub-title' => t('You can filter content by pre defined node types:'),
-    'items' => $links['bundles'],
-  ));
+      $content .= theme('os_rss_importer_bundles', array(
+        'title' => t('By content'),
+        'sub-title' => t('You can filter content by pre defined node types:'),
+        'items' => $links,
+      ));
+    }
+  }
 
   if (!empty($selected_vocabularies)) {
     $vocabularies_feeds = array();
@@ -102,6 +88,7 @@ function os_rss_list_of_feeds() {
       $tree = taxonomy_get_tree($vid);
 
       $items = array();
+
       foreach ($tree as $term) {
         $items[] = array('key' => $term->tid, 'link' => $term->name);
       }
@@ -116,11 +103,13 @@ function os_rss_list_of_feeds() {
       }
     }
 
-    $content .= theme('os_rss_importer_bundles', array(
-      'title' => t('By vocabularies'),
-      'sub-title' => t('You can filter content by pre defined vocabularies:'),
-      'items' => $vocabularies_feeds,
-    ));
+    if ($items) {
+      $content .= theme('os_rss_importer_bundles', array(
+        'title' => t('By vocabularies'),
+        'sub-title' => t('You can filter content by pre defined vocabularies:'),
+        'items' => $vocabularies_feeds,
+      ));
+    }
   }
 
   return $content;
