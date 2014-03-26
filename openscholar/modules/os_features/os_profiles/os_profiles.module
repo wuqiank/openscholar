@@ -1019,7 +1019,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   // level value.
   $form['dummy__os_profiles_display_type'] = array(
     '#type' => 'radios',
-    '#title' => t('Display Types'),
+    '#title' => t('Display types'),
     '#default_value' => variable_get('os_profiles_display_type', 'teaser'),
     '#options' => $profile_styles_hover,
     '#description' => t('Choose the display type of a person in the "/people" page.'),
@@ -1434,14 +1434,14 @@ function _os_profiles_build_display_style_example($style) {
   }
 
   switch ($style) {
-    case 'title':
+    case 'links':
       $result = '
         <div class="dummy-content">
           <h1><a>John Fitzgerald Kennedy</a></h1>
         </div>
       ';
       break;
-    case 'links':
+    case 'title':
       $result = '
         <div class="dummy-content">
           <h1>John Fitzgerald Kennedy</h1>
