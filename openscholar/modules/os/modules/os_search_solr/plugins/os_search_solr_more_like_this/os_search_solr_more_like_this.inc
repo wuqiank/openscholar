@@ -140,7 +140,7 @@ class os_search_solr_more_like_this extends os_boxes_default {
         return $block;
       }
 
-      $block['title'] = $this->description;
+      $block['title'] = $this->title;
       $block['content'] = theme('apachesolr_search_mlt_recommendation_block', array('docs' => $docs));
 
       return $block;
@@ -228,7 +228,14 @@ class os_search_solr_more_like_this extends os_boxes_default {
   }
 
   /**
+   * Supply default setting for the MLT block.
    *
+   * @param $block
+   *  Default setting to be merged into the supplied default settings.
+   *
+   * @return Array
+   *  The set
+   * @see apachesolr_search_mlt_block_defaults().
    */
   function defaultSetting($block = array()) {
     return $block + array(
