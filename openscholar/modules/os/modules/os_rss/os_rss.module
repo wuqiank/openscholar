@@ -64,30 +64,6 @@ function os_rss_theme() {
 function os_rss_importer_feed_links($content_types, $vocabs) {
   $links = $items = array();
 
-  if (!empty($content_types)) {
-    $items = array();
-
-    foreach ($content_types as $bundle) {
-      if ($bundle) {
-        $items[] = array('key' => $bundle, 'link' => node_type_get_name($bundle));
-      }
-    }
-
-    $links['bundles'] = _os_rss_importer_feed_create($items, 'type');
-  }
-
-  if (!empty($vocabs)) {
-    $items = array();
-
-    $vocabs = taxonomy_vocabulary_load_multiple($vocabs);
-
-    foreach ($vocabs as $vocab) {
-      $items[] = array('key' => $vocab->vid, 'link' => $vocab->name);
-    }
-
-    $links['vocabs'] = _os_rss_importer_feed_create($items, 'vocab');
-  }
-
   return $links;
 }
 /**
@@ -97,7 +73,19 @@ function os_rss_list_of_feeds() {
   $selected_bundles = variable_get('os_rss_feed_content_types', array());
   $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
 
-  $links = os_rss_importer_feed_links($selected_bundles, $selected_vocabularies);
+  $links = array();
+
+  if (!empty($selected_bundles)) {
+    $items = array();
+
+    foreach ($selected_bundles as $bundle) {
+      if ($bundle) {
+        $items[] = array('key' => $bundle, 'link' => node_type_get_name($bundle));
+      }
+    }
+
+    $links['bundles'] = _os_rss_importer_feed_create($items, 'type');
+  }
 
   $content = theme('os_rss_importer_bundles', array(
     'title' => t('By content'),
@@ -105,11 +93,35 @@ function os_rss_list_of_feeds() {
     'items' => $links['bundles'],
   ));
 
-  $content .= theme('os_rss_importer_bundles', array(
-    'title' => t('By vocabularies'),
-    'sub-title' => t('You can filter content by pre defined vocabularies:'),
-    'items' => $links['vocabs'],
-  ));
+  if (!empty($selected_vocabularies)) {
+    $vocabularies_feeds = array();
+
+    $vocabularies = taxonomy_vocabulary_load_multiple($selected_vocabularies);
+
+    foreach ($selected_vocabularies as $vid) {
+      $tree = taxonomy_get_tree($vid);
+
+      $items = array();
+      foreach ($tree as $term) {
+        $items[] = array('key' => $term->tid, 'link' => $term->name);
+      }
+
+      if ($items) {
+        $links = _os_rss_importer_feed_create($items, 'term');
+
+        $vocabularies_feeds[] = theme('item_list', array(
+          'title' => $vocabularies[$vid]->name,
+          'items' => $links,
+        ));
+      }
+    }
+
+    $content .= theme('os_rss_importer_bundles', array(
+      'title' => t('By vocabularies'),
+      'sub-title' => t('You can filter content by pre defined vocabularies:'),
+      'items' => $vocabularies_feeds,
+    ));
+  }
 
   return $content;
 }
@@ -163,16 +175,10 @@ function os_rss_importer_feed_export() {
       'data' => $_GET['type'],
     );
   }
-  elseif (!empty($_GET['vocab'])) {
-    $vocab = taxonomy_get_tree($_GET['vocab']);
-    $tids = array();
-    foreach ($vocab as $term) {
-      $tids[] = $term->tid;
-    }
-
+  elseif (!empty($_GET['term'])) {
     $info = array(
       'type' => 'terms',
-      'data' => $tids,
+      'data' => $_GET['term'],
     );
   }
   else {
@@ -209,7 +215,7 @@ function os_rss_importer_feed_get_nids($info) {
     $query->propertyCondition('type', $info['type']);
   }
   else {
-    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $info['data'], 'IN');
+    $query->fieldCondition(OG_VOCAB_FIELD, 'target_id', $info['data']);
   }
 
   $results = $query->execute();
