@@ -106,8 +106,8 @@ function os_rss_list_of_feeds() {
   ));
 
   $content .= theme('os_rss_importer_bundles', array(
-    'title' => t('By vocabs'),
-    'sub-title' => t('You can filter content by pre defined node types:'),
+    'title' => t('By vocabularies'),
+    'sub-title' => t('You can filter content by pre defined vocabularies:'),
     'items' => $links['vocabs'],
   ));
 
@@ -291,7 +291,7 @@ function os_rss_feed_settings($form, $form_settings) {
  * Theme callback; Display the links of the feed with additional text.
  */
 function theme_os_rss_importer_bundles($variables) {
-  drupal_add_css(drupal_get_path('module', 'os_rss') . '/os_rss.css');
+  drupal_add_css(drupal_get_path('module', 'os_rss') . '/css/os_rss.css');
   $content = '<h2 class="os-reader-feed-title">' . $variables['title'] . '</h2>';
   $content .= '<span class="os-reader-feed-sub-title">' . $variables['sub-title'] . '</span>';
   $content .= theme('item_list', array(
