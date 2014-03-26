@@ -32,7 +32,6 @@
 	background-color: lightgray;
 }
 
-
 /* WHEN PLACED IN A HEADER REGION */
 #header-container .block-boxes-os_boxes_follow .item-list ul li {
   display: inline;
@@ -46,11 +45,11 @@
 }
 
 #header-container .service-name-span {
-  margin-right: 10px;
+  margin-right: 10px; /* LTR */
 }
 
 #header-container ul li:last-child .service-name-span {
-  margin-right: 0;
+  margin-right: 0; /* LTR */
 }
 
 .rss-feed-icon {

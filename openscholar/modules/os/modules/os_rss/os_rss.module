@@ -251,11 +251,6 @@ function os_rss_feed_settings($form, $form_settings) {
     );
   }
 
-  $values += array(
-    'content_types' => array(),
-    'vocabularies' => array(),
-  );
-
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Content types'),

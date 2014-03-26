@@ -7,7 +7,7 @@
 }
 
 .os-reader-terms {
-  padding-left: 10px !important;
+  padding-left: 10px !important; /* LTR */
   padding-bottom: 5px !important;
   padding-top: 5px !important;
 }
