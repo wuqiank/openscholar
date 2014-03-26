@@ -693,3 +693,10 @@ function os_update_7031() {
   features_revert($to_revert);
   return t('Variable components of App features reverted.');
 }
+
+/**
+ * Enable the OS RSS module.
+ */
+function os_update_7032() {
+  module_enable(array('os_rss'));
+}
