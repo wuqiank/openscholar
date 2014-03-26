@@ -556,10 +556,13 @@ function vsite_node_access($node, $op, $account) {
     return NODE_ACCESS_DENY;
   }
 
-  if (!vsite_get_vsite()) {
+  if (!$vsite = vsite_get_vsite()) {
     // Deny access when outside of VSite.
     return NODE_ACCESS_DENY;
   }
+
+  // Check the user's permission to create new content in the current VSite.
+  return !og_user_access('node', $vsite->group->nid, 'create ' . $node . ' content', $account) ? NODE_ACCESS_DENY : NODE_ACCESS_IGNORE;
 }
 
 /**
@@ -3056,7 +3059,7 @@ function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
  */
 function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
   // Only continues if we have a purl (in order to save the favicon properly).
-  if (!$purl = vsite_get_purl() || !$vsite = vsite_get_vsite()) {
+  if (!($purl = vsite_get_purl()) || !$vsite = vsite_get_vsite()) {
     return;
   }
 
@@ -3270,3 +3273,21 @@ function vsite_page_build(&$page) {
     $page['content_top']['metatags'] = $page['content']['metatags'];
   }
 }
+
+/**
+ * Implements of hook_views_plugins().
+ */
+function vsite_views_plugins() {
+  return array(
+    'cache' => array(
+      'vsite_time_per_gorup' => array(
+        'title' => t('Time-based, per VSite'),
+        'help' => t('Simple time-based caching of data for each VSite, based on their access.'),
+        'handler' => 'vsite_views_og_cache_plugin_cache_time',
+        'uses options' => TRUE,
+        'parent' => 'views_og_cache_plugin_cache_time',
+      ),
+    ),
+  );
+}
+

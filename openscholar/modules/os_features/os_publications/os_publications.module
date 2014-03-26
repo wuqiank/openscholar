@@ -491,13 +491,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     '#collapsed' => TRUE,
   );
 
-  foreach (array('field_biblio_extra' => 12, 'field_biblio_image' => 11, 'og_vocabulary' => 9) as $field => $weight) {
-    if (isset($form[$field])) {
-      $form['publication_extras'][$field] = $form[$field];
-      $form['publication_extras'][$field]['#weight'] = $weight;
-      unset($form[$field]);
-    }
-  }
+  $form['#pre_render'][] = 'os_publications_form_biblio_node_form_field_adjust';
 
   $form['publication_extras']['biblio_tabs'][5]['#weight'] = 1;
 
@@ -511,16 +505,33 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $tabs = &$form['publication_extras']['biblio_tabs'];
   unset($tabs['biblio_full_text']['body'][LANGUAGE_NONE][0]['#title']);
   unset($tabs[5]['#title']);
-  $tabs[5]['url']['#prefix'] = '<h4>'.t('Publisher\'s Version of Article').'</h4>';
-  $tabs[5]['url']['biblio_url']['#title'] = t('Link Text');
-  $tabs[5]['url']['biblio_url_title']['#title'] = t('Article URL');
+  $tabs[5]['url']['#prefix'] = '<h4>'.t('Publisher\'s Version of Publication').'</h4>';
+  $tabs[5]['url']['biblio_url_title']['#title'] = t('Link Text');
+  $tabs[5]['url']['biblio_url']['#title'] = t('Article URL');
   unset($tabs[7]['biblio_notes']['#title']);
-  $form['publication_extras']['field_biblio_extra'][LANGUAGE_NONE][0]['label']['#title'] = t('Description');
+  foreach (element_children($form['field_biblio_extra'][LANGUAGE_NONE]) as $k) {
+    $form['field_biblio_extra'][LANGUAGE_NONE][$k]['label']['#title'] = t('Description');
+  }
 
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
 
   unset($form['biblio_tabs']);
+}
+
+/**
+ * Moves fields inside the publications extras fieldset
+ */
+function os_publications_form_biblio_node_form_field_adjust($form) {
+
+  foreach (array('field_biblio_extra' => 12, 'field_biblio_image' => 11, 'og_vocabulary' => 9) as $field => $weight) {
+    if (isset($form[$field])) {
+      $form['publication_extras'][$field] = $form[$field];
+      $form['publication_extras'][$field]['#weight'] = $weight;
+      unset($form[$field]);
+    }
+  }
+  return $form;
 }
 
 /**

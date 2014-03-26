@@ -1711,6 +1711,34 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @When /^I enable read-only mode$/
+   */
+  public function iEnableReadOnlyMode() {
+    $this->invoke_code('os_migrate_demo_set_read_only', array(TRUE));
+  }
+
+  /**
+   * @Then /^I disable read-only mode$/
+   */
+  public function iDisableReadOnlyMode() {
+    $this->invoke_code('os_migrate_demo_set_read_only', array(FALSE));
+  }
+
+  /**
+   * @Then /^I enable pinserver$/
+   */
+  public function iEnablePinserver() {
+    $this->invoke_code('module_enable', array('array(\'pinserver\', \'pinserver_authenticate\', \'os_pinserver_auth\')'));
+  }
+
+  /**
+   * @Then /^I disable pinserver$/
+   */
+  public function iDisablePinserver() {
+    $this->invoke_code('module_disable', array('array(\'pinserver\', \'pinserver_authenticate\', \'os_pinserver_auth\')'));
+  }
+
+  /**
    * @Given /^I verify that "([^"]*)" is the owner of vsite "([^"]*)"$/
    */
   public function iVerifyThatIsTheOwnerOfVsite($username, $group) {

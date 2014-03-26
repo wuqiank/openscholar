@@ -206,6 +206,7 @@ function os_events_date_formatter_pre_view_alter(&$entity, $vars) {
 
   if (!isset($entity->date_id)) {
     if ($entity->view = views_get_current_view()
+      && isset($entity->view->plugin_name)
       && $entity->view->plugin_name == 'date_ical'
       && isset($entity->view->row_index)
       && isset($entity->view->result[$entity->view->row_index])) {

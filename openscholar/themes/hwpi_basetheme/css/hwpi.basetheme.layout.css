@@ -66,7 +66,11 @@
     margin-right: auto;
     width:980px;
   }
-  
+
+  .modal-content .message-inner {
+    width: inherit;
+  }
+
   .mobile .branding-container,
   .mobile #header-container,
   .mobile #columns,
