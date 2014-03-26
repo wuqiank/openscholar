@@ -16,7 +16,6 @@ function cp_user_get_member_rows($gid) {
   // Defines end-user text for these values.
   $default_status = t('Active');
   $owner_role = '<strong>' . t('Site owner') . '</strong>';
-  $role_edit_text = t('edit');
   $status_edit_text = t('remove');
   $change_site_owner_text = t('Change owner');
 
@@ -35,6 +34,7 @@ function cp_user_get_member_rows($gid) {
 
     // If the user is the owner, return a special row with no edit links.
     if ($is_owner) {
+      $role_edit_text = '';
       $role = $owner_role;
       $status_edit_link = '';
 
@@ -48,6 +48,7 @@ function cp_user_get_member_rows($gid) {
     // Otherwise, checks the current user's OG roles.
     // The member's role could be one of: Vsite admin, Content Editor, or Member.
     else {
+      $role_edit_text = t('edit');
       $change_ownership = '';
       $human_name = TRUE;
       $role = _cp_user_get_role($account->uid, $vsite->group->nid, $human_name);
@@ -98,7 +99,7 @@ function cp_user_get_member_uids($gid) {
   $member_uids = array();
 
   foreach ($og_memberships as $og_membership) {
-    $member_uids[$$og_membership->etid] = $og_membership->etid;
+    $member_uids[$og_membership->etid] = $og_membership->etid;
   }
 
   return $member_uids;
