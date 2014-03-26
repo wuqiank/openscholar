@@ -63,6 +63,9 @@ before_script:
   - drush en os_search_solr -y
   - drush solr-mark-all
   - drush solr-index
+  # Trying to execute the internal solr commit
+  - sleep 10
+  - wget http://localhost:8983/solr/update?commit=true
 
   # Copy Behat configuration file.
   - cd profiles/openscholar/behat
