@@ -539,7 +539,7 @@ function os_publications_form_biblio_node_form_field_adjust($form) {
  * For some reason, doing this in node_form_alter wasn't working
  */
 function os_publications_nodeformcols_pre_placement_alter(&$form) {
-  $form['biblio_abst_e']['#weight'] = 2;
+  $form['biblio_abst_e']['#weight'] = 5;
 }
 
 /**
