@@ -30,7 +30,7 @@ class os_search_solr_more_like_this extends os_boxes_default {
     $form['num_results'] = array(
       '#type' => 'textfield',
       '#title' => t('Results number'),
-      '#description' => t('Define hoe much results should the block display.'),
+      '#description' => t('Define how many results should the block display.'),
       '#default_value' => $this->options['num_results'],
     );
 
@@ -55,8 +55,8 @@ class os_search_solr_more_like_this extends os_boxes_default {
 
     $form['mlt_type_filters'] = array(
       '#type' => 'select',
-      '#title' => t('Node types'),
-      '#description' => t('Select which node types to display'),
+      '#title' => t('Content types'),
+      '#description' => t('Select which content types to display'),
       '#element_validate' => array('os_search_solr_more_like_this_bundles_element_validate'),
       '#options' => array('all' => t('All')) + os_get_bundles(array(OS_PUBLIC_APP)),
       '#default_value' => $this->options['mlt_type_filters'],
