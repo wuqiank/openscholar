@@ -89,7 +89,7 @@ projects[entityreference][patch][] = "http://drupal.org/files/1802916-er-show-id
 
 projects[entityreference_prepopulate][subdir] = "contrib"
 projects[entityreference_prepopulate][version] = 1.5
-projects[entityreference_prepopulate][patch][] = "https://drupal.org/files/issues/1994702-values-from-cache-20.patch"
+projects[entityreference_prepopulate][patch][] = "https://drupal.org/files/issues/1994702-er-ajax-9.patch"
 
 projects[elysia_cron][subdir] = "contrib"
 projects[elysia_cron][version] = 2.1
@@ -389,6 +389,7 @@ projects[views_bulk_operations][version] = 3.0
 
 projects[views_og_cache][subdir] = "contrib"
 projects[views_og_cache][version] = 1.1
+projects[views_og_cache][patch][] = "https://drupal.org/files/issues/2226219-easy-key-data-override-2.patch"
 
 projects[views_slideshow][subdir] = "contrib"
 projects[views_slideshow][version] = 3.0

@@ -198,7 +198,7 @@ function os_migrate_demo_migrate_api() {
  *    the context page mapping.
  *    If the function called from CLI the function will print the string.
  */
-function os_migrate_demo_set_box_in_region($nid, $box, $page, $region = 'sidebar_second') {
+function os_migrate_demo_set_box_in_region($nid, $box, $page, $region = 'sidebar_second', $delta_suffix = '') {
   ctools_include('layout', 'os');
   // Mapping for all the pages.
   $page_mapping = array(
@@ -229,6 +229,7 @@ function os_migrate_demo_set_box_in_region($nid, $box, $page, $region = 'sidebar
     'Bio' => 'os_boxes_bio',
     'RSS feed' => 'os_boxes_rss',
     'Image gallery' => 'os_boxes_slideshow',
+    'Faceted taxonomy' => 'os_boxes_facetapi_vocabulary',
   );
 
   $contexts = array(
@@ -241,8 +242,12 @@ function os_migrate_demo_set_box_in_region($nid, $box, $page, $region = 'sidebar
   // Changing the region differently for box and block.
   if (empty($blocks[$boxes_mapping[$box]])) {
     // Define the box.
+    $delta = 'box-' . strtolower(str_replace(" ", "-", $box));
+    if ($delta_suffix) {
+      $delta .= '-' . $delta_suffix;
+    }
     $options = array(
-      'delta' => 'box-' . strtolower(str_replace(" ", "-", $box)),
+      'delta' => $delta,
       'title' => $box,
       'description' => $box,
     );
@@ -306,8 +311,9 @@ function os_migrate_demo_hide_box($nid, $plugin, $delta, $page) {
   if (empty($blocks[$plugin])) {
     $blocks['boxes-' . $delta]['region'] = FALSE;
     // Delete the box.
-    $box = boxes_box::factory($plugin, array());
-    $box->delete();
+    if ($box = boxes_box::factory($plugin, array())) {
+      $box->delete();
+    }
   }
   else {
     $blocks[$plugin]['region'] = FALSE;
