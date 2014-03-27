@@ -97,7 +97,7 @@ function os_rss_list_of_feeds() {
 
       $content .= theme('os_rss_importer_bundles', array(
         'title' => t('By content'),
-        'sub-title' => t('You can filter content by pre defined node types:'),
+        'sub-title' => t('You can filter content by pre defined content types:'),
         'items' => $links,
       ));
     }
