@@ -257,12 +257,13 @@ function os_taxonomy_activate_context($taxonomy_term = NULL, $vocabulary = NULL)
   if(!$vocabulary){
     $term = taxonomy_term_load($taxonomy_term);
     $vocabulary = $term->vid;
-  }elseif (isset($vocabulary->vid)) {
+  }
+  elseif (isset($vocabulary->vid)) {
     $vocabulary = $vocabulary->vid;
   }
 
   // Load context for taxonomy term.
-  if($taxonomy_term){
+  if ($taxonomy_term) {
 	  $context_name = 'os_taxonomy-term-'.$taxonomy_term;
 	  _os_taxonomy_active_elements(array('tid' => $taxonomy_term));
 
@@ -277,7 +278,7 @@ function os_taxonomy_activate_context($taxonomy_term = NULL, $vocabulary = NULL)
   }
 
   // Load context for vocab if we are not in a os feature context.
-  if($vocabulary && !os_get_active_feature()){
+  if ($vocabulary && !os_get_active_feature()) {
     $context_name = 'os_taxonomy-vocab-'.$vocabulary;
     _os_taxonomy_active_elements(array('vid' => $vocabulary));
 
@@ -1007,7 +1008,7 @@ function theme_os_taxonomy_tagged_nodes($variables) {
   );
   $taxonomy_term = $variables['taxonomy_term'];
   $vocabulary = !empty($variables['vocabulary']) ? $variables['vocabulary'] : NULL;
-  if(!$vocabulary && !($vocabulary = taxonomy_vocabulary_load($taxonomy_term->vid))){
+  if (!$vocabulary && !($vocabulary = taxonomy_vocabulary_load($taxonomy_term->vid))) {
     // Somthing bad has happened we don't have a vocab or term.
     return FALSE;
   }
@@ -1045,14 +1046,14 @@ function theme_os_taxonomy_tagged_nodes($variables) {
     '#suffix' => '</div>',
   );
 
-  if($taxonomy_term){
+  if ($taxonomy_term) {
     //Render the term and description
     $build['term_heading']['term'] = os_taxonomy_term_view($taxonomy_term, 'full', $options['description']);
   } elseif ($vocabulary) {
     //Render the vocab and description
     $build['term_heading']['vocabulary'] = array();
 
-    if($options['description']) {
+    if ($options['description']) {
       $build['term_heading']['vocabulary']['description'] = array(
         '#markup' => check_markup($vocabulary->description, $vocabulary->format, '', TRUE),
         '#weight' => 0,
@@ -1066,15 +1067,17 @@ function theme_os_taxonomy_tagged_nodes($variables) {
   $children = taxonomy_get_tree($vocabulary->vid, ($taxonomy_term)?$taxonomy_term->tid:0, 1, TRUE);
   $has_children_to_display = (!empty($children) && (is_null($options['max_depth']) || (is_numeric($options['max_depth']) && $options['max_depth'] > $options['cur_depth'])));
 
-  if($taxonomy_term){
+  if ($taxonomy_term) {
     $tid = $taxonomy_term->tid;
-  }else{
+  }
+  else {
     // This is a vocab aggregate the tid's unless a tree was asked for.
-    if($has_children_to_display){
+    if ($has_children_to_display) {
       // The first level will be the vocab itself so go one deeper.
       $options['max_depth'] = $options['max_depth'] + 1;
       $tid = false;
-    } else {
+    }
+    else {
       // Retrieve all of the terms.
       $all_terms = taxonomy_get_tree($vocabulary->vid,0);
       // Aggregate the TID's
@@ -1087,7 +1090,7 @@ function theme_os_taxonomy_tagged_nodes($variables) {
   }
 
   // Attaches list of nodes in this term, or empty message if term is root term.
-  if($tid){
+  if($tid) {
     $entity_count = os_taxonomy_count_attached_entities($tid, $options['bundles']);
   }
 
@@ -1103,10 +1106,9 @@ function theme_os_taxonomy_tagged_nodes($variables) {
 
     $entities = os_taxonomy_list_attached_entities($tid, $options['bundles'], $options['range'], $options['offset']);
 
-
     //this array map is only necessary when entity types are mixed.  would it be more efficient to use the TYPE_load_multiple and TYPE_view_multipe options when the bundles are all within one entity?
     $build += array_map(function ($a) use ($tid, $options) {
-      if($a['entity_type'] == "node") {
+      if ($a['entity_type'] == "node") {
         //Render a node.
         $entity = node_load($a['entity_id']);
         $entity->contextual_annotation_key = 'tid-' . $tid;
@@ -1648,7 +1650,7 @@ function os_taxonomy_taxonomy_vocabulary_update($vocabulary) {
   // Skip processing if the user has disabled pathauto for the term.
   if (!isset($vocabulary->path['pathauto']) || !empty($vocabulary->path['pathauto'])) {
 	  // Skip processing if the term has no pattern.
-	  if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $term->vocabulary_machine_name)) {
+	  if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $vocabulary->machine_name)) {
 	    module_load_include('inc', 'pathauto');
 	    $uri = entity_uri('taxonomy_vocabulary', $vocabulary);
 
@@ -1753,4 +1755,14 @@ function _os_taxonomy_create_default_context($vocabulary) {
   );
 
   vsite_layout_context_set($context_name, $blocks);
+}
+
+/**
+ * Invalidate os taxonomy cache.
+ *
+ * @param $viste
+ *  The vsite id.
+ */
+function os_taxonomy_invalidate_cache($viste) {
+
 }
