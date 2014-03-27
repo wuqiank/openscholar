@@ -7,7 +7,26 @@
 }
 
 .os-reader-terms {
-  padding-left: 10px !important; /* LTR */
+  padding-left: 0 !important; /* LTR */
   padding-bottom: 5px !important;
   padding-top: 5px !important;
+}
+
+
+
+.os-rss-description {
+    padding-left: 55px;
+    background: url('/profiles/openscholar/themes/os_basetheme/images/scholarbase-sprite.png') -38px 5px no-repeat;
+}
+
+
+h2.os-reader-feed-title,
+.os-reader-feed-items h3 {
+	margin-top:15px;font-weight:normal;
+	}
+
+
+.os-reader-feed-items li a {
+	padding-left: 22px;
+    background: url('/profiles/openscholar/themes/os_basetheme/images/scholarbase-sprite.png') -38px -73px no-repeat;
 }
