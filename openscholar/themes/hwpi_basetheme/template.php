@@ -94,7 +94,7 @@ function hwpi_basetheme_preprocess_node(&$vars) {
       return;
     }
 
-    if ($vars['view_mode'] == 'sidebar_teaser') {
+    if (in_array($vars['view_mode'], array('sidebar_teaser', 'full'))) {
       // On sidebar tease view mode the content in $vars['content']['pic_bio'].
       $key = &$vars['content']['pic_bio'];
       $vars['content']['pic_bio']['#access'] = TRUE;
