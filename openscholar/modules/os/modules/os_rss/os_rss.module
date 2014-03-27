@@ -44,6 +44,31 @@ function os_rss_theme() {
 }
 
 /**
+ * Return default bundles to be displayed for the user.
+ */
+function os_rss_default_bundles() {
+  $available_bundles = os_get_bundles(array(OS_PUBLIC_APP));
+  $machine_names = array_keys($available_bundles);
+
+  $selected_bundles = array(
+    'news',
+    'blog',
+    'events',
+    'presentation',
+    'biblio',
+  );
+
+  $bundles = array();
+  foreach ($selected_bundles as $bundle) {
+    if (in_array($bundle, $machine_names)) {
+      $bundles[] = $bundle;
+    }
+  }
+
+  return $bundles;
+}
+
+/**
  * Supply form for create RSS feed links.
  */
 function os_rss_list_of_feeds() {
@@ -52,19 +77,10 @@ function os_rss_list_of_feeds() {
 
   $content = '';
 
-  $text = "Really Simple Syndication (RSS) allow you to subscribe to content update of a particular interest<br />";
-  $text .= "Find a link of interest below and copy it to RSS reader.";
-
-  $content .= "<div class='os-rss-description'>" . t($text) . "</div>";
+  $content .= "<div class='os-rss-description'>" . t("Really Simple Syndication (RSS) allow you to subscribe to content update of a particular interest<br />Find a link of interest below and copy it to RSS reader.") . "</div>";
 
   if (empty($selected_bundles)) {
-    $selected_bundles = array(
-      'news',
-      'blog',
-      'events',
-      'presentation',
-      'biblio',
-    );
+    $selected_bundles = os_rss_default_bundles();
   }
 
   if (!empty($selected_bundles)) {
@@ -181,7 +197,7 @@ function os_rss_importer_feed_export() {
     );
   }
   else {
-    return;
+    return array();
   }
 
   $nids = os_rss_importer_feed_get_nids($info);
@@ -250,13 +266,7 @@ function os_rss_feed_settings($form, $form_settings) {
   );
 
   if (empty($values['content_types'])) {
-    $values['content_types'] = array(
-      'news',
-      'blog',
-      'events',
-      'presentation',
-      'biblio',
-    );
+    $values['content_types'] = os_rss_default_bundles();
   }
 
   $form['os_rss_feed_content_types'] = array(
