@@ -389,7 +389,7 @@ projects[views_bulk_operations][version] = 3.0
 
 projects[views_og_cache][subdir] = "contrib"
 projects[views_og_cache][version] = 1.1
-projects[views_og_cache][patch][] = "https://drupal.org/files/issues/2226219-easy-key-data-override-1.patch"
+projects[views_og_cache][patch][] = "https://drupal.org/files/issues/2226219-easy-key-data-override-2.patch"
 
 projects[views_slideshow][subdir] = "contrib"
 projects[views_slideshow][version] = 3.0
