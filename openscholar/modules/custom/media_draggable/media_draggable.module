@@ -293,3 +293,22 @@ function media_draggable_file_presave($file) {
     $file->timestamp = $file->original->timestamp;
   }
 }
+
+/**
+ * Adds a submit handler to the file edit form, so we can dump the file back to the parent page
+ */
+function media_draggable_form_file_entity_edit_alter(&$form, &$form_state) {
+  $form['actions']['submit']['#submit'][] = 'media_draggable_file_edit_submit';
+}
+
+/**
+ * Dumps the editted file back to the parent page, so it can update itself
+ */
+function media_draggable_file_edit_submit($form, $form_state) {
+  $file = $form_state['file'];
+  drupal_add_js(array(
+    'mediaDraggable' => array(
+      'editedFile' => $file
+    )
+  ), 'setting');
+}

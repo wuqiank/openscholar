@@ -48,6 +48,7 @@ p:empty {
 
 table, th, td, tr {
   border-color: #CACACA;
+  color: inherit;
 }
 table {
   margin-bottom: 15px;

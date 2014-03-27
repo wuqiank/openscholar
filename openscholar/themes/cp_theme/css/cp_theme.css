@@ -507,6 +507,12 @@ border-radius: 0;
 	display:inline-block;
 	margin-right:15px;
 	vertical-align: top;
+	width:200px;
+}
+
+.form-item-biblio-url,
+.form-item-biblio-url-title {
+	width:290px;
 }
 
 .form-item-biblio-url input.form-text,
@@ -535,6 +541,9 @@ border-radius: 0;
 	height:60px;
 }
 
+.form-item-biblio-abst-e-value ~ .description {
+	margin-bottom:20px;
+}
 
 .form-item-biblio-year {margin-top:10px;}
 

@@ -1019,7 +1019,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   // level value.
   $form['dummy__os_profiles_display_type'] = array(
     '#type' => 'radios',
-    '#title' => t('Display Types'),
+    '#title' => t('Display types'),
     '#default_value' => variable_get('os_profiles_display_type', 'teaser'),
     '#options' => $profile_styles_hover,
     '#description' => t('Choose the display type of a person in the "/people" page.'),
@@ -1434,10 +1434,17 @@ function _os_profiles_build_display_style_example($style) {
   }
 
   switch ($style) {
-    case 'title':
+    case 'links':
       $result = '
         <div class="dummy-content">
           <h1><a>John Fitzgerald Kennedy</a></h1>
+        </div>
+      ';
+      break;
+    case 'title':
+      $result = '
+        <div class="dummy-content">
+          <h1>John Fitzgerald Kennedy</h1>
         </div>
       ';
       break;
@@ -1448,7 +1455,7 @@ function _os_profiles_build_display_style_example($style) {
         </div>
         <div class="dummy-content">
           <h1><a>John Fitzgerald Kennedy</a></h1>
-				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
+				  <div class="dummy-professional-title">commander of Motor Torpedo Boats PT-109 and PT-59 during World War II<br />Massachusetts\'s 11th congressional district</div>
 				  <div>Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
 				  <div>555-1234</div>
 				  <div><a>example@address.com</a></div>
@@ -1462,7 +1469,20 @@ function _os_profiles_build_display_style_example($style) {
         </div>
         <div class="dummy-content">
           <h1><a>John Fitzgerald Kennedy</a></h1>
-				  <div class="dummy-professional-title">Drupal developer at Gizra.inc, QA person at Gizra.inc</div>
+				  <div class="dummy-professional-title">commander of Motor Torpedo Boats PT-109 and PT-59 during World War II<br />Massachusetts\'s 11th congressional district</div>
+        </div>
+      ';
+      break;
+    case 'slide_teaser':
+      $result = '
+        <h1 class="dummy-header">John Fitzgerald Kennedy</h1>
+        <div class="dummy-slider">
+          <div class="dummy-content">
+            <div class="dummy-professional-title">commander of Motor Torpedo Boats PT-109 and PT-59 during World War II<br />Massachusetts\'s 11th congressional district</div>
+          </div>
+          <div>Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
+				  <div>555-1234</div>
+				  <div><a>example@address.com</a></div>
         </div>
       ';
       break;
@@ -1470,7 +1490,7 @@ function _os_profiles_build_display_style_example($style) {
       $result = '
         <div class="dummy-content">
           <h1><a>John Fitzgerald Kennedy</a></h1>
-				  <div class="dummy-professional-title">Drupal developer at Gizra.inc<br>QA person at Gizra.inc</div>
+				  <div class="dummy-professional-title">commander of Motor Torpedo Boats PT-109 and PT-59 during World War II<br />Massachusetts\'s 11th congressional district</div>
 				  <div>Often referred to by his initials JFK, was the 35th President of the United States, serving from 1961 until his assassination in 1963.</div>
        	  <div>555-1234</div>
 				  <div><a>example@address.com</a></div>
