@@ -166,7 +166,6 @@ function hwpi_basetheme_process_node(&$vars) {
   }
 }
 
-
 /**
  * Implements hook_field_display_ENTITY_TYPE_alter().
  */
