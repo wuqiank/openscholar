@@ -3274,3 +3274,20 @@ function vsite_page_build(&$page) {
   }
 }
 
+/**
+ * Implements of hook_views_plugins().
+ */
+function vsite_views_plugins() {
+  return array(
+    'cache' => array(
+      'vsite_time_per_group' => array(
+        'title' => t('Time-based, per VSite'),
+        'help' => t('Simple time-based caching of data for each VSite, based on their access.'),
+        'handler' => 'vsite_views_og_cache_plugin_cache_time',
+        'uses options' => TRUE,
+        'parent' => 'views_og_cache_plugin_cache_time',
+      ),
+    ),
+  );
+}
+
