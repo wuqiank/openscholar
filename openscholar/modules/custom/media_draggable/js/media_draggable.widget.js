@@ -79,7 +79,7 @@
           && typeof settings.mediaDraggable.newFile != 'undefined'
           && $(ctx).prop('tagName') == 'FORM') {
         addRow(settings.mediaDraggable.newFile);
-        settings.mediaDraggable.newFile = false;
+        delete settings.mediaDraggable.newFile;
       }
     }
   };

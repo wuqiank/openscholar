@@ -733,7 +733,8 @@ div.ctools-modal-content .modal-content {
 }
 
 div.ctools-modal-content .modal-content .messages {
-  width: 680px;
+  width: 95%;
+  padding: 0;
 }
 
 #modalContent .spaces-customize-form .buttons input.form-submit {
@@ -1101,12 +1102,12 @@ img.recent-images-list:hover {
  background: none;
 }
 
-.field-name-body img.media-element.file-default {
+img.media-element.file-default {
 	padding-right:15px;
 	}
 
-.lt-ie9	.field-name-body img.media-element.file-default[style*="FLOAT:"][style*="RIGHT;"],
-.field-name-body img.media-element.file-default[style*="float:"][style*="right;"] {
+.lt-ie9	img.media-element.file-default[style*="FLOAT:"][style*="RIGHT;"],
+img.media-element.file-default[style*="float:"][style*="right;"] {
 	padding-left:15px;
 	padding-right:0;
 	}	

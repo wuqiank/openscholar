@@ -138,6 +138,7 @@ function os_files_library_alter(&$libs, $module) {
 function os_files_field_extra_fields_alter(&$info) {
   foreach ($info['file'] as $type => $data) {
     $info['file'][$type]['form']['preview']['weight'] = -11;
+    unset($info['file'][$type]['form']['redirect']);
   }
 }
 
@@ -759,6 +760,9 @@ function os_files_entity_info_alter(&$info){
       'bundle argument' => 4
     )
   );
+
+  // prevent URL redirect form for files
+  $info['file']['redirect'] = FALSE;
 }
 
 function os_files_image_default_styles(){

@@ -39,3 +39,8 @@
   display: inline-block;
   width: 45%;
 }
+
+.droppable-message,
+.droppable-standard-upload span {
+	font-weight:bold;
+	}
