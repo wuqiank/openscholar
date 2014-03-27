@@ -3078,6 +3078,7 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
       '#weight' => 30,
       'vsite_title' => array(
         '#type' => 'textfield',
+        '#required' => TRUE,
         '#title' => t('Site title'),
         '#default_value' => $vsite->group->title,
         '#description' => t('Your site\'s official title, as displayed in your Site info widget, in search results, and in browser tabs.'),
@@ -3159,20 +3160,29 @@ function vsite_cp_settings_form_submit($form, &$form_state) {
         if (isset($form_state['values'][$name])) {
           $value = $form_state['values'][$name];
           $property = isset($info['property']) ? $info['property'] : $name;
-          if (isset($info['use_set'])) {
-            $wrapper->{$property}->set($value);
+          $old_value = $wrapper->{$property}->value();
+          if ($old_value != $value) {
+            if (isset($info['use_set'])) {
+              $wrapper->{$property}->set($value);
+              $modified = TRUE;
+            }
+            else {
+              $wrapper->{$property} = $value;
+              $modified = TRUE;
+            }
           }
-          else {
-            $wrapper->{$property} = $value;
-          }
-          $modified = TRUE;
         }
         break;
     }
   }
 
+  // Only saves wrapper and clears metatag cache when the values have changed.
   if ($modified) {
     $wrapper->save();
+    // Clear the cache so that the the new tags are available immediately.
+    $cid_parts = _vsite_metatag_get_cid_parts($vsite);
+    $cid = metatag_cache_default_cid_parts($cid_parts);
+    cache_clear_all($cid, 'cache_metatag', TRUE);
   }
 }
 
@@ -3185,83 +3195,39 @@ function vsite_metatag_metatags_view_alter(&$output, $instance) {
     return;
   }
 
-  // Runs through the same basic actions as metatag does for entity view.
-  // @see metatag_entity_view()
-  // If this entity object isn't allowed meta tags, skip it.
-  $entity = $vsite->group;
-  $entity_type = 'node';
-  $view_mode = 'full';
-  if (!metatag_entity_has_metatags($entity_type, $entity)) {
-    return;
-  }
-
-  // Obtain some details of the entity that are needed elsewhere.
-  list($entity_id, $revision_id, $bundle) = entity_extract_ids($entity_type, $entity);
-  $revision_id = intval($revision_id);
-  $instance = "{$entity_type}:{$bundle}";
-
-  // Determine the language this entity actually uses.
-  $entity_language = metatag_entity_get_language($entity_type, $entity);
-
-  // No language was defined for the entity.
-  if ($entity_language == LANGUAGE_NONE) {
-    $langcode = LANGUAGE_NONE;
-  }
-  else {
-    $enabled_languages = field_content_languages();
-    foreach (field_language($entity_type, $entity) as $field => $lang) {
-      // Only accept actual language values that are properly enabled.
-      if ($lang != LANGUAGE_NONE && in_array($lang, $enabled_languages)) {
-        $langcode = $lang;
-      }
-    }
-  }
-
-  // All applicable pieces for this current page.
-  $cid_parts = array(
-    'entity_type' => $entity_type,
-    'bundle' => $bundle,
-    'entity_id' => $entity_id,
-    'revision_id' => $revision_id,
-    'langcode' => $langcode,
-    'view_mode' => $view_mode,
-  );
+  // Finds the metatag cache ID info for the vsite node.
+  $cid_parts = _vsite_metatag_get_cid_parts($vsite);
   $cid = metatag_cache_default_cid_parts($cid_parts);
-
   if ($cache = metatag_cache_get($cid)) {
     $output = $cache->data;
   }
   else {
     // Separate the meta tags.
-    $metatags = isset($entity->metatags) ? $entity->metatags : array();
+    $metatags = isset($vsite->group->metatags) ? $vsite->group->metatags : array();
 
     // Build options for meta tag rendering.
+    $languages = language_list();
     $options = array(
-      'entity' => $entity,
-      'entity_type' => $entity_type,
-      'view_mode' => $view_mode,
+      'entity' => $vsite->group,
+      'entity_type' => $cid_parts['entity_type'],
+      'view_mode' => $cid_parts['view_mode'],
+      'language' => $languages[$cid_parts['langcode']],
     );
 
-    // Ensure we actually pass a language object rather than language code.
-    $languages = language_list();
-    if (isset($languages[$langcode])) {
-      $options['language'] = $languages[$langcode];
-    }
-
     // Reload the entity object from cache as it may have been altered.
-    $token_type = token_get_entity_mapping('entity', $entity_type);
-    $entities = entity_load($entity_type, array($entity_id));
-    $options['token data'][$token_type] = $entities[$entity_id];
-    $options['entity'] = $entities[$entity_id];
+    $token_type = token_get_entity_mapping('entity', $cid_parts['entity_type']);
+    $entities = entity_load($cid_parts['entity_type'], array($cid_parts['entity_id']));
+    $options['token data'][$token_type] = $entities[$cid_parts['entity_id']];
+    $options['entity'] = $entities[$cid_parts['entity_id']];
 
     // Render the metatags and save to the cache.
-    $output = metatag_metatags_view($instance, $metatags, $options);
+    $output = metatag_metatags_view($cid_parts['instance'], $metatags, $options);
     metatag_cache_set($cid, $output);
   }
 
   // We need to register the term's metatags, so we can later fetch them.
   // @see metatag_page_build().
-  metatag_page_set_metatags($instance, $output);
+  metatag_page_set_metatags($cid_parts['instance'], $output);
 }
 
 /**
@@ -3291,3 +3257,37 @@ function vsite_views_plugins() {
   );
 }
 
+/**
+ * Implements hook_metatag_page_cache_cid_parts_alter().
+ */
+function vsite_metatag_page_cache_cid_parts_alter(&$cid_parts) {
+  // Only alters metatag view behavior for vsite home pages.
+  if (!isset($cid_parts['instance']) || $cid_parts['instance'] != 'global:frontpage' || !$vsite = vsite_get_vsite()) {
+    return;
+  }
+
+  // Modify $cid_parts to match the vsite entity $cid_parts.
+  $vsite_cid_parts = _vsite_metatag_get_cid_parts($vsite);
+  $cid_parts = array_merge($cid_parts, $vsite_cid_parts);
+}
+
+/**
+ * Builds the expected metatag cache ID parts as found in metatag.module.
+ */
+function _vsite_metatag_get_cid_parts($vsite) {
+  $entity_type = 'node';
+  $view_mode = 'full';
+  $entity = $vsite->group;
+  list($entity_id, $revision_id, $bundle) = entity_extract_ids($entity_type, $entity);
+  $cid_parts = array(
+    'instance' => "{$entity_type}:{$bundle}",
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'entity_id' => $entity_id,
+    'revision_id' => $revision_id,
+    'langcode' => LANGUAGE_NONE,
+    'view_mode' => $view_mode,
+  );
+
+  return $cid_parts;
+}
