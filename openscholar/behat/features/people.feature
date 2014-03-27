@@ -64,3 +64,24 @@ Feature:
       And I press "Save"
       And I verify that "john" is the owner of vsite "obama"
       And I should verify that the user "john" has a role of "vsite admin" in the group "obama"
+
+  @api
+  Scenario: Test changing the owner of a VSite via the "change owner" link.
+    Given I am logging in as "john"
+      And I visit "obama/cp/users"
+      And I click "Change owner"
+     When I select "michelle" from "User name"
+      And I press "Save"
+     Then I should see "The user michelle is now the owner of the site Obama."
+      And I verify that "michelle" is the owner of vsite "obama"
+      And I should verify that the user "john" has a role of "vsite admin" in the group "obama"
+          # Return "john" to be the site owner.
+     When I am logging in as "michelle"
+      And I visit "obama/cp/users"
+      And I click "Change owner"
+     When I select "john" from "User name"
+      And I press "Save"
+     Then I should see "The user john is now the owner of the site Obama."
+      And I verify that "john" is the owner of vsite "obama"
+          # Reassign michelle to be a basic user.
+      And I give the user "michelle" the role "vsite user" in the group "obama"
