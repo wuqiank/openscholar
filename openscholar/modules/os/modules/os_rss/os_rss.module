@@ -13,26 +13,19 @@ function os_rss_menu() {
   $items = array();
 
   $items['cp/build/features/os_rss_feed'] = array(
-    'title' => 'OS RSS feed settings',
+    'title' => 'RSS feed settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_rss_feed_settings'),
     'access callback' => 'spaces_access_admin',
   );
 
   $items['rss-feed'] = array(
-    'title callback' => 'os_rss_feed_title_callback',
+    'title' => 'RSS Feeds',
     'page callback' => 'os_rss_list_of_feeds',
     'access arguments' => array('access content'),
   );
 
   return $items;
-}
-
-/**
- * Title callback;
- */
-function os_rss_feed_title_callback() {
-  return t('@site-name RSS Feeds', array('@site-name' => variable_get('site_name')));
 }
 
 /**
@@ -58,6 +51,21 @@ function os_rss_list_of_feeds() {
   $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
 
   $content = '';
+
+  $text = "Really Simple Syndication (RSS) allow you to subscribe to content update of a particular interest<br />";
+  $text .= "Find a link of interest below and copy it to RSS reader.";
+
+  $content .= "<div class='os-rss-description'>" . t($text) . "</div>";
+
+  if (empty($selected_bundles)) {
+    $selected_bundles = array(
+      'news',
+      'blog',
+      'events',
+      'presentation',
+      'biblio',
+    );
+  }
 
   if (!empty($selected_bundles)) {
     $items = array();
@@ -255,7 +263,7 @@ function os_rss_feed_settings($form, $form_settings) {
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
     '#options' => os_get_bundles(array(1)),
-    '#description' => t('Select the content types whose rss deeds will be shown by default.'),
+    '#description' => t('Select which content types to display as RSS feed options for site visitors.'),
     '#default_value' => $values['content_types'],
   );
 
@@ -272,7 +280,7 @@ function os_rss_feed_settings($form, $form_settings) {
     '#type' => 'checkboxes',
     '#title' => t('Vocabularies'),
     '#options' => $options,
-    '#description' => t('Select vocabularies that will show an RSS links in the page.'),
+    '#description' => t('Select which vocabularies to display as RSS feed options for site visitors.'),
     '#default_value' => $values['vocabularies'],
   );
 
