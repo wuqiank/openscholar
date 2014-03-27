@@ -14,7 +14,7 @@ Feature:
      Then I click "Air"
       And I should not see "Norma"
 
-  @api @last
+  @api @wip
   Scenario: Test browse with one term not showing categories block
     Given I am logging in as "john"
       And I change privacy of the site "obama" to "Public on the web. "
