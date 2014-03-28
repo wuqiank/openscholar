@@ -66,17 +66,20 @@ class vsite extends space_og {
     }
 
     // We cannot rely on parent::activate() to check excluded path, as our URL
-    // is prefixed with the PURL, thus drupal_match_path() never find a matching
-    // path. Instead, we remvoe the PURL from the path and check it ourself.
+    // is prefixed with the PURL if we are using the path method, thus
+    // drupal_match_path() never finds a matching path.
+    // Instead, we remvoe the PURL from the path and check it ourself.
     // So for example instead of checking john/user/1/edit we check on
     // user/1/edit.
-    $paths = implode("\n", $this->excluded_paths());
-    $path = explode('/', $_GET['q']);
-    unset($path[0]);
-    $path = implode('/', $path);
-    if (drupal_match_path($path, $paths)) {
-      $this->deactivate();
-      return FALSE;
+    if($this->purl_provider == 'spaces_og') {
+      $paths = implode("\n", $this->excluded_paths());
+      $path = explode('/', $_GET['q']);
+      unset($path[0]);
+      $path = implode('/', $path);
+      if (drupal_match_path($path, $paths)) {
+        $this->deactivate();
+        return FALSE;
+       }
     }
 
     // Sets up user roles (call before menu_get_item caches access info)
