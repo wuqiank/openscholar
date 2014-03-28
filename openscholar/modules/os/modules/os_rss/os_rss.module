@@ -77,7 +77,12 @@ function os_rss_list_of_feeds() {
 
   $content = '';
 
-  $content .= "<div class='os-rss-description'>" . t("Really Simple Syndication (RSS) allow you to subscribe to content update of a particular interest<br />Find a link of interest below and copy it to RSS reader.") . "</div>";
+  $content .= "<div class='os-rss-description'>" .
+    t("RSS stands for Really Simple Syndication (see !wiki_link), and provides a way for
+    readers to subscribe to content updates. We provide RSS feeds for the following content types and
+    categories.", array(
+      '!wiki_link' => l("Wikipedia's more complete definition", 'http://en.wikipedia.org/wiki/RSS')
+    )) . "</div>";
 
   if (empty($selected_bundles)) {
     $selected_bundles = os_rss_default_bundles();
@@ -96,7 +101,7 @@ function os_rss_list_of_feeds() {
       $links = _os_rss_importer_feed_create($items, 'type');
 
       $content .= theme('os_rss_importer_bundles', array(
-        'title' => t('By content'),
+        'title' => t('Content Types'),
         'items' => $links,
       ));
     }
@@ -150,7 +155,7 @@ function os_rss_list_of_feeds() {
 
     if ($vocabularies_feeds) {
       $content .= theme('os_rss_importer_bundles', array(
-        'title' => t('By vocabularies'),
+        'title' => t('Categories'),
         'items' => $vocabularies_feeds,
         'attributes' => array('class' => array('os-reader-feed-items')),
       ));
