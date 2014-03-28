@@ -72,14 +72,14 @@ class vsite extends space_og {
     // So for example instead of checking john/user/1/edit we check on
     // user/1/edit.
     if($this->purl_provider == 'spaces_og') {
-	    $paths = implode("\n", $this->excluded_paths());
-	    $path = explode('/', $_GET['q']);
-	    unset($path[0]);
-	    $path = implode('/', $path);
-	    if (drupal_match_path($path, $paths)) {
-	      $this->deactivate();
-	      return FALSE;
-      }
+      $paths = implode("\n", $this->excluded_paths());
+      $path = explode('/', $_GET['q']);
+      unset($path[0]);
+      $path = implode('/', $path);
+      if (drupal_match_path($path, $paths)) {
+        $this->deactivate();
+        return FALSE;
+       }
     }
 
     // Sets up user roles (call before menu_get_item caches access info)
