@@ -3206,13 +3206,15 @@ function vsite_metatag_metatags_view_alter(&$output, $instance) {
     $metatags = isset($vsite->group->metatags) ? $vsite->group->metatags : array();
 
     // Build options for meta tag rendering.
-    $languages = language_list();
     $options = array(
       'entity' => $vsite->group,
       'entity_type' => $cid_parts['entity_type'],
       'view_mode' => $cid_parts['view_mode'],
-      'language' => $languages[$cid_parts['langcode']],
     );
+    $languages = language_list();
+    if (isset($languages[$cid_parts['langcode']])) {
+      $options['language'] = $languages[$cid_parts['langcode']];
+    }
 
     // Reload the entity object from cache as it may have been altered.
     $token_type = token_get_entity_mapping('entity', $cid_parts['entity_type']);
