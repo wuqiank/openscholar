@@ -130,7 +130,7 @@ class os_boxes_follow extends os_boxes_default {
 
     if (!empty($this->options['use_rss']) && empty($this->options['links'])) {
       $block['content'] .= theme('image', array('path' => 'misc/feed.png', 'title' => t('Syndicate content')));
-      $block['content'] .= l(t('RSS'), 'rss-feed', array('attributes' => array('class' => array('rss-feed-icon'))));
+      $block['content'] .= l(t('RSS'), 'rss', array('attributes' => array('class' => array('rss-feed-icon'))));
     }
 
     if (!$this->options['links']) {
@@ -147,14 +147,14 @@ class os_boxes_follow extends os_boxes_default {
         'width' => 24,
         'height' => 28
       ));
-      $l = l($image, 'rss-feed', array(
+      $l = l($image, 'rss', array(
         'attributes' => array(
           'class' => array('rss-follow-icon'),
         ),
         'html' => TRUE,
       ));
       if (isset($this->options['display_service_name']) && $this->options['display_service_name'] == 0) {
-        $service_name = '<span class="service-name-span">'.l('RSS', 'rss-feed', array('attributes' => array(
+        $service_name = '<span class="service-name-span">'.l('RSS', 'rss', array('attributes' => array(
             'class' => array(
               'follow-icon-service-name',
             )
