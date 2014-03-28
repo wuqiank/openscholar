@@ -19,7 +19,7 @@ function os_rss_menu() {
     'access callback' => 'spaces_access_admin',
   );
 
-  $items['rss-feed'] = array(
+  $items['rss'] = array(
     'title' => 'RSS Feeds',
     'page callback' => 'os_rss_list_of_feeds',
     'access arguments' => array('access content'),
@@ -73,7 +73,7 @@ function os_rss_default_bundles() {
  */
 function os_rss_list_of_feeds() {
   $selected_bundles = variable_get('os_rss_feed_content_types', array());
-  $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
+  $selected_vocabularies = variable_get('os_rss_feed_vocabs', FALSE);
 
   $content = '';
 
@@ -103,6 +103,22 @@ function os_rss_list_of_feeds() {
     }
   }
 
+  // Get the list of all vocabs
+  // We use the variable to filter out anything that shouldn't belong
+  $vsite = vsite_get_vsite();
+  ctools_include('taxonomy', 'vsite_vocab');
+  $vocabs = vsite_vocab_get_vocabularies($vsite);
+  if ($selected_vocabularies === FALSE) {
+    $ids = array_keys($vocabs);
+    $selected_vocabularies = array_combine($ids, $ids);
+  }
+  else {
+    // search for new vocabs and enable them by default
+    $new = array_diff_key($vocabs, $selected_vocabularies);
+    $new_vids = array_keys($new);
+    $selected_vocabularies += array_combine($new_vids, $new_vids);
+  }
+
   if (!empty($selected_vocabularies)) {
     $vocabularies_feeds = array();
 
@@ -119,9 +135,14 @@ function os_rss_list_of_feeds() {
 
       if ($items) {
         $links = _os_rss_importer_feed_create($items, 'term');
+        $description = '';
+        if ($vocabularies[$vid]->description) {
+          $description = '<span class="os-rss-vocab-description">'.$vocabularies[$vid]->description.'</span>';
+        }
 
-        $vocabularies_feeds[] = theme('item_list', array(
-          'title' => $vocabularies[$vid]->name,
+        $vocabularies_feeds[] = '<h3>'.$vocabularies[$vid]->name.'</h3>'.
+          $description.
+          theme('item_list', array(
           'items' => $links,
           'attributes' => array('class' => array('os-reader-terms')),
         ));
@@ -262,7 +283,7 @@ function os_rss_context_load_alter(&$context) {
 function os_rss_feed_settings($form, $form_settings) {
   $values = array(
     'content_types' => variable_get('os_rss_feed_content_types', array()),
-    'vocabularies' => variable_get('os_rss_feed_vocabs', array()),
+    'vocabularies' => variable_get('os_rss_feed_vocabs', FALSE),
   );
 
   if (empty($values['content_types'])) {
@@ -282,8 +303,14 @@ function os_rss_feed_settings($form, $form_settings) {
   $vocabs = vsite_vocab_get_vocabularies($vsite);
 
   $options = array();
+  if (is_array($values['vocabularies'])) {
+    $defaults = $values['vocabularies'];
+  }
   foreach ($vocabs as $vocab) {
     $options[$vocab->vid] = $vocab->name;
+    if ($values['vocabularies'] === FALSE) {
+      $defaults[$vocab->vid] = $vocab->vid;
+    }
   }
 
   $form['os_rss_feed_vocabs'] = array(
@@ -291,7 +318,7 @@ function os_rss_feed_settings($form, $form_settings) {
     '#title' => t('Vocabularies'),
     '#options' => $options,
     '#description' => t('Select which vocabularies to display as RSS feed options for site visitors.'),
-    '#default_value' => $values['vocabularies'],
+    '#default_value' => $defaults,
   );
 
   return system_settings_form($form);
