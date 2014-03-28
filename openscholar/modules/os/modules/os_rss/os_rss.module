@@ -97,7 +97,6 @@ function os_rss_list_of_feeds() {
 
       $content .= theme('os_rss_importer_bundles', array(
         'title' => t('By content'),
-        'sub-title' => t('You can filter content by pre defined content types:'),
         'items' => $links,
       ));
     }
@@ -152,7 +151,6 @@ function os_rss_list_of_feeds() {
     if ($vocabularies_feeds) {
       $content .= theme('os_rss_importer_bundles', array(
         'title' => t('By vocabularies'),
-        'sub-title' => t('You can filter content by pre defined vocabularies:'),
         'items' => $vocabularies_feeds,
         'attributes' => array('class' => array('os-reader-feed-items')),
       ));
