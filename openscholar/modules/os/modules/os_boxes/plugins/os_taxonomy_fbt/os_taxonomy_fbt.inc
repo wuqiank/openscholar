@@ -173,6 +173,10 @@ class os_taxonomy_fbt extends os_boxes_default {
   }
 
   function options_submit($form, $form_state) {
+    if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+      os_taxonomy_invalidate_cache($vsite->id);
+    }
+
     if (is_array($form_state['values']['bundles'])) {
       return;
     }
@@ -189,7 +193,6 @@ class os_taxonomy_fbt extends os_boxes_default {
 
     $block = parent::render();
     $cid = 'os_taxonomy:' . $vsite->id . ":" . $this->delta;
-
     if ($cache = cache_get($cid)) {
       $content = $cache->data;
     }
