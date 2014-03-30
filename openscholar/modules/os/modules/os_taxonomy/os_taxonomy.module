@@ -1760,11 +1760,11 @@ function _os_taxonomy_create_default_context($vocabulary) {
 /**
  * Invalidate os taxonomy cache.
  *
- * @param $viste
+ * @param $vid
  *  The vsite id.
  */
-function os_taxonomy_invalidate_cache($viste) {
-  cache_clear_all('os_taxonomy:' . $viste . ':', 'cache', TRUE);
+function os_taxonomy_invalidate_cache($vid) {
+  cache_clear_all('os_taxonomy:' . $vid . ':', 'cache', TRUE);
 }
 
 /**
