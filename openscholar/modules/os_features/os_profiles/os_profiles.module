@@ -990,7 +990,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
 
   $entity_info = entity_get_info('node');
   foreach ($entity_info['view modes'] as $name => $info) {
-    if (!$info['custom settings'] || $info['label'] == 'Links') {
+    if (!$info['custom settings'] || $name == 'links') {
       // Display only display modes the user turned on.
       continue;
     }
