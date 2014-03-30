@@ -15,10 +15,10 @@ function harvard_courses_os_app_info() {
   $apps['harvard_courses'] = array(
     'path' => 'courses',
     'nodetypes' => array(
-      /* Note: only provides App-related, listable group content,
-       * so, omits "harvard_api_importer".
-       */
       'harvard_course',
+    ),
+    'rss' => array(
+      'harvard_course' => OS_RSS_EXCLUDE_BUNDLE,
     ),
     'browse_pages' => array(
       'harvard_course' => array(

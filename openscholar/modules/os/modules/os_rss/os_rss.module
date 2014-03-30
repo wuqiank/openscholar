@@ -7,6 +7,12 @@
 include_once 'os_rss.features.inc';
 
 /**
+ * Define in the os app info which content type should be hidden when creating
+ * and RSS feed.
+ */
+define('OS_RSS_EXCLUDE_BUNDLE', 'exclude');
+
+/**
  * Implements hook_menu().
  */
 function os_rss_menu() {
@@ -198,7 +204,7 @@ function _os_rss_importer_feed_create($items, $key) {
       ),
     );
 
-    $links[] = l($item['link'], 'os_rss_feed_export', $options);
+    $links[] = l($item['link'], 'rss.xml', $options);
   }
 
   return $links;
@@ -293,10 +299,27 @@ function os_rss_feed_settings($form, $form_settings) {
     $values['content_types'] = os_rss_default_bundles();
   }
 
+  $bundles = os_get_bundles(array(1));
+
+  $app_info = os_app_info();
+  foreach ($app_info as $info) {
+    if (empty($info['rss'])) {
+      continue;
+    }
+
+    foreach ($info['rss'] as $bundle => $status) {
+      if ($status === OS_RSS_EXCLUDE_BUNDLE && in_array($bundle, $info['nodetypes'])) {
+        // The bundle is exported by the app and need to be removed from the
+        // content types list when creating an RSS feed.
+        unset($bundles[$bundle]);
+      }
+    }
+  }
+
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
-    '#options' => os_get_bundles(array(1)),
+    '#options' => $bundles,
     '#description' => t('Select which content types to display as RSS feed options for site visitors.'),
     '#default_value' => $values['content_types'],
   );

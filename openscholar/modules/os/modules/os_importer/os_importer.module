@@ -44,6 +44,22 @@ function os_importer_ctools_plugin_directory($module, $plugin) {
 }
 
 /**
+ * Implements hook_os_app_info().
+ */
+function os_importer_os_app_info() {
+  return array(
+    'os_importer' => array(
+      'nodetypes' => array(
+        'feed_importer',
+      ),
+      'rss' => array(
+        'feed_importer' => OS_RSS_EXCLUDE_BUNDLE,
+      ),
+    ),
+  );
+}
+
+/**
  * Implements hook_node_insert().
  *
  * Import feed item when the user add the feed importer for the first time.
