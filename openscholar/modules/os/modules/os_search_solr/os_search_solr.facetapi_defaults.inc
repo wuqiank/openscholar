@@ -151,7 +151,7 @@ function os_search_solr_facetapi_default_facet_settings() {
       'indexed' => '4',
     ),
     'empty_behavior' => 'none',
-    'soft_limit' => '20',
+    'soft_limit' => '30',
     'nofollow' => 1,
     'show_expanded' => 0,
     'empty_text' => array(
@@ -201,13 +201,13 @@ function os_search_solr_facetapi_default_facet_settings() {
   $facet->disabled = FALSE; /* Edit this to true to make a default facet disabled initially */
   $facet->api_version = 1;
   $facet->name = $searcher_name . '::sm_og_vocabulary';
-  $facet->searcher = $searcher_name . '@solr';
+  $facet->searcher = $searcher_name;
   $facet->realm = '';
   $facet->facet = 'sm_og_vocabulary';
   $facet->enabled = FALSE;
   $facet->settings = array(
     'operator' => 'and',
-    'hard_limit' => '40',
+    'hard_limit' => '75',
     'dependencies' => array(
       'roles' => array(),
       'bundle' => 'none',
