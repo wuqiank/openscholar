@@ -924,7 +924,12 @@ function os_entity_form_after_build($form, $form_state) {
  * Cleans up some advanced settings and places them in a fieldset.
  */
 function os_form_node_form_alter(&$form, $form_state) {
+  //Remove promote option
   unset($form['options']['promote']);
+
+  //Remove revisions option
+  $form['revision_information']['#access'] = false;
+
   $form['path']['pathauto']['#description'] = t('Uncheck this to create a custom alias below.');
   if (isset($form['field_upload']['und']['add_more']['#value'])) {
     $form['field_upload']['und']['add_more']['#value'] = t('Add media');
@@ -2118,9 +2123,9 @@ function os_preprocess_node(&$vars) {
 }
 
 /**
- * Implements hook_field_display_node_alter 
+ * Implements hook_field_display_node_alter
  *
- * Makes the slide_teaser display mode just like teaser.  
+ * Makes the slide_teaser display mode just like teaser.
  */
 function os_field_display_node_alter(&$display, $context) {
   if ($context['view_mode'] == 'slide_teaser') {

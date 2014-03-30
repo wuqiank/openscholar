@@ -596,6 +596,11 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
   float: left;
 }
 
+/* Kile the empty div when in a sidebar */
+.sidebar .node-person .no-default-image {
+display: none;
+}
+
 .node-type-person #content .node-person .field-name-body {
   margin: 0;
 }
