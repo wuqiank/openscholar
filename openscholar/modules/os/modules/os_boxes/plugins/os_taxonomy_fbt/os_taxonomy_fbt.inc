@@ -187,13 +187,13 @@ class os_taxonomy_fbt extends os_boxes_default {
       return;
     }
 
+    $block = parent::render();
     $cid = 'os_taxonomy:' . $vsite->id . ":" . $this->delta;
 
     if ($cache = cache_get($cid)) {
       $content = $cache->data;
     }
     else {
-      $block = parent::render();
       if (empty($this->options['vocabulary'])) {
         $this->options['vocabulary'] = current(array_keys(self::get_all_vocabularies()));
 

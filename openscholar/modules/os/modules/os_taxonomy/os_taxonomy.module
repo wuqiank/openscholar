@@ -1764,5 +1764,5 @@ function _os_taxonomy_create_default_context($vocabulary) {
  *  The vsite id.
  */
 function os_taxonomy_invalidate_cache($viste) {
-
+  cache_clear_all('os_taxonomy:' . $viste . ':', 'cache', TRUE);
 }
