@@ -50,11 +50,3 @@ Feature:
      Then I should not see "Export"
       And I go to "john/publications/export/bibtex"
      Then I should get a "403" HTTP response
-
-
-
-
-
-
-
-
