@@ -109,6 +109,7 @@ function os_publications_export($format = "tagged", $nid = NULL, $popup = FALSE)
   // exporting multiple publications).
   if (user_is_anonymous() && !$nid) {
     drupal_access_denied();
+    return;
   }
 
   module_load_include('inc', 'biblio', 'includes/biblio.import.export');
