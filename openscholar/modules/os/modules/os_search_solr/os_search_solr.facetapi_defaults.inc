@@ -123,7 +123,7 @@ function os_search_solr_facetapi_default_facet_settings() {
   $facet = new stdClass();
   $facet->disabled = FALSE; /* Edit this to true to make a default facet disabled initially */
   $facet->api_version = 1;
-  $facet->name = $searcher_name.'block:sm_og_group_ref';
+  $facet->name = $searcher_name . ':block:sm_og_group_ref';
   $facet->searcher = $searcher_name;
   $facet->realm = 'block';
   $facet->facet = 'sm_og_group_ref';
@@ -190,12 +190,35 @@ function os_search_solr_facetapi_default_facet_settings() {
       'display' => 4,
     ),
     'empty_behavior' => 'none',
-    'soft_limit' => 20,
+    'soft_limit' => 30,
     'nofollow' => 1,
     'show_expanded' => 0,
   );
 
   $export[$searcher_name . ':block:sm_og_vocabulary'] = $facet;
+
+  $facet = new stdClass();
+  $facet->disabled = FALSE; /* Edit this to true to make a default facet disabled initially */
+  $facet->api_version = 1;
+  $facet->name = $searcher_name . '::sm_og_vocabulary';
+  $facet->searcher = $searcher_name . '@solr';
+  $facet->realm = '';
+  $facet->facet = 'sm_og_vocabulary';
+  $facet->enabled = FALSE;
+  $facet->settings = array(
+    'operator' => 'and',
+    'hard_limit' => '40',
+    'dependencies' => array(
+      'roles' => array(),
+      'bundle' => 'none',
+      'bundle_selected' => array(),
+    ),
+    'facet_mincount' => 1,
+    'facet_missing' => '0',
+    'flatten' => 0,
+    'query_type' => 'term',
+  );
+  $export[$searcher_name . '::sm_og_vocabulary'] = $facet;
 
   return $export;
 }
