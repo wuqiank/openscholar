@@ -151,7 +151,7 @@ function os_search_solr_facetapi_default_facet_settings() {
       'indexed' => '4',
     ),
     'empty_behavior' => 'none',
-    'soft_limit' => '30',
+    'soft_limit' => '20',
     'nofollow' => 1,
     'show_expanded' => 0,
     'empty_text' => array(
@@ -190,7 +190,7 @@ function os_search_solr_facetapi_default_facet_settings() {
       'display' => 4,
     ),
     'empty_behavior' => 'none',
-    'soft_limit' => 30,
+    'soft_limit' => 20,
     'nofollow' => 1,
     'show_expanded' => 0,
   );
