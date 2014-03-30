@@ -990,7 +990,7 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
 
   $entity_info = entity_get_info('node');
   foreach ($entity_info['view modes'] as $name => $info) {
-    if (!$info['custom settings']) {
+    if (!$info['custom settings'] || $info['label'] == 'Links') {
       // Display only display modes the user turned on.
       continue;
     }
@@ -1434,17 +1434,10 @@ function _os_profiles_build_display_style_example($style) {
   }
 
   switch ($style) {
-    case 'links':
-      $result = '
-        <div class="dummy-content">
-          <h1><a>John Fitzgerald Kennedy</a></h1>
-        </div>
-      ';
-      break;
     case 'title':
       $result = '
         <div class="dummy-content">
-          <h1>John Fitzgerald Kennedy</h1>
+          <h1><a>John Fitzgerald Kennedy</a></h1>
         </div>
       ';
       break;
