@@ -92,7 +92,7 @@ function os_publications_menu_alter(&$items) {
  *   Access argument.
  *
  * @return bool
- *   If not vsite content - return FALSE. Otherwise use standard user_access.
+ *   If not vsite context - return FALSE. Otherwise use standard user_access.
  */
 function os_publications_authors_access($string) {
   if (!vsite_get_vsite()) {
