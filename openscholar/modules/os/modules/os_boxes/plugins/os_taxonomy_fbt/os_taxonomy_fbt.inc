@@ -233,7 +233,7 @@ class os_taxonomy_fbt extends os_boxes_default {
           }
         }
       }
-      else {
+      elseif ($this->options['behavior'] != 'select') {
         // Avoid caching in case behavior is 'contextual' but we don't have
         // context.
         $do_cache = FALSE;
