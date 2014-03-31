@@ -7,12 +7,6 @@
 include_once 'os_rss.features.inc';
 
 /**
- * Define in the os app info which content type should be hidden when creating
- * and RSS feed.
- */
-define('OS_RSS_EXCLUDE_BUNDLE', 'exclude');
-
-/**
  * Implements hook_menu().
  */
 function os_rss_menu() {
@@ -87,9 +81,8 @@ function os_rss_list_of_feeds() {
     '!wiki_link' => l("Wikipedia's more complete definition", 'http://en.wikipedia.org/wiki/RSS'),
   );
   $content .= "<div class='os-rss-description'>" .
-    t("RSS stands for Really Simple Syndication (see !wiki_link), and provides a way for
-    readers to subscribe to content updates. We provide RSS feeds for the following content types and
-    categories.", $params) . "</div>";
+  t("RSS stands for Really Simple Syndication (see !wiki_link), and provides a way for readers to subscribe to content updates. We provide RSS feeds for the following content types and categories.", $params)
+  . "</div>";
 
   if (empty($selected_bundles)) {
     $selected_bundles = os_rss_default_bundles();
@@ -148,10 +141,10 @@ function os_rss_list_of_feeds() {
         $links = _os_rss_importer_feed_create($items, 'term');
         $description = '';
         if ($vocabularies[$vid]->description) {
-          $description = '<span class="os-rss-vocab-description">' . $vocabularies[$vid]->description . '</span>';
+          $description = '<span class="os-rss-vocab-description">' . check_plain($vocabularies[$vid]->description) . '</span>';
         }
 
-        $reader_terms = '<h3>' . $vocabularies[$vid]->name . '</h3>';
+        $reader_terms = '<h3>' . check_plain($vocabularies[$vid]->name) . '</h3>';
         $reader_terms .= $description;
         $reader_terms .= theme('item_list', array(
           'items' => $links,
@@ -306,12 +299,12 @@ function os_rss_feed_settings($form, $form_settings) {
 
   $app_info = os_app_info();
   foreach ($app_info as $info) {
-    if (empty($info['rss'])) {
+    if (empty($info['exclude_from_rss'])) {
       continue;
     }
 
-    foreach ($info['rss'] as $bundle => $status) {
-      if ($status === OS_RSS_EXCLUDE_BUNDLE && in_array($bundle, $info['nodetypes'])) {
+    foreach ($info['exclude_from_rss'] as $bundle) {
+      if (in_array($bundle, $info['exclude_from_rss']) && in_array($bundle, $info['nodetypes'])) {
         // The bundle is exported by the app and need to be removed from the
         // content types list when creating an RSS feed.
         unset($bundles[$bundle]);

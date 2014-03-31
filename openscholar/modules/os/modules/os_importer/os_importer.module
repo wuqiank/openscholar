@@ -52,8 +52,8 @@ function os_importer_os_app_info() {
       'nodetypes' => array(
         'feed_importer',
       ),
-      'rss' => array(
-        'feed_importer' => OS_RSS_EXCLUDE_BUNDLE,
+      'exclude_from_rss' => array(
+        'feed_importer',
       ),
     ),
   );

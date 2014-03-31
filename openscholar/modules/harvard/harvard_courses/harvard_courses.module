@@ -17,8 +17,8 @@ function harvard_courses_os_app_info() {
     'nodetypes' => array(
       'harvard_course',
     ),
-    'rss' => array(
-      'harvard_course' => OS_RSS_EXCLUDE_BUNDLE,
+    'exclude_from_rss' => array(
+      'harvard_course',
     ),
     'browse_pages' => array(
       'harvard_course' => array(
