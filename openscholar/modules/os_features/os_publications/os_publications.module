@@ -80,6 +80,25 @@ function os_publications_menu_alter(&$items) {
 
   // for the toolbar
   $items['node/add/biblio']['title'] = 'Publication';
+
+  // Change access callback to publications/authors.
+  $items['publications/authors']['access callback'] = 'os_publications_authors_access';
+}
+
+/**
+ * Replacement for publications/authors access callback to require vsite.
+ *
+ * @param $string
+ *   Access argument.
+ *
+ * @return bool
+ *   If not vsite content - return FALSE. Otherwise use standard user_access.
+ */
+function os_publications_authors_access($string) {
+  if (!vsite_get_vsite()) {
+    return;
+  }
+  return user_access($string);
 }
 
 /**
