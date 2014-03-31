@@ -23,7 +23,7 @@ function os_pages_default_box() {
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
-  $box->delta = 'vocabulary_filter';
+  $box->delta = 'vocabulary_filter_pages';
   $box->plugin_key = 'os_boxes_facetapi_vocabulary';
   $box->title = 'Filter by taxonomy for pages';
   $box->description = 'Filter by taxonomy for pages';
@@ -31,7 +31,7 @@ function os_pages_default_box() {
     'bundle' => 'page',
     'vocabularies' => array(),
   );
-  $export['vocabulary_filter'] = $box;
+  $export['vocabulary_filter_pages'] = $box;
 
   return $export;
 }

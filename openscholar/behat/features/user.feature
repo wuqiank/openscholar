@@ -1,20 +1,20 @@
 Feature: User functionality testing.
 
-  @api
+  @api @first
   Scenario: Verify that user pages are inaccessible to anonymous users.
     Given I am not logged in
      Then I should be redirected in the following <cases>:
   #  | Request                    | Response Code | Final URL   |
      | users/admin                | 403           | users/admin |
 
-  @api
+  @api @first
   Scenario: User pages are accessible to the logging in user.
     Given I am logging in as "john"
      When I visit "/user"
      Then I should see "View"
       And I should see "Edit"
 
-  @api @nofar
+  @api @first @nofar
   Scenario: Adding a user to a vsite.
     Given I am logging in as "john"
      When I visit "john/cp/users/add"
@@ -22,7 +22,7 @@ Feature: User functionality testing.
       And I press "Add users"
      Then I should see "michelle has been added to the group John."
 
-  @api @nofar
+  @api @first @nofar
   Scenario: Enable custom roles and permissions in a VSite.
     Given I am logging in as "john"
       And I visit "john/cp/users/permissions"
@@ -31,7 +31,7 @@ Feature: User functionality testing.
       And I visit "john/cp/users/permissions"
      Then I should see the button "Save permissions"
 
-  @api @nofar
+  @api @first @nofar
   Scenario: Create a custom role in a vsite.
     Given I am logging in as "john"
      When I visit "john/cp/users/roles"
@@ -40,7 +40,7 @@ Feature: User functionality testing.
       And I visit "john/cp/users/roles"
      Then I should see "New Custom Role"
 
-  @api @nofar
+  @api @first @nofar
   Scenario: Assign a custom role to a vsite member.
     Given I am logging in as "john"
      When I give the user "klark" the role "New Custom Role" in the group "john"
@@ -79,19 +79,19 @@ Feature: User functionality testing.
      Then I go to "john/cp/content/add"
       And I should get a "403" HTTP response
 
-  @api @nofar
+  @api @first @nofar
   Scenario: Test node creation permissions of a custom role - check failure.
     Given I am logging in as "klark"
      When I go to "john/node/add/book"
      Then I should get a "403" HTTP response
 
-  @api @nofar
+  @api @first @nofar
   Scenario: Test node creation permissions of a custom role - check success.
     Given I am logging in as "klark"
      When I go to "john/node/add/blog"
      Then I should get a "200" HTTP response
 
-  @api @nofar
+  @api @first @nofar
   Scenario: Restore default roles and permissions in a VSite.
     Given I am logging in as "john"
       And I visit "john/cp/users/roles"

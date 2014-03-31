@@ -486,7 +486,7 @@ function gkplus_form_taxonomy_form_vocabulary_alter(&$form, &$form_state, $form_
  * Implements hook_form_BASE_FORM_ID_alter() for node_form.
  */
 function gkplus_form_node_form_alter(&$form, &$form_state, $form_id) {
-  if (!_gkplus_check_sid()) {
+  if (!_gkplus_check_sid() || ($form['#bundle'] == 'biblio' && !$form['biblio_type']['#default_value'])) {
     return;
   }
   $default_value = (isset($form['#node']->nid)) ? _gkplus_entity_setting($form['#node']->nid, 'minitheme_nodes') : 0;

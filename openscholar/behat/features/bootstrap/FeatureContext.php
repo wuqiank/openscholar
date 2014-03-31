@@ -368,7 +368,14 @@ class FeatureContext extends DrupalContext {
    * @Given /^the widget "([^"]*)" is set in the "([^"]*)" page with the following <settings>:$/
    */
   public function theWidgetIsSetInThePageWithSettings($page, $widget, TableNode $table) {
-    $code = "os_migrate_demo_set_box_in_region({$this->nid}, '$page', '$widget');";
+    return $this->theWidgetIsSetInThePageBytheNameWithSettings($page, $widget, '', $table);
+  }
+
+  /**
+   * @Given /^the widget "([^"]*)" is set in the "([^"]*)" page by the name "([^"]*)" with the following <settings>:$/
+   */
+  public function theWidgetIsSetInThePageBytheNameWithSettings($page, $widget, $name, TableNode $table) {
+    $code = "os_migrate_demo_set_box_in_region({$this->nid}, '$page', '$widget', 'sidebar_second', '$name');";
     $this->box[] = $this->getDriver()->drush("php-eval \"{$code}\"");
     $hash = $table->getRows();
 
@@ -1632,7 +1639,8 @@ class FeatureContext extends DrupalContext {
     $element = $page->find('xpath', "//h3[.='$week_header']");
 
     if (!$element) {
-      throw new Exception("The weekly calendar for the '$week_header' is not displayed correctly");
+      $element = $page->find('xpath', "//h3");
+      throw new Exception("The weekly calendar for the '$week_header' is not displayed correctly. It was '" . $element->getText() ."'");
     }
   }
 
@@ -1700,6 +1708,34 @@ class FeatureContext extends DrupalContext {
    */
   public function iMakeRegistrationToEventWithoutJavascriptUnavailable() {
     $this->invoke_code('os_migrate_demo_event_registration_link');
+  }
+
+  /**
+   * @When /^I enable read-only mode$/
+   */
+  public function iEnableReadOnlyMode() {
+    $this->invoke_code('os_migrate_demo_set_read_only', array(TRUE));
+  }
+
+  /**
+   * @Then /^I disable read-only mode$/
+   */
+  public function iDisableReadOnlyMode() {
+    $this->invoke_code('os_migrate_demo_set_read_only', array(FALSE));
+  }
+
+  /**
+   * @Then /^I enable pinserver$/
+   */
+  public function iEnablePinserver() {
+    $this->invoke_code('module_enable', array('array(\'pinserver\', \'pinserver_authenticate\', \'os_pinserver_auth\')'));
+  }
+
+  /**
+   * @Then /^I disable pinserver$/
+   */
+  public function iDisablePinserver() {
+    $this->invoke_code('module_disable', array('array(\'pinserver\', \'pinserver_authenticate\', \'os_pinserver_auth\')'));
   }
 
   /**
