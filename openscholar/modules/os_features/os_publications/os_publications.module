@@ -87,6 +87,18 @@ function os_publications_menu_alter(&$items) {
 }
 
 /**
+ * Menu access; Make sure publications export can be seen by privileged users
+ * only inside a VSite context, to prevent from loading too many nodes.
+ */
+function os_publications_export_access() {
+  if (!user_access('show export links') || (module_exists('vsite') && !spaces_get_space())) {
+    return;
+  }
+
+  return TRUE;
+}
+
+/**
  * Implements hook_vsite_og_node_type_info().
  */
 function os_publications_vsite_og_node_type_info() {
