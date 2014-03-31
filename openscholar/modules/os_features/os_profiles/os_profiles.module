@@ -991,7 +991,8 @@ function os_profiles_form_cp_app_settings_form_alter(&$form, &$form_state) {
   $entity_info = entity_get_info('node');
   foreach ($entity_info['view modes'] as $name => $info) {
     if (!$info['custom settings'] || $name == 'links') {
-      // Display only display modes the user turned on.
+      // Display only display modes the user turned on. The "links" view mode is
+      // disabled in the case of a "person" content type.
       continue;
     }
 
