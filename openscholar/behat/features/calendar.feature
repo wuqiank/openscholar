@@ -54,5 +54,4 @@ Feature: Testing OpenScholar calendar page.
     Given I visit "john/calendar"
       And I click "Week"
       And I click "Navigate to next week"
-      And I should print page
      Then I should verify the next week calendar is displayed correctly
