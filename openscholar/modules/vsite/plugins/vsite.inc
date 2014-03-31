@@ -71,10 +71,12 @@ class vsite extends space_og {
     // Instead, we remvoe the PURL from the path and check it ourself.
     // So for example instead of checking john/user/1/edit we check on
     // user/1/edit.
-    if($this->purl_provider == 'spaces_og') {
+    if ($this->purl_provider == 'spaces_og') {
       $paths = implode("\n", $this->excluded_paths());
       $path = explode('/', $_GET['q']);
-      unset($path[0]);
+      if ($path[0] == $this->group->purl) {
+        unset($path[0]);
+      }
       $path = implode('/', $path);
       if (drupal_match_path($path, $paths)) {
         $this->deactivate();
