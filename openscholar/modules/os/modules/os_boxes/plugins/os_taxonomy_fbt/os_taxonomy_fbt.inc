@@ -197,6 +197,7 @@ class os_taxonomy_fbt extends os_boxes_default {
       $content = $cache->data;
     }
     else {
+      $do_cache = TRUE;
       if (empty($this->options['vocabulary'])) {
         $this->options['vocabulary'] = current(array_keys(self::get_all_vocabularies()));
 
@@ -215,7 +216,7 @@ class os_taxonomy_fbt extends os_boxes_default {
           // Building a list of the bundles in two ways:
           // 1. Selected bundles from a list
           // 2. If the widget defined as a "Determine for me" set the bundles
-          //    whcih related to the app.
+          //    which related to the app.
           $paths = os_get_app_path();
           $menu = menu_get_item();
 
@@ -231,6 +232,11 @@ class os_taxonomy_fbt extends os_boxes_default {
             }
           }
         }
+      }
+      else {
+        // Avoid caching in case behavior is 'contextual' but we don't have
+        // context.
+        $do_cache = FALSE;
       }
 
       if (is_array($this->options['vocabulary'])) {
@@ -248,7 +254,9 @@ class os_taxonomy_fbt extends os_boxes_default {
       ));
 
       // Set the cache.
-      cache_set($cid, $content);
+      if ($do_cache) {
+        cache_set($cid, $content);
+      }
     }
 
     $block['content'] = $content;
