@@ -82,35 +82,8 @@ function os_publications_menu_alter(&$items) {
   $items['node/add/biblio']['title'] = 'Publication';
 
   // Change access callback to publications/authors.
-  $items['publications/authors']['access callback'] = 'os_publications_authors_access';
-}
-
-/**
- * Replacement for publications/authors access callback to require vsite.
- *
- * @param $string
- *   Access argument.
- *
- * @return bool
- *   If not vsite context - return FALSE. Otherwise use standard user_access().
- */
-function os_publications_authors_access($string) {
-  if (!vsite_get_vsite()) {
-    return;
-  }
-  return user_access($string);
-}
-
-/**
- * Menu access; Make sure publications export can be seen by privileged users
- * only inside a VSite context, to prevent from loading too many nodes.
- */
-function os_publications_export_access() {
-  if (!user_access('show export links') || (module_exists('vsite') && !spaces_get_space())) {
-    return;
-  }
-
-  return TRUE;
+  // Shut this page down completely until we can fix it
+  $items['publications/authors']['access callback'] = FALSE;
 }
 
 /**
