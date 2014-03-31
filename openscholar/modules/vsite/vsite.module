@@ -2953,6 +2953,11 @@ function vsite_og_permission() {
       'description' => t('Edit existing widgets.'),
       'os_override' => TRUE,
     ),
+    'edit terms' => array(
+      'title' => t('Edit terms'),
+      'description' => t('Edit terms.'),
+      'os_override' => TRUE,
+    ),
   );
 }
 
