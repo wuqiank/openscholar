@@ -175,7 +175,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
             }
           }
           // If no selection - show all. If there is selection - show only them.
-          if (count($selected) > 0) {
+          if (count($selected)) {
             foreach (array_keys($block['content']['sm_og_vocabulary']) as $vocabulary_name) {
               if (empty($selected[$vocabulary_name])) {
                 unset($block['content']['sm_og_vocabulary'][$vocabulary_name]);
