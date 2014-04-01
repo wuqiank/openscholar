@@ -28,6 +28,13 @@ function vsite_preset_og_tasks_info($entity_type, $entity) {
     'Research' => array(),
     'Resources' => array(),
     'Services' => array(),
+    'Program' => array(
+      'subpages' => array(
+        'Schedule',
+      ),
+    ),
+    'Register' => array(),
+    'Logistics' => array(),
   );
   foreach ($sections as $title => $info) {
     $key = 'vsite_preset_section_' . str_replace(' ', '_', strtolower($title));

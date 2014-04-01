@@ -748,3 +748,19 @@ function os_files_update_7015() {
     field_update_instance($instance_info);
   }
 }
+
+/**
+ * Remove erroneous desscription fields
+ */
+function os_files_update_7016() {
+  $info = entity_get_info('file');
+  $instances = field_info_instances('file');
+
+  $bad = array_diff_key($instances, $info['bundles']);
+
+  foreach ($bad as $k => $fields) {
+    foreach ($fields as $f => $def) {
+      field_delete_instance($def);
+    }
+  }
+}

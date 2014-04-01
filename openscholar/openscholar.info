@@ -46,7 +46,6 @@ dependencies[] = token
 dependencies[] = pathauto
 dependencies[] = biblio
 dependencies[] = biblio_ui
-dependencies[] = advanced_help
 dependencies[] = jquery_update
 dependencies[] = redirect
 
@@ -99,6 +98,7 @@ dependencies[] = citation_distribute
 dependencies[] = os_slideshow
 dependencies[] = os_breadcrumbs
 dependencies[] = os_front
+dependencies[] = os_rss
 
 ; Control Panel
 dependencies[] = cp

@@ -1,29 +1,30 @@
 Feature:
   Testing the publication tab and application.
 
-  @api
+  @api @first
   Scenario: Test the Publication tab
     Given I visit "john"
      When I click "Publications"
       And I click "The Little Prince"
      Then I should see "The Little Prince. United States; 1943."
 
-  @api
+  @api @first
   Scenario: Test the Publication tab allows caching of anonymous user
-    Given cache is enabled for anonymous users
+    Given cache is "enabled" for anonymous users
      When I visit "john/publications"
      Then I should get a "200" HTTP response
       And I visit "john/publications"
      Then response header "x-drupal-cache" should be "HIT"
+      And cache is "disabled" for anonymous users
 
-  @api
+  @api @first
   Scenario: Test the Authors field in Publication form
     Given I am logging in as "john"
      When I edit the node "The Little Prince"
-     Then I should see "Authors"
-      And I should see "Enter a single name per line"
+     Then I should see "Author"
+      And I should see "Add author"
 
-  @api
+  @api @first
   Scenario: Verify publications are sorted by the creation date of the node.
     Given I am logging in as "john"
      When I visit "john/publications"
@@ -31,7 +32,7 @@ Feature:
       And I should see the publication "Prisoner of Azkaban" comes before "Chamber of Secrets"
       And I should see the publication "Chamber of Secrets" comes before "Philosophers Stone"
 
-  @api
+  @api @first
   Scenario: Verify sticky publications appear first on each section.
     Given I am logging in as "john"
       And I make the node "Philosophers Stone" sticky

@@ -293,7 +293,7 @@ function gkplus_views_pre_build(&$view) {
  * Implements hook_node_insert().
  */
 function gkplus_node_insert($node) {
-  if (!_gkplus_check_sid() || $node->type !== 'page' || !$node->nid) {
+  if (!_gkplus_check_sid() || !$node->nid || !isset($node->gkplus_minitheme)) {
     return;
   }
   _gkplus_entity_setting_update($node->nid, 'minitheme_nodes', $node->gkplus_minitheme);
@@ -303,7 +303,7 @@ function gkplus_node_insert($node) {
  * Implements hook_node_update().
  */
 function gkplus_node_update($node) {
-  if (!_gkplus_check_sid() || $node->type !== 'page' || !$node->nid) {
+  if (!_gkplus_check_sid() || !$node->nid || !isset($node->gkplus_minitheme)) {
     return;
   }
   _gkplus_entity_setting_update($node->nid, 'minitheme_nodes', $node->gkplus_minitheme);
@@ -486,7 +486,7 @@ function gkplus_form_taxonomy_form_vocabulary_alter(&$form, &$form_state, $form_
  * Implements hook_form_BASE_FORM_ID_alter() for node_form.
  */
 function gkplus_form_node_form_alter(&$form, &$form_state, $form_id) {
-  if (!_gkplus_check_sid()) {
+  if (!_gkplus_check_sid() || ($form['#bundle'] == 'biblio' && !$form['biblio_type']['#default_value'])) {
     return;
   }
   $default_value = (isset($form['#node']->nid)) ? _gkplus_entity_setting($form['#node']->nid, 'minitheme_nodes') : 0;

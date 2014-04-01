@@ -34,8 +34,9 @@ function vsite_user_default_permissions() {
     'name' => 'create personal content',
     'roles' => array(
       'administrator' => 'administrator',
+      'authenticated user' => 'authenticated user',
       'manager' => 'manager',
-      'support team' => 'support team'
+      'support team' => 'support team',
     ),
     'module' => 'node',
   );

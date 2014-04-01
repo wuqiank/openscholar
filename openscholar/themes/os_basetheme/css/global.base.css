@@ -350,7 +350,7 @@ p {
 
 
 #columns p:only-child,
-#columns p:nth-last-of-type(1) {
+#columns p:last-child {
      margin: 0 0px .4em;
 }
 
@@ -567,6 +567,16 @@ ul ul ul ul {
 }
 
 .sidebar .block-boxes-os_taxonomy_fbt ul ul {margin: 0 10px;}
+
+/* ADDS SOME SPACE BELOW EACH VOCAB SECTION IN FACET'D BELOW */
+.sidebar .block-boxes-os_boxes_facetapi_vocabulary .item-list {
+	margin-bottom: 15px;
+}
+
+.sidebar .block-boxes-os_boxes_facetapi_vocabulary .item-list:last-chld {
+	margin-bottom: 0;
+}
+
 
 .boxes-box ul.featured-links {
 

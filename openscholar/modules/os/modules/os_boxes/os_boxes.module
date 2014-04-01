@@ -483,6 +483,22 @@ function os_boxes_menu_contextual_links_alter(&$links, $router_item, $path) {
 }
 
 /**
+ * Implements hook_contextual_links_view_alter().
+ *
+ * Removes the 'remove widget' option when the block in question is inside a columns widget
+ */
+function os_boxes_contextual_links_view_alter(&$element, $items) {
+  if (!empty($element['#element']) && !empty($element['#element']['#block'])) {
+    $regions = system_region_list($GLOBALS['theme_key']);
+    $r = $element['#element']['#block']->region;
+    if (!isset($regions[$r])) {
+      // this block is inside a columns widget
+      unset($element['#links']['widget-remove']);
+    }
+  }
+}
+
+/**
  * Implements hook_permission().
  *
  * Defines permissions for all the regions of the default theme

@@ -559,6 +559,7 @@ function vsite_preset_spaces_presets() {
         'os_classes' => '1',
       ),
       'spaces_features_available' => array(
+        'os_biocv',
         'os_blog',
         'os_booklets',
         'os_classes',
@@ -729,6 +730,177 @@ function vsite_preset_spaces_presets() {
   t('HWP Personal');
   t('The Harvard Web Publishing standard Personal site.');
   $export['hwp_personal'] = $spaces_presets;
+
+  $spaces_presets = new stdClass();
+  $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
+  $spaces_presets->api_version = 3;
+  $spaces_presets->name = 'hwp_event_conference';
+  $spaces_presets->title = 'HWP Event/Conference';
+  $spaces_presets->description = 'The Harvard Web Publishing standard Event or Conference site.';
+  $spaces_presets->space_type = 'og';
+  $spaces_presets->value = array(
+    'bundles' => array(
+      0 => 'project',
+    ),
+    'og_tasks' => array(
+      0 => 'vsite_preset_section_about',
+      1 => 'vsite_preset_section_program',
+      3 => 'vsite_preset_section_register',
+      4 => 'vsite_preset_section_logistics',
+      5 => 'vsite_preset_menu_order',
+    ),
+    'variable' => array(
+      'vsite_preset_menu_order' => array(
+        'primary-menu' => array(
+          'HOME' => -6,
+          'Program' => -5,
+          'Speakers' => -4,
+          'Register' => -3,
+          'Logistics' => -2,
+          'About' => -1,
+        ),
+      ),
+      'spaces_features' => array(
+        'os' => '1',
+        'os_pages' => '1',
+        'os_news' => '1',
+        'os_events' => '1',
+        'os_profiles' => '1',
+      ),
+      'spaces_features_available' => array(
+        0 => 'os_blog',
+        1 => 'os_booklets',
+        2 => 'os_classes',
+        3 => 'os_dataverse',
+        4 => 'os_events',
+        5 => 'os_faq',
+        6 => 'os_files_private',
+        7 => 'os_image_gallery',
+        8 => 'os_links',
+        9 => 'os_news',
+        10 => 'os_pages',
+        11 => 'os_presentations',
+        12 => 'os_profiles',
+        13 => 'os_publications',
+        14 => 'os_reader',
+        15 => 'os_software',
+        16 => 'harvard_courses',
+      ),
+      'site_frontpage' => 'home',
+      'theme_default' => 'hwpi_classic',
+      'os_breadcrumbs_show_breadcrumbs' => 1,
+    ),
+    'menus' => array(
+      'primary-menu' => array(
+        900 => array(
+          'link_path' => 'home',
+          'link_title' => 'HOME',
+          'options' => array(),
+          'mlid' => 900,
+          'p1' => 900,
+          'depth' => 1,
+          'router_path' => 'home',
+          'menu_name' => 'primary-menu',
+          'external' => 1,
+          'weight' => 0,
+          'hidden' => 0,
+          'has_children' => 0,
+          'expanded' => 0,
+          'module' => 'menu',
+          'customized' => 0,
+          'updated' => 0,
+          'plid' => 0,
+          'p2' => 0,
+          'p3' => 0,
+          'p4' => 0,
+          'p5' => 0,
+          'p6' => 0,
+          'p7' => 0,
+          'p8' => 0,
+          'p9' => 0,
+        ),
+        902 => array(
+          'link_path' => 'people',
+          'link_title' => 'Speakers',
+          'options' => array(),
+          'mlid' => 902,
+          'p1' => 902,
+          'depth' => 1,
+          'router_path' => 'people',
+          'menu_name' => 'primary-menu',
+          'external' => 1,
+          'weight' => 0,
+          'hidden' => 0,
+          'has_children' => 0,
+          'expanded' => 0,
+          'module' => 'menu',
+          'customized' => 0,
+          'updated' => 0,
+          'plid' => 0,
+          'p2' => 0,
+          'p3' => 0,
+          'p4' => 0,
+          'p5' => 0,
+          'p6' => 0,
+          'p7' => 0,
+          'p8' => 0,
+          'p9' => 0,
+        ),
+      ),
+    ),
+    'context' => array(
+      'os_public:reaction:block' => array(
+        'blocks' => array(
+          'os-secondary-menu' => array(
+            'module' => 'os',
+            'delta' => 'secondary-menu',
+            'region' => 'header_third',
+            'weight' => '-11',
+            'status' => 0,
+            'title' => '',
+          ),
+          'os-primary-menu' => array(
+            'module' => 'os',
+            'delta' => 'primary-menu',
+            'region' => 'menu_bar',
+            'weight' => '-10',
+            'status' => 0,
+            'title' => '',
+          ),
+          'boxes-site_info' => array(
+            'module' => 'boxes',
+            'delta' => 'site_info',
+            'region' => 'header_second',
+            'weight' => '-10',
+            'status' => 0,
+            'title' => '',
+          ),
+          'os_search_solr-site-search' => array(
+            'module' => 'os_search_solr',
+            'delta' => 'site-search',
+            'region' => 'header_third',
+            'weight' => '-10',
+            'status' => 0,
+            'title' => '',
+          ),
+        ),
+      ),
+      'os_front:reaction:block' => array(
+        'blocks' => array(),
+      ),
+    ),
+  );
+
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('HWP Event/Conference');
+  t('The Harvard Web Publishing standard Event or Conference site.');
+  t('Speakers');
+  t('Program');
+  t('Schedule');
+  t('Register');
+  t('Logistics');
+  $export['hwp_event_conference'] = $spaces_presets;
 
   return $export;
 }

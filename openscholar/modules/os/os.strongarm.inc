@@ -90,6 +90,13 @@ function os_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_taxonomy_vocabulary_pattern';
+  $strongarm->value = 'vocab/[vocabulary:name]';
+  $export['pathauto_taxonomy_vocabulary_pattern'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_update_action';
   $strongarm->value = '0';
   $export['pathauto_update_action'] = $strongarm;
@@ -141,7 +148,7 @@ user/login';
     'os_image_gallery' => '1',
     'os_links' => '1',
     'os_publications' => '1',
-    'os_events' => '1',
+    'os_events' => '0',
     'os_blog' => '1',
     'os_presentations' => '1',
     'os_profiles' => '1',

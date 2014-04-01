@@ -556,10 +556,13 @@ function vsite_node_access($node, $op, $account) {
     return NODE_ACCESS_DENY;
   }
 
-  if (!vsite_get_vsite()) {
+  if (!$vsite = vsite_get_vsite()) {
     // Deny access when outside of VSite.
     return NODE_ACCESS_DENY;
   }
+
+  // Check the user's permission to create new content in the current VSite.
+  return !og_user_access('node', $vsite->group->nid, 'create ' . $node . ' content', $account) ? NODE_ACCESS_DENY : NODE_ACCESS_IGNORE;
 }
 
 /**
@@ -1878,6 +1881,9 @@ function vsite_mail_alter(&$message){
       // Alter the message body.
       $message['body'][0] = t("Dear !firstname,\n\nA site owner at the !site website has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This login can be used only once.)\n\nYour username is: !username \n\nAfter setting your password with the included link, you will be able to log in at !futurelogin in the future.\n\nSincerely,\nThe !site Team", $replacements);
       break;
+    case 'contact_page_mail':
+      $message['headers']['Sender'] = $message['headers']['Return-Path'] = $message['headers']['From'];
+      break;
   }
 }
 
@@ -2554,6 +2560,7 @@ function _vsite_add_site_link($title, $description, $parent = NULL, $options = a
       'attributes' => array(
         'data-tooltip' => $description,
       ),
+      'html' => FALSE,
     ),
   );
 
@@ -2625,9 +2632,11 @@ function vsite_taxonomy_term_presave($term) {
  * Validate handler; Prevent duplicate aliases.
  */
 function vsite_form_alias_validate($form, &$form_state) {
-  $entity_type = $form['#entity_type'];
+  if (!empty($form['#entity_type'])) {
+    $entity_type = $form['#entity_type'];
+  }
 
-  if(!$entity_type && $form['#form_id'] == 'taxonomy_form_vocabulary'){
+  if (empty($entity_type) && $form['#form_id'] == 'taxonomy_form_vocabulary') {
     $entity_type = 'taxonomy_vocabulary';
   }
 
@@ -2645,9 +2654,9 @@ function vsite_form_alias_validate($form, &$form_state) {
       $entity->vid = $form_state['values']['vid'];
       break;
     case 'taxonomy_vocabulary':
-        // Vocabs must have a vid in order to generate their alias.
-        $entity = $form_state['vocabulary'];
-        break;
+      // Vocabs must have a vid in order to generate their alias.
+      $entity = $form_state['vocabulary'];
+      break;
   }
 
   // Verify the path is not in use.
@@ -2833,40 +2842,6 @@ function vsite_cp_settings() {
   }
   $settings = array();
 
-  // For personal sites only, allow an author link.
-  if ($vsite->group->type == 'personal') {
-    $default_value = variable_get('vsite_head_link_rel_author', '');
-    $settings['vsite_head_link_rel_author'] = array(
-      'form' => array(
-        '#type' => 'textfield',
-        '#title' => t('Author URL'),
-        '#default_value' => $default_value,
-        '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
-      ),
-      'group' => array(
-        '#id' => 'structured_data',
-        '#title' => t('Structured data'),
-        '#weight' => 31,
-      ),
-    );
-  }
-
-  // For all sites, allow a publisher link.
-  $default_value = variable_get('vsite_head_link_rel_publisher', '');
-  $settings['vsite_head_link_rel_publisher'] = array(
-    'form' => array(
-      '#type' => 'textfield',
-      '#title' => t('Publisher URL'),
-      '#default_value' => $default_value,
-      '#description' => t('Enter the URL to your publishing entity\'s permanent web address. Use a Google+ page URL to be eligible for a branded knowledge panel in Google search results.'),
-    ),
-    'group' => array(
-      '#id' => 'structured_data',
-      '#title' => t('Structured data'),
-      '#weight' => 31,
-    ),
-  );
-
   $default = array('department', 'project');
   $subsite_parents = variable_get('subsite_parents', $default);
   if (!in_array($vsite->group->type, $subsite_parents)) {
@@ -2971,12 +2946,12 @@ function vsite_get_os_override_permissions() {
 function vsite_og_permission() {
   return array(
     'administer boxes' => array(
-      'title' => t('Administer boxes'),
+      'title' => t('Administer widgets'),
       'os_override' => TRUE,
     ),
     'edit boxes' => array(
-      'title' => t('Edit boxes'),
-      'description' => t('Edit existing boxes.'),
+      'title' => t('Edit widgets'),
+      'description' => t('Edit existing widgets.'),
       'os_override' => TRUE,
     ),
   );
@@ -3085,17 +3060,38 @@ function vsite_redirect_parse_url_alter(&$parsed, $original_url) {
  */
 function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
   // Only continues if we have a purl (in order to save the favicon properly).
-  if (!$purl = vsite_get_purl()) {
+  if (!($purl = vsite_get_purl()) || !$vsite = vsite_get_vsite()) {
     return;
   }
 
   // Builds the "Site favicon" file field widget.
   // Renders a fieldset with a managed file widget.
+  $meta_description = '';
+  $vsite = vsite_get_vsite();
+  $items = field_get_items('node', $vsite->group, 'field_meta_description');
+  if (isset($items[0]['value'])) {
+    $meta_description = $items[0]['value'];
+  }
   $fieldset = array(
-    'vsite_favicon' => array(
+    'vsite_seo' => array(
       '#type' => 'fieldset',
-      '#title' => t('Site favicon'),
+      '#title' => t('SEO'),
       '#weight' => 30,
+      'vsite_title' => array(
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#title' => t('Site title'),
+        '#default_value' => $vsite->group->title,
+        '#description' => t('Your site\'s official title, as displayed in your Site info widget, in search results, and in browser tabs.'),
+      ),
+      'field_meta_description' => array(
+        '#type' => 'textarea',
+        '#rows' => 2,
+        '#title' => t('Meta description'),
+        '#resizable' => FALSE,
+        '#default_value' => $meta_description,
+        '#description' => t('A brief summary to appear in search results for your site\'s home page. Ideally 155 characters or less.'),
+      ),
       'site_favicon_fid' => array(
         '#type' => 'managed_file',
         '#title' => t('Favicon'),
@@ -3107,8 +3103,24 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
           'file_validate_size' => array(2*1024*1024),
         ),
       ),
+      'vsite_head_link_rel_publisher' => array(
+        '#type' => 'textfield',
+        '#title' => t('Publisher URL'),
+        '#default_value' => variable_get('vsite_head_link_rel_publisher', ''),
+        '#description' => t('Enter the URL to your publishing entity\'s permanent web address. Use a Google+ page URL to be eligible for a branded knowledge panel in Google search results.'),
+      ),
     ),
   );
+
+  // For personal sites only, allow an author link.
+  if ($vsite->group->type == 'personal') {
+    $fieldset['vsite_seo']['vsite_head_link_rel_author'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Author URL'),
+      '#default_value' => variable_get('vsite_head_link_rel_author', ''),
+      '#description' => t('Enter the URL to your permanent web address. Use a Google+ personal URL to display <a href="@href">Google Authorship</a> photos in search results.', array('@href' => 'http://www.google.com/insidesearch/features/authorship/')),
+    );
+  }
 
   // Adds the fieldset to the form.
   $form += $fieldset;
@@ -3120,16 +3132,163 @@ function vsite_form_cp_settings_form_alter(&$form, &$form_state, $form_id) {
 /**
  * Submit callback for cp_settings_form().
  *
- * Updates the 'field_favicon' value on the vsite node.
+ * Updates variable values exposed in the CP > Settings form for this vsite.
  *
  * @see vsite_form_cp_settings_form_alter()
  */
 function vsite_cp_settings_form_submit($form, &$form_state) {
   // Get the vsite_privacy value.
-  $name = 'site_favicon_fid';
-  if (isset($form_state['values'][$name])) {
-    $value = $form_state['values'][$name];
-    $vsite = vsite_get_vsite();
-    $vsite->controllers->variable->set($name, $value);
+  $values = array(
+    'site_favicon_fid' => array('type' => 'variable'),
+    'vsite_head_link_rel_publisher' => array('type' => 'variable'),
+    'vsite_head_link_rel_author' => array('type' => 'variable'),
+    'vsite_title' => array('type' => 'property', 'property' => 'title'),
+    'field_meta_description' => array('type' => 'property', 'use_set' => TRUE),
+  );
+  $modified = FALSE;
+  $vsite = vsite_get_vsite();
+  $wrapper = entity_metadata_wrapper('node', $vsite->group);
+  foreach ($values as $name => $info) {
+    switch ($info['type']) {
+      case 'variable':
+        if (isset($form_state['values'][$name])) {
+          $value = $form_state['values'][$name];
+          $vsite = vsite_get_vsite();
+          $vsite->controllers->variable->set($name, $value);
+        }
+        break;
+      case 'property':
+        if (isset($form_state['values'][$name])) {
+          $value = $form_state['values'][$name];
+          $property = isset($info['property']) ? $info['property'] : $name;
+          $old_value = $wrapper->{$property}->value();
+          if ($old_value != $value) {
+            if (isset($info['use_set'])) {
+              $wrapper->{$property}->set($value);
+              $modified = TRUE;
+            }
+            else {
+              $wrapper->{$property} = $value;
+              $modified = TRUE;
+            }
+          }
+        }
+        break;
+    }
   }
+
+  // Only saves wrapper and clears metatag cache when the values have changed.
+  if ($modified) {
+    $wrapper->save();
+    // Clear the cache so that the the new tags are available immediately.
+    $cid_parts = _vsite_metatag_get_cid_parts($vsite);
+    $cid = metatag_cache_default_cid_parts($cid_parts);
+    cache_clear_all($cid, 'cache_metatag', TRUE);
+  }
+}
+
+/**
+ * Implements hook_metatag_metatag_view_alter().
+ */
+function vsite_metatag_metatags_view_alter(&$output, $instance) {
+  // Only alters metatag view behavior for vsite home pages.
+  if ($instance != 'global:frontpage' || !$vsite = vsite_get_vsite()) {
+    return;
+  }
+
+  // Finds the metatag cache ID info for the vsite node.
+  $cid_parts = _vsite_metatag_get_cid_parts($vsite);
+  $cid = metatag_cache_default_cid_parts($cid_parts);
+  if ($cache = metatag_cache_get($cid)) {
+    $output = $cache->data;
+  }
+  else {
+    // Separate the meta tags.
+    $metatags = isset($vsite->group->metatags) ? $vsite->group->metatags : array();
+
+    // Build options for meta tag rendering.
+    $languages = language_list();
+    $options = array(
+      'entity' => $vsite->group,
+      'entity_type' => $cid_parts['entity_type'],
+      'view_mode' => $cid_parts['view_mode'],
+      'language' => $languages[$cid_parts['langcode']],
+    );
+
+    // Reload the entity object from cache as it may have been altered.
+    $token_type = token_get_entity_mapping('entity', $cid_parts['entity_type']);
+    $entities = entity_load($cid_parts['entity_type'], array($cid_parts['entity_id']));
+    $options['token data'][$token_type] = $entities[$cid_parts['entity_id']];
+    $options['entity'] = $entities[$cid_parts['entity_id']];
+
+    // Render the metatags and save to the cache.
+    $output = metatag_metatags_view($cid_parts['instance'], $metatags, $options);
+    metatag_cache_set($cid, $output);
+  }
+
+  // We need to register the term's metatags, so we can later fetch them.
+  // @see metatag_page_build().
+  metatag_page_set_metatags($cid_parts['instance'], $output);
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function vsite_page_build(&$page) {
+  // Moves vsite metatags to the content_top region so they aren't unset later.
+  if (drupal_is_front_page() && $vsite = vsite_get_vsite()) {
+    $page['content_top']['metatags'] = $page['content']['metatags'];
+  }
+}
+
+/**
+ * Implements of hook_views_plugins().
+ */
+function vsite_views_plugins() {
+  return array(
+    'cache' => array(
+      'vsite_time_per_group' => array(
+        'title' => t('Time-based, per VSite'),
+        'help' => t('Simple time-based caching of data for each VSite, based on their access.'),
+        'handler' => 'vsite_views_og_cache_plugin_cache_time',
+        'uses options' => TRUE,
+        'parent' => 'views_og_cache_plugin_cache_time',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_metatag_page_cache_cid_parts_alter().
+ */
+function vsite_metatag_page_cache_cid_parts_alter(&$cid_parts) {
+  // Only alters metatag view behavior for vsite home pages.
+  if (!isset($cid_parts['instance']) || $cid_parts['instance'] != 'global:frontpage' || !$vsite = vsite_get_vsite()) {
+    return;
+  }
+
+  // Modify $cid_parts to match the vsite entity $cid_parts.
+  $vsite_cid_parts = _vsite_metatag_get_cid_parts($vsite);
+  $cid_parts = array_merge($cid_parts, $vsite_cid_parts);
+}
+
+/**
+ * Builds the expected metatag cache ID parts as found in metatag.module.
+ */
+function _vsite_metatag_get_cid_parts($vsite) {
+  $entity_type = 'node';
+  $view_mode = 'full';
+  $entity = $vsite->group;
+  list($entity_id, $revision_id, $bundle) = entity_extract_ids($entity_type, $entity);
+  $cid_parts = array(
+    'instance' => "{$entity_type}:{$bundle}",
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'entity_id' => $entity_id,
+    'revision_id' => $revision_id,
+    'langcode' => LANGUAGE_NONE,
+    'view_mode' => $view_mode,
+  );
+
+  return $cid_parts;
 }

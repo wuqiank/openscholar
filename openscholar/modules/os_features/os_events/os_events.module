@@ -199,6 +199,52 @@ function os_events_default_registration_type() {
   return $items;
 }
 
+function os_events_date_formatter_pre_view_alter(&$entity, $vars) {
+  if ($entity->type != 'event') {
+    return;
+  }
+
+  if (!isset($entity->date_id)) {
+    if ($entity->view = views_get_current_view()
+      && isset($entity->view->plugin_name)
+      && $entity->view->plugin_name == 'date_ical'
+      && isset($entity->view->row_index)
+      && isset($entity->view->result[$entity->view->row_index])) {
+
+      // this entity is being rendered by a view.
+      //
+
+      $view = $entity->view;
+      $result = $view->result[$view->row_index];
+      $field = 'field_data_field_date_field_date_value';
+      $delta = -1;
+      if (isset($result->field_data_field_date_delta)) {
+        $delta = $result->field_data_field_date_delta;
+      }
+      else {
+        foreach ($entity->field_date[LANGUAGE_NONE] as $d => $r) {
+          if ($r['value'] == $result->$field) {
+            $delta = $d;
+            break;
+          }
+        }
+      }
+      $entity->date_id = 'node.'.$entity->nid.'.field_date.'.$delta;
+    }
+    else {
+      // this is a single node, and we need to filter it down to just the next occurence of an event
+      if (count($vars['items']) > 1) {
+        foreach ($vars['items'] as $d => $i) {
+          if (REQUEST_TIME < strtotime($i['value'])) {
+            $entity->date_id = 'node.'.$entity->nid.'.field_date.'.$d;
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
 /**
  * Implements hook_process_node().
  */
@@ -583,7 +629,13 @@ function os_events_url_outbound_alter(&$path, &$options, $original_path) {
   $data = explode('/', $original_path);
   $path = $data[0];
 
-  $format = array('year' => 'Y', 'month' => 'Y-m', 'week' => 'Y-\W', 'day' => 'Y-m-d');
+  // The format for week, "Y-\WW", is interpreted by date functions like so:
+  // The string consists of three parts delimited by dashes "-",
+  // The first part "Y" stands for the year in 4 digits,
+  // The second part "\WW" is actually "\W" and "W", meaning the first W is
+  // escaped and would be written as "W" and the second W is not escaped and
+  // thus stands for the number of the week,
+  $format = array('year' => 'Y', 'month' => 'Y-m', 'week' => 'Y-\WW', 'day' => 'Y-m-d');
   $date_format = new DateTime;
 
   if (isset($_GET[$data[1]])) {
@@ -597,12 +649,7 @@ function os_events_url_outbound_alter(&$path, &$options, $original_path) {
     $date_format->setTimestamp($time);
   }
 
-  if ($data[1] == 'week') {
-    $date = date_format($date_format, $format[$data[1]]) . date_week(date_format($date_format, 'Y-m-d'));
-  }
-  else {
-    $date = date_format($date_format, $format[$data[1]]);
-  }
+  $date = date_format($date_format, $format[$data[1]]);
 
   $type = $data[1];
 

@@ -314,7 +314,7 @@ function os_publications_field_default_field_instances() {
           'media_internet' => 'media_internet',
           'upload' => 'upload',
         ),
-        'droppable_area_text' => 'Drop files here to upload',
+        'droppable_area_text' => 'Drop related files here (typically an e-version of this publication) to upload',
         'multiupload' => 0,
         'progress_indicator' => 'throbber',
         'standard_upload' => 1,
