@@ -110,6 +110,10 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       $context['page_id'] = $page_id;
       $context['search_type'] = 'apachesolr_search_show_facets';
       apachesolr_search_run_empty('apachesolr', $params, $search_page['search_path'], $solr, $context);
+
+      // Returning TRUE means there was an empty search, and we will cache the
+      // block.
+      return TRUE;
     }
     catch (Exception $e) {
       watchdog('Apache Solr', nl2br(check_plain($e->getMessage())), NULL, WATCHDOG_ERROR);
@@ -121,7 +125,6 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
    */
   public function render() {
     $block = parent::render();
-
     $searcher_name = os_search_solr_get_searcher_name();
     // Gets delta map
     if (!$map = facetapi_get_delta_map()) {
@@ -134,53 +137,63 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $string_og_vocab = facetapi_build_delta($searcher_name, 'block', 'sm_og_vocabulary');
     $delta_og_vocab = array_search($string_og_vocab, $map);
 
-    // Verify the facet block has something to work on (means - it is in a solr
-    // search page). If not - execute the empty solr search without showing
-    // the results.
-    $this->call_empty_search_if_needed($delta_og_vocab);
-
-    $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
-    $block['delta'] = $delta;
-
-    // Set block subject/title from box configuration.
-    $block['subject'] = $this->title;
-    $block['title'] = $this->title;
-
-    if (empty($block['content'])) {
-      // Block content must be defined, even if it is empty, to avoid errors.
-      // os_boxes_widget_submit() renders blocks into a 'dummy' region, but
-      // gives errors in case the content is empty, hence the space.
-      $block['content'] = ' ';
+    $cid = 'sm_og_vocabulary:' . $delta_og_vocab;
+    if ($cache = cache_get($cid)) {
+      $block = $cache->data;
     }
     else {
-      if (!empty($this->options['vocabularies'])) {
-        // Get the list of selected vocabularies
-        $selected = array();
-        foreach ($this->options['vocabularies'] as $vocabulary_name => $value) {
-          if ($value == "all") {
-            $selected = array();
-            break;
+      // Verify the facet block has something to work on (means - it is in a solr
+      // search page). If not - execute the empty solr search without showing
+      // the results.
+      // If empty search happened, we will cache the block.
+      $do_cache = $this->call_empty_search_if_needed($delta_og_vocab);
+
+      $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
+      $block['delta'] = $delta;
+
+      // Set block subject/title from box configuration.
+      $block['subject'] = $this->title;
+      $block['title'] = $this->title;
+
+      if (empty($block['content'])) {
+        // Block content must be defined, even if it is empty, to avoid errors.
+        // os_boxes_widget_submit() renders blocks into a 'dummy' region, but
+        // gives errors in case the content is empty, hence the space.
+        $block['content'] = ' ';
+      }
+      else {
+        if (!empty($this->options['vocabularies'])) {
+          // Get the list of selected vocabularies
+          $selected = array();
+          foreach ($this->options['vocabularies'] as $vocabulary_name => $value) {
+            if ($value == "all") {
+              $selected = array();
+              break;
+            }
+            if ($value) {
+              $selected[$vocabulary_name] = $value;
+            }
           }
-          if ($value) {
-            $selected[$vocabulary_name] = $value;
-          }
-        }
-        // If no selection - show all. If there is selection - show only them.
-        if (count($selected) > 0) {
-          foreach (array_keys($block['content']['sm_og_vocabulary']) as $vocabulary_name) {
-            if (empty($selected[$vocabulary_name])) {
-              unset($block['content']['sm_og_vocabulary'][$vocabulary_name]);
+          // If no selection - show all. If there is selection - show only them.
+          if (count($selected) > 0) {
+            foreach (array_keys($block['content']['sm_og_vocabulary']) as $vocabulary_name) {
+              if (empty($selected[$vocabulary_name])) {
+                unset($block['content']['sm_og_vocabulary'][$vocabulary_name]);
+              }
             }
           }
         }
-      }
 
-      if (!empty($block['content']['sm_og_vocabulary'])) {
-        // Sort by vocab's title.
-        ksort($block['content']['sm_og_vocabulary']);
-      }
+        if (!empty($block['content']['sm_og_vocabulary'])) {
+          // Sort by vocab's title.
+          ksort($block['content']['sm_og_vocabulary']);
+        }
 
-      $block['content'] = render($block['content']);
+        $block['content'] = render($block['content']);
+        if ($do_cache) {
+          cache_set($cid, $block);
+        }
+      }
     }
     return $block;
   }
