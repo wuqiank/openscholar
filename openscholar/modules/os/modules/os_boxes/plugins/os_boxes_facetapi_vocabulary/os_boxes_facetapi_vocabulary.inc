@@ -146,7 +146,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       // search page). If not - execute the empty solr search without showing
       // the results.
       // If empty search happened, we will cache the block.
-      $do_cache = $this->call_empty_search_if_needed($delta_og_vocab);
+      $set_cache = $this->call_empty_search_if_needed($delta_og_vocab);
 
       $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
       $block['delta'] = $delta;
@@ -190,7 +190,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
         }
 
         $block['content'] = render($block['content']);
-        if ($do_cache) {
+        if ($set_cache) {
           cache_set($cid, $block);
         }
       }
