@@ -82,7 +82,6 @@ function os_publications_menu_alter(&$items) {
   $items['node/add/biblio']['title'] = 'Publication';
 
   // Change access callback to publications/authors.
-  // Shut this page down completely until we can fix it
   $items['publications/authors']['access callback'] = FALSE;
 }
 
