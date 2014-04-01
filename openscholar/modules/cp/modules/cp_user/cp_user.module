@@ -284,6 +284,7 @@ function cp_user_og_ui_admin_permissions($variables) {
     $allowed_permissions[$permission] = 'general';
   }
   $allowed_permissions['change theme'] = 'general';
+  $allowed_permissions['edit terms'] = 'general';
 
   foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
     foreach (array_keys($bundles) as $bundle) {
@@ -398,7 +399,6 @@ function cp_user_add_category_title_to_table($permission, $allowed_permissions, 
   // Get spaces features in order to get human readable application name.
   $spaces_features = spaces_features();
   $category = $allowed_permissions[$permission];
-
   if (empty($rows_per_category[$category])) {
     $title = t('General permissions');
 
