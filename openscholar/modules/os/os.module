@@ -2193,19 +2193,23 @@ function os_file_copy_set_error($message, $exception) {
  * Implements hook_drupal_goto_alter().
  */
 function os_drupal_goto_alter(&$path, &$options, &$http_response_code) {
-  if (module_exists('redirect')) {
-    if ($http_response_code == 301) {
-      // Serves 301 redirects with redirect_redirect(), to allow caching.
-      $options['absolute'] = TRUE;
-      $url = url($path, $options);
-      $defaults = array(
-        'redirect' => $url,
-        'status_code' => 301,
-        'type' => 'global',
-      );
-      $redirect = new stdClass;
-      redirect_object_prepare($redirect, $defaults);
-      redirect_redirect($redirect);
-    }
+  if (!module_exists('redirect')) {
+    return;
   }
+
+  if ($http_response_code != 301) {
+    return;
+  }
+
+  // Serves 301 redirects with redirect_redirect(), to allow caching.
+  $options['absolute'] = TRUE;
+  $url = url($path, $options);
+  $defaults = array(
+    'redirect' => $url,
+    'status_code' => 301,
+    'type' => 'global',
+  );
+  $redirect = new stdClass;
+  redirect_object_prepare($redirect, $defaults);
+  redirect_redirect($redirect);
 }
