@@ -38,63 +38,6 @@ function os_publications_os_app_info() {
 }
 
 /**
- * Defines the overview menu entry
- */
-function os_publications_menu_alter(&$items) {
-  $items['publications'] = array(
-    'title' => 'Publications',
-    'description' => 'Publications',
-    'page callback' => 'os_publications_overview',
-    'access callback' => 'spaces_access_feature',
-    'access arguments' => array('view', 'os_publications'),
-    'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
-    'menu_name' => 'primary-menu',
-  );
-
-  $items['publications/export'] = array(
-    'title' => '',
-    'page callback' => 'os_publications_export',
-    'access callback' => 'os_publications_export_access',
-    'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['publications/reset'] = array(
-    'title' => 'Reset OS Publications Defaults',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('os_publications_reset'),
-    'access arguments' => 'administer nodes',
-    'file' => drupal_get_path('module', 'os_publications'). '/os_publications.pages.inc',
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['features/os_publications'] = array(
-    'title' => 'Settings',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('os_publications_settings'),
-    'access callback' => module_exists('vsite') ? 'spaces_access_admin' : 'user_access',
-    'access arguments' => module_exists('vsite') ? array() : array('administer site configuration'),
-    'type' => MENU_CALLBACK,
-    'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
-  );
-
-  // for the toolbar
-  $items['node/add/biblio']['title'] = 'Publication';
-}
-
-/**
- * Menu access; Make sure publications export can be seen by privileged users
- * only inside a VSite context, to prevent from loading too many nodes.
- */
-function os_publications_export_access() {
-  if (!user_access('show export links') || (module_exists('vsite') && !spaces_get_space())) {
-    return;
-  }
-
-  return TRUE;
-}
-
-/**
  * Implements hook_vsite_og_node_type_info().
  */
 function os_publications_vsite_og_node_type_info() {
