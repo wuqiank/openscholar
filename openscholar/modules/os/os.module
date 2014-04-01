@@ -183,7 +183,7 @@ function os_in_readonly_mode($page) {
 
   // The default form should be displayed if the user is admin or in case the user
   // tries to access "site/register" and he can create a VSite.
-  if ($user->uid == 1 || (_vsite_user_access_create_vsite() && $page == 'site_register')) {
+  if (user_access('administer site configuration') || (_vsite_user_access_create_vsite() && $page == 'site_register')) {
     return drupal_get_form($drupal_default_form);
   }
 
