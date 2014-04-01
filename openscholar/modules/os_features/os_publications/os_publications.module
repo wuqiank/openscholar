@@ -247,43 +247,6 @@ function _os_publications_filter_by_term(QueryAlterableInterface $query) {
 }
 
 /**
- * Replaces biblio theme functions with our own.
- */
-function os_publications_theme_registry_alter(&$reg) {
-  $reg['biblio_tabular'] = array_merge($reg['biblio_tabular'], array(
-      'file' => 'os_publications.theme.inc',
-      'theme path' => drupal_get_path('module', 'os_publications'),
-      'function' => 'theme_os_publications_tabular',
-    ));
-  $reg['biblio_tabular']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
-
-  $reg['biblio_export_links'] = array_merge($reg['biblio_export_links'], array(
-      'file' => 'os_publications.theme.inc',
-      'theme path' => drupal_get_path('module', 'os_publications'),
-      'function' => 'theme_os_publications_export_links',
-    ));
-  $reg['biblio_export_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
-
-  $reg['biblio_contributors'] = array_merge($reg['biblio_contributors'], array(
-      'file' => 'os_publications.theme.inc',
-      'theme path' => drupal_get_path('module', 'os_publications'),
-      'function' => 'theme_os_publications_contributors',
-    ));
-  $reg['biblio_contributors']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
-
-  $reg['biblio_download_links'] = array_merge($reg['biblio_download_links'], array(
-      'file' => 'os_publications.theme.inc',
-      'theme path' => drupal_get_path('module', 'os_publications'),
-      'function' => 'theme_os_publications_download_links',
-    ));
-  $reg['biblio_download_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
-
-  //Override publications by year box so biblio years display submitted/inpress/etc
-  $reg['views_view_summary__publication_years__block'] = $reg['views_view_summary'];
-  $reg['views_view_summary__publication_years__block']['preprocess functions'][] = 'theme_os_publications_biblio_year_row';
-}
-
-/**
  * Alters the biblio form to do a lot of things
  */
 function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
@@ -733,30 +696,30 @@ function os_publications_node_view_alter(&$build, $type) {
   if ($type != 'node' || $build['#bundle'] != 'biblio') {
     return;
   }
-    
+
   switch ($build['#view_mode'])  {
     case 'full':
       // Remove the publication image as it's called in theme_os_publications_tabular instead.
       if (isset($build['field_biblio_image'])) {
       	$build['field_biblio_image']['#access'] = FALSE;
       }
-      
+
       // Remove the Google Scholar link that appears at the bottom of full view publications.
       if (isset($build['links']['biblio_google_scholar'])) {
         unset($build['links']['biblio_google_scholar']);
       }
       break;
-    
+
     case 'slide_teaser':
       $build['teaser']['#markup'] = theme('biblio_style', array('node' => $build['#node'], 'base' => variable_get('biblio_base', 'biblio'), 'style_name' => biblio_get_style()));
       //FALLTHROUGH!  slide_teaser should run just like teaser, except we need to load up the markup from biblio_view().
-    case 'teaser':  
+    case 'teaser':
       // Alter the teaser to remove the external URL as the URL title and
       // replace it with either the biblio_url_title or "website".
       if (isset($build['teaser']['#markup'])) {
         $node = node_load($build['#node']->nid);
         $build['teaser']['#markup'] = _os_publications_biblio_entry_alter($build['teaser']['#markup'], $node);
-      } 
+      }
 
       // Add the abstract slider.
 	    _os_publications_attach_abstract($build, $build['#node'], 'teaser');
@@ -767,7 +730,7 @@ function os_publications_node_view_alter(&$build, $type) {
       $build['teaser']['#weight'] = 1;
       $build['links']['#access'] = FALSE;
       break;
-      
+
     default:
       $links = &$build['links'];
       foreach ($links as $k => $l) {
@@ -780,7 +743,7 @@ function os_publications_node_view_alter(&$build, $type) {
         }
       }
       break;
-    
+
   }
 }
 
