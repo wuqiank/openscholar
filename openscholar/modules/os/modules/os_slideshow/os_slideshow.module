@@ -392,7 +392,9 @@ function os_slideshow_preprocess_os_slideshow_slideshow(&$vars) {
   foreach ($nodes as $nid => $node) {
     if ($node->status) {
       $slide_vars['node'] = $node;
-      $vars['slides'][] = theme('os_slideshow_slide', $slide_vars);
+      if (!empty($node->field_image[LANGUAGE_NONE][0])){
+        $vars['slides'][] = theme('os_slideshow_slide', $slide_vars);
+      }
     }
     else {
       // Controls should only know about published images so remove the
