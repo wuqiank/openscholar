@@ -285,3 +285,31 @@ function os_activity_message_node_create($node, $op) {
   $wrapper->field_private_message->set($is_private);
   $wrapper->save();
 }
+
+/**
+ * Implements hook_tokens_alter().
+ */
+function os_activity_tokens_alter(&$replacements, $context) {
+  if (empty($replacements)) {
+    // No replacements.
+    return;
+  }
+
+  if ($context['type'] != 'node' || $context['data']['node']->type != 'biblio') {
+    // Not biblio node.
+    return;
+  }
+
+  if (!isset($replacements['[message:field-node-reference:title]'])) {
+    // Not title token.
+    return;
+  }
+
+  dpm($replacements, '$replacements');
+  dpm($context, '$context');
+
+  $node = node_load($context['data']['node']->nid);
+  dpm($node, '$node');
+
+
+}
