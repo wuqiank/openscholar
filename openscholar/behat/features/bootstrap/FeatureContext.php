@@ -793,6 +793,26 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Then /^I should see the options "([^"]*)" under "([^"]*)"$/
+   */
+  public function iShouldSeeOptions($options, $container) {
+    $options = explode(',',$options);
+
+    $element = FALSE;
+    $page = $this->getSession()->getPage();
+    foreach ($options as $option) {
+      $element = $page->find('xpath', "//select[@name='{$container}']//option[contains(.,'{$option}')]");
+      if (!$element) {
+        break;
+      }
+    }
+
+    if (!$element) {
+      throw new Exception("The option {$option} is missing.");
+    }
+  }
+
+  /**
    * @Given /^I set courses to import$/
    */
   public function iSetCoursesToImport() {
