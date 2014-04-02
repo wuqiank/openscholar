@@ -143,8 +143,8 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $block['delta'] = $delta;
 
     // Set block subject/title from box configuration.
-    $block['subject'] = $this->title;
-    $block['title'] = $this->title;
+    $block['subject'] = check_plain($this->title);
+    $block['title'] = check_plain($this->title);
 
     if (empty($block['content'])) {
       // Block content must be defined, even if it is empty, to avoid errors.
