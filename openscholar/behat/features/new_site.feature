@@ -10,6 +10,12 @@ Feature: Testing the creation of the a new site.
       And I visit the site "random"
      Then I should see "Your site's front page is set to display your bio by default."
 
+  @api @last
+  Scenario: Make sure all types of a site are presented to an authenticated user.
+    Given I am logging in as "michelle"
+     When I visit "site/register"
+     Then I should see the options "Department Site,Personal Site,Project Site" under "bundle"
+
   # @todo add "@javascript" tag after selenium 2 is configured
   #    @fixme requires selenium for javascript support.
   #    @see waitForPageActionsToComplete()
