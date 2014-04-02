@@ -1,5 +1,4 @@
 <?php
-define('FACETAPI_VOCABULARY_CACHE_TIMEOUT', 300);
 
 class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
@@ -162,9 +161,8 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $delta_og_vocab = array_search($string_og_vocab, $map);
 
     $cid = 'sm_og_vocabulary:' . $delta_og_vocab;
-    if ($this->is_empty_search_needed() && ($cache = cache_get($cid)) &&
-      // Verify the cache is still valid, based on time since created.
-      $cache->created > REQUEST_TIME - FACETAPI_VOCABULARY_CACHE_TIMEOUT) {
+    // Verify the cache is still valid, based on time since created.
+    if ($this->is_empty_search_needed() && ($cache = cache_get($cid)) && $cache->created > REQUEST_TIME - variable_get('facetapi_vocabulary_cache_timeout', 300)) {
       $block = $cache->data;
     }
     else {
