@@ -2,6 +2,8 @@
 .buildpath
 .settings
 .idea
+.zedstate
+tags
 
 # Don't track temporary files or Mac OS system files.
 *~
