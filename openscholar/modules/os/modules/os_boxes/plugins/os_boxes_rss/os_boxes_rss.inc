@@ -66,7 +66,7 @@ class os_boxes_rss extends os_boxes_default {
       $arg = '/' . implode("+", $types);
     }
 
-    if ($image = theme('image', array('path' => 'misc/feed.png', 'title' => t('Syndicate content')))) {
+    if ($image = theme('image', array('path' => 'images/rss_square-24.png', 'title' => t('Syndicate content')))) {
       $block['content'] = l($image . ' Subscribe', 'feed' . $arg, array(
           'html' => TRUE,
           'attributes' => array(
