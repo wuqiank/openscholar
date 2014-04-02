@@ -1,4 +1,6 @@
 <?php
+define('FACETAPI_VOCABULARY_CACHE_TIMEOUT', 300);
+
 class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
   /**
@@ -69,11 +71,12 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
   }
 
   /**
-   * Facet widgets that in a non-solr search page must fake a search page in
-   * order to show the facet. To do so we execute a "silent" search on solr
-   * without showing the results.
+   * Check whether an empty Solr search is needed.
+   *
+   * @return $browse_page
+   *   Solr search page id in case empty search is needed, FALSE otherwise.
    */
-  public function call_empty_search_if_needed($delta) {
+  public function is_empty_search_needed() {
     if (!$feature = os_get_active_feature()) {
       // No active feature.
       return;
@@ -87,9 +90,30 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       return;
     }
 
+    $page_id = 'browse_' . $browse_page;
+    $search_page = apachesolr_search_page_load($page_id);
+    $env_id = $search_page['env_id'];
+
+    if (apachesolr_has_searched($env_id)) {
+      // Search was executed already.
+      return;
+    }
+    $page_id = 'browse_' . $browse_page;
+    return $page_id;
+  }
+
+  /**
+   * Facet widgets that in a non-solr search page must fake a search page in
+   * order to show the facet. To do so we execute a "silent" search on solr
+   * without showing the results.
+   */
+  public function call_empty_search_if_needed() {
+    if (!$page_id = $this->is_empty_search_needed()) {
+      return;
+    }
+
     // Execute the query.
     try {
-      $page_id = 'browse_' . $browse_page;
       $search_page = apachesolr_search_page_load($page_id);
       $env_id = $search_page['env_id'];
 
@@ -138,7 +162,9 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     $delta_og_vocab = array_search($string_og_vocab, $map);
 
     $cid = 'sm_og_vocabulary:' . $delta_og_vocab;
-    if ($cache = cache_get($cid)) {
+    if ($this->is_empty_search_needed() && ($cache = cache_get($cid)) &&
+      // Verify the cache is still valid, based on time since created.
+      $cache->created > REQUEST_TIME - FACETAPI_VOCABULARY_CACHE_TIMEOUT) {
       $block = $cache->data;
     }
     else {
@@ -146,7 +172,7 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
       // search page). If not - execute the empty solr search without showing
       // the results.
       // If empty search happened, we will cache the block.
-      $set_cache = $this->call_empty_search_if_needed($delta_og_vocab);
+      $set_cache = $this->call_empty_search_if_needed();
 
       $block = module_invoke('facetapi', 'block_view', $delta_og_vocab);
       $block['delta'] = $delta;
