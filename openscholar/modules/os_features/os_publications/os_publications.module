@@ -100,6 +100,9 @@ function os_publications_menu_alter(&$items) {
   $items['node/add/biblio']['title'] = 'Publication';
 }
 
+/**
+ * Page callback for "publications/authors".
+ */
 function os_publications_author_page() {
   $path = drupal_get_path('module', 'biblio');
   drupal_add_js($path . '/misc/biblio.highlight.js', 'file');
@@ -111,6 +114,16 @@ function os_publications_author_page() {
   return _biblio_format_author_page($uri['path'], $filter, $authors);
 }
 
+/**
+ * Get the list of publication authors of the viewed space.
+ *
+ * @see _biblio_get_auhtors().
+ *
+ * @param $filter
+ *    The letter to filter by the results.
+ * @return array
+ *    An array of authors to display.
+ */
 function _os_publications_get_authors($filter) {
   global $user;
   $where = array();
@@ -128,9 +141,10 @@ function _os_publications_get_authors($filter) {
     $header_ext = NULL;
   }
 
+  // Show only published entries to everyone except admin.
   if (!biblio_access('edit_author')) {
     $where['access'] = 'n.status = 1 ';
-  }//show only published entries to everyone except admin
+  }
 
   if (count($where)) {
     $where_clause =  'WHERE (' . implode(') AND (', $where) . ')';
@@ -183,15 +197,28 @@ function _os_publications_get_authors($filter) {
   return $authors;
 }
 
+/**
+ * Page callback for "publications/authors".
+ */
 function os_publications_keyword_page() {
   $uri = drupal_parse_url(request_uri());
 
   $filter = isset($uri['query']['f']['keyword']) ? $uri['query']['f']['keyword'] : '';
-  $keywords = _os_publications_keywords($filter);
+  $keywords = _os_publications_get_keywords($filter);
   return _biblio_format_keyword_page($uri, $filter, $keywords);
 }
 
-function _os_publications_keywords($filter = NULL) {
+/**
+ * Get the list of publication keywords of the viewed space.
+ *
+ * @see _biblio_get_keywords().
+ *
+ * @param $filter
+ *    The letter to filter by the results.
+ * @return array
+ *    An array of authors to display.
+ */
+function _os_publications_get_keywords($filter = NULL) {
   global $user;
   $keywords = array();
   $where = array();
@@ -206,9 +233,10 @@ function _os_publications_keywords($filter = NULL) {
     $header_ext = NULL;
   }
 
+  // Show only published entries to everyone except admin.
   if ($user->uid != 1 ) {
     $where[] = 'n.status = 1 ';
-  }//show only published entries to everyone except admin
+  }
 
   if (count($where)) {
     $where_clause = count($where) > 1 ? 'WHERE (' . implode(') AND (', $where) . ')': 'WHERE ' . $where[0];
