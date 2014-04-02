@@ -48,7 +48,7 @@ function os_activity_json($options = array()) {
   $query->range(0, $options['range']);
   $query->propertyOrderBy('timestamp', 'DESC');
   if (module_exists('vsite_access')) {
-    $query->fieldCondition('field_private_message', 'value', VSITE_ACCESS_PUBLIC);    
+    $query->fieldCondition('field_private_message', 'value', VSITE_ACCESS_PUBLIC);
   }
 
   // Only continues to filter by current space if we can load the vsite.
@@ -242,6 +242,11 @@ function os_activity_message_node_create($node, $op) {
   $values = array(
     'uid' => $node->uid,
   );
+
+  // We treat title differently, as some content types, such as biblio use a
+  // title field, so we need to sanitize it accordingly.
+  $allowed_html_elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+  $values['arguments']['!title'] = !empty($node_wrapper->title_field) ? filter_xss($node_wrapper->title_field->value->value(), $allowed_html_elements) : $node->title;
 
   $message = message_create($message_type, $values);
   $wrapper = entity_metadata_wrapper('message', $message);
