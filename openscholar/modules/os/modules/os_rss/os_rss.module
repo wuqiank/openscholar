@@ -330,7 +330,7 @@ function os_rss_feed_settings($form, $form_settings) {
   }
   foreach ($vocabs as $vocab) {
     $options[$vocab->vid] = $vocab->name;
-    if ($values['vocabularies'] === FALSE) {
+    if ($values['vocabularies'] === FALSE || !isset($values['vocabularies'][$vocab->vid])) {
       $defaults[$vocab->vid] = $vocab->vid;
     }
   }
