@@ -200,7 +200,8 @@ function _os_rss_importer_feed_create($items, $key) {
       ),
     );
 
-    $links[] = l($item['link'], 'rss.xml', $options);
+    $clippy = os_files_clippy(url('rss.xml', $options + array('absolute' => TRUE)));
+    $links[] = l($item['link'], 'rss.xml', $options) . $clippy;
   }
 
   return $links;
