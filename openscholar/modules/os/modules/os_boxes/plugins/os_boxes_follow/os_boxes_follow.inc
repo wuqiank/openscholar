@@ -141,7 +141,7 @@ class os_boxes_follow extends os_boxes_default {
 
     if (!empty($this->options['use_rss'])) {
       $image = theme('image', array(
-        'path' => 'misc/feed.png',
+        'path' => drupal_get_path('module', 'os_boxes').'/plugins/os_boxes_rss/images/rss_square-24.png',
         'title' => t('Syndicate content'),
         'alt' => t('RSS Feed'),
         'width' => 24,
