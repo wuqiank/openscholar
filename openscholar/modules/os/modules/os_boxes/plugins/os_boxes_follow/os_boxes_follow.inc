@@ -121,7 +121,7 @@ class os_boxes_follow extends os_boxes_default {
     $block['content'] = '';
 
     $block['content'] .= theme('image', array('path' => 'misc/feed.png', 'title' => t('Syndicate content')));
-    $block['content'] .= l(t('RSS'), 'rss-feed', array('attributes' => array('class' => array('rss-feed-icon'))));
+    $block['content'] .= l(t('RSS'), 'rss', array('attributes' => array('class' => array('rss-feed-icon'))));
 
     if (!$this->options['links']) {
       return $block;
