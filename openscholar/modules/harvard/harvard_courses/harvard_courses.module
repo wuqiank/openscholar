@@ -14,9 +14,6 @@ function harvard_courses_os_app_info() {
 
   $apps['harvard_courses'] = array(
     'path' => 'courses',
-    'nodetypes' => array(
-      'harvard_course',
-    ),
     'exclude_from_rss' => array(
       'harvard_course',
     ),

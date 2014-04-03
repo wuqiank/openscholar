@@ -49,9 +49,6 @@ function os_importer_ctools_plugin_directory($module, $plugin) {
 function os_importer_os_app_info() {
   return array(
     'os_importer' => array(
-      'nodetypes' => array(
-        'feed_importer',
-      ),
       'exclude_from_rss' => array(
         'feed_importer',
       ),

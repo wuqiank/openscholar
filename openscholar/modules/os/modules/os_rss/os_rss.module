@@ -305,7 +305,7 @@ function os_rss_feed_settings($form, $form_settings) {
     }
 
     foreach ($info['exclude_from_rss'] as $bundle) {
-      if (in_array($bundle, $info['exclude_from_rss']) && in_array($bundle, $info['nodetypes'])) {
+      if (in_array($bundle, $info['exclude_from_rss'])) {
         // The bundle is exported by the app and need to be removed from the
         // content types list when creating an RSS feed.
         unset($bundles[$bundle]);
