@@ -722,7 +722,9 @@ form.node-form.overlay-processed .form-region-main .fieldset-legend span.summary
 	display: inline;
      }
 
-
+.field-name-field-biocv-pdf-upload {
+  margin-bottom: 40px;
+}
 
 
 html.js .form-region-right  fieldset.collapsible .fieldset-legend,
