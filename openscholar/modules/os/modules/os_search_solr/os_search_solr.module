@@ -819,14 +819,21 @@ function os_search_solr_save_view_mode($page_id, $view_mode) {
   // Get Solr View Modes
   $solr_view_modes = variable_get('os_search_solr_display_mode', '');
 
-  // Set View Modes
-  $solr_view_modes[$page_id] = $view_mode;
-
   // Save Apache Solr View Modes. Use VSite if exists.
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+    // Set View Mode
+    $solr_view_modes[$page_id] = $view_mode;
+
     $vsite->controllers->variable->set('os_search_solr_display_mode', $solr_view_modes);
   }
   else {
+    if (isset($solr_view_modes[$page_id]) && $solr_view_modes[$page_id] == $view_mode) {
+      //Already set correctly.
+      return;
+    }
+    // Set View Mode if not set.
+    $solr_view_modes[$page_id] = $view_mode;
+
     variable_set('os_search_solr_display_mode', $solr_view_modes);
   }
 }
