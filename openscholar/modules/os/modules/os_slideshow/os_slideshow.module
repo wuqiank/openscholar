@@ -146,9 +146,25 @@ function os_slideshow_imagefield_crop_instance_alter(&$instance, $context) {
 /**
  * Implements hook_node_insert
  *
- * When a slideshow_slide is created, add its nid to the widget it was created for
+ * When a slideshow_slide is created, add its nid to the widget it was created for.
  */
 function os_slideshow_node_insert($node) {
+  os_slideshow_handle_slide_update($node, 'insert');
+}
+
+/**
+ * Implements hook_node_delete
+ *
+ * When a slideshow_slide is deleted, remove its nid from the widget it was created for.
+ */
+function os_slideshow_node_delete($node) {
+  os_slideshow_handle_slide_update($node, 'delete');
+}
+
+/**
+ * Utility function to keep widget updated when a slide is inserted/deleted.
+ */
+function os_slideshow_handle_slide_update($node, $action) {
   if ($node->type != 'slideshow_slide') {
     return;
   }
@@ -161,12 +177,17 @@ function os_slideshow_node_insert($node) {
       $box = boxes_box_load($node->widget);
     }
 
-    // Array reduce's anon function gets the highest weight of all the slides,
-    // so the newly inserted one can come last.
-    $box->options['nodes'][(int)$node->nid] = array(
-      'nid' => (int)$node->nid,
-      'weight' => 1 + array_reduce($box->options['nodes'], create_function('$val, $next', 'return ($next["weight"]>$val) ? $next["weight"] : $val;'), 0),
-	  );
+    if ($action == 'insert') {
+      // Array reduce's anon function gets the highest weight of all the slides,
+      // so the newly inserted one can come last.
+      $box->options['nodes'][(int)$node->nid] = array(
+        'nid' => (int)$node->nid,
+        'weight' => 1 + array_reduce($box->options['nodes'], create_function('$val, $next', 'return ($next["weight"]>$val) ? $next["weight"] : $val;'), 0),
+      );
+    }
+    elseif ($action == 'delete') {
+      unset($box->options['nodes'][(int)$node->nid]);
+    }
 
     if ($space) {
       $space->controllers->boxes->set($box->delta, $box);
