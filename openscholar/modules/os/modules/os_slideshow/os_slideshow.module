@@ -85,7 +85,6 @@ function os_slideshow_form_slideshow_slide_node_form_alter(&$form, &$state, $for
     $box = boxes_box_load($widget);
   }
 
-  //$form['field_image']['und'][0]['#upload_validators']['imagefield_crop_upload_validate'][1]['widget']['settings']['resolution'] = '900x100';
   if ($widget) {
     $form['widget'] = array('#type' => 'hidden', '#value' => $widget);
   }
@@ -174,33 +173,66 @@ function os_slideshow_handle_slide_update($node, $action) {
     return;
   }
 
+  // Get the widget info from the node or other way.
   if (isset($node->widget)) {
-    if (module_exists('spaces') && $space = spaces_get_space()) {
-      $box = $space->controllers->boxes->get($node->widget);
-    }
-    else {
-      $box = boxes_box_load($node->widget);
-    }
-
-    if ($action == 'insert') {
-      // Array reduce's anon function gets the highest weight of all the slides,
-      // so the newly inserted one can come last.
-      $box->options['nodes'][(int)$node->nid] = array(
-        'nid' => (int)$node->nid,
-        'weight' => 1 + array_reduce($box->options['nodes'], create_function('$val, $next', 'return ($next["weight"]>$val) ? $next["weight"] : $val;'), 0),
-      );
-    }
-    elseif ($action == 'delete') {
-      unset($box->options['nodes'][(int)$node->nid]);
-    }
-
-    if ($space) {
-      $space->controllers->boxes->set($box->delta, $box);
-    }
-    else {
-      $box->save();
-    }
+    $widget = $node->widget;
   }
+  else {
+    $widget = os_slideshow_retrieve_widget($node);
+  }
+
+  if (!$widget) {
+    // Couldn't find any widget information.
+    return;
+  }
+
+  // Load the box.
+  if (module_exists('spaces') && $space = spaces_get_space()) {
+    $box = $space->controllers->boxes->get($widget);
+  }
+  else {
+    $box = boxes_box_load($widget);
+  }
+
+  if (!$box) {
+    // Couldn't find any box related.
+    return;
+  }
+
+  if ($action == 'insert') {
+    // Array reduce's anon function gets the highest weight of all the slides,
+    // so the newly inserted one can come last.
+    $box->options['nodes'][(int)$node->nid] = array(
+      'nid' => (int)$node->nid,
+      'weight' => 1 + array_reduce($box->options['nodes'], create_function('$val, $next', 'return ($next["weight"]>$val) ? $next["weight"] : $val;'), 0),
+    );
+  }
+  elseif ($action == 'delete') {
+    unset($box->options['nodes'][(int)$node->nid]);
+  }
+
+  // Save the box after changes.
+  if ($space) {
+    $space->controllers->boxes->set($box->delta, $box);
+  }
+  else {
+    $box->save();
+  }
+}
+
+/**
+ * Utility function to retrieve any widget with the given node.
+ *
+ * @param $node
+ *   Slideshow slide node.
+ *
+ * @return string
+ *   Widget identifier.
+ */
+function os_slideshow_retrieve_widget($node) {
+  $widget = "";
+
+  return $widget;
 }
 
 /**
