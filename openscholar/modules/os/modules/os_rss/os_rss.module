@@ -50,22 +50,10 @@ function os_rss_default_bundles() {
   $available_bundles = os_get_bundles(array(OS_PUBLIC_APP));
   $machine_names = array_keys($available_bundles);
 
-  $selected_bundles = array(
-    'news',
-    'blog',
-    'events',
-    'presentation',
-    'biblio',
-  );
-
-  $bundles = array();
-  foreach ($selected_bundles as $bundle) {
-    if (in_array($bundle, $machine_names)) {
-      $bundles[] = $bundle;
-    }
+  if (!empty($machine_names)) {
+    return array_combine($machine_names, $machine_names);
   }
-
-  return $bundles;
+  return $machine_names;
 }
 
 /**
@@ -84,9 +72,7 @@ function os_rss_list_of_feeds() {
   t("RSS stands for Really Simple Syndication (see !wiki_link), and provides a way for readers to subscribe to content updates. We provide RSS feeds for the following content types and categories.", $params)
   . "</div>";
 
-  if (empty($selected_bundles)) {
-    $selected_bundles = os_rss_default_bundles();
-  }
+  $selected_bundles = array_merge(os_rss_default_bundles(), $selected_bundles);
 
   if (!empty($selected_bundles)) {
     $items = array();
@@ -120,7 +106,9 @@ function os_rss_list_of_feeds() {
     // Search for new vocabs and enable them by default.
     $new = array_diff_key($vocabs, $selected_vocabularies);
     $new_vids = array_keys($new);
-    $selected_vocabularies += array_combine($new_vids, $new_vids);
+    if (!empty($new_vids)) {
+      $selected_vocabularies += array_combine($new_vids, $new_vids);
+    }
   }
 
   if (!empty($selected_vocabularies)) {
@@ -200,8 +188,7 @@ function _os_rss_importer_feed_create($items, $key) {
       ),
     );
 
-    $clippy = os_files_clippy(url('rss.xml', $options + array('absolute' => TRUE)));
-    $links[] = l($item['link'], 'rss.xml', $options) . $clippy;
+    $links[] = l($item['link'], 'rss.xml', $options);
   }
 
   return $links;
@@ -292,9 +279,8 @@ function os_rss_feed_settings($form, $form_settings) {
     'vocabularies' => variable_get('os_rss_feed_vocabs', FALSE),
   );
 
-  if (empty($values['content_types'])) {
-    $values['content_types'] = os_rss_default_bundles();
-  }
+  // merge in defaults for any content type that's been enabled since this form was saved
+  $values['content_types'] = array_merge(os_rss_default_bundles(), $values['content_types']);
 
   $bundles = os_get_bundles(array(1));
 
