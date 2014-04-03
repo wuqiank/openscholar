@@ -817,7 +817,7 @@ function os_search_solr_save_view_mode_from_form($form, &$form_state) {
  */
 function os_search_solr_save_view_mode($page_id, $view_mode) {
   // Get Solr View Modes
-  $solr_view_modes = variable_get('os_search_solr_display_mode', '');
+  $solr_view_modes = variable_get('os_search_solr_display_mode', array());
 
   // Save Apache Solr View Modes. Use VSite if exists.
   if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
@@ -827,6 +827,8 @@ function os_search_solr_save_view_mode($page_id, $view_mode) {
     $vsite->controllers->variable->set('os_search_solr_display_mode', $solr_view_modes);
   }
   else {
+    // The vsite controller has logic to prevent saving the default and performs cleanup.
+    // This code prevents un-needed vset's when the cache is cleared.
     if (isset($solr_view_modes[$page_id]) && $solr_view_modes[$page_id] == $view_mode) {
       //Already set correctly.
       return;
