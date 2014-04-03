@@ -39,3 +39,9 @@ Feature:
      When I visit "john/publications"
       And I should see the publication "Philosophers Stone" comes before "Goblet of Fire"
 
+  @api @first
+  Scenario: Verify authors page is not available
+    Given I go to "/publications/authors"
+     Then I should get a "403" HTTP response
+      And I go to "john/publications/authors"
+     Then I should get a "403" HTTP response
