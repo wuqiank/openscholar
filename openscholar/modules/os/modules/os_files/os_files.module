@@ -601,6 +601,7 @@ function _os_files_delete_remove_reference_batch($nids, $file) {
  * Handle slides - delete node in case no files.
  *
  * @param $node
+ *   Node from which a file was removed.
  */
 function _os_files_delete_delete_orphan_slide($node) {
   if ($node->type == 'slideshow_slide' && !field_get_items('node', $node, 'field_image')) {
