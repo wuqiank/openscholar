@@ -590,10 +590,24 @@ function _os_files_delete_remove_reference_batch($nids, $file) {
         unset($node->{$field}[LANGUAGE_NONE]);
       }
     }
-    node_save($node);
+
+    if ($node->type == 'slideshow_slide') {
+      _os_files_delete_delete_orphan($node);
+    }
+    else {
+      node_save($node);
+    }
   }
 }
 
+function _os_files_delete_delete_orphan($node) {
+  if (!field_get_items('node', $node, 'field_image')) {
+    node_delete($node->nid);
+  }
+  else {
+    node_save($node);
+  }
+}
 /**
  * Finish callback function of the batch API.
  */
