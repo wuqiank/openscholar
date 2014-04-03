@@ -39,3 +39,16 @@ Feature:
      When I visit "john/publications"
       And I should see the publication "Philosophers Stone" comes before "Goblet of Fire"
 
+  @api @last
+  Scenario: Verify that "publications/keywords" is accessible only if
+            "publications" app is activated.
+    Given I am logging in as "john"
+      And I set feature "edit-spaces-features-os-publications" to "Disabled" on "john"
+      And I click "Log out"
+     When I go to "john/publications/keywords"
+     Then I should get a "403" HTTP response
+      And I am logging in as "john"
+      And I set feature "edit-spaces-features-os-publications" to "Public" on "john"
+      And I click "Log out"
+     When I go to "john/publications/keywords"
+     Then I should get a "200" HTTP response
