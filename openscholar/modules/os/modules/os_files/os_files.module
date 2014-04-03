@@ -592,7 +592,7 @@ function _os_files_delete_remove_reference_batch($nids, $file) {
     }
 
     if ($node->type == 'slideshow_slide') {
-      _os_files_delete_delete_orphan($node);
+      _os_files_delete_delete_orphan_slide($node);
     }
     else {
       node_save($node);
@@ -600,7 +600,12 @@ function _os_files_delete_remove_reference_batch($nids, $file) {
   }
 }
 
-function _os_files_delete_delete_orphan($node) {
+/**
+ * Handle slides - delete node in case no files, save otherwise.
+ *
+ * @param $node
+ */
+function _os_files_delete_delete_orphan_slide($node) {
   if (!field_get_items('node', $node, 'field_image')) {
     node_delete($node->nid);
   }
