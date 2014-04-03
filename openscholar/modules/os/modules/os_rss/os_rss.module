@@ -51,8 +51,25 @@ function os_rss_default_bundles() {
   $machine_names = array_keys($available_bundles);
 
   if (!empty($machine_names)) {
+    $app_info = os_app_info();
+    foreach ($app_info as $info) {
+      if (empty($info['exclude_from_rss'])) {
+        continue;
+      }
+
+      foreach ($info['exclude_from_rss'] as $bundle) {
+        if (in_array($bundle, $info['exclude_from_rss'])) {
+          // The bundle is exported by the app and need to be removed from the
+          // content types list when creating an RSS feed.
+          $key = array_search($bundle, $machine_names);
+          unset($machine_names[$key]);
+        }
+      }
+    }
+
     return array_combine($machine_names, $machine_names);
   }
+
   return $machine_names;
 }
 
