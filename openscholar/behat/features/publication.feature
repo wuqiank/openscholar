@@ -39,3 +39,14 @@ Feature:
      When I visit "john/publications"
       And I should see the publication "Philosophers Stone" comes before "Goblet of Fire"
 
+  @api @last
+  Scenario: Verify anonymous users can't export publications using the main
+            export link in the "publications" page but only through the link for
+            a single publication.
+    Given I visit "john/publications/john-f-kennedy-biography"
+     When I click "BibTex"
+     Then I should get a "200" HTTP response
+      And I visit "john/publications"
+     Then I should not see "Export"
+      And I go to "john/publications/export/bibtex"
+     Then I should get a "403" HTTP response
