@@ -83,6 +83,9 @@ function os_publications_menu_alter(&$items) {
 
   // Change access callback to publications/authors.
   $items['publications/authors']['access callback'] = FALSE;
+
+  // Change access callback to publications/keywords.
+  $items['publications/keywords']['access callback'] = FALSE;
 }
 
 /**
