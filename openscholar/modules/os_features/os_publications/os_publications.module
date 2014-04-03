@@ -38,7 +38,7 @@ function os_publications_os_app_info() {
 }
 
 /**
- * Implements hook_menu_alter().
+ * Defines the overview menu entry
  */
 function os_publications_menu_alter(&$items) {
   $items['publications'] = array(
@@ -78,158 +78,8 @@ function os_publications_menu_alter(&$items) {
     'file' => drupal_get_path('module', 'os_publications') . '/os_publications.pages.inc',
   );
 
-  $items['publications/authors'] = array(
-    'title' => 'Authors',
-    'page callback' => 'os_publications_author_page',
-    'access callback' => 'spaces_access_feature',
-    'access arguments' => array('view', 'os_publications'),
-    'file' => drupal_get_path('module', 'biblio') .'/includes/biblio.pages.inc',
-    'weight' => 1,
-  );
-
-  $items['publications/keywords'] = array(
-    'title' => 'Keywords',
-    'page callback' => 'os_publications_keyword_page',
-    'access callback' => 'spaces_access_feature',
-    'access arguments' => array('view', 'os_publications'),
-    'file' => drupal_get_path('module', 'biblio') .'/includes/biblio.pages.inc',
-    'weight' => 2,
-  );
-
   // for the toolbar
   $items['node/add/biblio']['title'] = 'Publication';
-}
-
-function os_publications_author_page() {
-  $path = drupal_get_path('module', 'biblio');
-  drupal_add_js($path . '/misc/biblio.highlight.js', 'file');
-
-  $uri = drupal_parse_url(request_uri());
-  $filter = isset($uri['query']['f']['author']) ? $uri['query']['f']['author'] : '';
-  $authors = _os_publications_get_authors($filter);
-
-  return _biblio_format_author_page($uri['path'], $filter, $authors);
-}
-
-function _os_publications_get_authors($filter) {
-  global $user;
-  $where = array();
-  $authors = array();
-  $where_clause = '';
-  $output = '';
-
-  if ($filter) {
-    $filter = strtoupper($filter);
-    $where['filter'] =  "UPPER(SUBSTRING(lastname,1,1)) = :filter ";
-    $header_ext = t(' (whose last name starts with the letter "@letter") ', array('@letter' => $filter ));
-  }
-  else {
-    $query_ext =  NULL;
-    $header_ext = NULL;
-  }
-
-  if (!biblio_access('edit_author')) {
-    $where['access'] = 'n.status = 1 ';
-  }//show only published entries to everyone except admin
-
-  if (count($where)) {
-    $where_clause =  'WHERE (' . implode(') AND (', $where) . ')';
-  }
-
-  $space = spaces_get_space();
-
-  $suspects = array();
-  $query = db_select('biblio_contributor_data', 'bcd');
-  $query->innerJoin('biblio_contributor', 'bc', 'bcd.cid = bc.cid');
-
-  // Join on og_membership to get only the authors for publications in the
-  // current VSite.
-  $query->innerJoin('og_membership', 'ogm', 'bc.nid = ogm.etid');
-  $query->fields('bcd', array('lastname'))
-    ->condition('ogm.gid', $space->id)
-    ->groupBy('lastname')
-    ->having('COUNT(*) >= 1');
-
-  if ($filter) {
-    $filter = strtoupper($filter);
-    $query->where("UPPER(SUBSTRING(lastname,1,1)) = :filter ", array(':filter' => $filter));
-  }
-  $result = $query->execute();
-  foreach ($result as $author) {
-    $suspects[] = $author->lastname;
-  }
-
-  $db_result = db_query('SELECT bd.cid, bd.drupal_uid, bd.name, bd.lastname,
-                                bd.firstname, bd.prefix, bd.suffix,
-                                bd.initials, bd.affiliation, bd.md5, bd.literal,
-                                COUNT(*) AS cnt
-                            FROM {biblio_contributor} b
-                                 LEFT JOIN {biblio_contributor_data} bd ON b.cid = bd.cid
-                                 INNER JOIN {node} n on n.vid = b.vid
-                            ' . $where_clause . '
-                            GROUP BY bd.cid, bd.drupal_uid, bd.name, bd.lastname,
-                                     bd.firstname, bd.prefix, bd.suffix,
-                                     bd.initials, bd.affiliation, bd.md5, bd.literal
-                            ORDER BY  lastname ASC, SUBSTRING(firstname,1,1) ASC,
-                            initials ASC', array(':filter' => $filter));
-
-  foreach ($db_result as $author) {
-    if (array_search($author->lastname, $suspects) !== FALSE) {
-      $author->suspect = TRUE;
-      $authors[] = $author;
-    }
-  }
-
-  return $authors;
-}
-
-function os_publications_keyword_page() {
-  $uri = drupal_parse_url(request_uri());
-
-  $filter = isset($uri['query']['f']['keyword']) ? $uri['query']['f']['keyword'] : '';
-  $keywords = _os_publications_keywords($filter);
-  return _biblio_format_keyword_page($uri, $filter, $keywords);
-}
-
-function _os_publications_keywords($filter = NULL) {
-  global $user;
-  $keywords = array();
-  $where = array();
-  $where_clause = '';
-  if ($filter) {
-    $filter = strtoupper($filter);
-    $where[] =  "UPPER(SUBSTRING(word,1,1)) = :filter ";
-    $header_ext = t(' (which start with the letter "@letter") ', array('@letter' => $filter ));
-  }
-  else {
-    $query_ext =  NULL;
-    $header_ext = NULL;
-  }
-
-  if ($user->uid != 1 ) {
-    $where[] = 'n.status = 1 ';
-  }//show only published entries to everyone except admin
-
-  if (count($where)) {
-    $where_clause = count($where) > 1 ? 'WHERE (' . implode(') AND (', $where) . ')': 'WHERE ' . $where[0];
-  }
-
-  $space = spaces_get_space();
-  $where_clause .= ' AND ogm.gid =' . $space->id;
-
-  $db_result = db_query('SELECT bkd.kid, bkd.word, COUNT(*) AS cnt
-                         FROM {biblio_keyword} bk
-                         LEFT JOIN {biblio_keyword_data} bkd ON bkd.kid = bk.kid
-                         INNER JOIN {node} n ON n.vid = bk.vid
-                         INNER JOIN {og_membership} ogm ON ogm.etid = n.nid
-                         '. $where_clause . '
-                         GROUP BY bkd.kid, bkd.word
-                         ORDER BY  word ASC', array(':filter' => $filter));
-
-  foreach ($db_result as $keyword) {
-    $keywords[] = $keyword;
-  }
-  return $keywords;
 }
 
 /**
