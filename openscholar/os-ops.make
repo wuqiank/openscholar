@@ -13,7 +13,7 @@ projects[integrated_support][download][url] = "git://github.com/openscholar/inte
 ; Libraries.
 libraries[tapir][type] = "libraries"
 libraries[tapir][download][type] = "git"
-libraries[tapir][download][url] = "git@github.com:sagotsky/tapir.git"
+libraries[tapir][download][url] = "git@github.com:openscholar/tapir.git"
 
 libraries[pear][type] = "libraries"
 libraries[pear][download][type] = "file"
