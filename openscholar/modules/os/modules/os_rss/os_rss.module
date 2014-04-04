@@ -19,7 +19,7 @@ function os_rss_menu() {
     'access callback' => 'spaces_access_admin',
   );
 
-  $items['rss-feed'] = array(
+  $items['rss'] = array(
     'title' => 'RSS Feeds',
     'page callback' => 'os_rss_list_of_feeds',
     'access arguments' => array('access content'),
@@ -50,22 +50,27 @@ function os_rss_default_bundles() {
   $available_bundles = os_get_bundles(array(OS_PUBLIC_APP));
   $machine_names = array_keys($available_bundles);
 
-  $selected_bundles = array(
-    'news',
-    'blog',
-    'events',
-    'presentation',
-    'biblio',
-  );
+  if (!empty($machine_names)) {
+    $app_info = os_app_info();
+    foreach ($app_info as $info) {
+      if (empty($info['exclude_from_rss'])) {
+        continue;
+      }
 
-  $bundles = array();
-  foreach ($selected_bundles as $bundle) {
-    if (in_array($bundle, $machine_names)) {
-      $bundles[] = $bundle;
+      foreach ($info['exclude_from_rss'] as $bundle) {
+        if (in_array($bundle, $info['exclude_from_rss'])) {
+          // The bundle is exported by the app and need to be removed from the
+          // content types list when creating an RSS feed.
+          $key = array_search($bundle, $machine_names);
+          unset($machine_names[$key]);
+        }
+      }
     }
+
+    return array_combine($machine_names, $machine_names);
   }
 
-  return $bundles;
+  return $machine_names;
 }
 
 /**
@@ -73,15 +78,18 @@ function os_rss_default_bundles() {
  */
 function os_rss_list_of_feeds() {
   $selected_bundles = variable_get('os_rss_feed_content_types', array());
-  $selected_vocabularies = variable_get('os_rss_feed_vocabs', array());
+  $selected_vocabularies = variable_get('os_rss_feed_vocabs', FALSE);
 
   $content = '';
 
-  $content .= "<div class='os-rss-description'>" . t("Really Simple Syndication (RSS) allow you to subscribe to content update of a particular interest<br />Find a link of interest below and copy it to RSS reader.") . "</div>";
+  $params = array(
+    '!wiki_link' => l("Wikipedia's more complete definition", 'http://en.wikipedia.org/wiki/RSS'),
+  );
+  $content .= "<div class='os-rss-description'>" .
+  t("RSS stands for Really Simple Syndication (see !wiki_link), and provides a way for readers to subscribe to content updates. We provide RSS feeds for the following content types and categories.", $params)
+  . "</div>";
 
-  if (empty($selected_bundles)) {
-    $selected_bundles = os_rss_default_bundles();
-  }
+  $selected_bundles = array_merge(os_rss_default_bundles(), $selected_bundles);
 
   if (!empty($selected_bundles)) {
     $items = array();
@@ -96,10 +104,27 @@ function os_rss_list_of_feeds() {
       $links = _os_rss_importer_feed_create($items, 'type');
 
       $content .= theme('os_rss_importer_bundles', array(
-        'title' => t('By content'),
-        'sub-title' => t('You can filter content by pre defined node types:'),
+        'title' => t('Content Types'),
         'items' => $links,
       ));
+    }
+  }
+
+  // Get the list of all vocabs. We use the variable to filter out anything that
+  // shouldn't belong.
+  $vsite = vsite_get_vsite();
+  ctools_include('taxonomy', 'vsite_vocab');
+  $vocabs = vsite_vocab_get_vocabularies($vsite);
+  if ($selected_vocabularies === FALSE) {
+    $ids = array_keys($vocabs);
+    $selected_vocabularies = array_combine($ids, $ids);
+  }
+  else {
+    // Search for new vocabs and enable them by default.
+    $new = array_diff_key($vocabs, $selected_vocabularies);
+    $new_vids = array_keys($new);
+    if (!empty($new_vids)) {
+      $selected_vocabularies += array_combine($new_vids, $new_vids);
     }
   }
 
@@ -119,19 +144,25 @@ function os_rss_list_of_feeds() {
 
       if ($items) {
         $links = _os_rss_importer_feed_create($items, 'term');
+        $description = '';
+        if ($vocabularies[$vid]->description) {
+          $description = '<span class="os-rss-vocab-description">' . check_plain($vocabularies[$vid]->description) . '</span>';
+        }
 
-        $vocabularies_feeds[] = theme('item_list', array(
-          'title' => $vocabularies[$vid]->name,
+        $reader_terms = '<h3>' . check_plain($vocabularies[$vid]->name) . '</h3>';
+        $reader_terms .= $description;
+        $reader_terms .= theme('item_list', array(
           'items' => $links,
           'attributes' => array('class' => array('os-reader-terms')),
         ));
+
+        $vocabularies_feeds[] = $reader_terms;
       }
     }
 
     if ($vocabularies_feeds) {
       $content .= theme('os_rss_importer_bundles', array(
-        'title' => t('By vocabularies'),
-        'sub-title' => t('You can filter content by pre defined vocabularies:'),
+        'title' => t('Categories'),
         'items' => $vocabularies_feeds,
         'attributes' => array('class' => array('os-reader-feed-items')),
       ));
@@ -174,7 +205,7 @@ function _os_rss_importer_feed_create($items, $key) {
       ),
     );
 
-    $links[] = l($item['link'], 'os_rss_feed_export', $options);
+    $links[] = l($item['link'], 'rss.xml', $options);
   }
 
   return $links;
@@ -262,17 +293,33 @@ function os_rss_context_load_alter(&$context) {
 function os_rss_feed_settings($form, $form_settings) {
   $values = array(
     'content_types' => variable_get('os_rss_feed_content_types', array()),
-    'vocabularies' => variable_get('os_rss_feed_vocabs', array()),
+    'vocabularies' => variable_get('os_rss_feed_vocabs', FALSE),
   );
 
-  if (empty($values['content_types'])) {
-    $values['content_types'] = os_rss_default_bundles();
+  // merge in defaults for any content type that's been enabled since this form was saved
+  $values['content_types'] = array_merge(os_rss_default_bundles(), $values['content_types']);
+
+  $bundles = os_get_bundles(array(1));
+
+  $app_info = os_app_info();
+  foreach ($app_info as $info) {
+    if (empty($info['exclude_from_rss'])) {
+      continue;
+    }
+
+    foreach ($info['exclude_from_rss'] as $bundle) {
+      if (in_array($bundle, $info['exclude_from_rss'])) {
+        // The bundle is exported by the app and need to be removed from the
+        // content types list when creating an RSS feed.
+        unset($bundles[$bundle]);
+      }
+    }
   }
 
   $form['os_rss_feed_content_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
-    '#options' => os_get_bundles(array(1)),
+    '#options' => $bundles,
     '#description' => t('Select which content types to display as RSS feed options for site visitors.'),
     '#default_value' => $values['content_types'],
   );
@@ -282,8 +329,14 @@ function os_rss_feed_settings($form, $form_settings) {
   $vocabs = vsite_vocab_get_vocabularies($vsite);
 
   $options = array();
+  if (is_array($values['vocabularies'])) {
+    $defaults = $values['vocabularies'];
+  }
   foreach ($vocabs as $vocab) {
     $options[$vocab->vid] = $vocab->name;
+    if ($values['vocabularies'] === FALSE || !isset($values['vocabularies'][$vocab->vid])) {
+      $defaults[$vocab->vid] = $vocab->vid;
+    }
   }
 
   $form['os_rss_feed_vocabs'] = array(
@@ -291,7 +344,7 @@ function os_rss_feed_settings($form, $form_settings) {
     '#title' => t('Vocabularies'),
     '#options' => $options,
     '#description' => t('Select which vocabularies to display as RSS feed options for site visitors.'),
-    '#default_value' => $values['vocabularies'],
+    '#default_value' => $defaults,
   );
 
   return system_settings_form($form);

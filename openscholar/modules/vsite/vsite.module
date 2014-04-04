@@ -1946,10 +1946,15 @@ function vsite_form_user_profile_form_alter(&$form, &$form_state, &$form_id){
 /**
  * Implements hook_node_view() for user_profile_form.
  */
-function vsite_node_view($node, $view_mode){
-  //If we are viewing a group node got to the groups homepage
+function vsite_node_view($node, $view_mode) {
+  // Goes to the group's homepage if we are viewing the group node.
+  // Note: This handles a case like "mypurl/node/123", where the group node ID
+  // is "123" and the group path is "mypurl", but not the sitewide "node/123".
   if ($view_mode == 'full' && node_is_page($node) && og_is_group('node', $node)) {
-    drupal_goto("<front>");
+    // Use 301, the recommended value for most redirects. This additionally
+    // allows the redirect to be cached.
+    // @see os_drupal_goto_alter()
+    drupal_goto("<front>", array(), 301);
   }
 }
 
@@ -1989,10 +1994,10 @@ function vsite_redirect_reset_submit($form, &$form_state){
   if (is_array($form_state['values']) && array_key_exists('redirect_from_reset', $form_state['values']) && $form_state['values']['redirect_from_reset']) {
     $vsites = vsite_get_vsite_by_owner($form['#user']->uid);
     if (count($vsites) == 1 && is_object($vsites[0])) {
-      drupal_goto($vsites[0]->get_absolute_url());
+      drupal_goto($vsites[0]->get_absolute_url(), 301);
     }
     else {
-      drupal_goto('user/' . $form['#user']->uid);
+      drupal_goto('user/' . $form['#user']->uid, 301);
     }
   }
 }
@@ -3206,13 +3211,15 @@ function vsite_metatag_metatags_view_alter(&$output, $instance) {
     $metatags = isset($vsite->group->metatags) ? $vsite->group->metatags : array();
 
     // Build options for meta tag rendering.
-    $languages = language_list();
     $options = array(
       'entity' => $vsite->group,
       'entity_type' => $cid_parts['entity_type'],
       'view_mode' => $cid_parts['view_mode'],
-      'language' => $languages[$cid_parts['langcode']],
     );
+    $languages = language_list();
+    if (isset($languages[$cid_parts['langcode']])) {
+      $options['language'] = $languages[$cid_parts['langcode']];
+    }
 
     // Reload the entity object from cache as it may have been altered.
     $token_type = token_get_entity_mapping('entity', $cid_parts['entity_type']);

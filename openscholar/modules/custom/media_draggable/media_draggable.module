@@ -30,6 +30,12 @@ function media_draggable_field_widget_info() {
   );
 }
 
+function media_draggable_file_load($files) {
+  foreach ($files as $file) {
+    $file->icon = file_icon_url($file);
+  }
+}
+
 /**
  * Implements hook_field_widget_settings_form.
  *
@@ -139,7 +145,7 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
     ),
     '#process' => array(
       'media_draggable_field_widget_indiv_process',
-    )
+    ),
   );
 
   foreach ($items as $delta => $item) {
@@ -159,9 +165,9 @@ function media_draggable_field_widget_form(&$form, &$form_state, $field, $instan
  * Processes files input by adding or removing rows to the form, based on the user's input
  */
 function media_draggable_field_widget_process($element, &$form_state, &$form) {
-
-  if (!empty($form_state['input'])) {
-    $copy = &$form_state['input']['field_upload'][LANGUAGE_NONE];
+  $field_name = $element['#field_name'];
+  if (!empty($form_state['input'][$field_name])) {
+    $copy = &$form_state['input'][$field_name][LANGUAGE_NONE];
     unset($copy['drop'], $copy['template']);
 
     $current = array();
@@ -185,6 +191,7 @@ function media_draggable_field_widget_process($element, &$form_state, &$form) {
       $temp = $element['template'];
       $temp['fid']['#default_value'] = $fid;
       $temp['#file'] = file_load($fid);
+      unset($temp['#attributes']['hidden']);
       $element[$k] = $temp;
     }
   }
@@ -265,6 +272,8 @@ function media_draggable_dnd_pre_render($element) {
       $file->status = 1;
       file_save($file);
     }
+
+    $file->icon = file_icon_url($file);
 
     module_load_include('inc', 'media', 'includes/media.browser');
     media_browser_build_media_item($file);

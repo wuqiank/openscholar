@@ -1133,7 +1133,7 @@ img.media-element.file-default[style*="float:"][style*="right;"] {
 }
 
 
-.block-boxes-os_sv_list_box h3 a {
+.block-boxes-os_sv_list_box .os_sv_list_box.sv-list-link.sv-list-view-links h1 a {
 	font-weight:normal;
 	font-size:initial;
 	}

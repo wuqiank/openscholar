@@ -49,4 +49,11 @@ Feature:
       And I visit "john/publications"
      Then I should not see "Export"
       And I go to "john/publications/export/bibtex"
+    Then I should get a "403" HTTP response
+  
+  @api @first
+  Scenario: Verify authors page is not available
+    Given I go to "/publications/authors"
      Then I should get a "403" HTTP response
+      And I go to "john/publications/authors"
+    Then I should get a "403" HTTP response
