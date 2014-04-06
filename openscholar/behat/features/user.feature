@@ -67,3 +67,26 @@ Feature: User functionality testing.
       And I press "Confirm"
       And I visit "john/cp/users/roles"
      Then I should not see the button "Save permissions"
+
+  @api @last
+  Scenario: Test adding a new member by creating a new user on the site.
+    Given I am logging in as "john"
+      And I visit "john/cp/users/add"
+     When I fill in "edit-name--2" with "Peter"
+      And I fill in "edit-mail" with "peter@example.com"
+      And I press "Create and add member"
+     Then I should see "Peter has been added to the website: John"
+      And I should verify that the user "Peter" has a role of "vsite member" in the group "john"
+
+  @api @last
+  Scenario: Test adding a new member by creating a new user on the site when
+            using a shared domain.
+    Given I am logging in as "admin"
+      And I define "john" domain to "lincoln.local"
+      And I am logging in as "john" in the domain "lincoln.local"
+      And I visit "http://lincoln.local/john/cp/users/add"
+     When I fill in "edit-name--2" with "Louis"
+      And I fill in "edit-mail" with "louis@example.com"
+      And I press "Create and add member"
+     Then I should see "Louis has been added to the website: John"
+      And I should verify that the user "Louis" has a role of "vsite member" in the group "john"

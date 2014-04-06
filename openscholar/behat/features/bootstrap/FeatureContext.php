@@ -105,6 +105,43 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * Authenticates a user with password from configuration.
+   *
+   * @Given /^I am logging in as "([^"]*)" in the domain "([^"]*)"$/
+   */
+  public function iAmLoggingInAsInDomain($username, $domain) {
+
+    try {
+      $password = $this->users[$username];
+    }
+    catch (Exception $e) {
+      throw new Exception("Password not found for '$username'.");
+    }
+
+    if ($this->getDriver() instanceof Drupal\Driver\DrushDriver) {
+      // We are using a cli, log in with meta step.
+
+      return array(
+        new Step\When('I am not logged in'),
+        new Step\When('I visit "http://' . $domain . '/user"'),
+        new Step\When('I fill in "Username" with "' . $username . '"'),
+        new Step\When('I fill in "Password" with "' . $password . '"'),
+        new Step\When('I press "edit-submit"'),
+      );
+    }
+    else {
+      // Log in.
+      // Go to the user page.
+      $element = $this->getSession()->getPage();
+      $this->getSession()->visit($this->locatePath('/user'));
+      $element->fillField('Username', $username);
+      $element->fillField('Password', $password);
+      $submit = $element->findButton('Log in');
+      $submit->click();
+    }
+  }
+
+  /**
    * @Given /^I am on a "([^"]*)" page titled "([^"]*)"(?:, in the tab "([^"]*)"|)$/
    */
   public function iAmOnAPageTitled($page_type, $title, $subpage = NULL) {
