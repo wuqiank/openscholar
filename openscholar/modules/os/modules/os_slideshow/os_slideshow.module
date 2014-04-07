@@ -229,7 +229,7 @@ function os_slideshow_node_presave($node) {
 /**
  * @function os_slideshow_process_form_nodes
  *
- * Form #process function.  After form is saved, remove the nids that were deleted.
+ * Form #process function. After form is saved, remove the nids that were deleted.
  */
 function os_slideshow_process_form_nodes($element, &$state, &$form) {
   // Bail out while the form is being built.
@@ -242,6 +242,10 @@ function os_slideshow_process_form_nodes($element, &$state, &$form) {
   foreach($form['options']['nodes_list']['#value'] as $nid) {
     if (!in_array($nid, $nodes_left)) {
       unset($element[$nid]);
+
+      // The node is a slide, if it is being removed from the slideshow, it should
+      // be deleted.
+      node_delete($nid);
     }
   }
 
