@@ -7,7 +7,7 @@
 /**
  * Implements hook_context_default_contexts().
  */
-function os_reader_context_default_contexts() {
+function os_rss_context_default_contexts() {
   $export = array();
 
   $context = new stdClass();
@@ -19,8 +19,7 @@ function os_reader_context_default_contexts() {
   $context->conditions = array(
     'path' => array(
       'values' => array(
-        'rss-feed' => 'rss-feed',
-        'rss-feed/*' => 'rss-feed/*',
+        'rss' => 'rss',
       ),
     ),
   );

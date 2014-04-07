@@ -80,6 +80,12 @@ function os_publications_menu_alter(&$items) {
 
   // for the toolbar
   $items['node/add/biblio']['title'] = 'Publication';
+
+  // Change access callback to publications/authors.
+  $items['publications/authors']['access callback'] = FALSE;
+
+  // Change access callback to publications/keywords.
+  $items['publications/keywords']['access callback'] = FALSE;
 }
 
 /**

@@ -30,3 +30,9 @@ h2.os-reader-feed-title,
 	padding-left: 22px;
     background: url('/profiles/openscholar/themes/os_basetheme/images/scholarbase-sprite.png') -38px -73px no-repeat;
 }
+
+
+.os-rss-vocab-description  {
+font-size: .9em;
+color: #555;
+}

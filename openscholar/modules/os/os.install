@@ -700,3 +700,10 @@ function os_update_7031() {
 function os_update_7032() {
   module_enable(array('os_rss'));
 }
+
+/**
+ * Disable the RDF module.
+ */
+function os_update_7033() {
+  module_disable(array('rdf'));
+}
