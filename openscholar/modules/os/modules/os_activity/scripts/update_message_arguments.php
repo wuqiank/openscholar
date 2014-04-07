@@ -16,6 +16,9 @@
  *
  *    drush scr update_message_arguments.php --id=30 --batch=450 --memory_limit=4000
  */
+if (!defined('DRUPAL_ROOT')) {
+  exit('The file is not reachable via web browser.');
+}
 $batch = drush_get_option('batch', 250);
 $memory_limit = drush_get_option('memory_limit', 500);
 $id = drush_get_option('id', 1);
