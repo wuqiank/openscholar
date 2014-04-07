@@ -537,6 +537,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
 }
 
+
 /**
  * After build; Re-arrange the biblio form.
  */
@@ -545,6 +546,14 @@ function os_publications_biblio_rearrange($form, $form_state) {
     '#weight' => -500,
   ) + $form['biblio_type'];
   hide($form['biblio_type']);
+
+  $form['biblio_authors']['add_more']['#value'] = t('Add person');
+
+  $form['actions']['delete'] = array(
+    '#type' => 'item',
+    '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
+  );
+
 
   return $form;
 }
