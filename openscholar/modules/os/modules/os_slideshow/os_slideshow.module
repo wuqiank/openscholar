@@ -420,7 +420,7 @@ function os_slideshow_preprocess_os_slideshow_slideshow(&$vars) {
   $nodes = node_load_multiple(array_keys($sorted_nodes));
   $vars['slides'] = array();
   $slide_vars = array('style_name' => _os_slideshow_get_style_name($vars['layout'], $vars['box_delta']));
-  $nodes_to_remove = array();
+  $nids_to_remove = array();
   foreach (array_keys($sorted_nodes) as $nid) {
     if (isset($nodes[$nid])) {
       $node = $nodes[$nid];
@@ -436,7 +436,7 @@ function os_slideshow_preprocess_os_slideshow_slideshow(&$vars) {
     }
     else {
       // Node wasn't loaded, hence need to be removed from the widget.
-      $nodes_to_remove[] = $nid;
+      $nids_to_remove[] = $nid;
     }
   }
 
@@ -445,22 +445,20 @@ function os_slideshow_preprocess_os_slideshow_slideshow(&$vars) {
   $vars['controls'] = theme('os_slideshow_controls', $control_vars);
 
   // Remove missing nodes from the box.
-  os_slideshow_remove_missing_nodes($nodes_to_remove, $vars['box_delta']);
+  os_slideshow_remove_missing_nodes($nids_to_remove, $vars['box_delta']);
 }
 
 /**
  * Utility function to remove list of nodes from widget.
  *
- * @param $nodes_to_remove
+ * @param $nids_to_remove
  *   Array of nids to remove from the widget.
  * @param $widget
  *   Widget id.
  */
-function os_slideshow_remove_missing_nodes($nodes_to_remove, $widget) {
-  if ($nodes_to_remove) {
-    foreach ($nodes_to_remove as $nid) {
-      os_slideshow_handle_slide_update($nid, $widget, 'delete');
-    }
+function os_slideshow_remove_missing_nodes($nids_to_remove, $widget) {
+  foreach ($nids_to_remove as $nid) {
+    os_slideshow_handle_slide_update($nid, $widget, 'delete');
   }
 }
 /**
