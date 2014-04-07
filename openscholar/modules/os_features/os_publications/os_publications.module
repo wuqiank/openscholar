@@ -529,6 +529,21 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
 
   unset($form['biblio_tabs']);
+
+  // Adding after build function.
+  $form['#after_build'][] = 'os_publications_biblio_rearrange';
+}
+
+/**
+ * After build; Re-arrange the biblio form.
+ */
+function os_publications_biblio_rearrange($form, $form_state) {
+  $form['biblio_type_new'] = array(
+    '#weight' => -500,
+  ) + $form['biblio_type'];
+  hide($form['biblio_type']);
+
+  return $form;
 }
 
 /**
