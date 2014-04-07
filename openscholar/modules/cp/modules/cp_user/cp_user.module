@@ -286,6 +286,7 @@ function cp_user_og_ui_admin_permissions($variables) {
   $allowed_permissions['change theme'] = 'general';
   $allowed_permissions['edit terms'] = 'general';
   $allowed_permissions['delete terms'] = 'general';
+  $allowed_permissions['administer taxonomy'] = 'general';
 
   foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
     foreach (array_keys($bundles) as $bundle) {
