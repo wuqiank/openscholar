@@ -207,21 +207,22 @@ function cp_menu() {
  * Implements hook_menu_alter().
  */
 function cp_menu_alter(&$items) {
-  // Makes all menu items with path like "cp*" part of the same "cp" menu.
-  foreach ($items as $path => $item) {
-    if (strpos($path, 'cp') === 0) {
-      if (!array_key_exists('menu_name', $item)) {
-        $items[$path]['menu_name'] = 'cp';
-      }
-
-      // @todo maybe provide our own permission instead ?
-      if (!array_key_exists('access callback', $item)) $items[$path]['access arguments'] = array(
-        'access control panel',
-      );
+  foreach ($items as $path => &$item) {
+    if (strpos($path, 'cp/') !== 0) {
+      // Not CP item path.
+      continue;
     }
+
+    // Menu name defaults to 'cp'. This makes all menu items with paths like
+    // "cp/*" part of the same "cp" menu.
+    $item['menu_name'] = !empty($item['menu_name']) ? $item['menu_name'] : 'cp';
+
+    // Access arguments defaults to 'access control panel'. This makes sure that
+    // all CP paths require a CP permission in order to access them.
+    $item['access arguments'] = !empty($item['access arguments']) ? $item['access arguments'] : array('access control panel');
   }
 
-  // Prevents vsite admins from accessing all sitewide redirects.
+  // Prevent VSite admins from accessing all sitewide redirects.
   $restricted = array(
     'admin/config/search/redirect',
     'admin/config/search/redirect/list',
