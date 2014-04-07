@@ -219,7 +219,13 @@ function cp_menu_alter(&$items) {
 
     // Access arguments defaults to 'access control panel'. This makes sure that
     // all CP paths require a CP permission in order to access them.
-    $item['access arguments'] = !empty($item['access arguments']) ? $item['access arguments'] : array('access control panel');
+    //$item['access arguments'] = !empty($item['access arguments']) ? $item['access arguments'] : array('access control panel');
+    if (empty($item['access callback'])) {
+      $item['access callback'] = 'cp_page_access';
+      if (empty($item['access arguments'])) {
+        dpm($item, $path);
+      }
+    }
   }
 
   // Prevent VSite admins from accessing all sitewide redirects.
@@ -237,6 +243,11 @@ function cp_menu_alter(&$items) {
       $items[$path]['access arguments'] = array('administer site settings');
     }
   }
+}
+
+function cp_page_access($permissions = array()) {
+  dpm($permissions);
+  return TRUE;
 }
 
 /**
