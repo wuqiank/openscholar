@@ -58,8 +58,12 @@
    * update button to the user.
    */
   Drupal.behaviors.CpHideUpdateButton = {
-    attach: function (context, settings) {
-      $(".page-cp-appearance-update-subtheme #edit-actions").hide();
+    attach: function () {
+      $(".page-cp-appearance-update-subtheme #edit-branch").change(function() {
+        // Only when changing the branch of the sub theme hide the update
+        // button. This will allow to the user update the current theme branch.
+        $(".page-cp-appearance-update-subtheme #edit-actions").hide();
+      });
     }
   };
 
