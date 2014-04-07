@@ -76,7 +76,7 @@ Drupal.wysiwyg.plugins.os_link = {
       window = iframe.contentWindow,
       selected = '[Rich content. Click here to overwrite.]';
 
-    if (this.selectLink(selection.node) && this.content == '') {
+    if (this.selectLink(selection.node) && selection.content == '') {
       selection.content = selection.node.innerHTML;
     }
 
