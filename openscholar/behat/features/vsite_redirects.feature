@@ -41,7 +41,7 @@ Feature:
      When I visit "http://lincoln.local/john/blog/first-blog"
      Then I should be on "john/blog/first-blog"
 
-  @api @wip @last
+  @api @last
   Scenario: Verify that when viewing the group node the redirect has a 301
             HTTP response status.
     When I go to "john/node/2"
