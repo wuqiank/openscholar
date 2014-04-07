@@ -1754,3 +1754,15 @@ function _os_taxonomy_create_default_context($vocabulary) {
 
   vsite_layout_context_set($context_name, $blocks);
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter() for taxonomy_form_term().
+ */
+function os_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state, $form_id) {
+  // Unsets "Meta tags" and "URL Redirects" fieldsets for all users.
+  foreach (array('metatags', 'redirect') as $element) {
+    if (isset($form[$element])) {
+      $form[$element]['#access'] = FALSE;
+    }
+  }
+}

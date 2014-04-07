@@ -181,7 +181,9 @@ function os_in_readonly_mode($page) {
     return drupal_get_form($drupal_default_form);
   }
 
-  if ($user->uid == 1) {
+  // The default form should be displayed if the user is admin or in case the user
+  // tries to access "site/register" and he can create a VSite.
+  if (user_access('administer site configuration') || (_vsite_user_access_create_vsite() && $page == 'site_register')) {
     return drupal_get_form($drupal_default_form);
   }
 
@@ -2189,3 +2191,24 @@ function os_file_copy_set_error($message, $exception) {
   );
 }
 
+/**
+ * Implements hook_drupal_goto_alter().
+ */
+function os_drupal_goto_alter(&$path, &$options, &$http_response_code) {
+  if (!module_exists('redirect')) {
+    return;
+  }
+
+  if ($http_response_code != 301) {
+    return;
+  }
+
+  // Serves 301 redirects with redirect_redirect(), to allow caching.
+  $options['absolute'] = TRUE;
+  $redirect = (object) array(
+    'redirect' => url($path, $options),
+    'status_code' => 301,
+    'type' => 'global',
+  );
+  redirect_redirect($redirect);
+}

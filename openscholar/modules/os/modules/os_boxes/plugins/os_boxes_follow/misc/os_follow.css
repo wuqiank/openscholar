@@ -55,3 +55,10 @@
 .rss-feed-icon {
   margin-left: 5px; /* LTR */
 }
+
+.rss-follow-icon {
+  display: inline-block;
+  height: 28px;
+  width: 24px;
+  vertical-align: middle;
+}

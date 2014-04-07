@@ -650,6 +650,13 @@ display: none;
   padding: 15px 0 30px;
 }
 
+
+@-moz-document url-prefix() { 
+  .node-teaser.node-person {
+  display: table;
+	}
+}
+
 .block-boxes-os_boxes_manual_list .node-teaser.node-person {
   padding: 0 0 30px;
 }
@@ -657,6 +664,7 @@ display: none;
 .person-teaser-wrapper {
 	display:table-cell;
 	vertical-align:top;
+	width: 100%;
 }
 
 .node-link.node-teaser {
@@ -672,7 +680,7 @@ display: none;
 	display:inline;
 }
 
-.block-boxes-os_sv_list_box h3 a {
+.block-boxes-os_sv_list_box .os_sv_list_box.sv-list-link.sv-list-view-links h1 a {
 	font-family:arial;
 	}
 
