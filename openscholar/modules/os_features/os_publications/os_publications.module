@@ -355,8 +355,11 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       // we're on the first step of a biblio form. bail out.
       $form['biblio_type']['#weight'] = -1000;
       return;
-
-    // Patents.
+      // Journal article.
+    case 102:
+      $form['biblio_tabs'][2]['biblio_secondary_title']['#description'] = t('Tile of the Journal, e.g. Nature');
+      break;
+      // Patents.
     case 119:
       // Hide Publication source to make using the csl files a bit easier.
       $form['biblio_tabs'][2]['biblio_secondary_title']['#access'] = FALSE;
@@ -518,6 +521,9 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   foreach (element_children($form['field_biblio_extra'][LANGUAGE_NONE]) as $k) {
     $form['field_biblio_extra'][LANGUAGE_NONE][$k]['label']['#title'] = t('Description');
   }
+
+  $form['url'] = $form['publication_extras']['biblio_tabs'][5]['url'];
+  $form['url']['#weight'] = 4;
 
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
