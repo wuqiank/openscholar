@@ -364,6 +364,10 @@ projects[stringoverrides][subdir] = "contrib"
 projects[strongarm][subdir] = "contrib"
 projects[strongarm][version] = 2.0-rc1
 
+projects[term_reference_tree][subdir] = "contrib"
+projects[term_reference_tree][version] = 1.x-dev
+projects[term_reference_tree][patch][] = "https://drupal.org/files/issues/2235057-term-er-3.patch"
+
 projects[title][subdir] = "contrib"
 projects[title][version] = 1.0-alpha7
 
