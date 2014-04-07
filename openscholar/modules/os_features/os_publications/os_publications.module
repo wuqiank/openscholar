@@ -522,8 +522,11 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     $form['field_biblio_extra'][LANGUAGE_NONE][$k]['label']['#title'] = t('Description');
   }
 
+  // Move the URL out of the extras section.
   $form['url'] = $form['publication_extras']['biblio_tabs'][5]['url'];
   $form['url']['#weight'] = 4;
+  unset($form['publication_extras']['biblio_tabs'][5]['url']);
+
 
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
