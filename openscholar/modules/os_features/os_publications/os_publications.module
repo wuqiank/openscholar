@@ -591,7 +591,6 @@ function os_publications_biblio_rearrange($form, $form_state) {
   if (isset($form['#node']->nid)) {
     $files = &$form['field_upload'][LANGUAGE_NONE];
     foreach ($files as $key => &$file) {
-      dpm($key);
       if (is_int($key)) {
         $remove_link = array(
           'href' => 'media/' . $file['fid']['#value'] . '/replace',
