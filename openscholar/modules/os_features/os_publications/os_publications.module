@@ -61,10 +61,6 @@ function os_publications_menu_alter(&$items) {
     'type' => MENU_CALLBACK,
   );
 
-  // Change access callback to publications/keywords.
-  $items['publications/keywords']['access callback'] = 'spaces_access_feature';
-  $items['publications/keywords']['access arguments'] = array('view', 'os_publications');
-
   $items['publications/reset'] = array(
     'title' => 'Reset OS Publications Defaults',
     'page callback' => 'drupal_get_form',
