@@ -145,6 +145,7 @@ function os_profiles_menu() {
     'title' => 'Sync',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_profiles_sync_profile'),
+    'access callback' => 'cp_og_user_access',
     'access arguments' => array('create person content'),
   );
 
