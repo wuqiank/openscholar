@@ -221,14 +221,14 @@ function cp_menu_alter(&$items) {
     }
 
     if (!isset($item['access callback']) && !isset($item['access arguments'])) {
-      // No access callback and no access arguments, provide a default.
+      // No access callback and arguments, default to "access control panel".
       $item['access arguments'] = array(
         'access control panel',
       );
     }
   }
 
-  // Prevents vsite admins from accessing all sitewide redirects.
+  // Prevent VSite admins from accessing all sitewide redirects.
   $restricted = array(
     'admin/config/search/redirect',
     'admin/config/search/redirect/list',
