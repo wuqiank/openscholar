@@ -546,19 +546,22 @@ function os_publications_biblio_rearrange($form, $form_state) {
     '#weight' => -500,
   ) + $form['biblio_type'];
   hide($form['biblio_type']);
+  $form['biblio_type_new']['#prefix'] = '<h1 class="biblio-type-prefix">'.t('Create').'</h1>';
 
   $form['biblio_authors']['add_more']['#value'] = t('Add person');
 
-  $form['actions']['delete'] = array(
-    '#type' => 'item',
-    '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
-  );
-  
-  $form['actions_top']['delete'] = array(
-    '#type' => 'item',
-    '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
-  );
+  // Add "delete" link if we edit a publication.
+  if (isset($form['#node']->nid)) {
+    $form['actions']['delete'] = array(
+      '#type' => 'item',
+      '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
+    );
 
+    $form['actions_top']['delete'] = array(
+      '#type' => 'item',
+      '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
+    );
+  }
 
   return $form;
 }
