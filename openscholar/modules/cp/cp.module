@@ -217,14 +217,26 @@ function cp_menu_alter(&$items) {
     // "cp/*" part of the same "cp" menu.
     $item['menu_name'] = !empty($item['menu_name']) ? $item['menu_name'] : 'cp';
 
-    // Access arguments defaults to 'access control panel'. This makes sure that
-    // all CP paths require a CP permission in order to access them.
-    //$item['access arguments'] = !empty($item['access arguments']) ? $item['access arguments'] : array('access control panel');
-    if (empty($item['access callback'])) {
-      $item['access callback'] = 'cp_page_access';
-      if (empty($item['access arguments'])) {
-        dpm($item, $path);
-      }
+    if (!isset($item['access callback']) && empty($item['access arguments'])) {
+      // Access arguments are not defined. This means that only VSite owners
+      // should access this page. We do it using the sitewide permission
+      // "access control panel", which is granted on the fly to VSite owners.
+      // The permission "access control panel" is relevant when outside of a
+      // VSite too because then only users that actually have this permission
+      // without getting it on the fly will be able to access the CP toolbar.
+      $item['access arguments'] = array('access control panel');
+    }
+    elseif (!isset($item['access callback'])) {
+      // Access callback not defined for this CP menu item, but access arguments
+      // are defined. This means that the access arguments are OG permissions.
+      // When inside a VSite, what we need to do is add access callback with the
+      // value "og_user_access()" so that the OG permissions are checked, but
+      // when outside of VSite we want the access to be based on the user
+      // permission "access control panel". We cannot do it all here because
+      // this hook is not called on every page load so we must have our own
+      // access callback function.
+      $item['access callback'] = 'cp_access_panel';
+      dpm($item['access arguments'], $path);
     }
   }
 
@@ -245,8 +257,16 @@ function cp_menu_alter(&$items) {
   }
 }
 
-function cp_page_access($permissions = array()) {
-  dpm($permissions);
+function cp_access_panel($permissions = NULL) {
+  dpm($permissions, 'permissions');
+
+//  if ($vsite = vsite_get_vsite()) {
+//    return og_user_access();
+//  }
+//  else {
+//
+//  }
+
   return TRUE;
 }
 

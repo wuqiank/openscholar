@@ -1899,7 +1899,7 @@ function vsite_form_user_profile_form_alter(&$form, &$form_state, &$form_id){
     );
     foreach ($role_names  as $role_name) {
       $role = user_role_load_by_name($role_name);
-      unset($form['account']['roles']['#options'][$role->rid]);
+     // unset($form['account']['roles']['#options'][$role->rid]);
     }
   }
 
@@ -2951,6 +2951,11 @@ function vsite_og_permission() {
   return array(
     'administer boxes' => array(
       'title' => t('Administer widgets'),
+      'os_override' => TRUE,
+    ),
+    'edit boxes' => array(
+      'title' => t('Edit widgets'),
+      'description' => t('Edit existing widgets.'),
       'os_override' => TRUE,
     ),
     'edit boxes' => array(
