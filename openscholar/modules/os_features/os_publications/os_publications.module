@@ -571,6 +571,7 @@ function os_publications_biblio_rearrange($form, $form_state) {
   hide($form['biblio_type']);
 
   $form['biblio_type_new']['#prefix'] = '<h1 class="biblio-type-prefix">' . t ('Create') . '</h1>';
+  $form['biblio_type_new']['#title'] = '';
 
   $form['biblio_authors']['add_more']['#value'] = t('Add person');
 

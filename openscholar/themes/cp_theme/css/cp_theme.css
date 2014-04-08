@@ -801,3 +801,7 @@ h1.biblio-type-prefix {
   font-size: 24px;
   font-weight: normal;
 }
+
+.form-item-biblio-type span.form-required {
+  visibility: hidden;
+}
