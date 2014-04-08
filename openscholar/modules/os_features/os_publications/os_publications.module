@@ -588,24 +588,6 @@ function os_publications_biblio_rearrange($form, $form_state) {
     );
   }
 
-  // Add "Remove" links to files if they exist.
-  if (isset($form['#node']->nid)) {
-    $files = &$form['field_upload'][LANGUAGE_NONE];
-
-    foreach ($files as $key => &$file) {
-      if (!is_int($key)) {
-        continue;
-      }
-
-      $remove_link = array(
-        'href' => 'media/' . $file['fid']['#value'] . '/replace',
-        'title' => t('Replace'),
-      );
-
-      array_unshift($file['controls']['#links'], $remove_link);
-    }
-  }
-
   return $form;
 }
 
