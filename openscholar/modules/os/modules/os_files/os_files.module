@@ -53,15 +53,11 @@ function os_files_menu(){
     'file' => 'os_files.admin.inc',
   );
 
-  $items['media/%file/replace'] = array(
+  $items['media/%file/replace/%ctools_js'] = array(
     'title' => 'Replace file',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array(
-      'file_entity_add_upload'
-    ),
+    'page arguments' => array('os_files_upload_file', 1, 3),
     'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-    'file' => drupal_get_path('moddule', 'file_entity') . '/file_entity.pages.inc',
   );
 
   return $items;
@@ -71,10 +67,36 @@ function os_files_menu(){
  * Implements hook_admin_paths().
  */
 function os_files_admin_paths() {
-  $paths = array(
+  return array(
     'media/*/replace' => TRUE,
   );
-  return $paths;
+}
+
+/**
+ * Upload file.
+ */
+function os_files_upload_file($form, $form_state, $file, $js) {
+  ctools_include('modal');
+  ctools_include('ajax');
+  form_load_include($form_state, 'inc', 'file_entity', 'file_entity.pages');
+
+  $upload_form = drupal_get_form('file_entity_add_upload', array());
+
+  if (!$js) {
+    return $upload_form;
+  }
+
+  $form_state = array(
+    'title' => 'foo',
+    'ajax' => $js,
+    'use_ctools' => TRUE,
+  );
+
+  // Not work as expected in modal. Check why.
+
+  $output = ctools_modal_form_render($form_state, $upload_form);
+  print ajax_render($output);
+  drupal_exit();
 }
 
 /**
