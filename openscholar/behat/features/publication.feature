@@ -52,3 +52,22 @@ Feature:
       And I click "Log out"
      When I go to "john/publications/keywords"
      Then I should get a "200" HTTP response
+
+  @api @last
+  Scenario: Verify anonymous users can't export publications using the main
+            export link in the "publications" page but only through the link for
+            a single publication.
+    Given I visit "john/publications/john-f-kennedy-biography"
+     When I click "BibTex"
+     Then I should get a "200" HTTP response
+      And I visit "john/publications"
+     Then I should not see "Export"
+      And I go to "john/publications/export/bibtex"
+    Then I should get a "403" HTTP response
+
+  @api @first
+  Scenario: Verify authors page is not available
+    Given I go to "/publications/authors"
+     Then I should get a "403" HTTP response
+      And I go to "john/publications/authors"
+    Then I should get a "403" HTTP response

@@ -1064,7 +1064,7 @@ function _cp_appearance_pull_subtheme_git(&$form, &$form_state, $info) {
     ),
     'description' => array(
       '#type' => 'item',
-      '#markup' => t('This action will pull the latest version of the theme code n GitHub into OpenScholar.'),
+      '#markup' => t('This action will pull the latest version of the theme code from GitHub into OpenScholar.'),
     ),
   );
 
