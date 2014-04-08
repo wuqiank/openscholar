@@ -151,7 +151,7 @@ function hwpi_basetheme_profile_default_image($size = 'small') {
 function hwpi_basetheme_process_node(&$vars) {
   // Event persons, change title markup to h1.
   if ($vars['type'] == 'person') {
-    if ($vars['view_mode'] == 'links') {
+    if ($vars['view_mode'] == 'title') {
       $vars['title_prefix']['#suffix'] = '<h1 class="node-title">' . l($vars['title'], 'node/' . $vars['nid']) . '</h1>';
       $vars['title'] = NULL;
     }

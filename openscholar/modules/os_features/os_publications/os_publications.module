@@ -80,6 +80,12 @@ function os_publications_menu_alter(&$items) {
 
   // for the toolbar
   $items['node/add/biblio']['title'] = 'Publication';
+
+  // Change access callback to publications/authors.
+  $items['publications/authors']['access callback'] = FALSE;
+
+  // Change access callback to publications/keywords.
+  $items['publications/keywords']['access callback'] = FALSE;
 }
 
 /**
@@ -831,6 +837,17 @@ function os_publications_node_update($node) {
 function os_publications_node_delete($node) {
   if ($node->type == 'biblio') {
     _os_publications_clear_cache($node);
+  }
+}
+
+/**
+ * Implements hook_node_prepare().
+ */
+function os_publications_node_prepare($node) {
+  // Prepare defaults for the add/edit form.
+  if (isset($node->type) && $node->type == 'biblio' && empty($node->nid) && !isset($node->biblio_type)) {
+    //If this is a new biblio node without a type set the default.
+    $node->biblio_type = 102;
   }
 }
 

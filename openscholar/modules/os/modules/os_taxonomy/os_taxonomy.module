@@ -1808,3 +1808,15 @@ function os_taxonomy_node_delete($node) {
 function os_taxonomy_node_update($node) {
   os_taxonomy_node_changed($node);
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter() for taxonomy_form_term().
+ */
+function os_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state, $form_id) {
+  // Unsets "Meta tags" and "URL Redirects" fieldsets for all users.
+  foreach (array('metatags', 'redirect') as $element) {
+    if (isset($form[$element])) {
+      $form[$element]['#access'] = FALSE;
+    }
+  }
+}
