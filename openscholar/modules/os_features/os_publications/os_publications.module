@@ -541,7 +541,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     $delete = array(
       '#type' => 'button',
       '#value' => t('Remove'),
-      '#element_key' => $key,
       '#ajax' => array (
         'callback' => 'os_publications_remove_author',
         'wrapper' => 'field-info-wrapper',
@@ -557,6 +556,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   }
 
   if (!empty($form_state['values'])) {
+    // Leave for later - remove the row of the author the user removed.
     unset($form['biblio_authors']['biblio_contributors']);
   }
 
