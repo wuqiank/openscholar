@@ -44,5 +44,6 @@ Feature:
   @api @last
   Scenario: Verify that when viewing the group node the redirect has a 301
             HTTP response status.
-    When I go to "john/node/2"
-    Then I should get a "301" HTTP response
+    Given I should be redirected in the following <cases>:
+     #  | Request                                 | Code  | Final URL                     |
+        | john/node/2                             | 301   | john                          |
