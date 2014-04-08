@@ -1,0 +1,12 @@
+.field-widget-media-draggable-file .file-list-single span {
+  width: 65%
+}
+
+.field-widget-media-draggable-file .file-list-single ul {
+  width: 35%;
+}
+
+.field-widget-media-draggable-file .file-list-single ul li {
+  width: 32%;
+}
+
