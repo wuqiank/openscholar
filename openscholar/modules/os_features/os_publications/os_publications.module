@@ -41,6 +41,8 @@ function os_publications_os_app_info() {
  * Defines the overview menu entry
  */
 function os_publications_menu_alter(&$items) {
+  $items['publications/import']['access callback'] = 'os_publications_import_from_file_access';
+
   $items['publications'] = array(
     'title' => 'Publications',
     'description' => 'Publications',
@@ -90,6 +92,23 @@ function os_publications_menu_alter(&$items) {
 
   // Change access callback to publications/keywords.
   $items['publications/keywords']['access callback'] = FALSE;
+}
+/**
+ * Menu access; Determine if user can import Biblio from file.
+ */
+function os_publications_import_from_file_access() {
+  if (!$vsite = vsite_get_vsite()) {
+    // Outside of a vsite context.
+    return;
+  }
+
+  if (!spaces_access_feature('view', 'os_publications')) {
+    // User doesn't access access to the feature, or it is disabled.
+    return;
+  }
+
+
+  return user_access('import from file');
 }
 
 /**
