@@ -97,7 +97,7 @@ function cp_menu() {
     'weight' => 10,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('taxonomy_overview_vocabularies'),
-    'access callback' => 'cp_og_user_access',
+    'access callback' => 'vsite_og_user_access',
     'access arguments' => array('administer taxonomy'),
     'file' => 'taxonomy.admin.inc',
     'file path' => drupal_get_path('module', 'taxonomy'),
@@ -108,7 +108,7 @@ function cp_menu() {
     'title' => 'Add vocabulary',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('taxonomy_form_vocabulary'),
-    'access callback' => 'cp_og_user_access',
+    'access callback' => 'vsite_og_user_access',
     'access arguments' => array('administer taxonomy'),
     'type' => MENU_LOCAL_ACTION,
     'file' => 'taxonomy.admin.inc',
@@ -203,25 +203,6 @@ function cp_menu() {
   }
 
   return $items;
-}
-
-/**
- * Access callback; Check OG permission for current VSite.
- *
- * @param $permission
- *  The OG permission to check.
- *
- * @return
- *  TRUE if the user has the permission in the current VSite, FALSE otherwise.
- */
-function cp_og_user_access($permission) {
-  $vsite = vsite_get_vsite();
-  if (!$vsite) {
-    // No VSite.
-    return FALSE;
-  }
-
-  return og_user_access('node', $vsite->id, $permission);
 }
 
 /**

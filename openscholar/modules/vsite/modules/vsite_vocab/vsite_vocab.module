@@ -62,7 +62,7 @@ function vsite_vocab_menu_alter(&$items) {
   $path_parts = array('', '/add', '/edit');
   foreach ($path_parts as $path_part) {
     $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part] = $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part];
-    $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part]['access callback'] = 'cp_og_user_access';
+    $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part]['access callback'] = 'vsite_og_user_access';
     $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part]['access arguments'] = array('administer taxonomy');
   }
 
