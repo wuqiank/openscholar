@@ -33,9 +33,10 @@ function vsite_user_default_permissions() {
   $permissions['create personal content'] = array(
     'name' => 'create personal content',
     'roles' => array(
+      'authenticated user' => 'authenticated user',
       'administrator' => 'administrator',
       'manager' => 'manager',
-      'support team' => 'support team'
+      'support team' => 'support team',
     ),
     'module' => 'node',
   );
