@@ -537,21 +537,13 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       continue;
     }
 
-    $name = $form['biblio_authors']['biblio_contributors'][$key]['name'];
-    $delete = array(
+    $form['biblio_authors']['biblio_contributors'][$key]['delete'] = array(
       '#type' => 'button',
       '#value' => t('Remove'),
       '#ajax' => array (
         'callback' => 'os_publications_remove_author',
         'wrapper' => 'field-info-wrapper',
       ),
-    );
-
-    $form['biblio_authors']['biblio_contributors'][$key]['name'] = array(
-      '#prefix' => '<div id="field-info-wrapper">',
-      '#suffix' => '</div>',
-      'name' => $name,
-      'remove' => $delete,
     );
   }
 

@@ -244,7 +244,7 @@ function theme_os_publications_contributors($variables) {
     $row[] = array('data' => drupal_render($form[$key]['auth_type']),
       'class' => array('biblio-contributor-type'),
     );
-    $row[] = array('data' => drupal_render($form[$key]['name']) . drupal_render($form[$key]['auth_category']),
+    $row[] = array('data' => drupal_render($form[$key]['name']) . drupal_render($form[$key]['auth_category']) . drupal_render($form[$key]['delete']),
       'class' => array('biblio-contributor', 'biblio-contributor-category'),
     );
     $row[] = drupal_render($form[$key]['rank']);
