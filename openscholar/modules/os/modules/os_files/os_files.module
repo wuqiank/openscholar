@@ -53,7 +53,28 @@ function os_files_menu(){
     'file' => 'os_files.admin.inc',
   );
 
+  $items['media/%/replace'] = array(
+    'title' => 'Replace file',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array(
+      'file_entity_add_upload'
+    ),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => drupal_get_path('moddule', 'file_entity') . '/file_entity.pages.inc',
+  );
+
   return $items;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function os_files_admin_paths() {
+  $paths = array(
+    'media/*/replace' => TRUE,
+  );
+  return $paths;
 }
 
 /**
