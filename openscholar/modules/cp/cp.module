@@ -209,20 +209,22 @@ function cp_menu() {
  * Implements hook_menu_alter().
  */
 function cp_menu_alter(&$items) {
-  // Makes all menu items with path like "cp/*" part of the same "cp" menu.
   foreach ($items as $path => &$item) {
-    if (strpos($path, 'cp/') === 0) {
-      if (!isset($item['menu_name'])) {
-        $item['menu_name'] = 'cp';
-      }
+    if (strpos($path, 'cp/') !== 0) {
+      // Not CP menu item.
+      continue;
+    }
 
-      // @todo maybe provide our own permission instead ?
-      if (!isset($item['access callback']) && !isset($item['access arguments'])) {
-        // No access callback and no access arguments, provide a default.
-        $item['access arguments'] = array(
-          'access control panel',
-        );
-      }
+    if (!isset($item['menu_name'])) {
+      // Make all menu items with path like "cp/*" part of the same "cp" menu.
+      $item['menu_name'] = 'cp';
+    }
+
+    if (!isset($item['access callback']) && !isset($item['access arguments'])) {
+      // No access callback and no access arguments, provide a default.
+      $item['access arguments'] = array(
+        'access control panel',
+      );
     }
   }
 
