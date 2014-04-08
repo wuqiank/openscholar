@@ -597,13 +597,8 @@ function os_publications_biblio_rearrange($form, $form_state) {
       }
 
       $remove_link = array(
-        'href' => 'media/' . $file['fid']['#value'] . '/replace/nojs',
+        'href' => 'media/' . $file['fid']['#value'] . '/replace',
         'title' => t('Replace'),
-        'attributes' => array(
-          'class' => array(
-            'ctools-use-modal', 'use-ajax', 'ctools-modal-media-file-edit'
-          ),
-        ),
       );
 
       array_unshift($file['controls']['#links'], $remove_link);
