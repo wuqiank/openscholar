@@ -531,15 +531,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
 
-  unset($form['biblio_tabs']);
-
-  // Adding after build function.
-  $form['#after_build'][] = 'os_publications_biblio_rearrange';
-  // Add JS and CSS files for the "Replace" button for file upload.
-  $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
-  $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
-}
-
   // Adding remove author button via AJAX.
   foreach (array_keys($form['biblio_authors']['biblio_contributors']) as $key) {
     if (!is_int($key)) {
@@ -568,6 +559,14 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   if (!empty($form_state['values'])) {
     unset($form['biblio_authors']['biblio_contributors']);
   }
+
+  unset($form['biblio_tabs']);
+
+  // Adding after build function.
+  $form['#after_build'][] = 'os_publications_biblio_rearrange';
+  // Add JS and CSS files for the "Replace" button for file upload.
+  $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
+  $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
 }
 
 /**
