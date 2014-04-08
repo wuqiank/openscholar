@@ -52,7 +52,7 @@
 
     // Adding a "Remove" button for each file.
     str = str.replace('edit first', 'edit');
-    str = str.replace('<ul>', '<ul><li class="replace first"><a href="' + Drupal.settings.basePath + Drupal.settings.pathPrefix + 'media/' + file.filename + '/replace">Replace</a></li>');
+    str = str.replace('<ul>', '<ul><li class="replace first"><a href="' + Drupal.settings.basePath + Drupal.settings.pathPrefix + 'media/' + file.fid + '/replace">Replace</a></li>');
     console.log(template);
 
     var $row = $(str),
