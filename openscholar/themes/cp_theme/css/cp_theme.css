@@ -792,3 +792,16 @@ font-size: 11px;
 form#cp-user-edit-membership-form .form-item-group-manager {
   margin: 15px 0 0;
 }
+
+h1.biblio-type-prefix {
+  float: left;
+  margin: 15px 10px 0px 0px;
+  padding: 0.3em 0;
+  color: #666;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.form-item-biblio-type span.form-required {
+  visibility: hidden;
+}

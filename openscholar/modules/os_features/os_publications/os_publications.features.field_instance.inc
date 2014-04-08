@@ -82,7 +82,7 @@ function os_publications_field_default_field_instances() {
     'bundle' => 'biblio',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => 'You may use these fields to add extra information about your publication that may not be common to publications if this type. For example, key "Publication Global ID" and value "http://hdl.handle.net/1902.1".',
+    'description' => 'You may use these fields to add extra information about your publication that may not be common to publications if this type. For example, key "Publication Global ID" and value "http://hdl.handle.net/1902.1". These fields will be displayed at the bottom of the detail page of this publication.',
     'display' => array(
       'default' => array(
         'label' => 'hidden',
@@ -314,7 +314,7 @@ function os_publications_field_default_field_instances() {
           'media_internet' => 'media_internet',
           'upload' => 'upload',
         ),
-        'droppable_area_text' => 'Drop related files here (typically an e-version of this publication) to upload',
+        'droppable_area_text' => 'Drag your files here',
         'multiupload' => 0,
         'progress_indicator' => 'throbber',
         'standard_upload' => 1,
