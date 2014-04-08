@@ -535,8 +535,36 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
-}
 
+  // Adding remove author button via AJAX.
+  foreach (array_keys($form['biblio_authors']['biblio_contributors']) as $key) {
+    if (!is_int($key)) {
+      continue;
+    }
+
+    $name = $form['biblio_authors']['biblio_contributors'][$key]['name'];
+    $delete = array(
+      '#type' => 'button',
+      '#value' => t('Remove'),
+      '#element_key' => $key,
+      '#ajax' => array (
+        'callback' => 'os_publications_remove_author',
+        'wrapper' => 'field-info-wrapper',
+      ),
+    );
+
+    $form['biblio_authors']['biblio_contributors'][$key]['name'] = array(
+      '#prefix' => '<div id="field-info-wrapper">',
+      '#suffix' => '</div>',
+      'name' => $name,
+      'remove' => $delete,
+    );
+  }
+
+  if (!empty($form_state['values'])) {
+    unset($form['biblio_authors']['biblio_contributors']);
+  }
+}
 
 /**
  * After build; Re-arrange the biblio form.
@@ -546,7 +574,8 @@ function os_publications_biblio_rearrange($form, $form_state) {
     '#weight' => -500,
   ) + $form['biblio_type'];
   hide($form['biblio_type']);
-  $form['biblio_type_new']['#prefix'] = '<h1 class="biblio-type-prefix">'.t('Create').'</h1>';
+
+  $form['biblio_type_new']['#prefix'] = '<h1 class="biblio-type-prefix">' . t ('Create') . '</h1>';
 
   $form['biblio_authors']['add_more']['#value'] = t('Add person');
 
@@ -564,6 +593,11 @@ function os_publications_biblio_rearrange($form, $form_state) {
   }
 
   return $form;
+}
+
+function os_publications_remove_author($form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+  return $form['biblio_authors']['biblio_contributors'][1];
 }
 
 /**
