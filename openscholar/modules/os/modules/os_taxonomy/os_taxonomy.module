@@ -1648,7 +1648,7 @@ function os_taxonomy_taxonomy_vocabulary_update($vocabulary) {
   // Skip processing if the user has disabled pathauto for the term.
   if (!isset($vocabulary->path['pathauto']) || !empty($vocabulary->path['pathauto'])) {
 	  // Skip processing if the term has no pattern.
-	  if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $term->vocabulary_machine_name)) {
+	  if (pathauto_pattern_load_by_entity('taxonomy_vocabulary', $vocabulary->vocabulary_machine_name)) {
 	    module_load_include('inc', 'pathauto');
 	    $uri = entity_uri('taxonomy_vocabulary', $vocabulary);
 
