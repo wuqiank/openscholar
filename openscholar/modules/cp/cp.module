@@ -355,7 +355,7 @@ function cp_form_spaces_features_form_alter(&$form, &$form_state, $form_id) {
 
   foreach (array_keys($form['spaces_features']) as $app_name) {
     // Skips render array markup.
-    if ($app_name[0] == '#') {
+    if (!element_child($app_name)) {
       continue;
     }
 
@@ -412,7 +412,7 @@ function cp_sort_features_by_human_name(&$form) {
 
   foreach ($original_features as $app_name => $value) {
     // Skips render array markup.
-    if ($app_name[0] == '#') {
+    if (!element_child($app_name)) {
       $new_form_spaces_features[$app_name] = $value;
       continue;
     }
