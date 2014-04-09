@@ -53,69 +53,7 @@ function os_files_menu(){
     'file' => 'os_files.admin.inc',
   );
 
-  $items['media/%file/replace'] = array(
-    'title' => 'Replace file',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('os_files_upload_file', 1, 3),
-    'access callback' => TRUE,
-  );
-
   return $items;
-}
-
-/**
- * Implements hook_admin_paths().
- */
-function os_files_admin_paths() {
-  return array(
-    'media/*/replace' => TRUE,
-  );
-}
-
-/**
- * Upload file.
- */
-function os_files_upload_file($form, $form_state, $file, $js) {
-  ctools_include('modal');
-  ctools_include('ajax');
-  form_load_include($form_state, 'inc', 'file_entity', 'file_entity.pages');
-
-  $upload_form = drupal_get_form('file_entity_add_upload', array());
-
-  if (!$js) {
-    return $upload_form;
-  }
-
-  $upload_form['#submit'][] = 'os_files_modal_submit';
-
-  $form_state = array(
-    'title' => t('Upload a file.'),
-    'ajax' => $js,
-    'use_ctools' => TRUE,
-  );
-
-  // Not work as expected in modal. Check why.
-
-  $output = ctools_modal_form_render($form_state, $upload_form);
-  print ajax_render($output);
-  drupal_exit();
-}
-
-/**
- * Submit handler; When the file is uploaded update the DB records, close the
- * modal and update original form.
- */
-function os_files_modal_submit($form, &$form_state) {
-  $commands = array();
-
-  // dismiss the window
-  $commands[] = ctools_modal_command_dismiss();
-
-  // Clean any message.
-  drupal_get_messages();
-
-  print ajax_render($commands);
-  drupal_exit();
 }
 
 /**
@@ -136,8 +74,6 @@ function os_files_get_save_path() {
  * Implements hook_menu_alter().
  */
 function os_files_menu_alter(&$callbacks){
-  $items = array();
-
   if (method_exists(file_stream_wrapper_get_instance_by_scheme('public'), 'getExternalDirectoryPath')) {
 
     // Generate image derivatives url for our alternate "clean" file path if it is different
@@ -169,7 +105,7 @@ function os_files_theme() {
   return $items;
 }
 
-function os_files_theme_registry_alter(&$reg){
+function os_files_theme_registry_alter(&$reg) {
   unset($reg['oembed']['template']);
   $reg['oembed']['function'] = 'theme_os_files_oembed';
 }
@@ -419,6 +355,9 @@ function os_files_file_entity_submit_redirect(&$form, &$form_state) {
   $form_state['redirect'] = 'file/'.$file->fid.'/edit';
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function os_files_form_file_entity_edit_alter(&$form, &$form_state){
   $form['#validate'][] = 'file_entity_edit_validate';
   $form['filename']['#title'] = t('Title');
@@ -428,8 +367,12 @@ function os_files_form_file_entity_edit_alter(&$form, &$form_state){
 
   $form['media_description']['#access'] = FALSE;
 
-  //$form['preview']['#weight'] = -1000;
-  $form['replace_upload']['#weight'] = -10.5;
+  $form['replace_upload']['#weight'] = 10;
+  $form['replace_upload']['#upload_validators']['file_validate_extensions'] = array('png');
+  $form['actions']['submit']['#submit'][] = 'os_files_edit_file_invalidate_cache';
+
+  $form['field_file_image_alt_text']['#access'] = FALSE;
+  $form['field_file_image_title_text']['#access'] = FALSE;
 
   $form['user']['#access'] = FALSE;
 
@@ -442,8 +385,6 @@ function os_files_form_file_entity_edit_alter(&$form, &$form_state){
   // this means we'll be getting it through the media browser
   if (strpos($_GET['q'], 'ajax') !== FALSE) {
     $form['preview']['#access'] = FALSE;
-
-    $form['replace_upload']['#access'] = FALSE;
 
     $form['media_title']['#access'] = FALSE;
     $form['media_title'][LANGUAGE_NONE][0]['value']['#value_callback'] = 'os_files_media_title_value';
@@ -464,6 +405,13 @@ function os_files_form_file_entity_edit_alter(&$form, &$form_state){
   elseif (overlay_get_mode() == 'child') {
     $form['actions']['submit']['#submit'][] = 'os_files_close_overlay';
   }
+}
+
+/**
+ * After editing a file we need to invalidate the cache of the file entity.
+ */
+function os_files_edit_file_invalidate_cache($form, $form_state) {
+  cache_clear_all($form['fid']['#value'], 'cache_entity_file');
 }
 
 /**
