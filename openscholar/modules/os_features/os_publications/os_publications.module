@@ -510,6 +510,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Year validation needs to happen before the standard validation.
   array_unshift($form['#validate'], 'os_publications_validate_year_field');
+  drupal_add_js(drupal_get_path('module', 'os_publications') . '/js/os_publications.js');
 
   // Change the Notes field's description to include a link to the settings form
   ctools_include('ajax');
