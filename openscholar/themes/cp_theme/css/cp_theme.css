@@ -805,3 +805,7 @@ h1.biblio-type-prefix {
 .form-item-biblio-type span.form-required {
   visibility: hidden;
 }
+
+#field-biblio-extra-values thead tr th {
+  text-transform: none;
+}
