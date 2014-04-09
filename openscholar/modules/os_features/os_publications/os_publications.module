@@ -556,9 +556,16 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
+
+  // Adding post render function.
+  $form['#post_render'][] = 'os_publications_biblio_post_render';
+
   // Add JS and CSS files for the "Replace" button for file upload.
   $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
   $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
+
+  // Add JS for hover tooltips in biblio node form.
+  $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications_biblio_form_hover.js';
 }
 
 /**
@@ -587,6 +594,21 @@ function os_publications_biblio_rearrange($form, $form_state) {
       '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
     );
   }
+
+  return $form;
+}
+
+/**
+ * Post render; Alter markup of the biblio form.
+ */
+function os_publications_biblio_post_render($form, $form_state) {
+  // Add popup of allowed file type and size. The text for the allowed types and
+  // size are in the field description.
+  preg_match("'<div class=\"description\">For example, book cover, journal cover.<br />(.*?)</div>'", $form, $match);
+  $file_desc = $match[1];
+  $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop"><span>Help</span></a><span id="pop" class="biblio-stylebox">' . $file_desc . '</span>';
+  $replace = '<div class="description">For example, book cover, journal cover.' . $popup_markup .'</div>';
+  $form = preg_replace("'<div class=\"description\">For example, book cover, journal cover.(.*?)</div>'", $replace, $form);
 
   return $form;
 }
