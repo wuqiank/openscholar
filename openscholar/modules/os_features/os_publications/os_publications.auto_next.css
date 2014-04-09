@@ -1,0 +1,10 @@
+#biblio-node-form {
+    background-image: url("/profiles/openscholar/themes/os_basetheme/images/throbber.gif");
+    min-height: 20px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#biblio-node-form .node-form {
+    display: none;
+}

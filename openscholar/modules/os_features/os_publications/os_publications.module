@@ -560,6 +560,22 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
+
+  $path = drupal_get_path('module', 'os_publications');
+  $form['os_publications_auto_next'] = array(
+    '#markup' => '<span id="os-publications-auto-next"><div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div><div class="message">Please wait...</div></div></span>',
+    '#weight' => -999,
+    '#attached' => array(
+      'js' => array(
+        0 => array(
+          'data' => "$path/os_publications.auto_next.js",
+        ),
+      ),
+      'css' => array(
+        0 => "$path/os_publications.auto_next.css",
+      ),
+    ),
+  );
 }
 
 /**
