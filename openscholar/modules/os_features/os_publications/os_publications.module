@@ -474,43 +474,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['biblio_tabs'][5]['url']['biblio_url']['#title'] = t('URL');
   unset($form['biblio_tabs'][5]['biblio_url']);
 
-  // generate the year description
-  $year_value = $form['biblio_year']['#default_value'];
-  $coded_value = '';
-  if (!is_numeric($year_value)) {
-    unset($form['biblio_year']['#default_value']);
-    $coded_value = _biblio_numeric_year($year_value);
-  }
-  $years = variable_get('biblio_years_text', array(9999 => t('Submitted'), 9998 => t('In Press')));
-  $form['biblio_year_group'] = array(
-    '#type' => 'fieldset',
-    '#title' => $form['biblio_year']['#title'],
-    '#collapsible' => FALSE,
-  );
-  $form['biblio_year_group']['biblio_year'] = $form['biblio_year'];
-  unset($form['biblio_year_group']['biblio_year']['#title']);
-  unset($form['biblio_year_group']['biblio_year']['#description']);
-  $form['biblio_year_group']['biblio_year']['#size'] = 100;
-  $form['biblio_year_group']['biblio_year']['#attributes'] = array('placeholder' => t('Year'));
-
-  $form['biblio_year_group']['biblio_year']['#weight'] = 0;
-  $form['biblio_year_group']['biblio_year_or'] = array(
-    '#weight' => 10,
-    '#markup' => t('or'),
-  );
-
-  $form['biblio_year_group']['biblio_year_coded'] = array(
-    '#type' => 'radios',
-    '#options' => $years,
-    '#multiple' => FALSE,
-    '#weight' => 20,
-    '#default_value' => $coded_value,
-  );
-  unset($form['biblio_year']);
-
-  // Year validation needs to happen before the standard validation.
-  array_unshift($form['#validate'], 'os_publications_validate_year_field');
-  drupal_add_js(drupal_get_path('module', 'os_publications') . '/js/os_publications.js');
+  os_publications_alter_year_field($form, $form_state);
 
   // Change the Notes field's description to include a link to the settings form
   ctools_include('ajax');
@@ -593,6 +557,63 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   // Add JS and CSS files for the "Replace" button for file upload.
   $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
   $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
+}
+
+/**
+ * Alter the year-related form elements.
+ *
+ * @param $form
+ * @param $form_state
+ */
+function os_publications_alter_year_field(&$form, &$form_state) {
+  // Biblio year value can be standard YYYY year number, or a coded number
+  // defined in the "biblio_yeasrs_text" variable. Both _biblio_numeric_year()
+  // and _biblio_text_year() are used to convert between code and numeric.
+  $year_value = $form['biblio_year']['#default_value'];
+  $year_coded_value = '';
+
+  // If not a number then it was coded, so we want to show the value in the
+  // checkboxes form element.
+  if (!is_numeric($year_value)) {
+    unset($form['biblio_year']['#default_value']);
+    $year_coded_value = _biblio_numeric_year($year_value);
+  }
+
+  $years = variable_get('biblio_years_text', array(9999 => t('Submitted'), 9998 => t('In Press')));
+  $form['biblio_year_group'] = array(
+    '#type' => 'fieldset',
+    '#title' => $form['biblio_year']['#title'],
+    '#collapsible' => FALSE,
+  );
+
+  // Form element changes - wrap in a fieldset with the checkboxes element, and
+  // fix additional attributes accordingly.
+  $form['biblio_year_group']['biblio_year'] = $form['biblio_year'];
+  unset($form['biblio_year_group']['biblio_year']['#title']);
+  unset($form['biblio_year_group']['biblio_year']['#description']);
+  $form['biblio_year_group']['biblio_year']['#size'] = 100;
+  $form['biblio_year_group']['biblio_year']['#attributes'] = array('placeholder' => t('Year'));
+
+  $form['biblio_year_group']['biblio_year']['#weight'] = 0;
+  $form['biblio_year_group']['biblio_year_or'] = array(
+    '#weight' => 10,
+    '#markup' => t('or'),
+  );
+
+  $form['biblio_year_group']['biblio_year_coded'] = array(
+    '#type' => 'radios',
+    '#options' => $years,
+    '#multiple' => FALSE,
+    '#weight' => 20,
+    '#default_value' => $year_coded_value,
+  );
+
+  // Remove original form element.
+  unset($form['biblio_year']);
+
+  // Year validation needs to happen before the standard validation.
+  array_unshift($form['#validate'], 'os_publications_validate_year_field');
+  drupal_add_js(drupal_get_path('module', 'os_publications') . '/js/os_publications.js');
 }
 
 /**
