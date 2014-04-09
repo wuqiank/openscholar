@@ -10,3 +10,20 @@
   width: 32%;
 }
 
+
+/* Term tree reference */
+ul.term-reference-tree-level {
+  list-style-type: none;
+}
+
+.term-reference-tree > ul {
+  margin-left: 0;
+}
+
+.term-reference-tree-button,
+.no-term-reference-tree-button {
+  background: none;
+  height: 0;
+  width: 0;
+  display: block;
+}
