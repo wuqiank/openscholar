@@ -788,6 +788,10 @@ function cp_content_views_default_views() {
   $handler->display->display_options['fields']['nothing_1']['field'] = 'nothing';
   $handler->display->display_options['fields']['nothing_1']['label'] = 'Manage';
   $handler->display->display_options['fields']['nothing_1']['alter']['text'] = '[edit] [delete]';
+  $handler->display->display_options['filter_groups']['groups'] = array(
+    1 => 'AND',
+    2 => 'OR',
+  );
   /* Filter criterion: Spaces: Content in current space */
   $handler->display->display_options['filters']['current']['id'] = 'current';
   $handler->display->display_options['filters']['current']['table'] = 'spaces';
@@ -801,6 +805,7 @@ function cp_content_views_default_views() {
   $handler->display->display_options['filters']['schema_type']['value'] = array(
     'private' => 'private',
   );
+  $handler->display->display_options['filters']['schema_type']['group'] = 1;
   /* Filter criterion: File: File name or title */
   $handler->display->display_options['filters']['file_name_title']['id'] = 'file_name_title';
   $handler->display->display_options['filters']['file_name_title']['table'] = 'file_managed';
@@ -873,12 +878,20 @@ function cp_content_views_default_views() {
   $handler->display->display_options['filters']['status']['value'] = array(
     1 => '1',
   );
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  /* Filter criterion: File Usage: Module */
+  $handler->display->display_options['filters']['module_1']['id'] = 'module_1';
+  $handler->display->display_options['filters']['module_1']['table'] = 'file_usage';
+  $handler->display->display_options['filters']['module_1']['field'] = 'module';
+  $handler->display->display_options['filters']['module_1']['operator'] = 'empty';
+  $handler->display->display_options['filters']['module_1']['group'] = 2;
   /* Filter criterion: File Usage: Module */
   $handler->display->display_options['filters']['module']['id'] = 'module';
   $handler->display->display_options['filters']['module']['table'] = 'file_usage';
   $handler->display->display_options['filters']['module']['field'] = 'module';
   $handler->display->display_options['filters']['module']['operator'] = '!=';
   $handler->display->display_options['filters']['module']['value'] = 'imagefield_crop';
+  $handler->display->display_options['filters']['module']['group'] = 2;
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
