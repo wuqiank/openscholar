@@ -424,10 +424,12 @@ function cp_sort_features_by_human_name(&$form) {
   // Sort by the human name.
   ksort($ordered_features);
 
+  // Put elements back in the new order.
   foreach ($ordered_features as $human_name => $app_name) {
     $new_form_spaces_features[$app_name] = $original_features[$app_name];
   }
 
+  // Override form element.
   $form['spaces_features'] = $new_form_spaces_features;
 }
 
