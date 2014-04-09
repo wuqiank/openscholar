@@ -585,15 +585,6 @@ function os_publications_biblio_rearrange($form, $form_state) {
     );
   }
 
-  $files = &$form['field_upload'][LANGUAGE_NONE];
-
-  foreach ($files as $key => &$file) {
-    if (!is_int($key)) {
-      continue;
-    }
-    $file['controls']['#links']['edit']['title'] = t('Edit/Replace');
-  }
-
   return $form;
 }
 
