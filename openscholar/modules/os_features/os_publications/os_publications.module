@@ -500,6 +500,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     '#weight' => 20,
   );
   unset($form['biblio_year']);
+  $form['#validate'][] = 'os_publications_validate_year_field';
 
   // Change the Notes field's description to include a link to the settings form
   ctools_include('ajax');
@@ -582,6 +583,20 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   // Add JS and CSS files for the "Replace" button for file upload.
   $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
   $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
+}
+
+/**
+ * Form validation function, verifying year valid value.
+ *
+ * @param $form
+ * @param $form_state
+ */
+function os_publications_validate_year_field($form, &$form_state) {
+  // if biblio_year value exist, verify biblio_year_coded is not.
+
+  // else, verify biblio_year_coded value exist, and convert it into a biblio_year value.
+
+  // else give a failure
 }
 
 /**
