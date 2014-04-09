@@ -41,3 +41,13 @@ a.cite-pop {
   color: #333;
   cursor: default;
 }
+
+.node-biblio-form .publications-delete-link {
+  color: #ff9900;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.node-biblio-form .form-actions {
+  display: flex;
+}
