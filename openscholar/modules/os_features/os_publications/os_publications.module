@@ -561,9 +561,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
 /**
  * Alter the year-related form elements.
- *
- * @param $form
- * @param $form_state
  */
 function os_publications_alter_year_field(&$form, &$form_state) {
   // Biblio year value can be standard YYYY year number, or a coded number
@@ -617,10 +614,8 @@ function os_publications_alter_year_field(&$form, &$form_state) {
 }
 
 /**
- * Form validation function, verifying year valid value.
- *
- * @param $form
- * @param $form_state
+ * Validate handler; Verify year field value to avoid mismatch between
+ * text field and checkboxes.
  */
 function os_publications_validate_year_field($form, &$form_state) {
   // if biblio_year value exist, verify biblio_year_coded is not.
