@@ -582,7 +582,7 @@ function os_publications_biblio_rearrange($form, $form_state) {
     );
     $delete = array(
       '#type' => 'item',
-      '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete', $options),
+      '#markup' => l(t('Delete this publication'), 'node/' . $form['nid']['#value'] . '/delete', $options),
       '#weight' => 10,
     );
 
