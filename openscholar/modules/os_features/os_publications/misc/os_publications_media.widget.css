@@ -12,12 +12,18 @@
 
 
 /* Term tree reference */
-ul.term-reference-tree-level {
-  list-style-type: none;
+.term-reference-tree {
+  border: 1px solid #CCC;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .term-reference-tree > ul {
   margin-left: 0;
+}
+
+ul.term-reference-tree-level {
+  list-style-type: none;
 }
 
 .term-reference-tree-button,
