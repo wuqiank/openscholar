@@ -391,6 +391,10 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       $form['field_biblio_image']['#access'] = TRUE;
   }
 
+  // Change styling of the "Extra fields" section.
+  $form['field_biblio_extra'][LANGUAGE_NONE]['add_more']['#suffix'] = '<div class="description">' . $form['field_biblio_extra'][LANGUAGE_NONE]['#description'] . '</div>';
+  $form['field_biblio_extra'][LANGUAGE_NONE]['#description'] = '';
+
   // Moves fields out of the vertical tabs
   // I like how the form looks with the tabs in. Much cleaner.
   // So I'm keeping them.
@@ -556,9 +560,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
-  // Add JS and CSS files for the "Replace" button for file upload.
-  $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
-  $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
 }
 
 /**

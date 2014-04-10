@@ -32,3 +32,7 @@
 .node-person .field-name-field-professional-title {
 	font-weight: bold;
 }
+
+.sv-list-view-full .node-person .pic-bio {
+  width: 100%;
+}

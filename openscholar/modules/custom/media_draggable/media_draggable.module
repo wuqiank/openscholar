@@ -233,7 +233,7 @@ function media_draggable_field_widget_indiv_process($element) {
     '#links' => array(
       'edit' => array(
         'href' => 'media/'.$file->fid.'/edit/nojs',
-        'title' => t('Edit'),
+        'title' => t('Edit/Replace'),
         'attributes' => array(
           'class' => array(
             'use-ajax',
