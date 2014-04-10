@@ -351,9 +351,11 @@ function cp_form_spaces_features_form_alter(&$form, &$form_state, $form_id) {
     $spaces_features_available = FALSE;
   }
 
+  cp_sort_features_by_human_name($form);
+
   foreach (array_keys($form['spaces_features']) as $app_name) {
     // Skips render array markup.
-    if ($app_name[0] == '#') {
+    if (!element_child($app_name)) {
       continue;
     }
 
@@ -394,6 +396,41 @@ function cp_form_spaces_features_form_alter(&$form, &$form_state, $form_id) {
     '#weight' => 100,
     '#access' => user_access('administer spaces'),
   );
+}
+
+/**
+ * Sort features on the form based on human names.
+ *
+ * @param $form
+ *   spaces_features form.
+ */
+function cp_sort_features_by_human_name(&$form) {
+  $original_features = $form['spaces_features'];
+  $ordered_features = array();
+  $spaces_features = spaces_features();
+  $new_form_spaces_features = array();
+
+  foreach ($original_features as $app_name => $value) {
+    // Skips render array markup.
+    if (!element_child($app_name)) {
+      $new_form_spaces_features[$app_name] = $value;
+      continue;
+    }
+
+    $human_name = $spaces_features[$app_name]->info['name'];
+    $ordered_features[$human_name] = $app_name;
+  }
+
+  // Sort by the human name.
+  ksort($ordered_features);
+
+  // Put elements back in the new order.
+  foreach ($ordered_features as $human_name => $app_name) {
+    $new_form_spaces_features[$app_name] = $original_features[$app_name];
+  }
+
+  // Override form element.
+  $form['spaces_features'] = $new_form_spaces_features;
 }
 
 /**
