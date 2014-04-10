@@ -59,9 +59,12 @@ function vsite_vocab_entity_info_alter(&$info) {
  * Adding custom paths to the vocabulary actions.
  */
 function vsite_vocab_menu_alter(&$items) {
-  $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name'] = $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name'];
-  $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name/add'] = $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add'];
-  $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name/edit'] = $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/edit'];
+  $path_parts = array('', '/add', '/edit');
+  foreach ($path_parts as $path_part) {
+    $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part] = $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part];
+    $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part]['access callback'] = 'vsite_og_user_access';
+    $items['cp/build/taxonomy/%taxonomy_vocabulary_machine_name' . $path_part]['access arguments'] = array('administer taxonomy');
+  }
 
   if (variable_get('og_vocab_term_page_access', FALSE)) {
     $items['taxonomy/term/%taxonomy_term']['access callback'] = 'vsite_vocab_term_page_access';
@@ -70,6 +73,7 @@ function vsite_vocab_menu_alter(&$items) {
     $items['taxonomy/term/%taxonomy_term/feed']['access callback'] = 'vsite_vocab_term_page_access';
     $items['taxonomy/term/%taxonomy_term/feed']['access arguments'] = array(2);
   }
+
 }
 
 /**
