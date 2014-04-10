@@ -565,9 +565,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['field_biblio_image']['#post_render'][] = 'os_publications_biblio_image_post_render';
 
   // Add JS and CSS files for the "Replace" button for file upload.
-  $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
-  $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
-
   $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
 
   // Add JS for hover tooltips in biblio node form.
