@@ -853,3 +853,7 @@ h1.biblio-type-prefix {
   -webkit-box-shadow: 0px 0px 5px 0px rgba(164, 164, 164, 1);
   box-shadow: 0px 0px 5px 0px rgba(164, 164, 164, 1);
 }
+
+#field-biblio-extra-values thead tr th {
+  text-transform: none;
+}

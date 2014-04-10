@@ -205,13 +205,28 @@ function os_publications_field_default_field_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'module' => 'image',
+      'active' => 1,
+      'module' => 'dragndrop_upload_image',
       'settings' => array(
+        'allow_replace' => 0,
+        'allowed_schemes' => array(
+          0 => 'public',
+          1 => 'private',
+        ),
+        'allowed_types' => array(
+          0 => 'image',
+        ),
+        'browser_plugins' => array(),
+        'droppable_area_text' => 'Drop files here to upload',
+        'multiupload' => 0,
         'preview_image_style' => 'thumbnail',
         'progress_indicator' => 'throbber',
+        'standard_upload' => 1,
+        'upload_button_text' => 'Upload',
+        'upload_event' => 'auto',
       ),
-      'type' => 'image_image',
-      'weight' => 31,
+      'type' => 'dragndrop_upload_image',
+      'weight' => 60,
     ),
   );
 
