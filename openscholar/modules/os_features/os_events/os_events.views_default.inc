@@ -9,6 +9,7 @@
  */
 function os_events_views_default_views() {
   $export = array();
+
   $view = new view();
   $view->name = 'os_events';
   $view->description = '';
@@ -370,7 +371,6 @@ function os_events_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['hide_alter_empty'] = FALSE;
-  $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
   /* Field: Content: Date */
   $handler->display->display_options['fields']['field_date']['id'] = 'field_date';
   $handler->display->display_options['fields']['field_date']['table'] = 'field_data_field_date';
@@ -667,7 +667,6 @@ function os_events_views_default_views() {
   $handler->display->display_options['filters']['field_date_value_1']['default_date'] = '+30 day';
   $handler->display->display_options['path'] = 'calendar/rss.xml';
   $handler->display->display_options['sitename_title'] = 0;
-
   $export['os_events'] = $view;
 
   return $export;
