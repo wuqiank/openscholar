@@ -330,10 +330,13 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     'VE' => 'Venezuela', 'VN' => 'Viet Nam, Socialist Rep.', 'WO' => 'WIPO (World Intellectual Prop Org)', 'YU' => 'Yugoslavia', 'ZM' => 'Zambia', 'ZW' => 'Zimbabwe',
   );
 
-  // Hides the "Book Cover" biblio_image field.
-  $form['field_biblio_image']['#access'] = FALSE;
-  // Hides the "Extra Fields" (dyntextfield) field until a type is selected.
-  $form['field_biblio_extra']['#access'] = FALSE;
+  //Hide the extra and cover fields if there is no TID
+  if(!$tid) {
+    // Hides the "Book Cover" biblio_image field.
+    $form['field_biblio_image']['#access'] = FALSE;
+    // Hides the "Extra Fields" (dyntextfield) field until a type is selected.
+    $form['field_biblio_extra']['#access'] = FALSE;
+  }
 
   // hide look up and pasting fields
   if (isset($form['biblio_doi_lookup'])) {
@@ -386,12 +389,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
         '#type' => 'hidden',
         '#value' => isset($node->biblio_edition) ? $node->biblio_edition : '',
       );
-
-    default:
-      // Shows the Extra Fields for any selected publication type.
-      $form['field_biblio_extra']['#access'] = TRUE;
-      // Show cover image upload field for any selected publication type.
-      $form['field_biblio_image']['#access'] = TRUE;
+      break;
   }
 
   // Change styling of the "Extra fields" section.
