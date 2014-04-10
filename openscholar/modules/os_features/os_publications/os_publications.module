@@ -561,6 +561,15 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
+
+  // Adding post render function for the image field.
+  $form['field_biblio_image']['#post_render'][] = 'os_publications_biblio_image_post_render';
+
+  // Add JS and CSS files for the "Replace" button for file upload.
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
+
+  // Add JS for hover tooltips in biblio node form.
+  $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications_biblio_form_hover.js';
 }
 
 /**
@@ -661,6 +670,56 @@ function os_publications_biblio_rearrange($form, $form_state) {
   }
 
   return $form;
+}
+
+/**
+ * Post render; Alter markup of the biblio form.
+ */
+function os_publications_biblio_image_post_render($element) {
+  // Add popup of allowed file type and size. The text for the allowed types and
+  // size are in the field description so just putting it into the element's
+  // suffix doesn't work.
+  $description = t('For example, book cover, journal cover.');
+  preg_match("'<div class=\"description\">" . $description . "<br />(.*?)</div>'", $element, $match);
+  $file_desc = $match[1];
+  $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop1"><span>Help</span></a><span id="pop1" class="biblio-stylebox1">' . $file_desc . '</span>';
+  $replace = '<div class="description">'. $description . $popup_markup .'</div>';
+  $element = preg_replace("'<div class=\"description\">" . $description . "(.*?)</div>'", $replace, $element);
+
+  // Add popup of a publication display example.
+  $icon = theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/application-pdf.png'));
+  $publication_image = theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/publication-cover.png'));
+  $display_example = '
+  <div class="biblio-dummy-wrapper">
+    <div class="biblio-dummy-image">'
+    . $publication_image .
+    '</div>
+    <div class="biblio-dummy-body">
+      Wand, Jonathan, Gary King and Olivia Lau. 2011.
+      <a>Anchors: Software for Anchoring Vigenttes Data.</a>
+      <em>Jornal of Statistical Software</em>
+      <span>42, no. 3: 1-25.</span>
+    </div>
+    <div class="biblio-dummy-links">
+      <a>Website</a>
+      <a class="biblio-abstract-dummy-link">Abstract</a>
+      <span>
+        <span>'
+          . $icon .
+          '<a>Article</a>
+        </span>
+      </span>
+    </div>
+  </div>
+  ';
+
+  $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop2"><span>Help</span></a><span id="pop2" class="biblio-stylebox2">' . $display_example . '</span>';
+  $find = '<a href="#" class="droppable-browse-button button">
+        Browse      </a>';
+  $replace = $find . $popup_markup;
+  $element = str_replace($find, $replace, $element);
+
+  return $element;
 }
 
 function os_publications_remove_author($form, &$form_state) {
@@ -978,17 +1037,6 @@ function os_publications_node_update($node) {
 function os_publications_node_delete($node) {
   if ($node->type == 'biblio') {
     _os_publications_clear_cache($node);
-  }
-}
-
-/**
- * Implements hook_node_prepare().
- */
-function os_publications_node_prepare($node) {
-  // Prepare defaults for the add/edit form.
-  if (isset($node->type) && $node->type == 'biblio' && empty($node->nid) && !isset($node->biblio_type)) {
-    //If this is a new biblio node without a type set the default.
-    $node->biblio_type = 102;
   }
 }
 
