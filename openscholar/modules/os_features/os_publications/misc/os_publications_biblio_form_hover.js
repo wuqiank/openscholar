@@ -13,7 +13,8 @@
         $(target).show();
         moveLeft = $(this).outerWidth();
         moveDown = ($(target).outerHeight());
-      }, function() {
+      },
+      function() {
         var target = '#' + ($(this).attr('data-popbox'));
         $(target).hide();
       });
