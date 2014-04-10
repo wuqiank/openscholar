@@ -53,18 +53,4 @@
     }
   };
 
-  /**
-   * The update of the branch is done via AJAX. We don't need to display the
-   * update button to the user.
-   */
-  Drupal.behaviors.CpHideUpdateButton = {
-    attach: function () {
-      $(".page-cp-appearance-update-subtheme #edit-branch").change(function() {
-        // Only when changing the branch of the sub theme hide the update
-        // button. This will allow to the user update the current theme branch.
-        $(".page-cp-appearance-update-subtheme #edit-actions").hide();
-      });
-    }
-  };
-
 })(jQuery);
