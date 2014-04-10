@@ -332,10 +332,10 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   //Hide the extra and cover fields if there is no TID
   if(!$tid) {
-	  // Hides the "Book Cover" biblio_image field.
-	  $form['field_biblio_image']['#access'] = FALSE;
-	  // Hides the "Extra Fields" (dyntextfield) field until a type is selected.
-	  $form['field_biblio_extra']['#access'] = FALSE;
+    // Hides the "Book Cover" biblio_image field.
+    $form['field_biblio_image']['#access'] = FALSE;
+    // Hides the "Extra Fields" (dyntextfield) field until a type is selected.
+    $form['field_biblio_extra']['#access'] = FALSE;
   }
 
   // hide look up and pasting fields
