@@ -611,7 +611,6 @@ function os_publications_alter_year_field(&$form, &$form_state) {
 
   // Year validation needs to happen before the standard validation.
   array_unshift($form['#validate'], 'os_publications_validate_year_field');
-  drupal_add_js(drupal_get_path('module', 'os_publications') . '/js/os_publications.js');
 }
 
 /**
@@ -619,12 +618,14 @@ function os_publications_alter_year_field(&$form, &$form_state) {
  * text field and checkboxes.
  */
 function os_publications_validate_year_field($form, &$form_state) {
-  // if biblio_year value exist, verify biblio_year_coded is not.
-  if ($form_state['values']['biblio_year'] && $form_state['values']['biblio_year_coded']) {
-    form_set_error('biblio_year', t('Please enter a year of publication or select a status from the list. Both are not allowed.'));
+  // Validate a year is numeric.
+  if ($form_state['values']['biblio_year'] && !is_numeric($form_state['values']['biblio_year'])) {
+    form_set_error('biblio_year', t('Year value must be in a YYYY format.'));
+    return;
   }
-  elseif ($form_state['values']['biblio_year_coded']) {
-    // Set the coded value as the year.
+
+  // Set the coded value as the year if exist.
+  if ($form_state['values']['biblio_year_coded'] && !$form_state['values']['biblio_year']) {
     $form_state['values']['biblio_year'] = $form_state['values']['biblio_year_coded'];
   }
 }

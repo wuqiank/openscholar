@@ -9,5 +9,23 @@ Drupal.behaviors.osPublications = {
       var tar = $(this).parents('tr').find('.biblio-contributor-category input[type="hidden"]').not('.autocomplete');
       tar.val($(this).val());
     }).change();
+
+    // Handle year fields.
+    var codedYear = $("input[name='biblio_year_coded']");
+    var yearField = $('#edit-biblio-year');
+    yearField.change(function() {
+      if (this.value != '') {
+        // Uncheck all radio buttons.
+        codedYear.each(function () {
+          $(this).prop('checked', false);
+        });
+      }
+    });
+    codedYear.change(function() {
+      if (this.value != '') {
+        // Empty year field.
+        yearField[0].value = '';
+      }
+    });
   }
 };
