@@ -491,10 +491,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     '!link' => l('App settings.', 'cp/build'),
   ));
 
-  // Disable wysiwyg for biblio_notes and abstract so check_markup is not needed, html entered manually is acceptible.
-  $form['biblio_tabs'][7]['biblio_notes']['#wysiwyg'] = false;
-  $form['biblio_abst_e']['#wysiwyg'] = FALSE;
-
   // Hide the rest of the vtabs behind a collapsible fieldset.
   $form['publication_extras'] = array(
     '#type' => 'fieldset',
@@ -561,6 +557,15 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
+
+  // Add JS and CSS files for the "Replace" button for file upload.
+  $form['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.js');
+  $form['#attached']['css'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications_media.widget.css');
+
+  // Add classes to "abstract" and "notes" to enable WYSIWYG functionality.
+  $wysiwyg_classes = $form['publication_extras']['biblio_tabs']['biblio_full_text']['body'][LANGUAGE_NONE][0]['#attributes']['class'];
+  $form['biblio_abst_e']['#attributes']['class'] = $wysiwyg_classes;
+  $form['publication_extras']['biblio_tabs'][7]['biblio_notes']['#attributes']['class'] = $wysiwyg_classes;
 
   // Adding post render function for the image field.
   $form['field_biblio_image']['#post_render'][] = 'os_publications_biblio_image_post_render';
