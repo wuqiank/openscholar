@@ -42,6 +42,9 @@ a.cite-pop {
   cursor: default;
 }
 
+#edit-biblio-year-coded, .form-item-biblio-year-coded, .form-item-biblio-year {
+  display: inline;
+}
 
 h1.biblio-type-prefix {
   float: left;
