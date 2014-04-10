@@ -827,8 +827,9 @@ ul.term-reference-tree-level {
 
 .term-reference-tree-button,
 .no-term-reference-tree-button {
+  float: left;
+}
+
+.no-term-reference-tree-button {
   background: none;
-  height: 0;
-  width: 0;
-  display: block;
 }
