@@ -293,6 +293,9 @@ function os_publications_theme_registry_alter(&$reg) {
  * Alters the biblio form to do a lot of things
  */
 function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
+  $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.js';
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
+
   if (!isset($form['#node']->nid)) {
     drupal_set_title(t('Create @name', array('@name' => 'Publication')), PASS_THROUGH);
 
@@ -403,7 +406,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['biblio_authors']['add_more']['#value'] = t('Add author');
   $form['field_biblio_extra']['und']['add_more']['#value'] = t('Add extra field');
   $form['biblio_authors']['#collapsible'] = FALSE;
-  $form['biblio_authors']['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications.js');
+
   foreach ($form['biblio_authors']['biblio_contributors'] as $k => $f) {
     if (is_array($f) && strpos($k, '#') !== 0) {
       $form['biblio_authors']['biblio_contributors'][$k]['auth_category']['#type'] = 'hidden';
@@ -739,8 +742,6 @@ function os_publications_biblio_entry_alter(&$entry, $node) {
   );
   // Add a weight to the download links to allow things to fall properly.
   $entry['download_links']['#weight'] = 4;
-  $entry['#attached']['css'][] = drupal_get_path('module', 'os_publications').'/misc/os_publications.css';
-
 }
 
 /**

@@ -41,3 +41,7 @@ a.cite-pop {
   color: #333;
   cursor: default;
 }
+
+#edit-biblio-year-coded, .form-item-biblio-year-coded, .form-item-biblio-year {
+  display: inline;
+}
