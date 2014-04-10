@@ -1485,6 +1485,7 @@ function os_files_file_view($file, $view_mode, $langcode) {
         $content['file-info'] = array(
           '#theme' => 'link',
           '#text' => render($img),
+//           '#text' => $img,
           '#path' => 'file/' . $file->fid,
           '#options' => array('attributes' => array(), 'html' => TRUE),
         );
@@ -1493,28 +1494,36 @@ function os_files_file_view($file, $view_mode, $langcode) {
     }
   }
 
-  // Add thumb/colorbox for list of video/audio.
+  //add thumb/colorbox for list of video/audio
   if (@$file->sv_list && (@$file->sv_list_of_videos || @$file->sv_list_of_audio)) {
     unset ($content['file-info']['icon']);
 
     if (in_array($file->filemime, array('video/oembed', 'audio/oembed'))) {
       switch ($view_mode) {
         case 'full':
-          $content = array_merge(array('file' => $file->content['file']), $content); // Include embedded image.
+          //$content['file-info']['file'] = $file->content['file']; //include embedded video
+          $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
+
           break;
 
         case 'teaser':
-          // Audio thumbnails are unreliable.  don't use them if we can't offer them consistently.
+          //audio thumbnails are unreliable.  don't use them if we can't offer them consistently.
           if ($file->filemime == 'video/oembed') {
             $content = array_merge(array('video_thumb' => _os_files_video_thumb($file, 200, 200)), $content);
-//            $content = array_merge(array('video_thumb' => _os_files_video_thumb($file)), $content);
+   //         $content = array_merge(array('video_thumb' => _os_files_video_thumb($file)), $content);
           }
           break;
+
+//         case 'os_files_grid':
+//           if ($file->filemime == 'video/oembed') {
+//             $content = array('video_thumb' => _os_files_video_thumb($file));
+//           }
+//           break;
       }
     }
   }
 
-  // Outside of sv list, we should still include the file preview.
+  //outside of sv list, we should still include the file preview
   if (!@$file->sv_list && $view_mode == 'full') {
     $content['file-info']['os_file_description'] = $file->os_file_description;
 
@@ -1959,32 +1968,31 @@ function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
   $url = urldecode(file_uri_target($file['uri']));
   $id = 'embed-colorbox-' . $file['fid'];
 
-  // Get dimensions. Scale down to preset max size if needed.
+  //get dimensions.  scale down to preset max size if needed.
   if (($data = oembed_get_data($url)) && isset($data['width'], $data['height'])) {
-    $thumbnail_width = $original_width = $data['width'];
-    $thumbnail_height = $original_height = $data['height'];
+    $w = $data['width'];
+    $h = $data['height'];
 
-    if ($thumbnail_width > $width_max) {
-      $thumbnail_width = $width_max;
-      $ratio = $thumbnail_width / $original_width;
-      $thumbnail_height = intval($ratio * $thumbnail_height);
+    if ($w > $width_max) {
+      $w = $width_max;
+      $ratio = $w/$data['width'];
+      $h = intval($ratio * $h);
     }
 
-    if ($thumbnail_height > $height_max) {
-      $thumbnail_height = $height_max;
-      $ratio = $thumbnail_height / $original_height;
-      $thumbnail_width = intval($ratio * $original_width);
+    if ($h > $height_max) {
+      $h = $height_max;
+      $ratio = $h/$data['height'];
+      $w = intval($ratio * $data['width']);
     }
-  }
-  else {
-    $thumbnail_width = $thumbnail_height = min($height_max, $width_max);
+  } else {
+    $w = $h = min($height_max, $width_max);
   }
 
   $filebox = array(
     '#type' => 'oembed',
     '#url' => $url,
-    '#options' => array('maxwidth' => $original_width),
-    '#parameters' => array('width' => $original_width, 'height' => $original_height, 'maxwidth' => $original_width),
+    '#options' => array('maxwidth' => $w),
+    '#parameters' => array('width' => $w, 'height' => $h, 'maxwidth' => $w),
   );
 
   $box_html = drupal_render($filebox);
@@ -1993,14 +2001,14 @@ function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
     return array();
   }
 
-  $box_html = '<div style="display:none;"><div id="' . $id . '" style="overflow: hidden !important">' . $box_html . '</div></div>';
+  $box_html = '<div style="display:none;"><div id="'.$id.'" style="overflow: hidden !important">' . $box_html . '</div></div>';
 
   $video = array(
     '#type' => 'oembed_thumbnail',
-    '#prefix' => '<div class="oembed"><a href="?innerWidth=' . $thumbnail_width . '&innerHeight=' . $thumbnail_height . '&inline=true#' . $id . '" class="colorbox-inline">',
+    '#prefix' => '<div class="oembed"><a href="?innerWidth='.$w.'&innerHeight='.$h.'&inline=true#' . $id . '" class="colorbox-inline">',
     '#suffix' => '<span class="video-indicator"> </span></a></div>' . $box_html,
     '#url' => $url,
-    '#attributes' => array('width' => min($thumbnail_width, 250) . 'px'),
+    '#attributes' => array('width' => min($w, 250) . 'px'),
     '#options' => array(),
   );
 
