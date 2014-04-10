@@ -913,17 +913,6 @@ function os_publications_node_delete($node) {
 }
 
 /**
- * Implements hook_node_prepare().
- */
-function os_publications_node_prepare($node) {
-  // Prepare defaults for the add/edit form.
-  if (isset($node->type) && $node->type == 'biblio' && empty($node->nid) && !isset($node->biblio_type)) {
-    //If this is a new biblio node without a type set the default.
-    $node->biblio_type = 102;
-  }
-}
-
-/**
  * Puts together a list of all the cids that a given node would affect
  * And then clears them from the cache table
  *
