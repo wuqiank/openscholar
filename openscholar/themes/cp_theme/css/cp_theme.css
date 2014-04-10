@@ -807,10 +807,8 @@ h1.biblio-type-prefix {
 }
 
 .os-publications-image-help {
-  background: url("../../../themes/os_basetheme/images/scholarbase-sprite.png") no-repeat 0 -296px;
+  background: url("../../../themes/os_basetheme/images/scholarbase-sprite.png") no-repeat 10px -297px;
   display: inline;
-  margin-left: 5px;
-  padding: 0;
   height: 14px;
   width: 19px;
 }
@@ -844,7 +842,7 @@ h1.biblio-type-prefix {
   display: none;
   position: absolute;
   z-index: 99999;
-  width: 200px;
+  width: 350px;
   padding: 5px;
   background: #fff;
   color: #000000;
@@ -856,4 +854,28 @@ h1.biblio-type-prefix {
 
 #field-biblio-extra-values thead tr th {
   text-transform: none;
+}
+
+.biblio-abstract-dummy-link {
+  background: url("../../../themes/os_basetheme/images/scholarbase-sprite.png") no-repeat scroll 0 -400px transparent;
+  padding-left: 12px;
+  text-decoration: none;
+  color: #336599;
+}
+
+.biblio-dummy-image {
+  width: 50px;
+  height: 65px;
+  float: left;
+  margin-right: 5px;
+}
+
+.biblio-dummy-wrapper {
+  line-height: 20px;
+  text-align: left;
+  font-weight: normal;
+}
+
+.biblio-dummy-body span {
+  font-weight: normal;
 }
