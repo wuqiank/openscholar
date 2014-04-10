@@ -610,12 +610,13 @@ function os_publications_biblio_rearrange($form, $form_state) {
 function os_publications_biblio_image_post_render($element) {
   // Add popup of allowed file type and size. The text for the allowed types and
   // size are in the field description so just putting it into the element's
-  // prefix doesn't work.
-  preg_match("'<div class=\"description\">For example, book cover, journal cover.<br />(.*?)</div>'", $element, $match);
+  // suffix doesn't work.
+  $description = t('For example, book cover, journal cover.');
+  preg_match("'<div class=\"description\">" . $description . "<br />(.*?)</div>'", $element, $match);
   $file_desc = $match[1];
   $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop1"><span>Help</span></a><span id="pop1" class="biblio-stylebox1">' . $file_desc . '</span>';
-  $replace = '<div class="description">For example, book cover, journal cover.' . $popup_markup .'</div>';
-  $element = preg_replace("'<div class=\"description\">For example, book cover, journal cover.(.*?)</div>'", $replace, $element);
+  $replace = '<div class="description">'. $description . $popup_markup .'</div>';
+  $element = preg_replace("'<div class=\"description\">" . $description . "(.*?)</div>'", $replace, $element);
 
   // Add popup of a publication display example.
   $icon = theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/application-pdf.png'));
