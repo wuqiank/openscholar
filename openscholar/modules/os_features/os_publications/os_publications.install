@@ -1135,3 +1135,12 @@ function os_publications_update_7021() {
 
   features_revert($revert);
 }
+
+/**
+ * Updating the widget of the publication image field.
+ */
+function os_publications_update_7022() {
+  $revert = array('os_publications' => array('field_instance'));
+
+  features_revert($revert);
+}

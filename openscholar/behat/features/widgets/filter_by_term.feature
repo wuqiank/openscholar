@@ -135,3 +135,18 @@ Feature:
      When I click "Fire (1)"
      Then I should see "This is a new site generated via the vsite options in open scholar."
       And I should not see "There are more tests available on the tests list"
+
+  @api @last
+  Scenario: Verify automatic port type determination is working properly
+    Given I am logging in as "john"
+      And the widget "Filter by term" is set in the "News" page with the following <settings>:
+        | Post types           | Determine for me  | select list |
+        | Show number of posts | uncheck           | checkbox    |
+      And I visit "john/news"
+     Then I should see "Air"
+      And I should not see "Air (1)"
+     When the widget "Filter by term" is set in the "News" page with the following <settings>:
+        | Post types           | Determine for me  | select list |
+        | Show number of posts | check             | checkbox    |
+    And I visit "john/news"
+     Then I should see "Air (1)"
