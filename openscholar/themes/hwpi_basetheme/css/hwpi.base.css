@@ -590,7 +590,7 @@ article.node-teaser.node-person .field-name-field-person-photo ~ .node-content {
 }
 
 /* An empty div styling in case of no default image */
-.node-person .no-default-image {
+.node-person.node-teaser .no-default-image {
   width: 75px;
   height: 75px;
   float: left;
