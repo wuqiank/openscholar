@@ -37,7 +37,7 @@ while ($max > $i) {
     ->entityCondition('entity_type', 'message')
     ->propertyCondition('mid', $id, '>=')
     ->propertyOrderBy('mid', 'ASC')
-    ->range($i, $i + $batch)
+    ->range(0, $batch)
     ->execute();
 
   if (empty($result['message'])) {
