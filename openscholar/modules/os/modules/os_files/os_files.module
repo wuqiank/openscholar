@@ -1501,23 +1501,15 @@ function os_files_file_view($file, $view_mode, $langcode) {
     if (in_array($file->filemime, array('video/oembed', 'audio/oembed'))) {
       switch ($view_mode) {
         case 'full':
-          //$content['file-info']['file'] = $file->content['file']; //include embedded video
           $content = array_merge(array('file' => $file->content['file']), $content);//include embedded image
-
           break;
 
         case 'teaser':
           //audio thumbnails are unreliable.  don't use them if we can't offer them consistently.
           if ($file->filemime == 'video/oembed') {
-            $content = array_merge(array('video_thumb' => _os_files_video_thumb($file, 200, 200)), $content);
+            $content = array_merge(array('video_thumb' => _os_files_video_thumb($file)), $content);
           }
           break;
-
-//         case 'os_files_grid':
-//           if ($file->filemime == 'video/oembed') {
-//             $content = array('video_thumb' => _os_files_video_thumb($file));
-//           }
-//           break;
       }
     }
   }
@@ -1981,7 +1973,7 @@ function _os_files_video_thumb($file, $width_max = 500, $height_max = 500) {
     if ($h > $height_max) {
       $h = $height_max;
       $ratio = $h/$data['height'];
-      $w = intval($ratio * $data['height']);
+      $w = intval($ratio * $data['width']);
     }
   } else {
     $w = $h = min($height_max, $width_max);
