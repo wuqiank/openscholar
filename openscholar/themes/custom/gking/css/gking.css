@@ -1327,6 +1327,24 @@ margin-top:5px;
   margin: 0 0.6em 0 0;
   }
 
+/* STYLES THE ATTACHED FILES TABLE IN BIBLIO PAGE VIEW */
+.os-files-other-list tr {
+	border: none;
+	background: #D95C00;
+} 
+.os-files-other-list tr:hover {
+	background:#D95C00;
+}
+
+.os-files-other-list td,
+.os-files-other-list,
+.os-files-other-list a {
+	color:#fff;
+}
+
+.os-files-other-list a {
+	text-decoration:underline;
+}
 
 /* TAXONOMY */
 
