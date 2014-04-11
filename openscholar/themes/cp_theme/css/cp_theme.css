@@ -494,6 +494,32 @@ background: none;
 border-radius: 0;
 }
 
+.biblio-contributor input.form-submit {
+cursor: pointer;
+padding: 0;
+margin-bottom: 0;
+margin-right: 0;
+color: #5a5a5a;
+text-align: center;
+font-weight: normal;
+font-size: 1em;
+font-family: "Lucida Grande", Verdana, sans-serif;
+border: none;
+border-bottom: none;
+border-left-color: none;
+border-right-color: none;
+background: url(../images/scholarbase-sprite.png) 0 -411px no-repeat;
+-moz-border-radius: none;
+-webkit-border-radius: none;
+border-radius: none;
+text-indent: 100%;
+white-space: nowrap;
+overflow: hidden;
+width:20px;
+float:right;
+
+}
+
 .form-item-biblio-url,
 .form-item-biblio-url-title,
 .node-biblio-form .form-item-biblio-section,
@@ -551,12 +577,29 @@ border-radius: 0;
 	width:140px;
 }
 
-html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper .fieldset-legend {
+.form-item.form-type-radio {
+	margin-left:10px;
+	font-size:1em;
+	font-weight:normal;
+}
+
+
+fieldset#edit-biblio-year-group {
 background: none;
+border: none;
+font-weight:bold;
+}
+
+fieldset#edit-biblio-year-group .fieldset-legend,
+fieldset#edit-biblio-year-group .fieldset-wrapper {
 padding-left: 0;
 }
 
 
+html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper .fieldset-legend {
+background: none;
+padding-left: 0;
+}
 
 
 
