@@ -50,7 +50,7 @@ Feature: Testing OpenScholar calendar page.
       Then I should get a "403" HTTP response
 
 
-  @api @last @wip
+  @api
   Scenario: Test the week tab and
     Given I visit "john/calendar"
       And I click "Week"
