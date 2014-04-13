@@ -13,12 +13,19 @@ Drupal.behaviors.osPublications = {
     // Handle year fields.
     var codedYear = $("input[name='biblio_year_coded']");
     var yearField = $('#edit-biblio-year');
+
     yearField.change(function() {
       if (this.value != '') {
         // Uncheck all radio buttons.
         codedYear.each(function () {
           $(this).prop('checked', false);
         });
+      }
+    }).focus(function() {
+        codedYear.prop("disabled", true);
+    }).blur(function() {
+      if (yearField[0].value == '') {
+        codedYear.prop("disabled", false);
       }
     });
     codedYear.change(function() {
