@@ -56,4 +56,11 @@ Feature:
     Given I go to "/publications/authors"
      Then I should get a "403" HTTP response
       And I go to "john/publications/authors"
-    Then I should get a "403" HTTP response
+     Then I should get a "403" HTTP response
+
+  @api @last
+  Scenario: Verify that the default publication type when creating a publication
+            is of the type "journal article"
+    Given I am logging in as "john"
+     When I visit "john/node/add/biblio"
+     Then I should verify the option "Journal Article" is selected in "biblio_type"

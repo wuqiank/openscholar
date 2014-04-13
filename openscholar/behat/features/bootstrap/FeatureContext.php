@@ -578,6 +578,18 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Then /^I should verify the option "([^"]*)" is selected in "([^"]*)"$/
+   */
+  public function iShouldVerifyOptionSelected($option, $list) {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('xpath', "//select[@name='{$list}']/option[contains(., '{$option}')][@selected='selected']");
+
+    if (!$element) {
+      throw new Exception(sprintf("The option %s was not selected in the list %s", $option, $list));
+    }
+  }
+
+  /**
    * @Then /^I should see tineMCE in "([^"]*)"$/
    */
   public function iShouldSeeTinemceIn($field) {
