@@ -553,6 +553,16 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   unset($form['biblio_tabs']);
 
+  // Change labels and descriptions in node author fieldset.
+  $form['author']['#title'] = t('Post Created/Edited By');
+  $form['author']['name']['#title'] = t('Posted by');
+  $form['author']['name']['#description'] = '';
+  $form['author']['date']['#title'] = t('Posted on');
+  $form['author']['date']['#description'] = t('Date can be used to change the order in which content is displayed.');
+
+  // Add description to Full Text field.
+  $form['publication_extras']['biblio_tabs']['biblio_full_text']['#suffix'] = '<div class="description">' . t('You can enter the full text of your article here, although most people upload PDFs instead.') . '</div>';
+
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
 
