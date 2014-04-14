@@ -553,6 +553,10 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   unset($form['biblio_tabs']);
 
+  // Add a datepicker to "Posted on" field.
+  $form['author']['date']['#type'] = 'date_popup';
+  $form['author']['date']['#date_format'] = 'm/d/Y';
+
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
 
@@ -667,6 +671,11 @@ function os_publications_biblio_rearrange($form, $form_state) {
       '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
     );
   }
+
+  // Remove title and description from the inner Date field. We do it here in
+  // after_build because the inner Date field doesn't exist yet in form_alter().
+  $form['author']['date']['date']['#title'] = '';
+  $form['author']['date']['date']['#description'] = '';
 
   return $form;
 }

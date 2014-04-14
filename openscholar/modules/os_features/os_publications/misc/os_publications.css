@@ -70,6 +70,11 @@ h1.biblio-type-prefix {
   visibility: hidden;
 }
 
+.container-inline-date .form-item-date #edit-date {
+  padding: 0;
+  margin-bottom: 5px;
+}
+
 .biblio-stylebox1 {
   text-align: center;
   display: none;
