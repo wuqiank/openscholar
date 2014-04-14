@@ -18,11 +18,11 @@ libraries[tapir][download][url] = "git@github.com:sagotsky/tapir.git"
 
 libraries[pear][type] = "libraries"
 libraries[pear][download][type] = "file"
-libraries[pear][download][url] = "http://github.com/sagotsky/tapir/blob/master/pear-http-request2.tar.gz?raw=true"
+libraries[pear][download][url] = "https://github.com/sagotsky/tapir/blob/master/pear-http-request2.tar.gz"
 
 libraries[composer][type] = "libraries"
 libraries[composer][download][type] = "file"
-libraries[composer][download][url] = "http://github.com/openscholar/integrated_support/blob/master/libraries/composer_knplabs_github-api.tar.gz?raw=true"
+libraries[composer][download][url] = "http://github.com/openscholar/integrated_support/blob/master/libraries/composer_knplabs_github-api.tar.gz"
 
 libraries[php-trello][type] = "libraries"
 libraries[php-trello][download][type] = "file"
