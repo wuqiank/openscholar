@@ -72,11 +72,11 @@ textarea {
 #og-vocabulary-add-more-wrapper select.form-select {height:120px;}
 
 html.js input.form-autocomplete {
-  background-position: 100% 8px;
+  background-position: 100% 21px;
 }
 
 html.js input.throbbing {
-  background-position: 100% -13px !important;
+  background-position: 100% -15px !important;
 }
 
 #block-os-powered-by {
@@ -878,9 +878,30 @@ ul.term-reference-tree-level {
 }
 
 .term-reference-tree-button {
-  background: url(../../../../../misc/menu-expanded.png) 5px 65% no-repeat;
+  background: url('../images/scholarbase-sprite.png') 2px -449px no-repeat;
 }
 
 .term-reference-tree-button.term-reference-tree-collapsed {
-  background: url(../../../../../misc/menu-collapsed.png) 5px 50% no-repeat;
+  background: url('../images/scholarbase-sprite.png') 6px -433px no-repeat;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
