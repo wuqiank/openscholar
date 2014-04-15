@@ -465,10 +465,13 @@ table#edit-biblio-contributors tr.even {
 }
 
 .field-name-og-vocabulary table td,
-table#field-biblio-extra-values td,
+table#field-biblio-extra-values td {
+	padding: 8px 0;
+}
+
 #edit-biblio-authors table td,
 table#edit-biblio-contributors td {
-	padding: 8px 0;
+	padding: 0;
 }
 
 #edit-og-vocabulary input.form-submit,
@@ -516,8 +519,7 @@ text-indent: 100%;
 white-space: nowrap;
 overflow: hidden;
 width:20px;
-float:right;
-
+display: inline-block;
 }
 
 .form-item-biblio-url,
@@ -838,11 +840,18 @@ form#cp-user-edit-membership-form .form-item-group-manager {
 
 h1.biblio-type-prefix {
   float: left;
-  margin: 15px 10px 0px 0px;
+  margin: 18px 10px 0px 0px;
   padding: 0.3em 0;
   color: #666;
   font-size: 24px;
   font-weight: normal;
+}
+
+.form-item-biblio-type select {
+width: 200px;
+height: 30px;
+font-size: 22px;
+color: #666;
 }
 
 .form-item-biblio-type span.form-required {

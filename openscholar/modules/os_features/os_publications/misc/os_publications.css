@@ -137,3 +137,25 @@ h1.biblio-type-prefix {
 .biblio-dummy-body span {
   font-weight: normal;
 }
+
+/** PLACES THE ATTACHED FILES TABLE NEXT TO THE CITATION DIV IN PUB FULL PAGE VIEW **/
+.page-node.node-type-biblio .biblio-node h3 {
+	margin-left: 21%;
+}
+	
+.page-node.node-type-biblio table.os-files-other-list {
+width: 20%;
+display: inline-block;
+}
+
+
+.page-node.node-type-biblio #citation-wrapper {
+width: 75%;
+display: inline-block;
+vertical-align: top;
+}
+
+
+
+
+
