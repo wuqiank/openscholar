@@ -245,10 +245,13 @@ class os_taxonomy_fbt extends os_boxes_default {
       if (is_array($bundles)) {
         foreach ($bundles as $key => $value) {
           if (!empty($value)) {
-            $this->options['bundles'] = $value;
+            $this->options['bundles'] = array($value);
             break;
           }
         }
+      }
+      else if (is_string($bundles)) {
+        $this->options['bundles'] = array($bundles);
       }
     }
 
