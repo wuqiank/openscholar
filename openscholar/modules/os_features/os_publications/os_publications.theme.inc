@@ -106,12 +106,9 @@ function theme_os_publications_tabular(&$vars) {
   $output = '<div id="biblio-node">';
   $output .= filter_xss($node->biblio_coins, array('span'));
   $field_upload = '';
-  if (isset($vars['node']->field_upload[LANGUAGE_NONE][0])) {
-    $item = $vars['node']->field_upload[LANGUAGE_NONE][0];
-    if (!empty($item)) {
-      $field_upload .= drupal_render(field_view_value('node', $vars['node'], 'field_upload', $item));
-      unset($vars['node']->field_upload[LANGUAGE_NONE][0]);
-    }
+  if (isset($vars['node']->field_upload[LANGUAGE_NONE])) {
+    $field_upload .= drupal_render(field_view_field('node', $vars['node'], 'field_upload', 'full'));
+    unset($vars['node']->field_upload[LANGUAGE_NONE]);
   }
 
   $output .= '<h3>Citation:</h3>' . $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
