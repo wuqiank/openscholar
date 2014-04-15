@@ -573,24 +573,6 @@ function os_publications_biblio_rearrange($form, $form_state) {
 
   $form['biblio_authors']['add_more']['#value'] = t('Add person');
 
-  // Add "delete" link if we edit a publication.
-  if (isset($form['#node']->nid)) {
-    $options = array(
-      'attributes' => array(
-        'class' => array('publications-delete-link'),
-      )
-    );
-    $delete = array(
-      '#type' => 'item',
-      '#markup' => l(t('Delete this publication'), 'node/' . $form['nid']['#value'] . '/delete', $options),
-      '#weight' => 10,
-    );
-
-    $form['actions']['delete'] = $form['actions_top']['delete'] = $delete;
-    hide($form['actions']['cancel']);
-    hide($form['actions_top']['cancel']);
-  }
-
   return $form;
 }
 

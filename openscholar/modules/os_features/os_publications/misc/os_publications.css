@@ -42,7 +42,8 @@ a.cite-pop {
   cursor: default;
 }
 
-.node-biblio-form .publications-delete-link {
+/* @TODO make general for all node delete links? */
+.node-biblio-form .os-biblio-delete-link {
   color: #f26b50;
   text-decoration: underline;
 }
