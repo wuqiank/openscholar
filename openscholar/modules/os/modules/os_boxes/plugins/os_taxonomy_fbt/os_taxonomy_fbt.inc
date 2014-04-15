@@ -173,10 +173,19 @@ class os_taxonomy_fbt extends os_boxes_default {
   }
 
   function options_submit($form, $form_state) {
+    // Only continues if the value is a string or an array of empty key values.
     if (is_array($form_state['values']['bundles'])) {
-      return;
+      if (($labels = array_filter(array_flip($form_state['values']['bundles']))) && !empty($labels)) {
+        return;
+      }
     }
-    $this->options['bundles'] = (array) $form_state['values']['bundles'];
+
+    // Converts a string value to a singleton array, defaults to empty array.
+    $bundles = array();
+    if (!empty($form_state['values']['bundles']) && is_string($form_state['values']['bundles'])) {
+      $bundles = array($form_state['values']['bundles']);
+    }
+    $this->options['bundles'] = $bundles;
   }
 
   /**
