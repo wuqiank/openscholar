@@ -733,7 +733,8 @@ div.ctools-modal-content .modal-content {
 }
 
 div.ctools-modal-content .modal-content .messages {
-  width: 680px;
+  width: 95%;
+  padding: 0;
 }
 
 #modalContent .spaces-customize-form .buttons input.form-submit {
@@ -1101,12 +1102,12 @@ img.recent-images-list:hover {
  background: none;
 }
 
-.field-name-body img.media-element.file-default {
+img.media-element.file-default {
 	padding-right:15px;
 	}
 
-.lt-ie9	.field-name-body img.media-element.file-default[style*="FLOAT:"][style*="RIGHT;"],
-.field-name-body img.media-element.file-default[style*="float:"][style*="right;"] {
+.lt-ie9	img.media-element.file-default[style*="FLOAT:"][style*="RIGHT;"],
+img.media-element.file-default[style*="float:"][style*="right;"] {
 	padding-left:15px;
 	padding-right:0;
 	}	
@@ -1130,6 +1131,12 @@ img.recent-images-list:hover {
   float: right;
   margin-left: 1em;
 }
+
+
+.block-boxes-os_sv_list_box .os_sv_list_box.sv-list-link.sv-list-view-links h1 a {
+	font-weight:normal;
+	font-size:initial;
+	}
 
 /**
 LIST OF POSTS - PERSON TEASER IN SIDEBAR

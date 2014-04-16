@@ -80,6 +80,12 @@ function os_publications_menu_alter(&$items) {
 
   // for the toolbar
   $items['node/add/biblio']['title'] = 'Publication';
+
+  // Change access callback to publications/authors.
+  $items['publications/authors']['access callback'] = FALSE;
+
+  // Change access callback to publications/keywords.
+  $items['publications/keywords']['access callback'] = FALSE;
 }
 
 /**
@@ -287,6 +293,9 @@ function os_publications_theme_registry_alter(&$reg) {
  * Alters the biblio form to do a lot of things
  */
 function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
+  $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.js';
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
+
   if (!isset($form['#node']->nid)) {
     drupal_set_title(t('Create @name', array('@name' => 'Publication')), PASS_THROUGH);
 
@@ -321,10 +330,13 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     'VE' => 'Venezuela', 'VN' => 'Viet Nam, Socialist Rep.', 'WO' => 'WIPO (World Intellectual Prop Org)', 'YU' => 'Yugoslavia', 'ZM' => 'Zambia', 'ZW' => 'Zimbabwe',
   );
 
-  // Hides the "Book Cover" biblio_image field.
-  $form['field_biblio_image']['#access'] = FALSE;
-  // Hides the "Extra Fields" (dyntextfield) field until a type is selected.
-  $form['field_biblio_extra']['#access'] = FALSE;
+  //Hide the extra and cover fields if there is no TID
+  if(!$tid) {
+    // Hides the "Book Cover" biblio_image field.
+    $form['field_biblio_image']['#access'] = FALSE;
+    // Hides the "Extra Fields" (dyntextfield) field until a type is selected.
+    $form['field_biblio_extra']['#access'] = FALSE;
+  }
 
   // hide look up and pasting fields
   if (isset($form['biblio_doi_lookup'])) {
@@ -349,8 +361,11 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       // we're on the first step of a biblio form. bail out.
       $form['biblio_type']['#weight'] = -1000;
       return;
-
-    // Patents.
+      // Journal article.
+    case 102:
+      $form['biblio_tabs'][2]['biblio_secondary_title']['#description'] = t('Tile of the Journal, e.g. Nature');
+      break;
+      // Patents.
     case 119:
       // Hide Publication source to make using the csl files a bit easier.
       $form['biblio_tabs'][2]['biblio_secondary_title']['#access'] = FALSE;
@@ -374,13 +389,12 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
         '#type' => 'hidden',
         '#value' => isset($node->biblio_edition) ? $node->biblio_edition : '',
       );
-
-    default:
-      // Shows the Extra Fields for any selected publication type.
-      $form['field_biblio_extra']['#access'] = TRUE;
-      // Show cover image upload field for any selected publication type.
-      $form['field_biblio_image']['#access'] = TRUE;
+      break;
   }
+
+  // Change styling of the "Extra fields" section.
+  $form['field_biblio_extra'][LANGUAGE_NONE]['add_more']['#suffix'] = '<div class="description">' . $form['field_biblio_extra'][LANGUAGE_NONE]['#description'] . '</div>';
+  $form['field_biblio_extra'][LANGUAGE_NONE]['#description'] = '';
 
   // Moves fields out of the vertical tabs
   // I like how the form looks with the tabs in. Much cleaner.
@@ -390,12 +404,13 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['biblio_authors']['add_more']['#value'] = t('Add author');
   $form['field_biblio_extra']['und']['add_more']['#value'] = t('Add extra field');
   $form['biblio_authors']['#collapsible'] = FALSE;
-  $form['biblio_authors']['#attached']['js'] = array(drupal_get_path('module', 'os_publications') . '/misc/os_publications.js');
+
   foreach ($form['biblio_authors']['biblio_contributors'] as $k => $f) {
     if (is_array($f) && strpos($k, '#') !== 0) {
       $form['biblio_authors']['biblio_contributors'][$k]['auth_category']['#type'] = 'hidden';
     }
   }
+  unset($form['biblio_authors']['#title'], $form['biblio_authors']['#description']);
 
   // We're coming from biblio's ajax callback. It requires the form structure for authors be unchanged.
   if (isset($form_state['values']['op']) && $form_state['values']['op'] == t('Add author')) {
@@ -407,6 +422,12 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['body'][LANGUAGE_NONE][0]['summary']['#access'] = false;
   $form['biblio_tabs']['biblio_full_text']['body'] = $form['body'];
   unset($form['body']);
+
+  unset($form['biblio_tabs']['#type']);
+  foreach (element_children($form['biblio_tabs']) as $k => $t) {
+    unset($form['biblio_tabs'][$k]['#group']);
+  }
+
 
   // Take certain vtabs out of biblio vtabs and into the main form.
   // The vtabs we are pulling may contain fields we either want outside of vtabs
@@ -437,6 +458,8 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     }
   }
 
+  $form['biblio_abst_e']['#weight'] = -1;
+
   // Add our related URL title field to the form
   // Place it next to the URL title field, which is in a vtab.
   // Put them in a container so we can put a header on the both of them
@@ -456,9 +479,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['biblio_tabs'][5]['url']['biblio_url']['#title'] = t('URL');
   unset($form['biblio_tabs'][5]['biblio_url']);
 
-  // generate the year description
-  $years = variable_get('biblio_years_text', array(9999 => t('Submitted'), 9998 => t('In Press')));
-  $form['biblio_year']['#description'] = t('Required. Must be one of @years, or YYYY', array('@years' => implode(', ', $years)));
+  os_publications_alter_year_field($form, $form_state);
 
   // Change the Notes field's description to include a link to the settings form
   ctools_include('ajax');
@@ -468,24 +489,283 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     '!link' => l('App settings.', 'cp/build'),
   ));
 
-  // Disable wysiwyg for biblio_notes and abstract so check_markup is not needed, html entered manually is acceptible.
-  $form['biblio_tabs'][7]['biblio_notes']['#wysiwyg'] = false;
-  $form['biblio_abst_e']['#wysiwyg'] = FALSE;
-
   // Hide the rest of the vtabs behind a collapsible fieldset.
   $form['publication_extras'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Publication Extras',
+    '#title' => 'Publication Details',
     '#weight' => 20,
     'biblio_tabs' => $form['biblio_tabs'],
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
 
+  $form['#pre_render'][] = 'os_publications_form_biblio_node_form_field_adjust';
+
+  $form['publication_extras']['biblio_tabs'][5]['#weight'] = 1;
+
+  foreach (element_children($form['publication_extras']['biblio_tabs']) as $k) {
+    $elem = &$form['publication_extras']['biblio_tabs'][$k];
+    if ($elem['#type'] == 'fieldset') {
+      $elem['#collapsible'] = FALSE;
+    }
+  }
+
+  $tabs = &$form['publication_extras']['biblio_tabs'];
+  unset($tabs['biblio_full_text']['body'][LANGUAGE_NONE][0]['#title']);
+  unset($tabs[5]['#title']);
+  $tabs[5]['url']['#prefix'] = '<h4>'.t('Publisher\'s Version of Publication').'</h4>';
+  $tabs[5]['url']['biblio_url_title']['#title'] = t('Link Text');
+  $tabs[5]['url']['biblio_url']['#title'] = t('Article URL');
+  unset($tabs[7]['biblio_notes']['#title']);
+  foreach (element_children($form['field_biblio_extra'][LANGUAGE_NONE]) as $k) {
+    $form['field_biblio_extra'][LANGUAGE_NONE][$k]['label']['#title'] = t('Description');
+  }
+
+  // Move the URL out of the extras section.
+  $form['url'] = $form['publication_extras']['biblio_tabs'][5]['url'];
+  $form['url']['#weight'] = 4;
+  unset($form['publication_extras']['biblio_tabs'][5]['url']);
+
+
   // Add in a new validation for patents
   $form['#validate'][] = 'os_publications_biblio_form_patent_validate';
 
+  // Adding remove author button via AJAX.
+  foreach (array_keys($form['biblio_authors']['biblio_contributors']) as $key) {
+    if (!is_int($key)) {
+      continue;
+    }
+
+    $form['biblio_authors']['biblio_contributors'][$key]['delete'] = array(
+      '#type' => 'button',
+      '#value' => t('Remove'),
+      '#ajax' => array (
+        'callback' => 'os_publications_remove_author',
+        'wrapper' => 'field-info-wrapper',
+      ),
+    );
+  }
+
+  if (!empty($form_state['values'])) {
+    // Leave for later - remove the row of the author the user removed.
+    unset($form['biblio_authors']['biblio_contributors']);
+  }
+
   unset($form['biblio_tabs']);
+
+  // Change labels and descriptions in node author fieldset.
+  $form['author']['#title'] = t('Post Created/Edited By');
+  $form['author']['name']['#title'] = t('Posted by');
+  $form['author']['name']['#description'] = '';
+  $form['author']['date']['#title'] = t('Posted on');
+  $form['author']['date']['#description'] = t('Date can be used to change the order in which content is displayed.');
+
+  // Add description to Full Text field.
+  $form['publication_extras']['biblio_tabs']['biblio_full_text']['#suffix'] = '<div class="description">' . t('You can enter the full text of your article here, although most people upload PDFs instead.') . '</div>';
+  
+  // Add a datepicker to "Posted on" field.
+  $form['author']['date']['#type'] = 'date_popup';
+  $form['author']['date']['#date_format'] = 'm/d/Y';
+
+  // Adding after build function.
+  $form['#after_build'][] = 'os_publications_biblio_rearrange';
+
+  // Add classes to "abstract" and "notes" to enable WYSIWYG functionality.
+  $wysiwyg_classes = $form['publication_extras']['biblio_tabs']['biblio_full_text']['body'][LANGUAGE_NONE][0]['#attributes']['class'];
+  $form['biblio_abst_e']['#attributes']['class'] = $wysiwyg_classes;
+  $form['publication_extras']['biblio_tabs'][7]['biblio_notes']['#attributes']['class'] = $wysiwyg_classes;
+
+  // Adding post render function for the image field.
+  $form['field_biblio_image']['#post_render'][] = 'os_publications_biblio_image_post_render';
+
+  // Add CSS file for file upload.
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
+
+  // Add JS for hover tooltips in biblio node form.
+  $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications_biblio_form_hover.js';
+}
+
+/**
+ * Alter the year-related form elements.
+ */
+function os_publications_alter_year_field(&$form, &$form_state) {
+  // Biblio year value can be standard YYYY year number, or a coded number
+  // defined in the "biblio_yeasrs_text" variable. Both _biblio_numeric_year()
+  // and _biblio_text_year() are used to convert between code and numeric.
+  $year_value = $form['biblio_year']['#default_value'];
+  $year_coded_value = '';
+
+  // If not a number then it was coded, so we want to show the value in the
+  // checkboxes form element.
+  if (!is_numeric($year_value)) {
+    unset($form['biblio_year']['#default_value']);
+    $year_coded_value = _biblio_numeric_year($year_value);
+  }
+
+  $years = variable_get('biblio_years_text', array(9999 => t('Submitted'), 9998 => t('In Press')));
+  $form['biblio_year_group'] = array(
+    '#type' => 'fieldset',
+    '#title' => $form['biblio_year']['#title'],
+    '#collapsible' => FALSE,
+  );
+
+  // Form element changes - wrap in a fieldset with the checkboxes element, and
+  // fix additional attributes accordingly.
+  $form['biblio_year_group']['biblio_year'] = $form['biblio_year'];
+  unset($form['biblio_year_group']['biblio_year']['#title']);
+  unset($form['biblio_year_group']['biblio_year']['#description']);
+  $form['biblio_year_group']['biblio_year']['#size'] = 100;
+  $form['biblio_year_group']['biblio_year']['#attributes'] = array('placeholder' => t('Year'));
+
+  $form['biblio_year_group']['biblio_year']['#weight'] = 0;
+  $form['biblio_year_group']['biblio_year_or'] = array(
+    '#weight' => 10,
+    '#markup' => t('or'),
+  );
+
+  $form['biblio_year_group']['biblio_year_coded'] = array(
+    '#type' => 'radios',
+    '#options' => $years,
+    '#multiple' => FALSE,
+    '#weight' => 20,
+    '#default_value' => $year_coded_value,
+  );
+
+  // Remove original form element.
+  unset($form['biblio_year']);
+
+  // Year validation needs to happen before the standard validation.
+  array_unshift($form['#validate'], 'os_publications_validate_year_field');
+}
+
+/**
+ * Validate handler; Verify year field value to avoid mismatch between
+ * text field and checkboxes.
+ */
+function os_publications_validate_year_field($form, &$form_state) {
+  // Validate a year is numeric.
+  if ($form_state['values']['biblio_year'] && !is_numeric($form_state['values']['biblio_year'])) {
+    form_set_error('biblio_year', t('Year value must be in a YYYY format.'));
+    return;
+  }
+
+  // Set the coded value as the year if exist.
+  if ($form_state['values']['biblio_year_coded'] && !$form_state['values']['biblio_year']) {
+    $form_state['values']['biblio_year'] = $form_state['values']['biblio_year_coded'];
+  }
+}
+
+/**
+ * After build; Re-arrange the biblio form.
+ */
+function os_publications_biblio_rearrange($form, $form_state) {
+  $form['biblio_type_new'] = array(
+    '#weight' => -500,
+  ) + $form['biblio_type'];
+  hide($form['biblio_type']);
+
+  $form['biblio_type_new']['#prefix'] = '<h1 class="biblio-type-prefix">' . t ('Create') . '</h1>';
+  $form['biblio_type_new']['#title'] = '';
+
+  $form['biblio_authors']['add_more']['#value'] = t('Add person');
+
+  // Add "delete" link if we edit a publication.
+  if (isset($form['#node']->nid)) {
+    $form['actions']['delete'] = array(
+      '#type' => 'item',
+      '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
+    );
+
+    $form['actions_top']['delete'] = array(
+      '#type' => 'item',
+      '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
+    );
+  }
+
+  // Remove title and description from the inner Date field. We do it here in
+  // after_build because the inner Date field doesn't exist yet in form_alter().
+  $form['author']['date']['date']['#title'] = '';
+  $form['author']['date']['date']['#description'] = '';
+
+  return $form;
+}
+
+/**
+ * Post render; Alter markup of the biblio form.
+ */
+function os_publications_biblio_image_post_render($element) {
+  // Add popup of allowed file type and size. The text for the allowed types and
+  // size are in the field description so just putting it into the element's
+  // suffix doesn't work.
+  $description = t('For example, book cover, journal cover.');
+  preg_match("'<div class=\"description\">" . $description . "<br />(.*?)</div>'", $element, $match);
+  $file_desc = $match[1];
+  $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop1"><span>Help</span></a><span id="pop1" class="biblio-stylebox1">' . $file_desc . '</span>';
+  $replace = '<div class="description">'. $description . $popup_markup .'</div>';
+  $element = preg_replace("'<div class=\"description\">" . $description . "(.*?)</div>'", $replace, $element);
+
+  // Add popup of a publication display example.
+  $icon = theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/application-pdf.png'));
+  $publication_image = theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/publication-cover.png'));
+  $display_example = '
+  <div class="biblio-dummy-wrapper">
+    <div class="biblio-dummy-image">'
+    . $publication_image .
+    '</div>
+    <div class="biblio-dummy-body">
+      Wand, Jonathan, Gary King and Olivia Lau. 2011.
+      <a>Anchors: Software for Anchoring Vigenttes Data.</a>
+      <em>Jornal of Statistical Software</em>
+      <span>42, no. 3: 1-25.</span>
+    </div>
+    <div class="biblio-dummy-links">
+      <a>Website</a>
+      <a class="biblio-abstract-dummy-link">Abstract</a>
+      <span>
+        <span>'
+          . $icon .
+          '<a>Article</a>
+        </span>
+      </span>
+    </div>
+  </div>
+  ';
+
+  $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop2"><span>Help</span></a><span id="pop2" class="biblio-stylebox2">' . $display_example . '</span>';
+  $find = '<a href="#" class="droppable-browse-button button">
+        Browse      </a>';
+  $replace = $find . $popup_markup;
+  $element = str_replace($find, $replace, $element);
+
+  return $element;
+}
+
+function os_publications_remove_author($form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+  return $form['biblio_authors']['biblio_contributors'][1];
+}
+
+/**
+ * Moves fields inside the publications extras fieldset
+ */
+function os_publications_form_biblio_node_form_field_adjust($form) {
+
+  foreach (array('field_biblio_extra' => 12, 'field_biblio_image' => 11, 'og_vocabulary' => 9) as $field => $weight) {
+    if (isset($form[$field])) {
+      $form['publication_extras'][$field] = $form[$field];
+      $form['publication_extras'][$field]['#weight'] = $weight;
+      unset($form[$field]);
+    }
+  }
+  return $form;
+}
+
+/**
+ * Repositions form elements before nodeformcols does things to them.
+ * For some reason, doing this in node_form_alter wasn't working
+ */
+function os_publications_nodeformcols_pre_placement_alter(&$form) {
+  $form['biblio_abst_e']['#weight'] = 5;
 }
 
 /**
@@ -539,8 +819,6 @@ function os_publications_biblio_entry_alter(&$entry, $node) {
   );
   // Add a weight to the download links to allow things to fall properly.
   $entry['download_links']['#weight'] = 4;
-  $entry['#attached']['css'][] = drupal_get_path('module', 'os_publications').'/misc/os_publications.css';
-
 }
 
 /**
@@ -849,7 +1127,7 @@ function os_publications_preprocess_page(&$variables) {
   if (user_is_anonymous()) {
     unset($variables['page']['content']['system_main']['biblio_page']['header']['export_links']);
   }
-  
+
   // Make sure both filters are there.
   if(!isset($menu['map'][1]) || !isset($menu['map'][2])) {
     return;

@@ -25,7 +25,7 @@ function os_events_views_default_views() {
   $handler->display->display_options['link_display'] = 'page_1';
   $handler->display->display_options['access']['type'] = 'spaces_feature';
   $handler->display->display_options['access']['spaces_feature'] = 'os_events';
-  $handler->display->display_options['cache']['type'] = 'time_per_gorup';
+  $handler->display->display_options['cache']['type'] = 'vsite_time_per_group';
   $handler->display->display_options['cache']['results_lifespan'] = '518400';
   $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
   $handler->display->display_options['cache']['output_lifespan'] = '518400';
@@ -537,7 +537,7 @@ function os_events_views_default_views() {
   $handler->display->display_options['title'] = 'Ical';
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['cache'] = FALSE;
-  $handler->display->display_options['cache']['type'] = 'time_per_gorup';
+  $handler->display->display_options['cache']['type'] = 'vsite_time_per_group';
   $handler->display->display_options['cache']['results_lifespan'] = '518400';
   $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
   $handler->display->display_options['cache']['output_lifespan'] = '518400';
@@ -611,7 +611,7 @@ function os_events_views_default_views() {
   $handler->display->display_options['title'] = 'Ical';
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['cache'] = FALSE;
-  $handler->display->display_options['cache']['type'] = 'time_per_gorup';
+  $handler->display->display_options['cache']['type'] = 'vsite_time_per_group';
   $handler->display->display_options['cache']['results_lifespan'] = '518400';
   $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
   $handler->display->display_options['cache']['output_lifespan'] = '518400';

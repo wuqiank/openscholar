@@ -39,3 +39,21 @@
   display: inline-block;
   width: 45%;
 }
+
+.droppable-message,
+.droppable-standard-upload span {
+	font-weight:bold;
+	}
+
+
+.field-name-field-biblio-image .droppable {
+float: none;
+background-color: #f0f0ee;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+padding: 2px;
+border: 1px solid #ccc;
+text-align: center;
+margin: 5px 0;
+}

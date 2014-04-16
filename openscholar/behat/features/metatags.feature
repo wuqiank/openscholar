@@ -1,21 +1,22 @@
 Feature:
   Testing the metatags.
 
-  @api
+  @api @first
   Scenario: Testing default metatags.
     Given I visit "john/about"
      Then I should see the meta tag "description" with value "Page about john"
 
-  @api
+    
+  @api @first
   Scenario: Testing custom metatags.
     Given I am logging in as "john"
       And I edit the page meta data of "about" in "john"
-      And I fill in "Summary description" with "custom tag value"
+      And I fill in "Meta description" with "custom tag value"
       And I press "Save"
      Then I visit "john/about"
       And I should see the meta tag "description" with value "custom tag value"
 
-  @api
+  @api @first
   Scenario: Testing metatags settings form in a personal site.
     Given I am logging in as "john"
      When I go to "john/cp/settings"
@@ -25,7 +26,7 @@ Feature:
       And I should see "Publisher URL"
       And I should see "Author URL"
 
-  @api
+  @api @first
   Scenario: Testing metatags settings functionality in a personal site.
     Given I am logging in as "john"
      When I go to "john/cp/settings"
@@ -38,7 +39,7 @@ Feature:
           # Change site title back to "John"
       And I change site title to "John" in the site "john"
 
-  @api
+  @api @first
   Scenario: Testing metatags settings form in a department site.
     Given I am logging in as "alexander"
      When I go to "edison/cp/settings"
@@ -48,7 +49,7 @@ Feature:
       And I should see "Publisher URL"
       And I should not see "Author URL"
 
-  @api
+  @api @first
   Scenario: Testing metatags settings functionality in a department site.
     Given I am logging in as "alexander"
      When I go to "edison/cp/settings"

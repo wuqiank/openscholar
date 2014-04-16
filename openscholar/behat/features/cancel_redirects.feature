@@ -1,7 +1,7 @@
 Feature:
   Test the redirect of the "cancel" button on node forms.
 
-  @api
+  @api @first
   Scenario: Test redirect when user edits a node (no destination).
     Given I am logging in as "john"
       And I visit "john"
@@ -9,7 +9,7 @@ Feature:
       And I click "Cancel"
      Then I should be on "john/blog"
 
-  @api
+  @api @first
   Scenario: Test redirect when user edits a node using the contextual link (with destination).
     Given I am logging in as "john"
       And I visit "john/blog"
@@ -17,7 +17,7 @@ Feature:
       And I click "Cancel"
      Then I should be on "john/blog"
 
-  @api
+  @api @first
   Scenario: Test redirect when user creates a page.
     Given I am logging in as "john"
       And I visit "john"

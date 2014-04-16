@@ -105,7 +105,13 @@ function theme_os_publications_tabular(&$vars) {
 
   $output = '<div id="biblio-node">';
   $output .= filter_xss($node->biblio_coins, array('span'));
-  $output .= '<h3>Citation:</h3><div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
+  $field_upload = '';
+  if (isset($vars['node']->field_upload[LANGUAGE_NONE])) {
+    $field_upload .= drupal_render(field_view_field('node', $vars['node'], 'field_upload', 'full'));
+    unset($vars['node']->field_upload[LANGUAGE_NONE]);
+  }
+
+  $output .= '<h3>Citation:</h3>' . $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
 
   // Move publication image up under the citation.
   $book_images = field_get_items('node',$node,'field_biblio_image', $node->language);
@@ -241,16 +247,16 @@ function theme_os_publications_contributors($variables) {
 
     // Build the table row.
     $row = array('');
-    $row[] = array('data' => drupal_render($form[$key]['name']) . drupal_render($form[$key]['auth_category']),
-      'class' => array('biblio-contributor', 'biblio-contributor-category'),
-    );
     $row[] = array('data' => drupal_render($form[$key]['auth_type']),
       'class' => array('biblio-contributor-type'),
+    );
+    $row[] = array('data' => drupal_render($form[$key]['name']) . drupal_render($form[$key]['auth_category']) . drupal_render($form[$key]['delete']),
+      'class' => array('biblio-contributor', 'biblio-contributor-category'),
     );
     $row[] = drupal_render($form[$key]['rank']);
     $rows[] = array('data' => $row, 'class' => array('draggable'));
   }
-  $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => $form['#id'])));
+  $output = theme('table', array('rows' => $rows, 'attributes' => array('id' => $form['#id'])));
   //$output .= drupal_render_children($form);
   return $output;
 }
