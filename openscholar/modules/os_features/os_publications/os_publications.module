@@ -546,11 +546,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     );
   }
 
-  if (!empty($form_state['values'])) {
-    // Leave for later - remove the row of the author the user removed.
-    unset($form['biblio_authors']['biblio_contributors']);
-  }
-
   unset($form['biblio_tabs']);
 
   // Change labels and descriptions in node author fieldset.
