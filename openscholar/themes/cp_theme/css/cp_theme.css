@@ -522,6 +522,11 @@ width:20px;
 display: inline-block;
 }
 
+.biblio-contributor input.form-text {
+float: left;
+margin-right: 8px;
+}
+
 .form-item-biblio-url,
 .form-item-biblio-url-title,
 .node-biblio-form .form-item-biblio-section,
