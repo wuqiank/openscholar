@@ -2013,10 +2013,10 @@ function vsite_redirect_reset_submit($form, &$form_state){
   if (is_array($form_state['values']) && array_key_exists('redirect_from_reset', $form_state['values']) && $form_state['values']['redirect_from_reset']) {
     $vsites = vsite_get_vsite_by_owner($form['#user']->uid);
     if (count($vsites) == 1 && is_object($vsites[0])) {
-      drupal_goto($vsites[0]->get_absolute_url(), 301);
+      drupal_goto($vsites[0]->get_absolute_url(), array(), 301);
     }
     else {
-      drupal_goto('user/' . $form['#user']->uid, 301);
+      drupal_goto('user/' . $form['#user']->uid, array(), 301);
     }
   }
 }
