@@ -16,7 +16,7 @@ Drupal.behaviors.osPublications = {
     var yearGroup = $("#edit-biblio-year-group");
 
     // Add validation warning.
-    yearGroup.after('<div id="biblio-year-group-validate">' + Drupal.t('Input must be in the form YYYY. Only numerical digits are allowed.') + '</div>')
+    yearGroup.after('<div id="biblio-year-group-validate">' + Drupal.t('Input must be in the form YYYY. Only numerical digits are allowed.') + '</div>');
     var yearWarning = $("#biblio-year-group-validate");
     yearWarning.css('visibility', 'hidden');
     yearWarning.css('color', 'red');
