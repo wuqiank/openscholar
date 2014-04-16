@@ -173,10 +173,24 @@ class os_taxonomy_fbt extends os_boxes_default {
   }
 
   function options_submit($form, $form_state) {
-    if (is_array($form_state['values']['bundles'])) {
+    // Only continues the user is selecting individual types.
+    // For "All types" and "Determine for me", this value is overridden in
+    // $this::render().
+    if ($form_state['values']['behavior'] != 'select') {
       return;
     }
-    $this->options['bundles'] = (array) $form_state['values']['bundles'];
+
+    // Defaults to all types, but tries to find a non-empty value if array.
+    $bundles = $this->options['bundles'];
+    $this->options['bundles'] = FALSE;
+    if (is_array($bundles)) {
+      foreach ($bundles as $key => $value) {
+        if (!empty($value)) {
+          $this->options['bundles'] = $value;
+          break;
+        }
+      }
+    }
   }
 
   /**
@@ -221,6 +235,23 @@ class os_taxonomy_fbt extends os_boxes_default {
             }
           }
         }
+      }
+    }
+    else if ($this->options['behavior'] == 'select') {
+      // For specified node type behavior but non-string value, default to all
+      // and try to grab any first value of an array.
+      $bundles = $this->options['bundles'];
+      $this->options['bundles'] = FALSE;
+      if (is_array($bundles)) {
+        foreach ($bundles as $key => $value) {
+          if (!empty($value)) {
+            $this->options['bundles'] = array($value);
+            break;
+          }
+        }
+      }
+      else if (is_string($bundles)) {
+        $this->options['bundles'] = array($bundles);
       }
     }
 
