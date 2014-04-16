@@ -12,24 +12,52 @@ Drupal.behaviors.osPublications = {
 
     // Handle year fields.
     var codedYear = $("input[name='biblio_year_coded']");
-    var yearField = $('#edit-biblio-year');
+    var yearField = $("#edit-biblio-year");
+    var yearGroup = $("#edit-biblio-year-group");
+
+    // Add validation warning.
+    yearGroup.after('<div id="biblio-year-group-validate">' + Drupal.t('Input must be in the form YYYY. Only numerical digits are allowed.') + '</div>')
+    var yearWarning = $("#biblio-year-group-validate");
+    yearWarning.css('visibility', 'hidden');
+    yearWarning.css('color', 'red');
+
+    // Allowed year input.
+    var numbers = /^[0-9]+$/;
 
     // Publication year can be either given in a numerical value or by a coded
     // value ("in press", "submitted" and so on). If the user fills a numerical
     // value the radio buttons are unchecked and disabled. Clearing the numerical
     // value enables the radio buttons again.
-    yearField.change(function() {
+    yearField.keyup(function() {
       if (this.value != '') {
         // Uncheck all radio buttons.
         codedYear.each(function () {
           $(this).prop('checked', false);
         });
+        codedYear.prop("disabled", true);
+
+        // Validate year input.
+        userInput = this.value;
+        if ((userInput.length != 4 && userInput.match(numbers)) || !userInput.match(numbers)) {
+          yearWarning.css('visibility', 'visible');
+          yearField.addClass("error");
+        }
+        else if (userInput.length == 4 && userInput.match(numbers)){
+          yearWarning.css('visibility', 'hidden');
+          yearField.removeClass("error");
+        }
+      }
+      else {
+        codedYear.prop("disabled", false);
+        yearWarning.css('visibility', 'hidden');
+        yearField.removeClass("error");
       }
     }).focus(function() {
-        codedYear.prop("disabled", true);
-    }).blur(function() {
-      if (yearField[0].value == '') {
+      if ((yearField.value == '' || yearField.value == undefined) && !yearField.hasClass('error') ) {
         codedYear.prop("disabled", false);
+      }
+      else {
+        codedYear.prop("disabled", true);
       }
     });
     codedYear.change(function() {
