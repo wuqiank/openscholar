@@ -356,6 +356,11 @@ function vsite_vocab_form_taxonomy_form_vocabulary_submit(&$form, &$form_state) 
         $og_vocab->settings['cardinality'] = $values['cardinality'];
         $values['widget_type'] = $values['widget_type_autocomplete'] == 'entityreference_autocomplete' ? $values['widget_type'] : $values['widget_type_autocomplete'];
         $og_vocab->settings['widget_type'] = $values['widget_type'];
+
+        if ($values['widget_type'] == 'term_reference_tree') {
+          $og_vocab->settings['widget']['start_minimized'] = TRUE;
+        }
+
         $og_vocab->save();
       }
     }
