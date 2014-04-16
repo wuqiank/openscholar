@@ -643,8 +643,8 @@ function os_publications_alter_year_field(&$form, &$form_state) {
  * text field and checkboxes.
  */
 function os_publications_validate_year_field($form, &$form_state) {
-  // Validate a year is numeric.
-  if ($form_state['values']['biblio_year'] && !is_numeric($form_state['values']['biblio_year'])) {
+  // Validate a year is numeric and that it's only four digits long.
+  if ($form_state['values']['biblio_year'] && !is_numeric($form_state['values']['biblio_year']) || is_numeric($form_state['values']['biblio_year']) && $form_state['values']['biblio_year'] > 9999) {
     form_set_error('biblio_year', t('Year value must be in a YYYY format.'));
     return;
   }
