@@ -962,7 +962,7 @@ function os_form_node_form_alter(&$form, $form_state) {
     $options = array(
       'attributes' => array(
         'class' => array('os-delete-link', 'os-' . $form['#node']->type . '-delete-link'),
-      )
+      ),
     );
     $delete = array(
       '#type' => 'item',
