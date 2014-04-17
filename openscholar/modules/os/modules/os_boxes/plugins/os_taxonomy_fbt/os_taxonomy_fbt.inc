@@ -252,24 +252,23 @@ class os_taxonomy_fbt extends os_boxes_default {
         // context.
         $do_cache = FALSE;
       }
-    }
-    else if ($this->options['behavior'] == 'select') {
-      // For specified node type behavior but non-string value, default to all
-      // and try to grab any first value of an array.
-      $bundles = $this->options['bundles'];
-      $this->options['bundles'] = FALSE;
-      if (is_array($bundles)) {
-        foreach ($bundles as $key => $value) {
-          if (!empty($value)) {
-            $this->options['bundles'] = array($value);
-            break;
+      else if ($this->options['behavior'] == 'select') {
+        // For specified node type behavior but non-string value, default to all
+        // and try to grab any first value of an array.
+        $bundles = $this->options['bundles'];
+        $this->options['bundles'] = FALSE;
+        if (is_array($bundles)) {
+          foreach ($bundles as $value) {
+            if (!empty($value)) {
+              $this->options['bundles'] = array($value);
+              break;
+            }
           }
         }
+        else if (is_string($bundles)) {
+          $this->options['bundles'] = array($bundles);
+        }
       }
-      else if (is_string($bundles)) {
-        $this->options['bundles'] = array($bundles);
-      }
-    }
 
       if (is_array($this->options['vocabulary'])) {
         $t = array_filter($this->options['vocabulary']);
@@ -316,4 +315,3 @@ class os_taxonomy_fbt extends os_boxes_default {
     return $vocabularies;
   }
 }
-
