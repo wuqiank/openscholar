@@ -112,7 +112,7 @@ function theme_os_publications_tabular(&$vars) {
   }
 
   // Add label to the table of uploaded files.
-  $field_upload = '<label>' . t('Download') .'</label><div class="biblio-upload-wrapper">' . $field_upload . '</div>';
+  $field_upload = '<label class="biblio-download-links-label">' . t('Download') .'</label><div class="biblio-upload-wrapper">' . $field_upload . '</div>';
   $output .= '<h3>Citation:</h3>' . $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
 
   // Move publication image up under the citation.
