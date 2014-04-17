@@ -588,7 +588,7 @@ function hwpi_basetheme_status_messages($vars) {
     if (count($messages) > 1) {
       $output .= " <ul>";
       foreach ($messages as $message) {
-        if (strpos($message, 'Biblio') === 0) {
+        if (strpos($message, 'Biblio') === 0 || strpos($message, 'Publication') === 0) {
           // Allow some tags in messages about a Biblio.
           $output .= '  <li>' . strip_tags(html_entity_decode($message), $allowed_html_elements) . "</li>";
         }
