@@ -173,70 +173,124 @@ class os_taxonomy_fbt extends os_boxes_default {
   }
 
   function options_submit($form, $form_state) {
-    if (is_array($form_state['values']['bundles'])) {
+    if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+      os_taxonomy_invalidate_cache($vsite->id);
+    }
+
+    // Only continues the user is selecting individual types.
+    // For "All types" and "Determine for me", this value is overridden in
+    // $this::render().
+    if ($form_state['values']['behavior'] != 'select') {
       return;
     }
-    $this->options['bundles'] = (array) $form_state['values']['bundles'];
+
+    // Defaults to all types, but tries to find a non-empty value if array.
+    $bundles = $this->options['bundles'];
+    $this->options['bundles'] = FALSE;
+    if (is_array($bundles)) {
+      foreach ($bundles as $key => $value) {
+        if (!empty($value)) {
+          $this->options['bundles'] = $value;
+          break;
+        }
+      }
+    }
   }
 
   /**
    * Implements boxes_content::render().
    */
   public function render() {
-    if (module_exists('vsite') && !vsite_get_vsite()) {
+    if (module_exists('vsite') && !$vsite = vsite_get_vsite()) {
       return;
     }
 
     $block = parent::render();
-    if (empty($this->options['vocabulary'])) {
-      $this->options['vocabulary'] = current(array_keys(self::get_all_vocabularies()));
-
-      if(empty($this->options['vocabulary'])){
-        // There are no vocabularies defined in the VSite.
-        return $block;
-      }
+    $cid = 'os_taxonomy:' . $vsite->id . ":" . $this->delta;
+    if ($cache = cache_get($cid)) {
+      $content = $cache->data;
     }
-    ctools_include('layout', 'os');
+    else {
+      $do_cache = TRUE;
+      if (empty($this->options['vocabulary'])) {
+        $this->options['vocabulary'] = current(array_keys(self::get_all_vocabularies()));
 
-    if ($this->options['behavior'] == '--all--') {
-      $this->options['bundles'] = array();
-    }
-    else if (!empty($this->options['behavior']) && $this->options['behavior'] == 'contextual' && ($feature = os_get_active_feature())) {
-      if (isset($feature->info['features']['node'])) {
-        // Building a list of the bundles in two ways:
-        // 1. Selected bundles from a list
-        // 2. If the widget defined as a "Determine for me" set the bundles
-        //    whcih related to the app.
-        $paths = os_get_app_path();
-        $menu = menu_get_item();
-
-        $this->options['bundles'] = array();
-        if ($menu['map'][0] == 'node') {
-          $this->options['bundles'] = array($menu['map'][1]->type);
+        if(empty($this->options['vocabulary'])){
+          // There are no vocabularies defined in the VSite.
+          return $block;
         }
-        else {
-          foreach ($paths as $bundle => $path) {
-            if ($path == $menu['original_map'][0]) {
-              $this->options['bundles'][] = $bundle;
+      }
+      ctools_include('layout', 'os');
+
+      if ($this->options['behavior'] == '--all--') {
+        $this->options['bundles'] = array();
+      }
+      else if (!empty($this->options['behavior']) && $this->options['behavior'] == 'contextual' && ($feature = os_get_active_feature())) {
+        if (isset($feature->info['features']['node'])) {
+          // Building a list of the bundles in two ways:
+          // 1. Selected bundles from a list
+          // 2. If the widget defined as a "Determine for me" set the bundles
+          //    which related to the app.
+          $paths = os_get_app_path();
+          $menu = menu_get_item();
+
+          $this->options['bundles'] = array();
+          if ($menu['map'][0] == 'node') {
+            $this->options['bundles'] = array($menu['map'][1]->type);
+          }
+          else {
+            foreach ($paths as $bundle => $path) {
+              if ($path == $menu['original_map'][0]) {
+                $this->options['bundles'][] = $bundle;
+              }
             }
           }
         }
       }
+      elseif ($this->options['behavior'] != 'select') {
+        // Avoid caching in case behavior is 'contextual' but we don't have
+        // context.
+        $do_cache = FALSE;
+      }
+      else if ($this->options['behavior'] == 'select') {
+        // For specified node type behavior but non-string value, default to all
+        // and try to grab any first value of an array.
+        $bundles = $this->options['bundles'];
+        $this->options['bundles'] = FALSE;
+        if (is_array($bundles)) {
+          foreach ($bundles as $value) {
+            if (!empty($value)) {
+              $this->options['bundles'] = array($value);
+              break;
+            }
+          }
+        }
+        else if (is_string($bundles)) {
+          $this->options['bundles'] = array($bundles);
+        }
+      }
+
+      if (is_array($this->options['vocabulary'])) {
+        $t = array_filter($this->options['vocabulary']);
+        $this->options['vocabulary'] = current($t);
+      }
+
+      if ($this->options['as_nav']) {
+        $this->options['additional_classes'] = 'navigation';
+      }
+
+      $content = theme('os_taxonomy_vocabulary_item_list', array(
+        'vid' => $this->options['vocabulary'],
+        'options' => $this->options,
+      ));
+
+      // Set the cache.
+      if ($do_cache) {
+        cache_set($cid, $content);
+      }
     }
 
-    if (is_array($this->options['vocabulary'])) {
-      $t = array_filter($this->options['vocabulary']);
-      $this->options['vocabulary'] = current($t);
-    }
-
-    if ($this->options['as_nav']) {
-      $this->options['additional_classes'] = 'navigation';
-    }
-
-    $block['content'] = theme('os_taxonomy_vocabulary_item_list', array(
-      'vid' => $this->options['vocabulary'],
-      'options' => $this->options,
-    ));
+    $block['content'] = $content;
 
     return $block;
   }
@@ -250,7 +304,6 @@ class os_taxonomy_fbt extends os_boxes_default {
    * Get all the vocabularies id using the taxonomy terms.
    */
   private function get_all_vocabularies() {
-
     ctools_include('taxonomy', 'os');
     $taxonomy_vocabularies = os_get_vocabularies();
     $vocabularies = array();
@@ -262,4 +315,3 @@ class os_taxonomy_fbt extends os_boxes_default {
     return $vocabularies;
   }
 }
-

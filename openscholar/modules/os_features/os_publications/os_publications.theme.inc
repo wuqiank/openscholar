@@ -105,7 +105,15 @@ function theme_os_publications_tabular(&$vars) {
 
   $output = '<div id="biblio-node">';
   $output .= filter_xss($node->biblio_coins, array('span'));
-  $output .= '<h3>Citation:</h3><div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
+  $field_upload = '';
+  if (isset($vars['node']->field_upload[LANGUAGE_NONE])) {
+    $field_upload .= drupal_render(field_view_field('node', $vars['node'], 'field_upload', 'full'));
+    unset($vars['node']->field_upload[LANGUAGE_NONE]);
+  }
+
+  // Add label to the table of uploaded files.
+  $field_upload = '<label class="biblio-download-links-label">' . t('Download') .'</label><div class="biblio-upload-wrapper">' . $field_upload . '</div>';
+  $output .= '<h3>Citation:</h3>' . $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
 
   // Move publication image up under the citation.
   $book_images = field_get_items('node',$node,'field_biblio_image', $node->language);

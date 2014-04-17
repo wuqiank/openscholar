@@ -49,6 +49,25 @@ function vsite_default_og_membership_type() {
 }
 
 /**
+ * Access callback; Check OG permission in current VSite.
+ *
+ * @param $permission
+ *  The OG permission to check.
+ *
+ * @return
+ *  TRUE if the user has the permission in the current VSite, FALSE otherwise.
+ */
+function vsite_og_user_access($permission) {
+  $vsite = vsite_get_vsite();
+  if (!$vsite) {
+    // No VSite.
+    return FALSE;
+  }
+
+  return og_user_access('node', $vsite->id, $permission);
+}
+
+/**
  * Implements hook_og_user_access_alter().
  *
  * Allow "support team" members to subscribe without approval to groups.
@@ -1994,10 +2013,10 @@ function vsite_redirect_reset_submit($form, &$form_state){
   if (is_array($form_state['values']) && array_key_exists('redirect_from_reset', $form_state['values']) && $form_state['values']['redirect_from_reset']) {
     $vsites = vsite_get_vsite_by_owner($form['#user']->uid);
     if (count($vsites) == 1 && is_object($vsites[0])) {
-      drupal_goto($vsites[0]->get_absolute_url(), 301);
+      drupal_goto($vsites[0]->get_absolute_url(), array(), 301);
     }
     else {
-      drupal_goto('user/' . $form['#user']->uid, 301);
+      drupal_goto('user/' . $form['#user']->uid, array(), 301);
     }
   }
 }

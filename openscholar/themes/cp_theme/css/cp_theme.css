@@ -72,11 +72,11 @@ textarea {
 #og-vocabulary-add-more-wrapper select.form-select {height:120px;}
 
 html.js input.form-autocomplete {
-  background-position: 100% 8px;  
+  background-position: 100% 21px;
 }
 
 html.js input.throbbing {
-  background-position: 100% -13px !important;
+  background-position: 100% -15px !important;
 }
 
 #block-os-powered-by {
@@ -109,7 +109,7 @@ html.js input.throbbing {
 
 .view-os-files-private ul {list-style-type: none !important;
  list-style: none !important;}
- 
+
 .view-os-files-private .cp-controls-wrapper .add_new {
     background: url("/themes/seven/images/add.png") no-repeat scroll 0 center #FFF !important;
     line-height: 30px;
@@ -232,8 +232,8 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
 	margin-top: 10px;
 	display: block;
 		}
-		
-		
+
+
 
 .downarrow {
 	padding-right: 12px;
@@ -243,25 +243,25 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
 .helper.columns {
 	width: 968px !important;
 		}
-		
+
 .helper.columns .downarrow {
 	background-position: 51px -553px;
 		}
-	
+
 .formlabel {color: #444;
 font-size: 12px;
 font-weight: bold;}
 
 /** OVERLAY MODAL OVERRIDES **/
-	
+
 #overlay-close, #overlay-close:hover {
     background: url('../../../themes/os_basetheme/images/icon-close-window.png') no-repeat;
 	width:30px;
 	height:30px;
 	position: relative;
- 	margin: -28px 10px;   
+ 	margin: -28px 10px;
 }
-	
+
 #overlay-titlebar {
     padding: 7px 10px 17px;
     position: relative;
@@ -280,7 +280,7 @@ font-weight: bold;}
     font-size:24px;
     font-weight: normal;
 }
-	
+
 #overlay-tabs {
  	margin: -30px 0 0;
  	right: 50px;
@@ -312,10 +312,10 @@ font-weight: bold;}
      margin-bottom: -1px;
      padding-bottom: 0px;
 }
- 
+
 
 /** CP TABLE STYLES **/
-	
+
 table.spaces td.option, table.spaces td.storage {
     width: 13%;
 }
@@ -340,25 +340,25 @@ table.spaces td.option, table.spaces td.storage {
 #edit-menu-table td:first-child {
     width: 40%;
 }
- 
- 
- 
+
+
+
  #user-register-form {
  	background:#f1f1f1;
     padding:15px;
     border: 1px solid #CCC;
  }
- 
+
  .cp-add-new-user ul {list-style-type:none;}
 
-/* CP/BUILD MENU */ 
+/* CP/BUILD MENU */
 .page-cp-build-menu table thead {
 	display:none;
-	
+
     }
-    
+
 #edit-menu-table,
-#cp-menu-build-form {width:775px;}   
+#cp-menu-build-form {width:775px;}
 
 
 #cp-appearance-theme-picker-form select {max-width:90px;overflow:hidden;}
@@ -369,7 +369,7 @@ table.spaces td.option, table.spaces td.storage {
 #cp-appearance-theme-picker-form #theme-header-featured p {color:#777;font-size:15px;margin:-8px 0 28px 0;}
 
 
-/* CP/BUILD LAYOUT */   
+/* CP/BUILD LAYOUT */
 .page-cp-build-layout #content {width:854px;}
 
 
@@ -388,7 +388,7 @@ form#spaces-features-form td.actions a {
 }
 
 
-/** VSITE OS LOGIN CONTAINER STYLES **/	
+/** VSITE OS LOGIN CONTAINER STYLES **/
 body.page-cp.page-cp-account {
 	background:#EEE;
 }
@@ -408,7 +408,7 @@ body.page-cp.page-cp-account #messages {
 	border:3px solid #8996A0;
 }
 
-.page-cp.page-cp-account #columns #main-content-header { 
+.page-cp.page-cp-account #columns #main-content-header {
 	background: #DDD;
 	margin:-10px -8px;
 	padding:7px;
@@ -442,7 +442,7 @@ fieldset .fieldset-legend {text-transform:none;}
 	clear:right;
 	margin-bottom:20px;
 }
- 
+
 .tabledrag-toggle-weight-wrapper {
   display: none;
 }
@@ -465,10 +465,13 @@ table#edit-biblio-contributors tr.even {
 }
 
 .field-name-og-vocabulary table td,
-table#field-biblio-extra-values td,
+table#field-biblio-extra-values td {
+	padding: 8px 0;
+}
+
 #edit-biblio-authors table td,
 table#edit-biblio-contributors td {
-	padding: 8px 0;
+	padding: 0;
 }
 
 #edit-og-vocabulary input.form-submit,
@@ -492,6 +495,36 @@ background: none;
 -moz-border-radius: 0;
 -webkit-border-radius: 0;
 border-radius: 0;
+}
+
+.biblio-contributor input.form-submit {
+cursor: pointer;
+padding: 0;
+margin-bottom: 0;
+margin-right: 0;
+color: #5a5a5a;
+text-align: center;
+font-weight: normal;
+font-size: 1em;
+font-family: "Lucida Grande", Verdana, sans-serif;
+border: none;
+border-bottom: none;
+border-left-color: none;
+border-right-color: none;
+background: url(../images/scholarbase-sprite.png) 0 -411px no-repeat;
+-moz-border-radius: none;
+-webkit-border-radius: none;
+border-radius: none;
+text-indent: 100%;
+white-space: nowrap;
+overflow: hidden;
+width:20px;
+display: inline-block;
+}
+
+.biblio-contributor input.form-text {
+float: left;
+margin-right: 8px;
 }
 
 .form-item-biblio-url,
@@ -551,13 +584,30 @@ border-radius: 0;
 	width:140px;
 }
 
+.form-item.form-type-radio {
+	margin-left:10px;
+	font-size:1em;
+	font-weight:normal;
+}
+
+
+fieldset#edit-biblio-year-group {
+background: none;
+border: none;
+font-weight:bold;
+}
+
+fieldset#edit-biblio-year-group .fieldset-legend,
+fieldset#edit-biblio-year-group .fieldset-wrapper {
+padding-left: 0;
+}
+
+
 html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper .fieldset-legend {
 background: none;
 padding-left: 0;
 }
 
-
- 
 
 
 .field-name-field-biblio-extra table.field-multiple-table,
@@ -593,30 +643,30 @@ padding-left:0;
 
 #edit-field-biblio-extra .description {margin-left:35px;}
 
-	
-/**	 QUICK TAB CREATION **/	
-	
+
+/**	 QUICK TAB CREATION **/
+
 .page-os-widget #tabs {
     background:  #F1F1F1;
     border: 1px solid #CCCCCC;
     padding-left:10px;
-}	
-	
+}
+
 .page-os-widget #tabs .panel,
 .page-os-widget #tabs fieldset .fieldset-wrapper {
   padding: 0;
-} 
+}
 
 .page-os-widget .ui-state-disabled, .ui-widget-content .ui-state-disabled {
     opacity: 1;
-}	
+}
 
 .page-os-widget .ui-tabs .ui-tabs-nav li a {
     border-radius: 10px 10px 0 0;
     -webkit-border-radius: 10px 10px 0 0;
     -moz-border-radius: 10px 10px 0 0;
     padding: 5px;
-} 	
+}
 
 /* Shrinks the node form to take up less vertical space. */
 
@@ -692,7 +742,7 @@ form.node-form .form-region-main input a,
 
 form.node-form .form-region-right input.form-text{
     width: 85% !important;
-   
+
 }
 
 form.node-form .form-region-main input.form-text {
@@ -743,7 +793,7 @@ form.node-form.overlay-processed .form-region-right  fieldset.collapsed .fieldse
 
 html.js .form-region-right  fieldset.collapsible .fieldset-legend {
     background: url("../../../../../misc/menu-expanded.png") no-repeat scroll 5px 9px #F5F5F5;
- 
+
 }
 
 .form-region-main a.fieldset-title,
@@ -795,13 +845,77 @@ form#cp-user-edit-membership-form .form-item-group-manager {
 
 h1.biblio-type-prefix {
   float: left;
-  margin: 15px 10px 0px 0px;
+  margin: 18px 10px 0px 0px;
   padding: 0.3em 0;
   color: #666;
   font-size: 24px;
   font-weight: normal;
 }
 
+.form-item-biblio-type select {
+width: 200px;
+height: 30px;
+font-size: 22px;
+color: #666;
+}
+
 .form-item-biblio-type span.form-required {
   visibility: hidden;
 }
+
+#field-biblio-extra-values thead tr th {
+  text-transform: none;
+}
+
+/* Term tree reference */
+.term-reference-tree {
+  border: 1px solid #CCC;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.term-reference-tree > ul {
+  margin-left: 0;
+}
+
+ul.term-reference-tree-level {
+  list-style-type: none;
+}
+
+.term-reference-tree-button,
+.no-term-reference-tree-button {
+  float: left;
+}
+
+.no-term-reference-tree-button {
+  background: none;
+}
+
+.term-reference-tree-button {
+  background: url('../images/scholarbase-sprite.png') 2px -449px no-repeat;
+}
+
+.term-reference-tree-button.term-reference-tree-collapsed {
+  background: url('../images/scholarbase-sprite.png') 6px -433px no-repeat;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
