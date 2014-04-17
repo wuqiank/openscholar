@@ -335,6 +335,24 @@ body.node-type-biblio .biblio-export {
   padding:10px;
   margin-bottom:8px;
   }
+  
+/** PLACES THE ATTACHED FILES TABLE NEXT TO THE CITATION DIV IN PUB FULL PAGE VIEW **/
+.page-node.node-type-biblio #biblio-node h3:first-of-type {
+	margin-left: 23%;
+}
+	
+.page-node.node-type-biblio .biblio-upload-wrapper {
+width: 23%;
+display: inline-block;
+}
+
+
+.page-node.node-type-biblio #citation-wrapper {
+width: 73%;
+display: inline-block;
+vertical-align: top;
+}
+  
 
 dd.biblio-citation {
   margin-bottom: 0;
