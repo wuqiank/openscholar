@@ -147,6 +147,19 @@ a.form-cancel:hover {
  text-decoration:none;
 }
 
+.form-actions .form-submit,
+.form-actions #edit-delete,
+.form-actions #edit-delete--2 {
+	display:inline-block;
+}
+
+.form-actions .os-delete-link {
+  color: #f83535;
+  text-decoration: underline;
+  font-size: 1.1em;
+}
+
+
 /* CTools MODAL OVERRIDES */
 
 #modalContent {
@@ -544,7 +557,7 @@ margin-right: 8px;
 	display:inline-block;
 	margin-right:15px;
 	vertical-align: top;
-	width:200px;
+	width:170px;
 }
 
 .form-item-biblio-url,
