@@ -656,6 +656,7 @@ function os_publications_validate_year_field($form, &$form_state) {
  * After build; Re-arrange the biblio form.
  */
 function os_publications_biblio_rearrange($form, $form_state) {
+  $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
   $form['biblio_type_new'] = array(
     '#weight' => -500,
   ) + $form['biblio_type'];
@@ -665,19 +666,6 @@ function os_publications_biblio_rearrange($form, $form_state) {
   $form['biblio_type_new']['#title'] = '';
 
   $form['biblio_authors']['add_more']['#value'] = t('Add person');
-
-  // Add "delete" link if we edit a publication.
-  if (isset($form['#node']->nid)) {
-    $form['actions']['delete'] = array(
-      '#type' => 'item',
-      '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
-    );
-
-    $form['actions_top']['delete'] = array(
-      '#type' => 'item',
-      '#markup' => l(t('Delete'), 'node/' . $form['nid']['#value'] . '/delete'),
-    );
-  }
 
   // Remove title and description from the inner Date field. We do it here in
   // after_build because the inner Date field doesn't exist yet in form_alter().

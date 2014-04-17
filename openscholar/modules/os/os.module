@@ -949,6 +949,32 @@ function os_form_node_form_alter(&$form, $form_state) {
   }
 
   $form['actions_top'] = $form['actions'];
+
+  // Alters action buttons for existing nodes.
+  if (isset($form['#node']->nid, $form['#node']->type)) {
+    // Adds "Delete this post" link specifying node type if available.
+    $text = t('Delete this post');
+    $names = node_type_get_names();
+    if (isset($names[$form['#node']->type])) {
+      $name = strtolower($names[$form['#node']->type]);
+      $text = t('Delete this @name', array('@name' => $name));
+    }
+    $options = array(
+      'attributes' => array(
+        'class' => array('os-delete-link', 'os-' . $form['#node']->type . '-delete-link'),
+      ),
+    );
+    $delete = array(
+      '#type' => 'item',
+      '#markup' => l($text, 'node/' . $form['#node']->nid . '/delete', $options),
+      '#weight' => 10,
+    );
+    $form['actions']['delete'] = $form['actions_top']['delete'] = $delete;
+
+    // Hides "Cancel" button entirely from existing node edit forms.
+    hide($form['actions']['cancel']);
+    hide($form['actions_top']['cancel']);
+  }
 }
 
 /**

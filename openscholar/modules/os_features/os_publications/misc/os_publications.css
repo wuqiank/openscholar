@@ -42,6 +42,16 @@ a.cite-pop {
   cursor: default;
 }
 
+/* @TODO make general for all node delete links? */
+.node-biblio-form .os-biblio-delete-link {
+  color: #f26b50;
+  text-decoration: underline;
+}
+
+.node-biblio-form .form-actions {
+  display: flex;
+}
+
 #edit-biblio-year-coded, .form-item-biblio-year-coded, .form-item-biblio-year {
   display: inline;
 }
@@ -154,8 +164,4 @@ width: 75%;
 display: inline-block;
 vertical-align: top;
 }
-
-
-
-
 
