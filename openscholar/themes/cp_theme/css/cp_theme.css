@@ -168,6 +168,10 @@ a.form-cancel:hover {
   position: fixed !important;
 }
 
+div.ctools-modal-content .form-item label {
+float: none;
+}
+
 div.ctools-modal-content {
   color: #555;
   margin: 0;
@@ -460,6 +464,9 @@ fieldset .fieldset-legend {text-transform:none;}
   display: none;
 }
 
+table#edit-biblio-contributors {
+	width:640px;
+}
 
 .field-name-og-vocabulary table,
 .field-name-og-vocabulary table th,
