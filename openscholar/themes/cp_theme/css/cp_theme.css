@@ -474,6 +474,10 @@ table#edit-biblio-contributors td {
 	padding: 0;
 }
 
+#edit-biblio-contributors .draggable {
+	height: 40px;
+}
+
 #edit-og-vocabulary input.form-submit,
 .node-biblio-form #edit-field-biblio-extra input.form-submit,
 #edit-biblio-authors #edit-add-more {
