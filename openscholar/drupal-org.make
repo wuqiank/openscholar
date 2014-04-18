@@ -1,7 +1,7 @@
 ; Drupal.org MakeFile for OpenScholar
 core = 7.x
 api = 2
-
+;1
 projects[admin_menu][subdir] = "contrib"
 projects[admin_menu][version] = 3.0-rc1
 
