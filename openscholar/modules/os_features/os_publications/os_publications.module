@@ -363,7 +363,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
       return;
       // Journal article.
     case 102:
-      $form['biblio_tabs'][2]['biblio_secondary_title']['#description'] = t('Tile of the Journal, e.g. Nature');
+      $form['biblio_tabs'][2]['biblio_secondary_title']['#description'] = t('Title of the Journal, e.g. Nature');
       break;
       // Patents.
     case 119:
