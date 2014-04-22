@@ -368,7 +368,6 @@ function os_files_form_file_entity_edit_alter(&$form, &$form_state){
   $form['media_description']['#access'] = FALSE;
 
   $form['replace_upload']['#weight'] = 10;
-  $form['replace_upload']['#upload_validators']['file_validate_extensions'] = array('png');
   $form['actions']['submit']['#submit'][] = 'os_files_edit_file_invalidate_cache';
 
   $form['field_file_image_alt_text']['#access'] = FALSE;
