@@ -604,6 +604,7 @@ function os_publications_alter_year_field(&$form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => $form['biblio_year']['#title'],
     '#collapsible' => FALSE,
+    '#weight' => $form['biblio_year']['#weight'],
   );
 
   // Form element changes - wrap in a fieldset with the checkboxes element, and
