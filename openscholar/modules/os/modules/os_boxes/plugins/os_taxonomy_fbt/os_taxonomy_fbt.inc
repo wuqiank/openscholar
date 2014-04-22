@@ -195,6 +195,9 @@ class os_taxonomy_fbt extends os_boxes_default {
         }
       }
     }
+    else if (is_string($bundles)) {
+      $this->options['bundles'] = array($bundles);
+    }
   }
 
   /**
