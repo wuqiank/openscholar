@@ -680,6 +680,12 @@ function os_publications_biblio_rearrange($form, $form_state) {
   $form['author']['date']['date']['#title'] = '';
   $form['author']['date']['date']['#description'] = '';
 
+  // Change labels and descriptions in the path fieldset.
+  $form['path']['#title'] = t('URL');
+  $form['path']['alias']['#title'] = t('URL');
+  $form['path']['pathauto']['#title'] = t('Generate automatic URL');
+  $form['path']['pathauto']['#description'] = t('Uncheck this to create a custom URL');
+
   return $form;
 }
 
