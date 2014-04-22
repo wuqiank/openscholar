@@ -403,7 +403,12 @@ function os_comments_form_node_form_alter(&$form, $form_state, $form_id) {
   // Hides settings for inappropriate comment types
   $node = $form['#node'];
   $source = comment_sources_get_source($node);
-  $action = $source ? 'change or disable' : 'enable';
+
+  // If no sources - hide the form element.
+  if (!$source) {
+    unset($form['comment_settings']);
+    return;
+  }
 
   // Prepare description with link to app settings page for this app.
   // If vsite is enabled and app can be determined from node type,
@@ -449,17 +454,18 @@ function os_comments_form_node_form_alter(&$form, $form_state, $form_id) {
     }
   }
 
-  $change_settings_text = t('Go to <a href="@href" target="_blank">@settings</a> to @action comments on new posts.', array('@href' => $app_settings_path, '@action' => $action, '@settings' => $settings));
+  $change_settings_text = t('Go to <a href="@href" target="_blank">@settings</a> to change or disable comments on new posts.', array('@href' => $app_settings_path, '@settings' => $settings));
   $form['comment_settings']['os_comments'] = array(
     '#markup' => "<br/>$change_settings_text",
     '#weight' => 10,
   );
 
   $form['comment_settings']['no_comment']['#options'] = empty($form['comment_settings']['no_comment']['#options']) ? array() : $form['comment_settings']['no_comment']['#options'];
+
+  // Change title to "Private comments".
   if ($source == 'comment' && isset($form['comment_settings']['comment_status']['#title'])) {
     $form['comment_settings']['comment_status']['#title'] = t('Private comments');
   }
-}
 
 /**
  * Implements hook_form_FORM_ID_alter() for comment_form.
