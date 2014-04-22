@@ -13,12 +13,12 @@ Drupal.behaviors.osPublications = {
     // Handle year fields.
     var codedYear = $("input[name='biblio_year_coded']");
     var yearField = $("#edit-biblio-year");
-    var yearGroup = $("#edit-biblio-year-group");
 
     // Add validation warning.
-    yearGroup.after('<div id="biblio-year-group-validate">' + Drupal.t('Input must be in the form YYYY. Only numerical digits are allowed.') + '</div>');
     var yearWarning = $("#biblio-year-group-validate");
-    yearWarning.css('visibility', 'hidden');
+    if (!yearField.hasClass('error')) {
+      yearWarning.css('visibility', 'hidden');
+    }
     yearWarning.css('color', 'red');
 
     // Allowed year input.
