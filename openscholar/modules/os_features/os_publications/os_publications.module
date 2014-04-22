@@ -548,6 +548,10 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   unset($form['biblio_tabs']);
 
+  // Change labels in the menu fieldset.
+  $form['os_menu']['#title'] = t('Menu options');
+  $form['os_menu']['enabled']['#title'] = t('Place it in a menu');
+
   // Change labels and descriptions in node author fieldset.
   $form['author']['#title'] = t('Post Created/Edited By');
   $form['author']['name']['#title'] = t('Posted by');
