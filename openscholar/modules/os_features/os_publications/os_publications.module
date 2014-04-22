@@ -628,6 +628,9 @@ function os_publications_alter_year_field(&$form, &$form_state) {
     '#default_value' => $year_coded_value,
   );
 
+  // Add validation message for validating the field via JS.
+  $form['biblio_year_group']['#suffix'] = '<div id="biblio-year-group-validate">' . t('Input must be in the form YYYY. Only numerical digits are allowed.') . '</div>';
+
   // Remove original form element.
   unset($form['biblio_year']);
 
