@@ -413,6 +413,11 @@ function theme_os_taxonomy_vocabulary_item_list($variables) {
   // Arrange term in an array with information about inner tree.
   $path_prefix = '';
 
+  // If only one bundle is selected put it in an array.
+  if (is_string($options['bundles'])) {
+    $options['bundles'] = array($options['bundles']);
+  }
+
   // If there is more than 0 bundles using this vocabulary.
   os_taxonomy_get_prefix_path($options);
   $data = array();
@@ -899,7 +904,7 @@ function os_taxonomy_build_child_item($items, $parent, $options) {
         continue;
       }
 
-      if (!os_taxonomy_is_tagged_tree($item, $depth, $options['bundles'])) {
+      if (!os_taxonomy_is_tagged_tree($item, $options['bundles'], $depth)) {
         // All children are empty.
         continue;
       }
@@ -1246,7 +1251,7 @@ function os_taxonomy_count_attached_entities_query_object($tid, $bundles = array
     $query->condition($node_published);
   }
 
-  if (!empty($bundles)) {
+  if (!empty($bundles) && is_array($bundles) && reset($bundles) != '--all--') {
     $query->condition('ogv.bundle', $bundles, 'IN');
   }
 
@@ -1516,7 +1521,7 @@ function _os_taxonomy_bundle_entities($bundles = array()) {
 
   foreach ($bundle_functions as $entity => $func) {
     $entity_bundles = array_keys($func(TRUE));
-    if (array_intersect($entity_bundles, $bundles)) {
+    if (array_intersect($entity_bundles, $bundles) || reset($bundles) == '--all--') {
       $ret[] = $entity;
     }
   }
