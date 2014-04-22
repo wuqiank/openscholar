@@ -466,6 +466,7 @@ function os_comments_form_node_form_alter(&$form, $form_state, $form_id) {
   if ($source == 'comment' && isset($form['comment_settings']['comment_status']['#title'])) {
     $form['comment_settings']['comment_status']['#title'] = t('Private comments');
   }
+}
 
 /**
  * Implements hook_form_FORM_ID_alter() for comment_form.
