@@ -410,11 +410,62 @@ function os_comments_form_node_form_alter(&$form, $form_state, $form_id) {
     return;
   }
 
+  // Prepare description with link to app settings page for this app.
+  // If vsite is enabled and app can be determined from node type,
+  // then the link will go to the overlayed app settings form,
+  // Othewise, it will default to CP > Build > Apps.
+
+  // Default values in case we don't find the app info.
+  $app = '';
+  $settings = t('App settings');
+
+  $vsite_enabled = module_exists('vsite');
+  if ($vsite_enabled && $purl = vsite_get_purl()) {
+    $app_settings_path = "/$purl/cp/build";
+  }
+  else {
+    $app_settings_path = '/cp/build';
+  }
+
+  // Try to find this app's info...
+  $app_info = os_app_info();
+  foreach ($app_info as $app => $info) {
+    if (!empty($info['nodetypes']) && in_array($node->type, $info['nodetypes'])) {
+      // We found the app! Break now and $app is the module's machine name.
+      break;
+    }
+  }
+
+  // If we found the app, format a nice link for the end user.
+  if ($app) {
+    $settings_path = "cp/build/features/$app";
+    $menu_item = menu_get_item($settings_path);
+    // Include the App Settings page name if available
+    if (isset($menu_item['title']) && $menu_item['path'] == $settings_path) {
+      $settings = $menu_item['title'];
+    }
+    // Multi tenant
+    if ($purl) {
+      $app_settings_path = "/$purl/cp/build/#overlay=$purl/cp/build/features/$app";
+    }
+    // Single tenant
+    else {
+      $app_settings_path = "/cp/build/#overlay=cp/build/features/$app";
+    }
+  }
+
+  $change_settings_text = t('Go to <a href="@href" target="_blank">@settings</a> to change or disable comments on new posts.', array('@href' => $app_settings_path, '@settings' => $settings));
+  $form['comment_settings']['os_comments'] = array(
+    '#markup' => "<br/>$change_settings_text",
+    '#weight' => 10,
+  );
+
+  $form['comment_settings']['no_comment']['#options'] = empty($form['comment_settings']['no_comment']['#options']) ? array() : $form['comment_settings']['no_comment']['#options'];
+
   // Change title to "Private comments".
   if ($source == 'comment' && isset($form['comment_settings']['comment_status']['#title'])) {
     $form['comment_settings']['comment_status']['#title'] = t('Private comments');
   }
-}
 
 /**
  * Implements hook_form_FORM_ID_alter() for comment_form.
