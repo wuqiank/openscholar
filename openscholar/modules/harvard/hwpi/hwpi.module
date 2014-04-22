@@ -308,7 +308,7 @@ function hwpi_theme_set_defaults() {
 }
 
 /**
- * 
+ * Implements hook_vsite_register_notify_author_body_text_alter().
  */
 function hwpi_vsite_register_notify_author_body_text_alter(&$body_text) {
   $body_text = 'Hi !username,\n\n'
