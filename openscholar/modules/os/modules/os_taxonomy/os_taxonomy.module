@@ -1825,3 +1825,31 @@ function os_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state, $form_i
     }
   }
 }
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Add expand/ collapse to a tree widget.
+ */
+function os_taxonomy_field_widget_form_alter(&$element, &$form_state, $context) {
+  if ($context['field']['field_name'] != OG_VOCAB_FIELD) {
+    // Not an OG vocabulary field.
+    return;
+  }
+
+  if ($context['instance']['widget']['type'] != 'term_reference_tree') {
+    // Not a tree widget.
+    return;
+  }
+
+  $items = array(
+    '<a href="#" class="expand">' . t('Expand Terms') . '</a>',
+    '<a href="#" class="collapse">' . t('Collapse Terms') . '</a>',
+  );
+
+  $attributes['class'] = 'toggle-wrapper';
+
+  $element['#prefix'] = theme('item_list', array('items' => $items, 'attributes' => $attributes));
+  $element['#attached']['css'][] = drupal_get_path('module', 'os_taxonomy') . '/os_taxonomy.css';
+  $element['#attached']['js'][] = drupal_get_path('module', 'os_taxonomy') . '/os_taxonomy.js';
+}
