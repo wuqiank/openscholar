@@ -1837,7 +1837,6 @@ function os_taxonomy_field_widget_form_alter(&$element, &$form_state, $context) 
     return;
   }
 
-
   $items = array(
     '<a href="#" class="expand">' . t('Expand Terms') . '</a>',
     '<a href="#" class="collapse">' . t('Collapse Terms') . '</a>',
@@ -1847,4 +1846,5 @@ function os_taxonomy_field_widget_form_alter(&$element, &$form_state, $context) 
 
   $element['#prefix'] = theme('item_list', array('items' => $items, 'attributes' => $attributes));
   $element['#attached']['css'][] = drupal_get_path('module', 'os_taxonomy') . '/os_taxonomy.css';
+  $element['#attached']['js'][] = drupal_get_path('module', 'os_taxonomy') . '/os_taxonomy.js';
 }
