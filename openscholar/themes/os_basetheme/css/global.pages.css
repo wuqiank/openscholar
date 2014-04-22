@@ -813,6 +813,46 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
  	right: 50px;
  }	
  
+ /** MODAL OVERRIDES for OS ORG ROADMAP PAGE **/
+.page-roadmap .ui-dialog-titlebar {
+padding: 7px 10px 17px;
+position: relative;
+white-space: nowrap;
+z-index: 100;
+background: #EFEFEF !important;
+border-bottom: 2px solid #C4C2C2;
+height: 24px;
+}
+
+
+.page-roadmap .ui-dialog-title {
+float: left;
+margin: 0;
+padding: 0.3em 0;
+color: #666;
+font-size: 24px;
+font-weight: normal;
+font: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+}
+
+
+.page-roadmap .roadmap-gs-link {
+display:block;
+margin-bottom:20px;
+}
+
+.page-roadmap  .ui-dialog .ui-dialog-content {
+padding: 2em;
+}
+
+
+.page-roadmap .ui-icon-closethick {
+background: url('../images/icon-close-window.png') no-repeat;
+width: 30px;
+height: 30px;
+position: relative;
+margin: -5px -20px;
+}
  
 /** MEDIA BROWSER MODAL OVERRIDES **/
 	
