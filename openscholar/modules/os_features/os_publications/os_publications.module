@@ -580,9 +580,6 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Add JS for hover tooltips in biblio node form.
   $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications_biblio_form_hover.js';
-
-
-  dpm($form);
 }
 
 /**
