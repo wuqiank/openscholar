@@ -364,6 +364,9 @@ projects[stringoverrides][subdir] = "contrib"
 projects[strongarm][subdir] = "contrib"
 projects[strongarm][version] = 2.0-rc1
 
+projects[term_reference_tree][subdir] = "contrib"
+projects[term_reference_tree][version] = 1.10
+
 projects[title][subdir] = "contrib"
 projects[title][version] = 1.0-alpha7
 
