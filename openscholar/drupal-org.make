@@ -1,7 +1,7 @@
 ; Drupal.org MakeFile for OpenScholar
 core = 7.x
 api = 2
-;2
+
 projects[admin_menu][subdir] = "contrib"
 projects[admin_menu][version] = 3.0-rc1
 
@@ -285,6 +285,8 @@ projects[og_vocab][subdir] = "contrib"
 projects[og_vocab][version] = 1.2
 projects[og_vocab][patch][] = "https://drupal.org/files/issues/2224007-og-vocab-set-value-1.patch"
 projects[og_vocab][patch][] = "https://drupal.org/files/issues/og-vocab-reset-to-alpahbetical-2174907-4.patch"
+projects[og_vocab][patch][] = "https://drupal.org/files/issues/og-vocab-widget-settings-from-entity.patch"
+projects[og_vocab][patch][] = "https://drupal.org/files/issues/hide-empty-vocab-from-form.patch"
 
 projects[olark][subdir] = "contrib"
 projects[olark][version] = 1.0-beta1
@@ -365,7 +367,7 @@ projects[strongarm][subdir] = "contrib"
 projects[strongarm][version] = 2.0-rc1
 
 projects[term_reference_tree][subdir] = "contrib"
-projects[term_reference_tree][version] = 1.10
+projects[term_reference_tree][version] = 1.x-dev
 projects[term_reference_tree][patch][] = "https://drupal.org/files/issues/2235057-term-er-3.patch"
 
 projects[title][subdir] = "contrib"
