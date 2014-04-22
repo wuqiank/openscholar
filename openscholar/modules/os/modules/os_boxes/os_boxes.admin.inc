@@ -87,6 +87,9 @@ function os_boxes_widget_submit($form, $form_state) {
         $block = array_shift($t);
         // do this or else notices will throw. absolutely nothing is done with it but whatever
         $block->region = 'dummy';
+        $block->module = 'dummy';
+        $block->delta = 'dummy';
+        $block->subject = 'dummy';
         $array         = array('#theme' => 'block', '#block' => $block);
         $html          = drupal_render($array);
         $target        = '#boxes-box-' . $box->delta;
