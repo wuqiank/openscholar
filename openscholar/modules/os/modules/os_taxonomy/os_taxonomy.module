@@ -899,7 +899,7 @@ function os_taxonomy_build_child_item($items, $parent, $options) {
         continue;
       }
 
-      if (!os_taxonomy_is_tagged_tree($item, $depth, $options['bundles'])) {
+      if (!os_taxonomy_is_tagged_tree($item, $options['bundles'], $depth)) {
         // All children are empty.
         continue;
       }
