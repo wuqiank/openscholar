@@ -580,6 +580,9 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   // Add JS for hover tooltips in biblio node form.
   $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications_biblio_form_hover.js';
+
+
+  dpm($form);
 }
 
 /**
@@ -671,6 +674,12 @@ function os_publications_biblio_rearrange($form, $form_state) {
   // after_build because the inner Date field doesn't exist yet in form_alter().
   $form['author']['date']['date']['#title'] = '';
   $form['author']['date']['date']['#description'] = '';
+
+  // Change labels and descriptions in the path fieldset.
+  $form['path']['#title'] = t('URL');
+  $form['path']['alias']['#title'] = t('URL');
+  $form['path']['pathauto']['#title'] = t('Generate automatic URL');
+  $form['path']['pathauto']['#description'] = t('Uncheck this to create a custom URL');
 
   return $form;
 }

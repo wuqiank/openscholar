@@ -68,3 +68,26 @@ Drupal.behaviors.osPublications = {
     });
   }
 };
+
+(function ($) {
+  // Override pathauto.js implementation to change summaries of the path field.
+  Drupal.behaviors.pathFieldsetSummaries = {
+    attach: function (context) {
+      $('fieldset.path-form', context).drupalSetSummary(function (context) {
+        var path = $('.form-item-path-alias input').val();
+        var automatic = $('.form-item-path-pathauto input').attr('checked');
+
+        if (automatic) {
+          return Drupal.t('Automatic URL');
+        }
+        if (path) {
+          return Drupal.t('URL: @alias', { '@alias': path });
+        }
+        else {
+          return Drupal.t('No URL');
+        }
+      });
+    }
+  };
+
+})(jQuery);
