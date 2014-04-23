@@ -303,6 +303,12 @@ font-weight: bold;}
  	right: 50px;
 }
 
+.page-node-add.page-node-add-biblio #overlay,
+.page-node-edit.node-type-biblio #overlay {
+max-width: 930px;
+min-width: 850px;
+}
+
  /* OVERRIDES WITH TABS IN MODAL - EXPERIMENTAL */
 #overlay-tabs {
      border-bottom: 1px solid #CCCCCC;
@@ -465,7 +471,8 @@ fieldset .fieldset-legend {text-transform:none;}
 }
 
 table.biblio-contributors {
-	width:640px;
+	min-width: 550px;
+	max-width: 650px;
 }
 
 .field-name-og-vocabulary table,
@@ -564,12 +571,12 @@ margin-right: 8px;
 	display:inline-block;
 	margin-right:15px;
 	vertical-align: top;
-	width:170px;
+	width:165px;
 }
 
 .form-item-biblio-url,
 .form-item-biblio-url-title {
-	width:290px;
+	width:255px;
 }
 
 .form-item-biblio-url input.form-text,
