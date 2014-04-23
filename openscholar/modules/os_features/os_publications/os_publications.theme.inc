@@ -344,11 +344,3 @@ function theme_os_publications_sort_tabs($vars) {
   // this arrow points down for some reason, despite being named 'asc'
   return theme('ctools_dropdown', array('title' => 'Sort '.theme('image', array('path' => drupal_get_path('module', 'biblio').'/misc/arrow-asc.png')), 'links' => $links, 'image' => TRUE));
 }
-
-function os_board_most_viewed_data() {
-  $data = array();
-  $data['sites'] = most_viewed_sites();
-  $data['pages'] = most_viewed_pages();
-
-  return $data;
-}
