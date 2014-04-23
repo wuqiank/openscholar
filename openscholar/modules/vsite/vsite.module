@@ -257,6 +257,10 @@ function vsite_form_node_form_alter(&$form, &$form_state, $form_id){
     $form['comment_settings']['#access'] = FALSE;
     $form['comment_settings']['comment']['#default_value'] = 1;
   }
+  else {
+    $form['options']['status']['#title'] = t('Published to this site');
+  }
+
   // Prepares the node form for alias preview with some markup customizations.
   $form['#after_build'][] = 'vsite_node_term_form_after_build';
   drupal_add_js(drupal_get_path('module', 'vsite') . '/vsite.pathauto.js');

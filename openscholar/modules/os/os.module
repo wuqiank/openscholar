@@ -928,7 +928,6 @@ function os_entity_form_after_build($form, $form_state) {
 function os_form_node_form_alter(&$form, $form_state) {
   // Removes "Promoted to front page" checkbox.
   unset($form['options']['promote']);
-  $form['options']['status']['#title'] = t('Published to this site');
 
   // Removes "Revision information" fieldset.
   $form['revision_information']['#access'] = FALSE;
