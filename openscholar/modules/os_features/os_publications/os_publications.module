@@ -255,38 +255,41 @@ function _os_publications_filter_by_term(QueryAlterableInterface $query) {
 /**
  * Replaces biblio theme functions with our own.
  */
-function os_publications_theme_registry_alter(&$reg) {
-  $reg['biblio_tabular'] = array_merge($reg['biblio_tabular'], array(
+function os_publications_theme_registry_alter(&$theme_registry) {
+  $theme_registry['os_publications_dnd_upload_droppable_area_image'] = $theme_registry['dnd_upload_droppable_area_image'];
+  $theme_registry['os_publications_dnd_upload_droppable_area_image']['path'] = drupal_get_path('module', 'os_publications') . '/templates';
+
+  $theme_registry['biblio_tabular'] = array_merge($theme_registry['biblio_tabular'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_tabular',
     ));
-  $reg['biblio_tabular']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_tabular']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
-  $reg['biblio_export_links'] = array_merge($reg['biblio_export_links'], array(
+  $theme_registry['biblio_export_links'] = array_merge($theme_registry['biblio_export_links'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_export_links',
     ));
-  $reg['biblio_export_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_export_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
-  $reg['biblio_contributors'] = array_merge($reg['biblio_contributors'], array(
+  $theme_registry['biblio_contributors'] = array_merge($theme_registry['biblio_contributors'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_contributors',
     ));
-  $reg['biblio_contributors']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_contributors']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
-  $reg['biblio_download_links'] = array_merge($reg['biblio_download_links'], array(
+  $theme_registry['biblio_download_links'] = array_merge($theme_registry['biblio_download_links'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_download_links',
     ));
-  $reg['biblio_download_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_download_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
   //Override publications by year box so biblio years display submitted/inpress/etc
-  $reg['views_view_summary__publication_years__block'] = $reg['views_view_summary'];
-  $reg['views_view_summary__publication_years__block']['preprocess functions'][] = 'theme_os_publications_biblio_year_row';
+  $theme_registry['views_view_summary__publication_years__block'] = $theme_registry['views_view_summary'];
+  $theme_registry['views_view_summary__publication_years__block']['preprocess functions'][] = 'theme_os_publications_biblio_year_row';
 }
 
 /**
@@ -577,7 +580,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['publication_extras']['biblio_tabs'][7]['biblio_notes']['#attributes']['class'] = $wysiwyg_classes;
 
   // Adding post render function for the image field.
-  $form['field_biblio_image']['#post_render'][] = 'os_publications_biblio_image_post_render';
+  $form['field_biblio_image']['#after_build'][] = 'os_publications_biblio_image_after_build';
 
   // Add CSS file for file upload.
   $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
@@ -690,9 +693,12 @@ function os_publications_biblio_rearrange($form, $form_state) {
 }
 
 /**
- * Post render; Alter markup of the biblio form.
+ * After build; Alter markup of the biblio form.
  */
-function os_publications_biblio_image_post_render($element) {
+function os_publications_biblio_image_after_build($element) {
+  $element[LANGUAGE_NONE][0]['droppable_area']['#theme'] = 'os_publications_dnd_upload_droppable_area_image';
+  return $element;
+
   // Add popup of allowed file type and size. The text for the allowed types and
   // size are in the field description so just putting it into the element's
   // suffix doesn't work.
