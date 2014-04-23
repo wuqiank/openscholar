@@ -44,7 +44,7 @@ class os_boxes_accordion extends os_boxes_widget_collection {
               'os_boxes' => array(
                 'accordion' => array(
                   $this->delta => array(
-                    'active' => $this->options['collapsed']?false:0,
+                    'active' => $this->options['collapsed'] ? FALSE : 0,
                     'delta' => $this->delta,
                   )
                 )
