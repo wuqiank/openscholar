@@ -55,7 +55,6 @@ class os_boxes_accordion extends os_boxes_widget_collection {
       )
     );
 
-
     foreach ($this->options['widgets'] as $k => $w) {
       $block_output = $this->render_widget($k);
       unset($block_output['#theme_wrappers']);
