@@ -229,16 +229,11 @@ function theme_os_publications_export_links($variables) {
 }
 
 /**
- *
- * @param $form
- *
- * @return unknown_type
+ * Overrides theme_biblio_contributors().
  */
 function theme_os_publications_contributors($variables) {
   $form         = $variables['form'];
   $rows         = array();
-  $display_role = TRUE;
-  $headers      = array('', t('Name'), t('Role'), t('Weight'));
   drupal_add_tabledrag($form['#id'], 'order', 'sibling', 'rank');
 
   foreach (element_children($form) as $key) {
@@ -258,7 +253,7 @@ function theme_os_publications_contributors($variables) {
     $row[] = drupal_render($form[$key]['rank']);
     $rows[] = array('data' => $row, 'class' => array('draggable'));
   }
-  $output = theme('table', array('rows' => $rows, 'attributes' => array('id' => $form['#id'])));
+  $output = theme('table', array('rows' => $rows, 'attributes' => array('id' => $form['#id'], 'class' => 'biblio-contributors')));
   //$output .= drupal_render_children($form);
   return $output;
 }

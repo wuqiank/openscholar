@@ -464,7 +464,7 @@ fieldset .fieldset-legend {text-transform:none;}
   display: none;
 }
 
-table#edit-biblio-contributors {
+table.biblio-contributors {
 	width:640px;
 }
 
@@ -476,9 +476,9 @@ table#field-biblio-extra-values th,
 #edit-biblio-authors table,
 #edit-biblio-authors table tr,
 #edit-biblio-authors table,
-table#edit-biblio-contributors,
-table#edit-biblio-contributors tr.odd,
-table#edit-biblio-contributors tr.even {
+table.biblio-contributors,
+table.biblio-contributors tr.odd,
+table.biblio-contributors tr.even {
 	border:none;
 	background:#FFF;
 	margin:0;
@@ -490,11 +490,11 @@ table#field-biblio-extra-values td {
 }
 
 #edit-biblio-authors table td,
-table#edit-biblio-contributors td {
+table.biblio-contributors td {
 	padding: 0;
 }
 
-#edit-biblio-contributors .draggable {
+.biblio-contributors .draggable {
 	height: 40px;
 }
 
