@@ -112,8 +112,8 @@ function theme_os_publications_tabular(&$vars) {
   }
 
   // Add label to the table of uploaded files.
-  $field_upload = '<label class="biblio-download-links-label">' . t('Download') .'</label><div class="biblio-upload-wrapper">' . $field_upload . '</div>';
-  $output .= '<h3>Citation:</h3>' . $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
+  $field_upload = '<div class="biblio-upload-wrapper"><label class="biblio-download-links-label">' . t('Download') .'</label>' . $field_upload . '</div>';
+  $output .= $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
 
   // Move publication image up under the citation.
   $book_images = field_get_items('node',$node,'field_biblio_image', $node->language);
@@ -198,7 +198,7 @@ function _os_publications_plain_citation($node) {
   }
 }', 'inline');
 
-  $citation = "<div class=\"biblio-citation\" onclick=\"if (event.target) { selectText(event.target); } else{ selectText(this);} \">{$citation}</div>";
+  $citation = "<h3>Citation:</h3><div class=\"biblio-citation\" onclick=\"if (event.target) { selectText(event.target); } else{ selectText(this);} \">{$citation}</div>";
 
   return $citation;
 }

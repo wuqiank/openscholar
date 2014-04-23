@@ -337,10 +337,7 @@ body.node-type-biblio .biblio-export {
   }
   
 /** PLACES THE ATTACHED FILES TABLE NEXT TO THE CITATION DIV IN PUB FULL PAGE VIEW **/
-.page-node.node-type-biblio #biblio-node h3:first-of-type {
-	margin-left: 23%;
-}
-	
+
 .page-node.node-type-biblio .biblio-upload-wrapper {
 width: 23%;
 display: inline-block;

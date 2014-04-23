@@ -184,16 +184,10 @@ class os_taxonomy_fbt extends os_boxes_default {
       return;
     }
 
-    // Defaults to all types, but tries to find a non-empty value if array.
-    $bundles = $this->options['bundles'];
-    $this->options['bundles'] = FALSE;
-    if (is_array($bundles)) {
-      foreach ($bundles as $key => $value) {
-        if (!empty($value)) {
-          $this->options['bundles'] = $value;
-          break;
-        }
-      }
+    // The user can select only one bundle at a time there for when there is
+    // multiple bundles we need to select the first one.
+    if (is_array($this->options['bundles'])) {
+      $this->options['bundles'] = reset($this->options['bundles']);
     }
   }
 

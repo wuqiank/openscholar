@@ -548,6 +548,10 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
 
   unset($form['biblio_tabs']);
 
+  // Change labels in the menu fieldset.
+  $form['os_menu']['#title'] = t('Menu options');
+  $form['os_menu']['enabled']['#title'] = t('Place it in a menu');
+
   // Change labels and descriptions in node author fieldset.
   $form['author']['#title'] = t('Post Created/Edited By');
   $form['author']['name']['#title'] = t('Posted by');
@@ -604,6 +608,7 @@ function os_publications_alter_year_field(&$form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => $form['biblio_year']['#title'],
     '#collapsible' => FALSE,
+    '#weight' => $form['biblio_year']['#weight'],
   );
 
   // Form element changes - wrap in a fieldset with the checkboxes element, and
@@ -627,6 +632,9 @@ function os_publications_alter_year_field(&$form, &$form_state) {
     '#weight' => 20,
     '#default_value' => $year_coded_value,
   );
+
+  // Add validation message for validating the field via JS.
+  $form['biblio_year_group']['#suffix'] = '<div id="biblio-year-group-validate">' . t('Input must be in the form YYYY. Only numerical digits are allowed.') . '</div>';
 
   // Remove original form element.
   unset($form['biblio_year']);
@@ -662,7 +670,7 @@ function os_publications_biblio_rearrange($form, $form_state) {
   ) + $form['biblio_type'];
   hide($form['biblio_type']);
 
-  $form['biblio_type_new']['#prefix'] = '<h1 class="biblio-type-prefix">' . t ('Create') . '</h1>';
+  $form['biblio_type_new']['#prefix'] = '<h1 class="biblio-type-prefix">' . t ('Type') . '</h1>';
   $form['biblio_type_new']['#title'] = '';
 
   $form['biblio_authors']['add_more']['#value'] = t('Add person');
@@ -671,6 +679,12 @@ function os_publications_biblio_rearrange($form, $form_state) {
   // after_build because the inner Date field doesn't exist yet in form_alter().
   $form['author']['date']['date']['#title'] = '';
   $form['author']['date']['date']['#description'] = '';
+
+  // Change labels and descriptions in the path fieldset.
+  $form['path']['#title'] = t('URL');
+  $form['path']['alias']['#title'] = t('URL');
+  $form['path']['pathauto']['#title'] = t('Generate automatic URL');
+  $form['path']['pathauto']['#description'] = t('Uncheck this to create a custom URL');
 
   return $form;
 }
