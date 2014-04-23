@@ -22,7 +22,7 @@ Feature:
     Given I am logging in as "john"
      When I edit the node "The Little Prince"
      Then I should see "Author"
-      And I should see "Add author"
+      And I should see "Add person"
 
   @api @first
   Scenario: Verify publications are sorted by the creation date of the node.
@@ -50,7 +50,7 @@ Feature:
      Then I should not see "Export"
       And I go to "john/publications/export/bibtex"
     Then I should get a "403" HTTP response
-  
+
   @api @first
   Scenario: Verify authors page is not available
     Given I go to "/publications/authors"
