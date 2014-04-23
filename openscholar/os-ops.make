@@ -28,3 +28,7 @@ libraries[php-trello][type] = "libraries"
 libraries[php-trello][download][type] = "file"
 libraries[php-trello][download][url] = "http://bitbucket.org/mattzuba/php-trello/get/v1.1.1.zip"
 
+libraries[php-markdown][type] = "libraries"
+libraries[php-markdown][download][type] = "git"
+libraries[php-markdown][download][tag] = "1.4.0"
+libraries[php-markdown][download][url] = "http://github.com/michelf/php-markdown.git"
