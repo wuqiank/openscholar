@@ -1320,37 +1320,38 @@ function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = N
     $query->leftJoin('taxonomy_index', 't', '(ogv.entity_type = :node_order_type AND ogv.entity_id = t.nid)', array(':node_order_type' => 'node'));
     $query->orderBy('t.weight', 'ASC');
   }
-
-  if (count($bundles) == 1){
-    switch(current($bundles)){
-    	case 'biblio':
-    	  $query->leftJoin('biblio', 'b', 'b.vid = n.vid');
-    	  $query->orderBy('b.biblio_year', 'DESC');
-    	  break;
-    	case 'person':
-    	  $query->leftJoin('field_data_field_last_name', 'p', 'p.revision_id = n.vid AND p.bundle = \'person\' AND p.entity_type = \'node\' AND p.language = \'und\' AND p.delta = 0');
-    	  $query->orderBy('p.field_last_name_value', 'ASC');
-    	  break;
+  else {
+    if (count($bundles) == 1){
+      switch(current($bundles)){
+        case 'biblio':
+          $query->leftJoin('biblio', 'b', 'b.vid = n.vid');
+          $query->orderBy('b.biblio_year', 'DESC');
+          break;
+        case 'person':
+          $query->leftJoin('field_data_field_last_name', 'p', 'p.revision_id = n.vid AND p.bundle = \'person\' AND p.entity_type = \'node\' AND p.language = \'und\' AND p.delta = 0');
+          $query->orderBy('p.field_last_name_value', 'ASC');
+          break;
+      }
     }
-  }
 
-  //apply an expensive sort only when it's needed for many bundles.
-  switch (_os_taxonomy_bundle_entities($bundles)) {
-    case array('node'):
-      $query->orderBy('n.sticky', 'DESC');
-      $query->orderBy('n.created', 'DESC');
-      break;
+    // Apply an expensive sort only when it's needed for many bundles.
+    switch (_os_taxonomy_bundle_entities($bundles)) {
+      case array('node'):
+        $query->orderBy('n.sticky', 'DESC');
+        $query->orderBy('n.created', 'DESC');
+        break;
 
-    case array('file'):
-      $query->orderBy('fm.timestamp', 'DESC');
-      break;
+      case array('file'):
+        $query->orderBy('fm.timestamp', 'DESC');
+        break;
 
-    default:
-      //select a date depending on the type of entity, sort by that.  this is slow.
-      $query->addExpression('IF(ogv.entity_type = :node, n.created, fm.timestamp)', 'entity_date', array(':node' => 'node'));
-      $query->orderBy('n.sticky', 'DESC');
-      $query->orderBy('entity_date', 'DESC');
-      break;
+      default:
+        //select a date depending on the type of entity, sort by that.  this is slow.
+        $query->addExpression('IF(ogv.entity_type = :node, n.created, fm.timestamp)', 'entity_date', array(':node' => 'node'));
+        $query->orderBy('n.sticky', 'DESC');
+        $query->orderBy('entity_date', 'DESC');
+        break;
+    }
   }
 
   if ($range) {
