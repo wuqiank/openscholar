@@ -292,7 +292,7 @@ function os_publications_theme_registry_alter(&$reg) {
 /**
  * Alters the biblio form to do a lot of things
  */
-function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
+function os_publications_form_biblio_node_form_alter(&$form, &$form_state) {
   $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.js';
   $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
 
@@ -400,6 +400,8 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
     // Each delta is in the name of the op (e.g. delete_1, delete_2).
     $delta = explode('_', $form_state['values']['op']);
     unset($form['biblio_tabs']['biblio_authors']['biblio_contributors'][$delta[1]]);
+    unset($node->biblio_contributors[$delta[1]]);
+    $form_state['biblio_contrib_count']--;
   }
 
   // Adding remove author button via AJAX.
