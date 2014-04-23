@@ -872,14 +872,12 @@ h1.biblio-type-prefix {
   margin: 18px 10px 0px 0px;
   padding: 0.3em 0;
   color: #666;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: normal;
 }
 
 .form-item-biblio-type select {
-width: 200px;
-height: 30px;
-font-size: 22px;
+font-size: 18px;
 color: #666;
 }
 
