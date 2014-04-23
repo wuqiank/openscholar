@@ -107,12 +107,28 @@ function theme_os_publications_tabular(&$vars) {
   $output .= filter_xss($node->biblio_coins, array('span'));
   $field_upload = '';
   if (isset($vars['node']->field_upload[LANGUAGE_NONE])) {
-    $field_upload .= drupal_render(field_view_field('node', $vars['node'], 'field_upload', 'full'));
+    $build = array(
+      '#type' => 'container',
+      '#attributes' => array(
+        'class' => array(
+          'biblio-upload-wrapper',
+        ),
+      ),
+      'label' => array(
+        '#theme' => 'html_tag',
+        '#tag' => 'label',
+        '#attributes' => array(
+          'class' => 'biblio-download-links-label',
+        ),
+        '#value' => t('Download'),
+      ),
+      'field_upload' => field_view_field('node', $vars['node'], 'field_upload', 'full'),
+    );
+    $field_upload .= drupal_render($build);
     unset($vars['node']->field_upload[LANGUAGE_NONE]);
   }
 
   // Add label to the table of uploaded files.
-  $field_upload = '<div class="biblio-upload-wrapper"><label class="biblio-download-links-label">' . t('Download') .'</label>' . $field_upload . '</div>';
   $output .= $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
 
   // Move publication image up under the citation.
@@ -327,4 +343,12 @@ function theme_os_publications_sort_tabs($vars) {
 
   // this arrow points down for some reason, despite being named 'asc'
   return theme('ctools_dropdown', array('title' => 'Sort '.theme('image', array('path' => drupal_get_path('module', 'biblio').'/misc/arrow-asc.png')), 'links' => $links, 'image' => TRUE));
+}
+
+function os_board_most_viewed_data() {
+  $data = array();
+  $data['sites'] = most_viewed_sites();
+  $data['pages'] = most_viewed_pages();
+
+  return $data;
 }
