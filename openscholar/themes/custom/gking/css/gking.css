@@ -1346,6 +1346,10 @@ vertical-align: top;
 	display: table-cell;
 }
 
+.publication-cover-container {
+	min-width: 150px;
+}
+
 .biblio-upload-wrapper + .pubcontent-wrapper {
 display: block;
 clear: both;
