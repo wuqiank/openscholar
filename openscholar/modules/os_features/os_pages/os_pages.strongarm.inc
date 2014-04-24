@@ -191,13 +191,6 @@ function os_pages_strongarm() {
       'title' => 'Save',
       'hidden' => 0,
     ),
-    'gkplus' => array(
-      'region' => 'right',
-      'weight' => 8,
-      'has_required' => FALSE,
-      'title' => 'Custom theme settings',
-      'hidden' => 0,
-    ),
   );
   $export['nodeformscols_field_placements_page_default'] = $strongarm;
 
