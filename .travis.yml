@@ -15,7 +15,7 @@ env:
 
 before_script:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer global require drush/drush:6.2.0
+  - composer global require drush/drush:6.*@dev
   # Install apache
   - sudo apt-get update
   - sudo apt-get install apache2
