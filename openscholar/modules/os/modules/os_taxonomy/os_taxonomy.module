@@ -1317,7 +1317,7 @@ function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = N
   $query = os_taxonomy_count_attached_entities_query_object($tid, $bundles);
 
   // Order by weight only if "nodeorder" is on and order has been set.
-  if (module_exists('nodeorder') && _os_taxonomy_noderoder_is_set($tid)) {
+  if (module_exists('nodeorder') && _os_taxonomy_noderoder_exists($tid)) {
     $query->leftJoin('taxonomy_index', 't', '(ogv.entity_type = :node_order_type AND ogv.entity_id = t.nid)', array(':node_order_type' => 'node'));
     $query->orderBy('t.weight', 'ASC');
   }
@@ -1379,7 +1379,7 @@ function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = N
  *  TRUE - If an order was set for the given term.
  *  FALSE - Otherwise.
  */
-function _os_taxonomy_noderoder_is_set($tid) {
+function _os_taxonomy_noderoder_exists($tid) {
   // If the weight is not zero, an order for the term has been set.
   $query = db_select('taxonomy_index', 't');
   $query->condition('tid', $tid)
