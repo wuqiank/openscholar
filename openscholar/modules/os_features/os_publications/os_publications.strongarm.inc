@@ -313,6 +313,13 @@ function os_publications_strongarm() {
       'title' => 'Citation Distribute',
       'hidden' => 0,
     ),
+    'gkplus' => array(
+      'region' => 'right',
+      'weight' => 80,
+      'has_required' => FALSE,
+      'title' => 'Custom theme settings',
+      'hidden' => 0,
+    ),
   );
   $export['nodeformscols_field_placements_biblio_default'] = $strongarm;
 

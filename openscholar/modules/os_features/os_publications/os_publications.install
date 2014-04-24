@@ -1164,3 +1164,12 @@ function os_publications_update_7022() {
 
   features_revert($revert);
 }
+
+/**
+ * Updating the nodeformcol settings.
+ */
+function os_publications_update_7023() {
+  $revert = array('os_publications' => array('variable'));
+
+  features_revert($revert);
+}
