@@ -255,38 +255,42 @@ function _os_publications_filter_by_term(QueryAlterableInterface $query) {
 /**
  * Replaces biblio theme functions with our own.
  */
-function os_publications_theme_registry_alter(&$reg) {
-  $reg['biblio_tabular'] = array_merge($reg['biblio_tabular'], array(
+function os_publications_theme_registry_alter(&$theme_registry) {
+  $theme_registry['os_publications_dnd_upload_droppable_area_image'] = $theme_registry['dnd_upload_droppable_area_image'];
+  $theme_registry['os_publications_dnd_upload_droppable_area_image']['path'] = drupal_get_path('module', 'os_publications') . '/templates';
+  $theme_registry['os_publications_dnd_upload_droppable_area_image']['theme path'] = drupal_get_path('module', 'os_publications') . '/templates';
+
+  $theme_registry['biblio_tabular'] = array_merge($theme_registry['biblio_tabular'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_tabular',
     ));
-  $reg['biblio_tabular']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_tabular']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
-  $reg['biblio_export_links'] = array_merge($reg['biblio_export_links'], array(
+  $theme_registry['biblio_export_links'] = array_merge($theme_registry['biblio_export_links'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_export_links',
     ));
-  $reg['biblio_export_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_export_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
-  $reg['biblio_contributors'] = array_merge($reg['biblio_contributors'], array(
+  $theme_registry['biblio_contributors'] = array_merge($theme_registry['biblio_contributors'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_contributors',
     ));
-  $reg['biblio_contributors']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_contributors']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
-  $reg['biblio_download_links'] = array_merge($reg['biblio_download_links'], array(
+  $theme_registry['biblio_download_links'] = array_merge($theme_registry['biblio_download_links'], array(
       'file' => 'os_publications.theme.inc',
       'theme path' => drupal_get_path('module', 'os_publications'),
       'function' => 'theme_os_publications_download_links',
     ));
-  $reg['biblio_download_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
+  $theme_registry['biblio_download_links']['includes'][] = drupal_get_path('module', 'os_publications') . '/os_publications.theme.inc';
 
   //Override publications by year box so biblio years display submitted/inpress/etc
-  $reg['views_view_summary__publication_years__block'] = $reg['views_view_summary'];
-  $reg['views_view_summary__publication_years__block']['preprocess functions'][] = 'theme_os_publications_biblio_year_row';
+  $theme_registry['views_view_summary__publication_years__block'] = $theme_registry['views_view_summary'];
+  $theme_registry['views_view_summary__publication_years__block']['preprocess functions'][] = 'theme_os_publications_biblio_year_row';
 }
 
 /**
@@ -578,7 +582,7 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['publication_extras']['biblio_tabs'][7]['biblio_notes']['#attributes']['class'] = $wysiwyg_classes;
 
   // Adding post render function for the image field.
-  $form['field_biblio_image']['#post_render'][] = 'os_publications_biblio_image_post_render';
+  $form['field_biblio_image']['#after_build'][] = 'os_publications_biblio_image_after_build';
 
   // Add CSS file for file upload.
   $form['#attached']['css'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications.css';
@@ -696,52 +700,12 @@ function os_publications_biblio_rearrange($form, $form_state) {
 }
 
 /**
- * Post render; Alter markup of the biblio form.
+ * After build; Alter markup of the biblio form.
  */
-function os_publications_biblio_image_post_render($element) {
-  // Add popup of allowed file type and size. The text for the allowed types and
-  // size are in the field description so just putting it into the element's
-  // suffix doesn't work.
-  $description = t('For example, book cover, journal cover.');
-  preg_match("'<div class=\"description\">" . $description . "<br />(.*?)</div>'", $element, $match);
-  $file_desc = $match[1];
-  $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop1"><span>Help</span></a><span id="pop1" class="biblio-stylebox1">' . $file_desc . '</span>';
-  $replace = '<div class="description">'. $description . $popup_markup .'</div>';
-  $element = preg_replace("'<div class=\"description\">" . $description . "(.*?)</div>'", $replace, $element);
-
-  // Add popup of a publication display example.
-  $icon = theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/application-pdf.png'));
-  $publication_image = theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/publication-cover.png'));
-  $display_example = '
-  <div class="biblio-dummy-wrapper">
-    <div class="biblio-dummy-image">'
-    . $publication_image .
-    '</div>
-    <div class="biblio-dummy-body">
-      Wand, Jonathan, Gary King and Olivia Lau. 2011.
-      <a>Anchors: Software for Anchoring Vigenttes Data.</a>
-      <em>Jornal of Statistical Software</em>
-      <span>42, no. 3: 1-25.</span>
-    </div>
-    <div class="biblio-dummy-links">
-      <a>Website</a>
-      <a class="biblio-abstract-dummy-link">Abstract</a>
-      <span>
-        <span>'
-          . $icon .
-          '<a>Article</a>
-        </span>
-      </span>
-    </div>
-  </div>
-  ';
-
-  $popup_markup = '<a href="#" class="biblio-pop os-publications-image-help" data-popbox="pop2"><span>Help</span></a><span id="pop2" class="biblio-stylebox2">' . $display_example . '</span>';
-  $find = '<a href="#" class="droppable-browse-button button">
-        Browse      </a>';
-  $replace = $find . $popup_markup;
-  $element = str_replace($find, $replace, $element);
-
+function os_publications_biblio_image_after_build($element) {
+  $element[LANGUAGE_NONE][0]['droppable_area']['#theme'] = 'os_publications_dnd_upload_droppable_area_image';
+  $element[LANGUAGE_NONE][0]['#pdf_image'] = array('#markup' => theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/application-pdf.png')));
+  $element[LANGUAGE_NONE][0]['#cover_image'] = array('#markup' => theme('image', array('path' => drupal_get_path('module', 'os_publications') . '/misc/publication-cover.png')));
   return $element;
 }
 
