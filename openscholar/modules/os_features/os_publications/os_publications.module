@@ -562,12 +562,14 @@ function os_publications_form_biblio_node_form_alter(&$form, $form_state) {
   $form['publication_extras']['biblio_tabs']['biblio_full_text']['#suffix'] = '<div class="description">' . t('You can enter the full text of your article here, although most people upload PDFs instead.') . '</div>';
 
   // Add a datepicker to "Posted on" field.
-  /*
   $form['author']['date']['#type'] = 'date_popup';
   $form['author']['date']['#date_format'] = 'm/d/Y';
   // Decide on the default value. If it's a new publication use today's date.
   $form['author']['date']['#default_value'] = isset($form['#node']->nid) ?  date("Y-m-d", $form['#node']->created) : date("Y-m-d", time());
-  */
+
+  // Set the element max length to NULL won't trigger the normal form validation
+  // for of standard element.
+  $form['author']['date']['#maxlength'] = NULL;
 
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
