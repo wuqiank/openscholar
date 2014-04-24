@@ -854,6 +854,10 @@ position: relative;
 margin: -5px -20px;
 }
  
+.page-roadmap strong:first-child {
+font-size:18px;
+} 
+ 
 /** MEDIA BROWSER MODAL OVERRIDES **/
 	
 
