@@ -129,7 +129,9 @@ function theme_os_publications_tabular(&$vars) {
   }
 
   // Add label to the table of uploaded files.
-  $output .= $field_upload . '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
+  $output .= '<div id="citation-wrapper">' . $citation . '' . theme('biblio_export_links', array('node' => $node)) . '</div>';
+  // Add Upload Div.
+  $output .= $field_upload;
 
   // Move publication image up under the citation.
   $book_images = field_get_items('node',$node,'field_biblio_image', $node->language);
@@ -145,6 +147,9 @@ function theme_os_publications_tabular(&$vars) {
     $output .= $book_output;
   }
 
+  // Wrap all remaining content in a div.
+  $output .= '<div class="pubcontent-wrapper">';
+
   foreach ($rows as $row) {
     if (isset($row[0]['data']) && $row[0]['data']) {
       $output .= "<h3>" . $row[0]['data'] . ":</h3>";
@@ -156,6 +161,9 @@ function theme_os_publications_tabular(&$vars) {
     $output .= '<h3>Full Text</h3>';
     $output .= check_markup($node->body[LANGUAGE_NONE][0]['value'], $node->body[LANGUAGE_NONE][0]['format'], FALSE);
   }
+
+  // End PubContent Wrapper
+  $output .= '</div>';
 
   $output .= '</div>';
 
