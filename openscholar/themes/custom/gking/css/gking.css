@@ -1329,6 +1329,23 @@ margin-top:5px;
   }
 
 /* STYLES THE ATTACHED FILES TABLE IN BIBLIO PAGE VIEW */
+.page-node.node-type-biblio .biblio-upload-wrapper {
+width: 23%;
+float: left;
+}
+
+
+.page-node.node-type-biblio #citation-wrapper {
+width: 73%;
+float: right;
+vertical-align: top;
+}
+
+.pubcontent-wrapper,
+.publication-cover-container {
+	display: table-cell;
+}
+
 .os-files-other-list tr {
 	border: none;
 	background: #D95C00;
