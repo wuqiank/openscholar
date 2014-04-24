@@ -922,11 +922,12 @@ function os_entity_form_after_build($form, $form_state) {
  * Cleans up some advanced settings and places them in a fieldset.
  */
 function os_form_node_form_alter(&$form, $form_state) {
-  //Remove promote option
+  // Removes "Promoted to front page" checkbox.
   unset($form['options']['promote']);
 
-  //Remove revisions option
-  $form['revision_information']['#access'] = false;
+  // Removes "Revision information" fieldset.
+  $form['revision_information']['#access'] = FALSE;
+
 
   $form['path']['pathauto']['#description'] = t('Uncheck this to create a custom alias below.');
   if (isset($form['field_upload']['und']['add_more']['#value'])) {
