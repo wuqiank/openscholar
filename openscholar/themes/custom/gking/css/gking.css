@@ -1346,6 +1346,11 @@ vertical-align: top;
 	display: table-cell;
 }
 
+.biblio-upload-wrapper + .pubcontent-wrapper {
+display: block;
+clear: both;
+}
+
 .os-files-other-list tr {
 	border: none;
 	background: #D95C00;
