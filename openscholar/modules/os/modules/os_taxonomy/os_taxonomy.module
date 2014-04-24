@@ -1316,7 +1316,8 @@ function os_taxonomy_count_attached_entities($tid, $bundles = array()) {
 function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = NULL, $offset = NULL) {
   $query = os_taxonomy_count_attached_entities_query_object($tid, $bundles);
 
-  if (module_exists('nodeorder')) {
+  // Order by weight only if "nodeorder" is on and order has been set.
+  if (module_exists('nodeorder') && _os_taxonomy_noderoder_is_set($tid)) {
     $query->leftJoin('taxonomy_index', 't', '(ogv.entity_type = :node_order_type AND ogv.entity_id = t.nid)', array(':node_order_type' => 'node'));
     $query->orderBy('t.weight', 'ASC');
   }
@@ -1365,6 +1366,29 @@ function os_taxonomy_list_attached_entities($tid, $bundles = array(), $range = N
   }
 
   return $entities;
+}
+
+/**
+ * Helper function; Checks if an order has been set for a given term using
+ * the "nodeorder" module.
+ *
+ * @param $tid
+ *  The term ID to check for.
+ *
+ * @return bool
+ *  TRUE - If an order was set for the given term.
+ *  FALSE - Otherwise.
+ */
+function _os_taxonomy_noderoder_is_set($tid) {
+  // If the weight is not zero, an order for the term has been set.
+  $query = db_select('taxonomy_index', 't');
+  $query->condition('tid', $tid)
+    ->condition('weight', 0, '<>')
+    ->fields('t', array('nid'));
+
+  $result = $query->execute()->rowCount();
+
+  return $result > 0;
 }
 
 /**
