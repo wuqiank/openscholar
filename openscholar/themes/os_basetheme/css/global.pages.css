@@ -814,6 +814,11 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
  }	
  
  /** MODAL OVERRIDES for OS ORG ROADMAP PAGE **/
+
+.page-roadmap .ui-dialog {
+z-index: 500;
+}	
+	
 .page-roadmap .ui-dialog-titlebar {
 padding: 7px 10px 17px;
 position: relative;
@@ -857,6 +862,11 @@ margin: -5px -20px;
 .page-roadmap strong:first-child {
 font-size:18px;
 } 
+
+
+.page-roadmap .ui-dialog-content {
+max-height: 650px !important;
+}
  
 /** MEDIA BROWSER MODAL OVERRIDES **/
 	
