@@ -410,7 +410,9 @@ function os_files_form_file_entity_edit_alter(&$form, &$form_state){
  * After editing a file we need to invalidate the cache of the file entity.
  */
 function os_files_edit_file_invalidate_cache($form, $form_state) {
-  cache_clear_all($form['fid']['#value'], 'cache_entity_file');
+  if (module_exists('entitycache')) {
+    cache_clear_all($form['fid']['#value'], 'cache_entity_file');
+  }
 }
 
 /**
