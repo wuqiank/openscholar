@@ -247,7 +247,7 @@ function os_publications_strongarm() {
     ),
     'os_menu' => array(
       'region' => 'right',
-      'weight' => '4',
+      'weight' => '3',
       'has_required' => FALSE,
       'title' => 'Menu settings',
       'collapsed' => 1,
@@ -308,7 +308,7 @@ function os_publications_strongarm() {
     ),
     'citation_distribute' => array(
       'region' => 'right',
-      'weight' => '3',
+      'weight' => '4',
       'has_required' => FALSE,
       'title' => 'Citation Distribute',
       'hidden' => 0,
