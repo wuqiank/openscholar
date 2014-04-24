@@ -297,6 +297,16 @@ body.node-type-biblio .node-type-biblio .field-field-biblio-image {
 	padding:3px 6px;
 } 
 
+.os-files-other-list tr td.mime {
+	padding:3px;
+} 
+
+
+.os-files-other-list tr td.size {
+	font-size:10px;
+} 
+
+
 .node-teaser.node-type-biblio .itu-attachment-list td {
   padding: 0 .4em;
   }
