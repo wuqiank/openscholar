@@ -1052,7 +1052,7 @@ function os_files_media_token_to_markup_alter(&$element, $tag_info, $settings){
   if (isset($element['content']['#type']) && isset($settings['attributes']['style'])) {
     $element['content']['#attributes']['style'] = $settings['attributes']['style'];
   }
-  
+
   // hide the description field when embedding
   // no one wants it here
   if (!empty($element['content']['media_description'])) {
@@ -1688,6 +1688,9 @@ function os_files_field_formatter_view($entity_type, $entity, $field, $instance,
           $extension = strtolower(substr(strrchr($i['filename'], '.'), 1));
           $href = file_create_url($i['uri']);
           $text = $i['description'] ? $i['description'] : $i['filename'];
+          //Round Filesize to nearest KB
+          $filesize = $i['filesize'] - ($i['filesize'] % DRUPAL_KILOBYTE);
+
           $other[] = array(
             array(
               'data' => theme('file_icon', array(
@@ -1705,7 +1708,7 @@ function os_files_field_formatter_view($entity_type, $entity, $field, $instance,
               )
             ),
             array(
-              'data' => format_size($i['filesize']),
+              'data' => format_size($filesize),
               'class' => array(
                 'size'
               )
