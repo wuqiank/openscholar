@@ -869,7 +869,7 @@ max-height: 650px !important;
 }
 
 
-.page-roadmap .ui-dialog-content strong {
+.page-roadmap .ui-dialog-content strong:first-child {
 display: block;
 margin: 15px 0;
 font-size: 16px;
