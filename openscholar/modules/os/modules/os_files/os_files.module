@@ -1708,7 +1708,7 @@ function os_files_field_formatter_view($entity_type, $entity, $field, $instance,
               )
             ),
             array(
-              'data' => format_size($i['filesize']),
+              'data' => format_size($filesize),
               'class' => array(
                 'size'
               )
