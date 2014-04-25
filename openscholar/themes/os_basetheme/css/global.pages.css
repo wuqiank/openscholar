@@ -867,6 +867,13 @@ font-size:18px;
 .page-roadmap .ui-dialog-content {
 max-height: 650px !important;
 }
+
+
+.page-roadmap .ui-dialog-content strong {
+display: block;
+margin: 15px 0;
+font-size: 16px;
+}
  
 /** MEDIA BROWSER MODAL OVERRIDES **/
 	
