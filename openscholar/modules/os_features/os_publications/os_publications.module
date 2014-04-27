@@ -938,9 +938,16 @@ function os_publications_node_view_alter(&$build, $type) {
       	$build['field_biblio_image']['#access'] = FALSE;
       }
 
-      // Remove the Google Scholar link that appears at the bottom of full view publications.
-      if (isset($build['links']['biblio_google_scholar'])) {
-        unset($build['links']['biblio_google_scholar']);
+      // Remove the following export links from the bottom of the node view.
+      $remove_links = array(
+        'biblio_google_scholar',
+        'biblio_ris',
+        'biblio_rtf',
+      );
+      foreach ($remove_links as $link) {
+        if (isset($build['links'][$link])) {
+          unset($build['links'][$link]);
+        }
       }
       break;
 

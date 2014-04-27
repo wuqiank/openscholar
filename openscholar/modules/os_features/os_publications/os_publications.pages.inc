@@ -112,6 +112,16 @@ function os_publications_export($format = "tagged", $nid = NULL, $popup = FALSE)
     return;
   }
 
+  // Don't allow export of the following types.
+  $formats = array(
+    'ris',
+    'rtf',
+  );
+  if (in_array($format, $formats)) {
+    drupal_access_denied();
+    return;
+  }
+
   module_load_include('inc', 'biblio', 'includes/biblio.import.export');
 
   $title = 'publications';
