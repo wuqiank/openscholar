@@ -112,12 +112,13 @@ function os_publications_export($format = "tagged", $nid = NULL, $popup = FALSE)
     return;
   }
 
-  // Don't allow export of the following types.
-  $formats = array(
-    'ris',
-    'rtf',
+  // Don't allow export of the export types which are not defined.
+  $export_defaults = array(
+    'tagged',
+    'xml',
+    'bibtex',
   );
-  if (in_array($format, $formats)) {
+  if (!in_array($format, variable_get('biblio_export_links', $export_defaults))) {
     drupal_access_denied();
     return;
   }

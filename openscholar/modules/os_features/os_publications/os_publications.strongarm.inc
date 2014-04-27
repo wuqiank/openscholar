@@ -44,10 +44,8 @@ function os_publications_strongarm() {
   $strongarm->name = 'biblio_export_links';
   $strongarm->value = array(
     'bibtex' => 'bibtex',
-    'rtf' => 'rtf',
     'tagged' => 'tagged',
     'xml' => 'xml',
-    'ris' => 'ris',
   );
   $export['biblio_export_links'] = $strongarm;
 
