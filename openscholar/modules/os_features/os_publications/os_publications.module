@@ -410,7 +410,7 @@ function os_publications_form_biblio_node_form_alter(&$form, &$form_state) {
 
   // Adding remove author button via AJAX.
   foreach (array_keys($form['biblio_tabs']['biblio_authors']['biblio_contributors']) as $key) {
-    if (!is_int($key) || !$key) {
+    if (!is_int($key)) {
       continue;
     }
 
