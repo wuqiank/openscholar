@@ -817,6 +817,9 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
 
 .page-roadmap .ui-dialog {
 z-index: 500;
+-webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.4);
+-moz-box-shadow:    5px 5px 5px 0px rgba(50, 50, 50, 0.4);
+box-shadow:         5px 5px 5px 0px rgba(50, 50, 50, 0.4);
 }	
 	
 .page-roadmap .ui-dialog-titlebar {
