@@ -500,6 +500,9 @@ table#field-biblio-extra-values td {
 table.biblio-contributors td {
 	padding: 0;
 }
+#edit-biblio-authors table td.biblio-contributor-type {
+  padding-right: 1em;
+}
 
 .biblio-contributors .draggable {
 	height: 40px;
