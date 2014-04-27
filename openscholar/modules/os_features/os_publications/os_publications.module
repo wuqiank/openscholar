@@ -89,6 +89,17 @@ function os_publications_menu_alter(&$items) {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function os_publications_theme() {
+  return array(
+    'os_publications_preview' => array(
+      'template' => 'os-publication-preview',
+      'path' => drupal_get_path('module', 'os_publications') . '/templates',
+    ),
+  );
+}
+/**
  * Menu access; Make sure publications export can be seen by privileged users
  * only inside a VSite context, to prevent from loading too many nodes.
  */
@@ -706,7 +717,8 @@ function os_publications_biblio_rearrange($form, $form_state) {
 /**
  * After build; Alter markup of the biblio form.
  */
-function os_publications_biblio_image_after_build($element) {
+function os_publications_biblio_image_after_build(&$element) {
+  $element[LANGUAGE_NONE][0]['remove_button']['#prefix'] = theme('os_publications_preview');
   $element[LANGUAGE_NONE][0]['droppable_area']['#theme'] = 'os_publications_dnd_upload_droppable_area_image';
   $popup_text = t('Files must be less than <strong>2 MB</strong>.<br />Allowed file types: <strong>png gif jpg jpeg</strong>');
 
