@@ -404,7 +404,10 @@ function os_publications_form_biblio_node_form_alter(&$form, &$form_state) {
     // Each delta is in the name of the op (e.g. delete_1, delete_2).
     $delta = explode('_', $form_state['values']['op']);
     unset($form['biblio_tabs']['biblio_authors']['biblio_contributors'][$delta[1]]);
-    unset($node->biblio_contributors[$delta[1]]);
+
+    if ($node) {
+      unset($node->biblio_contributors[$delta[1]]);
+    }
     $form_state['biblio_contrib_count']--;
   }
 
