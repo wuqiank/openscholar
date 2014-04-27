@@ -65,4 +65,4 @@ Feature:
       And I edit the node "The Little Prince"
      When I click "Delete this publication"
       And I click "Cancel"
-     Then I should see "Publisher's Version of Publication"
+     Then I should see "Delete this publication"
