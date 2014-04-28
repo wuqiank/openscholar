@@ -105,7 +105,7 @@ function os_events_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'DateIcalIcalcreatorParser',
+      'plugin_key' => 'DateiCalFeedsParser',
       'config' => array(),
     ),
     'processor' => array(
