@@ -974,8 +974,9 @@ color: #444;
 
 
 
-
-
+#edit-url .form-item-biblio-url .description {
+	width: 600px;
+}
 
 
 
