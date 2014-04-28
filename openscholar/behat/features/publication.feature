@@ -61,5 +61,8 @@ Feature:
   @javascript @first @me
   Scenario: Verify user can create a publication.
     Given I am logging in as "admin"
-    And I visit "/john/node/add/biblio"
-    Then I should see "Create Publication"
+     When I visit "/john/node/add/biblio"
+#     And I fill in "title_field[und][0][value]" with "Journal publication"
+     And I fill in "biblio_year" with "2013"
+     And I press "Save"
+     Then I should see "Journal publication"
