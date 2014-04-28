@@ -63,7 +63,6 @@ Feature:
             redirects to the edit form of that node.
     Given I am logging in as "john"
       And I edit the node "The Little Prince"
-      And I should print page
-     When I click "Delete this publication"
+     When I click "Delete this biblio"
       And I click "Cancel"
-     Then I should see "Delete this publication"
+     Then I should see "Delete this biblio"
