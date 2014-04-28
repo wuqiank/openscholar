@@ -532,28 +532,32 @@ border-radius: 0;
 }
 
 .biblio-contributor input.form-submit {
-cursor: pointer;
-padding: 0;
-margin-bottom: 0;
-margin-right: 0;
-color: #5a5a5a;
-text-align: center;
-font-weight: normal;
-font-size: 1em;
-font-family: "Lucida Grande", Verdana, sans-serif;
-border: none;
-border-bottom: none;
-border-left-color: none;
-border-right-color: none;
-background: url(../images/scholarbase-sprite.png) 0 -411px no-repeat;
--moz-border-radius: none;
--webkit-border-radius: none;
-border-radius: none;
-text-indent: 100%;
-white-space: nowrap;
-overflow: hidden;
-width:20px;
-display: inline-block;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 0;
+  margin-right: 0;
+  color: #5a5a5a;
+  text-align: center;
+  font-weight: normal;
+  font-size: 1em;
+  font-family: "Lucida Grande", Verdana, sans-serif;
+  border: none;
+  border-bottom: none;
+  border-left-color: none;
+  border-right-color: none;
+  background: url(../images/scholarbase-sprite.png) 0 -411px no-repeat;
+  -moz-border-radius: none;
+  -webkit-border-radius: none;
+  border-radius: none;
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  width:20px;
+  display: inline-block;
+}
+
+table.biblio-contributors tr:first-child input.form-submit {
+  display: none;
 }
 
 .biblio-contributor input.form-text {
