@@ -101,6 +101,9 @@ class FeatureContext extends DrupalContext {
       $element->fillField('Password', $password);
       $submit = $element->findButton('Log in');
       $submit->click();
+
+      // @todo: We need to reload for some reason, for the login to work.
+      $this->getSession()->reload();
     }
   }
 
@@ -1180,7 +1183,7 @@ class FeatureContext extends DrupalContext {
       new Step\When('I press "Save permissions"'),
     );
   }
-  
+
   /**
    * @Then /^I should verify that the user "([^"]*)" has a role of "([^"]*)" in the group "([^"]*)"$/
    */

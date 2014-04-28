@@ -61,6 +61,5 @@ Feature:
   @javascript @first @me
   Scenario: Verify user can create a publication.
     Given I am logging in as "admin"
-    When I reload the page
     And I visit "/john/node/add/biblio"
     Then I should see "Create Publication"
