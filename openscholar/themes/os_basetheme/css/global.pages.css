@@ -867,6 +867,13 @@ height: 30px;
 position: relative;
 margin: -5px -20px;
 }
+
+
+.page-roadmap .ui-button.ui-widget.ui-state-default {
+border: none;
+background: none;
+}
+
  
 .page-roadmap strong:first-child {
 font-size:18px;
