@@ -246,10 +246,6 @@ function theme_os_publications_export_links($variables) {
     $nid          = (isset($node->nid)) ? $node->nid : NULL;
     $export_links = module_invoke_all('biblio_export_link', $nid, $filter);
     $links        = array_merge($lookup_links, $export_links);
-
-    // Remove links for RIS and RTF export types.
-    unset($links['biblio_ris']);
-    unset($links['biblio_rtf']);
   }
   $title = 'Export';
 
