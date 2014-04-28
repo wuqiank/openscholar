@@ -928,8 +928,38 @@ ul.term-reference-tree-level {
   background: url('../images/scholarbase-sprite.png') 6px -433px no-repeat;
 }
 
+/* PUB FORM EXTERNAL URL SECTIONON */
+
+#edit-url .form-item-biblio-url-title {
+margin-right:0;
+width: 138px;
+}
+
+#edit-url .form-item-biblio-url-title.editing {
+width: 195px;
+
+}
+
+#edit-url .form-item-biblio-url-title.editing #edit-biblio-url-title {
+ text-align:right;
+}
 
 
+#edit-biblio-url-title {
+	border:none;
+	background: url('../images/scholarbase-sprite.png') no-repeat 0 -475px #FFFFFF;
+    padding-left:25px;
+	color: #0074BD;
+	text-decoration:underline;
+cursor:pointer;
+}
+#edit-biblio-url-title:focus {
+background: url('../../../themes/os_basetheme/images/form-input-bg.gif') repeat-x scroll left top #FFFFFF;
+border: 1px solid #CDCDCD;
+padding-left:0;
+color: #444;
+	text-decoration:none;
+}
 
 
 
