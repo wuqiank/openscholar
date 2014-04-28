@@ -57,3 +57,10 @@ Feature:
      Then I should get a "403" HTTP response
       And I go to "john/publications/authors"
     Then I should get a "403" HTTP response
+
+  @javascript @first @me
+  Scenario: Verify user can create a publication.
+    Given I am logging in as "admin"
+    When I reload the page
+    And I visit "/john/node/add/biblio"
+    Then I should see "Create Publication"
