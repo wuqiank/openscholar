@@ -1853,4 +1853,14 @@ class FeatureContext extends DrupalContext {
       throw new Exception(sprintf('The feed items has been imported %s times.', $count));
     }
   }
+
+  /**
+   * @Given /^I select tomorrow on "([^"]*)"$/
+   */
+  public function iSelectTomorrowOn($arg1) {
+    $this->getSession()->getDriver()->focus($arg1);
+    $this->select("2014");
+    throw new PendingException();
+  }
+
 }
