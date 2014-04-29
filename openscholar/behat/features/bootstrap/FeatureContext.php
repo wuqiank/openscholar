@@ -1866,10 +1866,17 @@ class FeatureContext extends DrupalContext {
 
     $this_month = date('M');
     $next_month = date('M', strtotime('next month'));
+    sleep (5);
     $selector = $page->find('xpath', "//select[@class='ui-datepicker-month']");
-    $s2 = $selector->find('xpath', "//option[contains(.,'{$this_month}'");
+    sleep (5);
+    $s2 = $selector->find('xpath', "//option[@value='5']");
     $s2->press();
-    sleep(100);
+    sleep(5);
+    $page = $this->getSession()->getPage();
+    $day = $page->find('xpath', "//td[@data-handler='selectDay']");
+    $day->press();
+    sleep (5);
+
  //   throw new PendingException();
   }
 
