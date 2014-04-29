@@ -58,11 +58,11 @@ Feature:
       And I go to "john/publications/authors"
     Then I should get a "403" HTTP response
 
-  @javascript @first @foo
+  @javascript @first @me
   Scenario: Verify user can create a publication.
     Given I am logging in as "admin"
      When I visit "/john/node/add/biblio"
-#     And I fill in "title_field[und][0][value]" with "Journal publication"
+      And I fill in the publication title "Journal publication"
       And I fill in "biblio_year" with "2013"
       And I press "Save"
      Then I should see "Journal publication"
