@@ -66,3 +66,13 @@ Feature:
      And I fill in "biblio_year" with "2013"
      And I press "Save"
      Then I should see "Journal publication"
+
+  @javascript @first
+  Scenario: Verify changing biblio types changes fields
+    Given I am logging in as "admin"
+     When I visit "/john/node/add/biblio"
+     Then I should see "Title of the Journal"
+      And I should not see "Secondary Title"
+      And I select "Artwork" from "edit-biblio-type"
+     Then I should see "Secondary Title"
+      And I should not see "Title of the Journal"
