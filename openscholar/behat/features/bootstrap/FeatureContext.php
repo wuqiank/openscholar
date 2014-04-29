@@ -1857,10 +1857,20 @@ class FeatureContext extends DrupalContext {
   /**
    * @Given /^I select tomorrow on "([^"]*)"$/
    */
-  public function iSelectTomorrowOn($arg1) {
-    $this->getSession()->getDriver()->focus($arg1);
-    $this->select("2014");
-    throw new PendingException();
+  public function iSelectTomorrowOn($elementId) {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('xpath', "//div[@id='{$elementId}']");
+    $e2= $element->find('xpath', "//input");
+    $e2->press();
+    $page = $this->getSession()->getPage();
+
+    $this_month = date('M');
+    $next_month = date('M', strtotime('next month'));
+    $selector = $page->find('xpath', "//select[@class='ui-datepicker-month']");
+    $s2 = $selector->find('xpath', "//option[contains(.,'{$this_month}'");
+    $s2->press();
+    sleep(100);
+ //   throw new PendingException();
   }
 
 }
