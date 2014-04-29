@@ -322,10 +322,9 @@ function hwpi_vsite_register_notify_author_body_text_alter(&$body_text) {
     . "· Starter Hosting, Support & Training\n"
     . "    No charge to the user, courtesy of your Harvard school\n"
     . "· Basic Website Building with HWP assistance\n"
-    . "    Learn more about options and pricing\n"
+    . "    Learn more about options and pricing at http://hwp.harvard.edu\n"
     . "· Premium Hosting, Support & Training\n"
-    . "    Learn more about options and pricing\n\n"
-    . "Visit http://hwp.harvard.edu/pricing to learn more about our options and pricing.\n\n"
+    . "    Learn more about options and pricing at http://hwp.harvard.edu\n\n"
     . "Sincerely,\n"
     . "Harvard Web Publishing\n";
 }
