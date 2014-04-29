@@ -23,7 +23,7 @@ Drupal.behaviors.tabs = {
       new_row = $(template.replace(/widget-new/g, id));
 
       // get the new weight
-      $('.field-weight', $form).each(function () {
+      $('.widget-weight', $form).each(function () {
         if ($(this).val() > weight) {
           weight = parseInt($(this).val());
         }
