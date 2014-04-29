@@ -62,10 +62,10 @@ Feature:
   Scenario: Verify user can create a publication.
     Given I am logging in as "admin"
      When I visit "/john/node/add/biblio"
-      And I fill in the publication title "Journal publication"
+      And I fill in the publication title with random string
       And I fill in "biblio_year" with "2013"
       And I press "Save"
-     Then I should see "Journal publication"
+     Then I should see the random string
 
   @api @first @foo
   Scenario: Test the Publication form year validation when submitting the form.

@@ -1823,7 +1823,7 @@ class FeatureContext extends DrupalContext {
 
   /**
    * @Given /^I edit the membership of "([^"]*)" in vsite "([^"]*)"$/
-   */\
+   */
   public function iEditTheMembershipOfInVsite($username, $group) {
     $uid = $this->invoke_code('os_migrate_demo_get_user_by_name', array($username));
     return array(
@@ -1855,14 +1855,10 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^I fill in the publication title "([^"]*)"$/
-   *
-   * The field from formatter is a tiny mce text area and custom code is needed.
+   * @Given /^I fill in the publication title with random string$/
    */
-  public function iFillInThePublicationTitle($title) {
-    $page = $this->getSession()->getPage();
-    $this->getSession()->switchToWindow('edit-title-field-und-0-value_ifr');
-    $selenium = $this->getSession()->getDriver();
-    $selenium->evaluateScript("tinyMCE.activeEditor.setContent('');");
+  public function iFillInThePublicationTitleWithRandomString() {
+    $this->randomizeMe();
+    $this->getSession()->executeScript("tinymce.get()[0].setContent('" . $this->randomText . "');");
   }
 }
