@@ -91,8 +91,10 @@ Feature:
       And I edit current node
      When I click "Post Created/Edited By"
       And I click "Menu options"
+      And I sleep for "1"
      Then I should see "Posted on"
       And I select another month on "edit-date"
+      And I sleep for "1"
       And I should see "Posted on"
       And I press "Save"
 
