@@ -76,7 +76,7 @@ Feature:
      When I click "Save"
      Then I should see "Year value must be in a YYYY format."
 
-  @javascript @first @foo
+  @javascript-wip @first @foo
   Scenario: Test the JS Publication form year validation.
     Given I am logging in as "john"
       And I visit "john/node/add/biblio"
