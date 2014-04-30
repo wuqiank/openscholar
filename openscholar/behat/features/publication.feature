@@ -89,4 +89,7 @@ Feature:
     Given I am logging in as "john"
       And I visit "/john/publications/goblet-fire"
       And I edit current node
-      And I press "Publication Details"
+    Then I should see "Wand"
+      And I click "Publication Details"
+     Then I should see "Help"
+
