@@ -7,7 +7,17 @@ Drupal.behaviors.tabs = {
     var $form = $('#boxes-add-form, #boxes-box-form'),
       template = '<tr class="draggable">'+$('input[name="widgets[widget-new][bid]"]', $form).parents('tr').hide().html()+'</tr>',
       tableDrag = Drupal.tableDrag['widget-list'],
-      new_id = parseInt($('#edit-count').val());
+      new_id = 0;
+    
+    $('input[type="text"]', $form).each(function () {
+      var $this = $(this),
+          name = $this.attr('name'),
+          id = parseInt(name.match(/[0-9]+/));
+      
+      if (id >= new_id) {
+        new_id = id+1;
+      }
+    });
 
     // add a new row to the table, set all its form elements to the right values and make it draggable
     $('.add-new', $form).click(function (e) {
