@@ -88,5 +88,9 @@ Feature:
   @javascript @first @me
   Scenario: Test the JS Publication form year validation.
     Given I am logging in as "john"
-     When I set the widget of vocabulary "science" to "tree"
-      And I set the term "Air" from the vocabulary "science" under "fire"
+     When I set the widget of vocabulary "food" to "tree"
+      And I visit "john/node/add/biblio"
+     When I click "Publication Details"
+      And I should not see "Burger"
+     Then I click "Expand Terms"
+      And I should see "Burger"
