@@ -79,20 +79,20 @@ Feature:
   @javascript @first @foo
   Scenario: Test the JS Publication form year validation.
     Given I am logging in as "john"
-    And I visit "john/node/add/biblio"
-    And I fill in "title" with "Example title"
-    When I fill in "edit-biblio-year" with "199"
-    Then I should see "Input must be in the form YYYY. Only numerical digits are allowed."
+      And I visit "john/node/add/biblio"
+      And I fill in "title" with "Example title"
+     When I fill in "edit-biblio-year" with "199"
+     Then I should see "Input must be in the form YYYY. Only numerical digits are allowed."
 
-  @javascript @first @shushu
+  @javascript @first
   Scenario: Verify date picker for posting date
     Given I am logging in as "john"
       And I visit "/john/publications/goblet-fire"
       And I edit current node
      When I click "Post Created/Edited By"
-     When I click "Menu options"
+      And I click "Menu options"
      Then I should see "Posted on"
       And I select another month on "edit-date"
-     Then I should see "Posted on"
-     When I press "Save"
+      And I should see "Posted on"
+      And I press "Save"
 
