@@ -58,7 +58,7 @@ Feature:
       And I go to "john/publications/authors"
     Then I should get a "403" HTTP response
 
-  @javascript @first @foo
+  @javascript-wip @first @foo
   Scenario: Verify user can create a publication.
     Given I am logging in as "admin"
      When I visit "/john/node/add/biblio"
