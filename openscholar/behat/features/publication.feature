@@ -83,3 +83,10 @@ Feature:
       And I fill in "title" with "Example title"
      When I fill in "edit-biblio-year" with "199"
      Then I should see "Input must be in the form YYYY. Only numerical digits are allowed."
+
+  @javascript @first @shushu
+  Scenario: Verify tooltip hoover works
+    Given I am logging in as "john"
+      And I visit "/john/publications/goblet-fire"
+      And I edit current node
+      And I press "Publication Details"
