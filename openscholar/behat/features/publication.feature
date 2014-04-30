@@ -67,6 +67,7 @@ Feature:
       And I press "Save"
      Then I should see the random string
 
+    
   @api @first @foo
   Scenario: Test the Publication form year validation when submitting the form.
     Given I am logging in as "john"
