@@ -644,7 +644,7 @@ function os_publications_alter_year_field(&$form, &$form_state) {
   $years = variable_get('biblio_years_text', array(9999 => t('Submitted'), 9998 => t('In Press')));
   $form['biblio_year_group'] = array(
     '#type' => 'fieldset',
-    '#title' => $form['biblio_year']['#title'] . ' <span class="form-required" title="This field is required.">*</span>',
+    '#title' => $form['biblio_year']['#title'] . ' <span class="form-required" title="' . t('This field is required.') . '">*</span>',
     '#collapsible' => FALSE,
     '#weight' => $form['biblio_year']['#weight'],
   );
