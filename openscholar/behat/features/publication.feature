@@ -83,3 +83,10 @@ Feature:
       And I fill in "title" with "Example title"
      When I fill in "edit-biblio-year" with "199"
      Then I should see "Input must be in the form YYYY. Only numerical digits are allowed."
+
+
+  @javascript @first @me
+  Scenario: Test the JS Publication form year validation.
+    Given I am logging in as "john"
+     When I set the widget of vocabulary "science" to "tree"
+      And I set the term "Air" from the vocabulary "science" under "fire"

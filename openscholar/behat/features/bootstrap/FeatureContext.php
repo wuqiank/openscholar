@@ -1831,7 +1831,45 @@ class FeatureContext extends DrupalContext {
     );
   }
 
- /**
+  /**
+   * @Given /^I set the widget of vocabulary "([^"]*)" to "([^"]*)"$/
+   */
+  public function iSetTheWidgetOfVocabularyTo($vocab, $widget) {
+    $this->links = array(
+      'science' => "john/cp/build/taxonomy/science_personal1",
+    );
+
+    $widgets = array(
+      'tree' => 'term_reference_tree',
+    );
+
+    return array(
+      new Step\When('I visit "' . $this->links[$vocab] . '/edit"'),
+      new Step\When('I select the radio button named "widget_type" with value "' . $widgets[$widget] . '"'),
+      new Step\When('I press "Save"'),
+    );
+  }
+
+  /**
+   * @Given /^I set the term "([^"]*)" from the vocabulary "([^"]*)" under "([^"]*)"$/
+   */
+  public function iSetTheTermFromTheVocabularyUnder($term, $vocab, $parent_term) {
+
+    $selenium = $this->getSession()->getDriver();
+    $page = $this->getSession()->getPage();
+    $this->visit($this->links[$vocab]);
+    sleep(3);
+    $page->find('xpath', "//a[.='" . $term . "']")->click();
+    sleep(3);
+    $page->find('xpath', "//a[.='Edit']")->click();
+    sleep(3);
+    return array(
+      new Step\When('I click "RELATIONS"'),
+      new Step\When('I sleep for "3"'),
+    );
+  }
+
+  /**
    * @Given /^I re import feed item "([^"]*)"$/
    */
   public function iReImportFeedItem($node) {
