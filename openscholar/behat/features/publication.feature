@@ -87,16 +87,12 @@ Feature:
   @javascript @first @shushu
   Scenario: Verify date picker for posting date
     Given I am logging in as "john"
-      And I visit "john/node/add/biblio"
+      And I visit "/john/publications/goblet-fire"
+      And I edit current node
      When I click "Post Created/Edited By"
      When I click "Menu options"
-    Then I should see "Posted on"
-    Then I should see "Posted on"
-    And I should see "2014"
-    And I select tomorrow on "edit-date"
      Then I should see "Posted on"
-    When I click "Menu options"
-    When I click "Menu options"
-    When I click "Menu options"
-    When I click "Menu options"
+      And I select another month on "edit-date"
+     Then I should see "Posted on"
+     When I press "Save"
 

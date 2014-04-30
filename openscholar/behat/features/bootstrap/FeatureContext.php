@@ -1131,6 +1131,16 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * @Given /^I click on "([^"]*)" under "([^"]*)"$/
+   */
+  public function iClickOnUnder($text, $container) {
+    if (!$element = $this->searchForLinkUnderElement($text, $container)) {
+      throw new Exception(sprintf("The link %s was not found in %s", $text, $container));
+    }
+    $element->press();
+  }
+
+  /**
    * Searching a link under an element with class
    */
   private function searchForLinkUnderElement($text, $container) {
@@ -1855,29 +1865,46 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
-   * @Given /^I select tomorrow on "([^"]*)"$/
+   * @Given /^I select another month on "([^"]*)"$/
    */
-  public function iSelectTomorrowOn($elementId) {
-    $page = $this->getSession()->getPage();
-    $element = $page->find('xpath', "//div[@id='{$elementId}']");
-    $e2= $element->find('xpath', "//input");
-    $e2->press();
+  public function iSelectAnotherMonthOn($elementId) {
     $page = $this->getSession()->getPage();
 
-    $this_month = date('M');
-    $next_month = date('M', strtotime('next month'));
-    sleep (5);
+    // Focus on the date field to open the pop-up date selector.
+    $element = $page->find('xpath', "//div[@id='{$elementId}']");
+    $field = $element->find('xpath', "//input");
+    $field->press();
+
+    // Month values are 1-12, but in the form they are 0-11.
+    $month = date('n');
+
+    if ($month == 12) {
+      $month = 10;
+    }
+
+    // Find month selector and select new month.
     $selector = $page->find('xpath', "//select[@class='ui-datepicker-month']");
-    sleep (5);
-    $s2 = $selector->find('xpath', "//option[@value='5']");
+    $s2 = $selector->find('xpath', "//option[@value='$month']");
     $s2->press();
-    sleep(5);
-    $page = $this->getSession()->getPage();
+
+    // Press on the first day of the month
     $day = $page->find('xpath', "//td[@data-handler='selectDay']");
     $day->press();
-    sleep (5);
+  }
 
- //   throw new PendingException();
+  /**
+   * @Given /^I edit current node$/
+   */
+  public function iEditCurrentNode() {
+    $page = $this->getSession()->getPage();
+    $pattern = '/<link[\s\S]*href=[\s\S]*node\/([\S]*)\"/';
+    if (!preg_match($pattern, $page->getHtml(), $matches)) {
+      throw new Exception("Could not find edit link for current node.");
+    }
+
+    return array(
+      new Step\When('I visit "/node/' . $matches[1] . '/edit"'),
+    );
   }
 
 }
